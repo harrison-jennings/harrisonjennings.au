@@ -11,4 +11,11 @@
   "observability": {
     "enabled": true,
   },
+  // Production is reached only through the www route (from cutover), never a public workers.dev copy.
+  // Branch previews get workers.dev URLs, behind Cloudflare Access. See docs/deployment.md.
+  "workers_dev": false,
+  "preview_urls": true,
+  // Required by `wrangler preview`, which Workers Builds runs for every non-production branch.
+  // Empty: previews use the same assets and settings as production.
+  "previews": {},
 }
