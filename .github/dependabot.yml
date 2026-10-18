@@ -11,10 +11,14 @@ updates:
     labels: ['dependencies']
     commit-message:
       prefix: 'chore(deps)'
+    # Minor and patch updates are grouped; each major update gets its own PR, so one breaking
+    # release can't hold up the rest of its group, and closing it skips just that version.
     groups:
       astro:
+        update-types: ['minor', 'patch']
         patterns: ['astro', '@astrojs/*']
       tooling:
+        update-types: ['minor', 'patch']
         patterns:
           [
             'eslint',
@@ -27,6 +31,7 @@ updates:
             'globals',
           ]
       cloudflare:
+        update-types: ['minor', 'patch']
         patterns: ['wrangler', '@cloudflare/*']
 
   - package-ecosystem: github-actions
