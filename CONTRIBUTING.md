@@ -10,7 +10,7 @@ Please open an issue before a pull request for anything beyond a small fix.
 
 ## Working on the code
 
-1. Use Node 22.22 or newer (`nvm use`).
+1. Use Node 24 LTS (`nvm use`); Node 22.22 or newer still works.
 2. `npm ci`, then `npm run dev`.
 3. Branch from `main`: `fix/…`, `feat/…`, `content/…`, `chore/…`.
 4. Before pushing, run `npm run verify` (the first time, run `npx playwright install chromium` for the end-to-end tests).

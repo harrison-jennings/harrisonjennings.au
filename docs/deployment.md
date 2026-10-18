@@ -15,7 +15,7 @@ The site deploys from GitHub to Cloudflare with [Workers Builds](https://develop
    - Deploy command: `npx wrangler deploy`
    - Non-production branch deploy command: `npx wrangler versions upload`
    - Root directory: `/`
-   - Variable `NODE_VERSION` = `22` if the build image doesn't pick up `.nvmrc`.
+   - Variable `NODE_VERSION` = `24` if the build image doesn't pick up `.nvmrc`.
 3. **Branch builds.** Turn on builds for non-production branches, so every branch gets a preview URL.
 4. **Lock the previews.** In the Worker's **Settings → Domains & Routes**, enable Cloudflare Access for workers.dev and preview URLs, and allow only your own email.
 5. **Check a preview.** Push a branch, open its preview URL, sign in through Access.

@@ -15,7 +15,7 @@ marketing automation, analytics and measurement, creative and media strategy.
 [![CI](https://github.com/harrison-jennings/harrisonjennings.au/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/harrison-jennings/harrisonjennings.au/actions/workflows/ci.yml)
 [![Astro 7](https://img.shields.io/badge/astro-7-C85A52?style=flat-square&logo=astro&logoColor=EFEAE6&labelColor=121110)](https://astro.build/)
 [![Cloudflare Workers](https://img.shields.io/badge/cloudflare-workers-C85A52?style=flat-square&logo=cloudflare&logoColor=EFEAE6&labelColor=121110)](https://developers.cloudflare.com/workers/static-assets/)
-[![Node 22](https://img.shields.io/badge/node-22.22%2B-E8A27A?style=flat-square&logo=nodedotjs&logoColor=EFEAE6&labelColor=121110)](https://nodejs.org/)
+[![Node 24](https://img.shields.io/badge/node-24_LTS-E8A27A?style=flat-square&logo=nodedotjs&logoColor=EFEAE6&labelColor=121110)](https://nodejs.org/)
 [![TypeScript strictest](https://img.shields.io/badge/typescript-strictest-E8A27A?style=flat-square&logo=typescript&logoColor=EFEAE6&labelColor=121110)](tsconfig.json)
 [![Code: MIT](https://img.shields.io/badge/code-MIT-A39C97?style=flat-square&labelColor=121110)](LICENSE)
 
@@ -29,7 +29,7 @@ A fast, static personal site: a blog, a projects index and a way to book a call.
 
 ## quick start
 
-Requires Node 22.22 or newer (`nvm use` reads `.nvmrc`).
+Built and developed on Node 24 LTS (`nvm use` reads `.nvmrc`); Node 22.22 or newer still works.
 
 ```sh
 npm ci                           # install exactly what the lockfile says
