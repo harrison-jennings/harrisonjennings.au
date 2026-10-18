@@ -27,7 +27,7 @@ design/tokens.json ──scripts/build-tokens.mjs──▶ src/styles/tokens.css
 
 - **Unit** (`tests/unit/`, Vitest, `npm run test`): the pure logic. `src/lib/posts.ts` (slugs, URLs, drafts, newest-first order, which topics earn a page) with `astro:content` mocked, and `buildTokensCss` from `scripts/build-tokens.mjs` against both the real `design/tokens.json` and small fixtures for the edge cases (fallback values, font paths, bad and duplicate names). `vitest.config.ts` uses Astro's Vite config, so `import.meta.env` behaves as it does in a build.
 - **End-to-end** (`tests/e2e/`, Playwright, `npm run test:e2e`): builds the site, then tests `dist/` served by `wrangler dev` on port 8790, so `_headers`, trailing-slash handling and the 404 page behave as they do on Workers. Page lists come from the built sitemap, so new pages are covered automatically.
-  - `pages`: every sitemap page returns 200; an unknown path returns 404 with the 404 page.
+  - `pages`: every sitemap page returns 200; an unknown path returns 404, with the 404 page for browser page loads (Cloudflare sends other requests a bare "Not found").
   - `menu`: at phone width the menu opens with focus inside, keeps focus out of the page behind it, and closes on Escape or the close button with focus back on the menu button. It's a native modal `<dialog>`, so Tab steps out to the browser's own controls after the last item and back in from the first; the test allows that and fails if focus reaches the page.
   - `motion`: under `prefers-reduced-motion: reduce`, no animation runs on load or hover, the logo stays at rest, and the page is pixel-identical half a second apart.
   - `headers`: every rule in `public/_headers` is checked against a real response from a matching path.
