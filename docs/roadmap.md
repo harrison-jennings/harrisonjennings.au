@@ -37,7 +37,7 @@ From WordPress on VentraIP to this repo, live before the hosting renews on **11 
 - [x] Core components: logo, nav and mobile menu, footer, button, link, icon button, project row, live signal, tag
 - [x] CI, Dependabot, templates, docs
 - [ ] Private GitHub repo, first push, repository settings
-- [ ] Workers Builds connected; previews behind Cloudflare Access; a branch preview checked ([deployment.md](deployment.md))
+- [x] Workers Builds connected; previews behind Cloudflare Access; a branch preview checked ([deployment.md](deployment.md))
 
 ## 4. page mockups
 
