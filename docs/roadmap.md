@@ -38,7 +38,7 @@ From WordPress on VentraIP to this repo, live before the hosting renews on **11 
 - [x] CI, Dependabot, templates, docs
 - [x] Private GitHub repo, first push, repository settings
 - [x] Unit and end-to-end tests in `npm run verify` and CI ([architecture.md](architecture.md#tests))
-- [ ] Workers Builds connected; previews behind Cloudflare Access; a branch preview checked ([deployment.md](deployment.md))
+- [x] Workers Builds connected; previews behind Cloudflare Access; a branch preview checked ([deployment.md](deployment.md))
 
 ## 4. page mockups
 

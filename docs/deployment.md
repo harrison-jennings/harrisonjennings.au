@@ -2,23 +2,29 @@
 
 The site deploys from GitHub to Cloudflare with [Workers Builds](https://developers.cloudflare.com/workers/ci-cd/builds/).
 
-| branch        | goes to                                                |
-| ------------- | ------------------------------------------------------ |
-| `main`        | production: www.harrisonjennings.au                    |
-| anything else | a preview URL on workers.dev, behind Cloudflare Access |
+| branch        | goes to                                            |
+| ------------- | -------------------------------------------------- |
+| `main`        | production: www.harrisonjennings.au                |
+| anything else | a Preview on workers.dev, behind Cloudflare Access |
+
+The Worker is `harrisonjennings-au`, on the `harrisonjennings-au.workers.dev` subdomain. A branch's Preview URL is `<branch>-harrisonjennings-au.harrisonjennings-au.workers.dev` (slashes become hyphens: `chore/tests` → `chore-tests-…`), and Cloudflare comments it on the pull request. The production workers.dev URL is off (`workers_dev: false`); production is reached only through the www route from cutover.
 
 ## one-time setup in Cloudflare
 
-1. **Workers & Pages → Create → Import a repository.** Pick `harrison-jennings/harrisonjennings.au`.
+Done on 18 October 2026. Kept here to rebuild it if needed.
+
+1. **Workers & Pages → Create application → Import a repository.** Install the Cloudflare Workers & Pages GitHub app on this repository only, and pick `harrison-jennings/harrisonjennings.au`.
 2. **Build settings.**
+   - Worker name: `harrisonjennings-au` (must match `name` in `wrangler.jsonc`, or every build fails)
+   - Production branch: `main`
    - Build command: `npm run build`
    - Deploy command: `npx wrangler deploy`
-   - Non-production branch deploy command: `npx wrangler versions upload`
+   - Preview command: `npx wrangler preview` (needs the `previews` block in `wrangler.jsonc`)
    - Root directory: `/`
-   - Variable `NODE_VERSION` = `24` if the build image doesn't pick up `.nvmrc`.
-3. **Branch builds.** Turn on builds for non-production branches, so every branch gets a preview URL.
-4. **Lock the previews.** In the Worker's **Settings → Domains & Routes**, enable Cloudflare Access for workers.dev and preview URLs, and allow only your own email.
-5. **Check a preview.** Push a branch, open its preview URL, sign in through Access.
+   - No build variables: the build image reads `.nvmrc` (Node 24). Set `NODE_VERSION` = `24` only if that ever stops working.
+3. **Preview builds.** **Settings → Build**, Previews Base: turn on **Builds for Preview branches**. `preview_urls: true` in `wrangler.jsonc` keeps Preview URLs on.
+4. **Lock the previews.** The Worker's **Access** tab → **Protect this Worker behind Access** → **Previews only** (never **All traffic**: that would put a login in front of the live site once the route is added). Policy: **Cloudflare account**, so only members of the account (just Harrison) can sign in.
+5. **Service token for automated checks.** **Zero Trust → Access controls → Service credentials → Service Tokens**: `preview-checks`, valid for a year. A **Service Auth** policy (`preview-checks service token`) that includes it sits alongside the account policy. Scripts send `CF-Access-Client-Id` and `CF-Access-Client-Secret`; locally they live in `.env.preview` (ignored by git). Renew the token before it expires in October 2027.
 
 ## cutover (around 4 November)
 
