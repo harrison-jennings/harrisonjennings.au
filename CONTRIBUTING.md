@@ -13,7 +13,7 @@ Please open an issue before a pull request for anything beyond a small fix.
 1. Use Node 24 LTS (`nvm use`); Node 22.22 or newer still works.
 2. `npm ci`, then `npm run dev`.
 3. Branch from `main`: `fix/…`, `feat/…`, `content/…`, `chore/…`.
-4. Before pushing, run `npm run verify`.
+4. Before pushing, run `npm run verify` (the first time, run `npx playwright install chromium` for the end-to-end tests).
 5. Open a pull request using the template. Pull requests are squash-merged, so the title becomes the commit message: write it in the imperative ("Add projects index"), and use a [Conventional Commits](https://www.conventionalcommits.org/) prefix where it fits (`feat:`, `fix:`, `content:`, `chore:`, `docs:`).
 
 ## House rules
