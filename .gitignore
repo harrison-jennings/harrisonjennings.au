@@ -18,6 +18,11 @@ node_modules/
 .env.*
 !.env.example
 
+# test output
+test-results/
+playwright-report/
+blob-report/
+
 # logs
 npm-debug.log*
 *.log

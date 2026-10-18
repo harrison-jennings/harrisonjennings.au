@@ -17,7 +17,7 @@ jobs:
   verify:
     name: Format, lint, types and build
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v6
         with:
@@ -39,8 +39,30 @@ jobs:
       - name: Types
         run: npm run check
 
+      - name: Unit tests
+        run: npm run test
+
       - name: Build
         run: npm run build
+
+      - name: Install Playwright's Chromium
+        run: npx playwright install --with-deps chromium
+
+      # Runs against the dist/ built above, served by wrangler dev (see playwright.config.ts).
+      - name: End-to-end tests
+        run: npx playwright test
+        env:
+          WRANGLER_SEND_METRICS: 'false'
+
+      - name: Keep the Playwright report if tests fail
+        if: failure()
+        uses: actions/upload-artifact@v5
+        with:
+          name: playwright-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
 
       - name: Keep the build for review
         uses: actions/upload-artifact@v5

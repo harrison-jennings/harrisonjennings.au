@@ -21,6 +21,20 @@ design/tokens.json ──scripts/build-tokens.mjs──▶ src/styles/tokens.css
 - **Redirects** (`public/_redirects`): one explicit 301 per old WordPress post and category URL, plus the old sitemap URLs. No wildcards.
 - **404**: `src/pages/404.astro` builds `404.html`, which Workers serves for any unknown path (`not_found_handling: 404-page`). WordPress-only URLs (`?p=` shortlinks, `wp-content` uploads) are left to lapse.
 
+## tests
+
+`npm run verify` runs both suites after format, lint and type checks, and CI runs the same steps on every pull request and on `main`.
+
+- **Unit** (`tests/unit/`, Vitest, `npm run test`): the pure logic. `src/lib/posts.ts` (slugs, URLs, drafts, newest-first order, which topics earn a page) with `astro:content` mocked, and `buildTokensCss` from `scripts/build-tokens.mjs` against both the real `design/tokens.json` and small fixtures for the edge cases (fallback values, font paths, bad and duplicate names). `vitest.config.ts` uses Astro's Vite config, so `import.meta.env` behaves as it does in a build.
+- **End-to-end** (`tests/e2e/`, Playwright, `npm run test:e2e`): builds the site, then tests `dist/` served by `wrangler dev` on port 8790, so `_headers`, trailing-slash handling and the 404 page behave as they do on Workers. Page lists come from the built sitemap, so new pages are covered automatically.
+  - `pages`: every sitemap page returns 200; an unknown path returns 404 with the 404 page.
+  - `menu`: at phone width the menu opens with focus inside, keeps focus out of the page behind it, and closes on Escape or the close button with focus back on the menu button. It's a native modal `<dialog>`, so Tab steps out to the browser's own controls after the last item and back in from the first; the test allows that and fails if focus reaches the page.
+  - `motion`: under `prefers-reduced-motion: reduce`, no animation runs on load or hover, the logo stays at rest, and the page is pixel-identical half a second apart.
+  - `headers`: every rule in `public/_headers` is checked against a real response from a matching path.
+  - `a11y`: an axe scan (WCAG 2.2 A and AA rules) of every page and the 404 page, in dark and light.
+
+Run `npx playwright install chromium` once before the first end-to-end run. Tests that reach real Cloudflare (preview URLs, redirects on the live domain, Lighthouse) come in later phases: see the [roadmap](roadmap.md).
+
 ## what's coming (and where it goes)
 
 - **Consent and analytics:** CookieConsent v3 with Google Consent Mode (advanced), loading the server-side GTM container from `measure.harrisonjennings.au`. Consent choices will be logged to D1 through a small Worker route. That will be the first non-static code, added to `wrangler.jsonc` as a `main` script with `run_worker_first` limited to the logging path, so pages stay static. The footer's "cookie settings" button already carries `data-cc="show-preferencesModal"` for it.

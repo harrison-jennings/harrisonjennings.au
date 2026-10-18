@@ -36,7 +36,8 @@ From WordPress on VentraIP to this repo, live before the hosting renews on **11 
 - [x] Astro, TypeScript (strictest), content collections, tokens build, fonts, favicons
 - [x] Core components: logo, nav and mobile menu, footer, button, link, icon button, project row, live signal, tag
 - [x] CI, Dependabot, templates, docs
-- [ ] Private GitHub repo, first push, repository settings
+- [x] Private GitHub repo, first push, repository settings
+- [x] Unit and end-to-end tests in `npm run verify` and CI ([architecture.md](architecture.md#tests))
 - [ ] Workers Builds connected; previews behind Cloudflare Access; a branch preview checked ([deployment.md](deployment.md))
 
 ## 4. page mockups
@@ -64,6 +65,7 @@ The hero first, then each page, approved before it's built.
 - [ ] Privacy and terms into `src/content/pages/`
 - [ ] Turn the 8 populated categories (and any tags) into a short `topics.yaml`; merge any that overlap
 - [ ] A 301 in `public/_redirects` for every old post URL (`/YYYY/MM/<slug>/` → `/blog/<slug>/`) and category URL, from the crawl
+- [ ] Redirect tests: a Playwright test that every source in `public/_redirects` returns a single 301 to a page that returns 200, and that no rule uses a wildcard
 - [ ] Projects, services and testimonials into their files
 
 ## 7. analytics and consent
@@ -83,6 +85,7 @@ The hero first, then each page, approved before it's built.
 - [ ] Titles and descriptions for every page, post and topic
 - [ ] Sitemap, RSS at `/feed/`, social cards and structured data validated
 - [ ] Lighthouse 95+ on performance, accessibility and SEO
+- [ ] Lighthouse CI on every pull request, failing below 95 on performance, accessibility and SEO
 - [ ] Remove `noindex` from the placeholder home page
 
 ## 9. cutover
