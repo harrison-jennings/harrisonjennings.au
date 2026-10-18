@@ -1,0 +1,36 @@
+# architecture
+
+## the short version
+
+Astro builds every page to static HTML at build time. Cloudflare Workers serves `dist/` as [static assets](https://developers.cloudflare.com/workers/static-assets/). No code runs per request for pages.
+
+```text
+Markdown + .astro ──astro build──▶ dist/ ──Workers Builds──▶ Cloudflare edge ──▶ www.harrisonjennings.au
+        ▲
+design/tokens.json ──scripts/build-tokens.mjs──▶ src/styles/tokens.css
+```
+
+## pieces
+
+- **Pages** (`src/pages/`): one file per route. Trailing slashes are always used (`/blog/`), and `wrangler.jsonc` sets `html_handling: auto-trailing-slash` to match, so there are no redirect chains.
+- **Content** (`src/content/`): posts and pages in Markdown, topics and projects in YAML. `src/content.config.ts` holds the schemas, so bad frontmatter fails the build. Posts publish at `/blog/<slug>/` and topics at `/blog/topic/<id>/`. See [content.md](content.md).
+- **Components** (`src/components/`): each has scoped styles that read tokens only. Behaviours live in `src/scripts/` and are imported by the component that needs them, so Astro bundles them once per page.
+- **Tokens** (`design/tokens.json`): the brand's single source of truth. `npm run tokens` writes `src/styles/tokens.css` (ignored by git, rebuilt before `dev`, `build` and `check`). Dark is the default; light follows the visitor's system setting, and `data-theme="light"` or `"dark"` on `<html>` forces one.
+- **Fonts**: Martian Mono and Schibsted Grotesk, variable, Latin subset, as woff2 in `public/fonts/`, preloaded in `Base.astro`.
+- **Headers** (`public/_headers`): security headers on every response, and long immutable caching for hashed assets and fonts.
+- **Redirects** (`public/_redirects`): one explicit 301 per old WordPress post and category URL, plus the old sitemap URLs. No wildcards.
+- **404**: `src/pages/404.astro` builds `404.html`, which Workers serves for any unknown path (`not_found_handling: 404-page`). WordPress-only URLs (`?p=` shortlinks, `wp-content` uploads) are left to lapse.
+
+## what's coming (and where it goes)
+
+- **Consent and analytics:** CookieConsent v3 with Google Consent Mode (advanced), loading the server-side GTM container from `measure.harrisonjennings.au`. Consent choices will be logged to D1 through a small Worker route. That will be the first non-static code, added to `wrangler.jsonc` as a `main` script with `run_worker_first` limited to the logging path, so pages stay static. The footer's "cookie settings" button already carries `data-cc="show-preferencesModal"` for it.
+- **Content-Security-Policy:** added to `_headers` once the analytics, consent and booking sources are final.
+- **Feeds and SEO:** RSS at `/feed/`, generated social images per post, structured data (Person and ProfessionalService on the home page, BlogPosting and BreadcrumbList on posts), and 301s from the old Yoast sitemap URLs to the new sitemap index.
+
+Never route every request through Worker code (`run_worker_first: true`). On the free plan, once the daily request cap is hit those requests fail instead of falling back to the static page.
+
+## rules of thumb
+
+- Prefer build time over request time. If something can be computed when building, it should be.
+- No client framework. If a component needs more than a small script, discuss it first.
+- No new colours or sizes outside `design/tokens.json`.

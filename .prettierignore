@@ -1,0 +1,7 @@
+dist/
+.astro/
+.wrangler/
+node_modules/
+package-lock.json
+src/styles/tokens.css
+public/fonts/

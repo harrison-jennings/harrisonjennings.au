@@ -1,0 +1,39 @@
+name: Bug report
+description: Something on the site is broken or looks wrong.
+labels: ['bug']
+body:
+  - type: input
+    id: url
+    attributes:
+      label: Page URL
+      placeholder: https://www.harrisonjennings.au/blog/...
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you saw, and what you expected instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open the page on a phone
+        2. Tap the menu button
+        3. ...
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and device
+      placeholder: Safari 19 on iPhone 16, Chrome 141 on macOS
+  - type: dropdown
+    id: theme
+    attributes:
+      label: Colour mode
+      options:
+        - Dark
+        - Light
+        - Not sure

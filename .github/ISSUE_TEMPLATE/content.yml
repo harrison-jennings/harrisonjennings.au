@@ -1,0 +1,17 @@
+name: Content correction
+description: A typo, broken link or out-of-date detail in a post or page.
+labels: ['content']
+body:
+  - type: input
+    id: url
+    attributes:
+      label: Page URL
+    validations:
+      required: true
+  - type: textarea
+    id: correction
+    attributes:
+      label: What needs changing
+      description: Quote the current text if you can, and what it should say.
+    validations:
+      required: true

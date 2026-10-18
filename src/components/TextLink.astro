@@ -1,0 +1,42 @@
+---
+// Text-coloured link with a brick underline; lifts to the link colour on hover.
+interface Props {
+  href: string;
+  /** Standalone links ("all projects") start in the link colour. */
+  quiet?: boolean;
+  external?: boolean;
+  class?: string;
+}
+
+const { href, quiet = false, external = false, class: className } = Astro.props;
+---
+
+<a
+  class:list={['link', { 'link--quiet': quiet }, className]}
+  href={href}
+  {...(external ? { target: '_blank', rel: 'noopener' } : {})}
+>
+  <slot />
+</a>
+
+<style>
+  .link {
+    color: var(--text);
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 5px;
+    transition:
+      color 150ms ease,
+      text-decoration-color 150ms ease,
+      text-decoration-thickness 150ms ease;
+  }
+  .link--quiet {
+    color: var(--link);
+  }
+  .link:hover {
+    color: var(--link);
+    text-decoration-color: var(--link);
+    text-decoration-thickness: 2px;
+  }
+</style>

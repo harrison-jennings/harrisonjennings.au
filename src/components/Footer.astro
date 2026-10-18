@@ -1,0 +1,127 @@
+---
+// Three columns on surface: who, where to go, where else.
+import { BOOKING_URL, LEGAL, SITE, SOCIAL } from '../consts';
+import Icon from './Icon.astro';
+import Logo from './Logo.astro';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="container footer-wrap">
+  <div class="footer">
+    <div class="footer__col">
+      <a class="footer__brand" href="/">
+        <Logo size={28} />
+        {SITE.name}
+      </a>
+      <p class="footer__tagline">{SITE.tagline}</p>
+    </div>
+    <nav class="footer__col" aria-label="Footer">
+      <a href="/blog/">blog</a>
+      <a href="/projects/">projects</a>
+      <a href={BOOKING_URL} target="_blank" rel="noopener">
+        book a call
+      </a>
+    </nav>
+    <div class="footer__col">
+      <a class="footer__social" href={SOCIAL.github.href} rel="me noopener" target="_blank">
+        <Icon name="github" size={18} />
+        github
+      </a>
+      <a class="footer__social" href={SOCIAL.linkedin.href} rel="me noopener" target="_blank">
+        <Icon name="linkedin" size={17} />
+        linkedin
+      </a>
+      <p class="footer__legal">
+        {LEGAL.map((item) => (
+          <a href={item.href}>{item.label}</a>
+        ))}
+        <button type="button" data-cc="show-preferencesModal">
+          cookie settings
+        </button>
+        <span>© {year}</span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer-wrap {
+    margin-top: var(--space-56);
+    margin-bottom: var(--space-32);
+  }
+  .footer {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--space-32);
+    padding: 36px var(--space-40);
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+  }
+  .footer__col {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-10);
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  .footer__col a {
+    color: var(--text);
+    text-decoration: none;
+    transition: color 150ms ease;
+  }
+  .footer__col a:hover {
+    color: var(--link);
+  }
+  .footer__brand {
+    display: flex;
+    align-items: center;
+    gap: var(--space-10);
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+  .footer__social {
+    display: flex;
+    align-items: center;
+    gap: var(--space-10);
+  }
+  .footer__tagline {
+    margin: 0;
+    font-size: 15px;
+    color: var(--muted);
+  }
+  .footer__legal {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--muted);
+  }
+  .footer__legal a,
+  .footer__legal button {
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    color: var(--muted);
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-underline-offset: 4px;
+    cursor: pointer;
+  }
+  .footer__legal a:hover,
+  .footer__legal button:hover {
+    color: var(--link);
+  }
+  @media (max-width: 760px) {
+    .footer {
+      grid-template-columns: minmax(0, 1fr);
+      padding: 28px 22px;
+    }
+  }
+</style>

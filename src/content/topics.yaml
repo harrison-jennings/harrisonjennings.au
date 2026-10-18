@@ -1,0 +1,6 @@
+# The fixed list of topics. Posts reference these ids; a typo fails the build.
+# Filled in during the content migration from the WordPress categories (and any tags).
+# - id: marketing-automation
+#   name: marketing automation
+#   description: Marketo Engage, lifecycle programs and the plumbing behind them.
+[]

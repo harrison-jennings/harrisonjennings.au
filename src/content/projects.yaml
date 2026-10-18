@@ -1,0 +1,16 @@
+# Deployed projects. `featured` ones appear in "built and shipped" on the home page, by `order`.
+- id: leadlens
+  name: leadlens
+  summary: Email previews and linting that understand Marketo, inside VS Code. Reads Email Editor 2.0 templates the way Marketo does, then shows how they render across 21 email clients.
+  host: leadlens.harrisonjennings.au
+  url: https://leadlens.harrisonjennings.au/
+  featured: true
+  order: 1
+
+- id: api-reference-for-marketo-engage
+  name: api reference for marketo engage
+  summary: A searchable reference for the Marketo Engage REST API, generated from Adobe's own specifications, with a request builder that shows exactly what a call would send.
+  host: mkto-ref.harrisonjennings.au
+  url: https://mkto-ref.harrisonjennings.au/
+  featured: true
+  order: 2

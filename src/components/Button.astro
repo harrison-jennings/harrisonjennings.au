@@ -1,0 +1,92 @@
+---
+// Solid brick pill. Apricot wipes in from the side the pointer enters and out the side it leaves.
+interface Props {
+  href: string;
+  label: string;
+  size?: 'l' | 'm' | 's' | 'xs' | 'block';
+  external?: boolean;
+  class?: string;
+}
+
+const { href, label, size = 'm', external = false, class: className } = Astro.props;
+---
+
+<a
+  class:list={['btn', `btn--${size}`, className]}
+  href={href}
+  data-wipe
+  {...(external ? { target: '_blank', rel: 'noopener' } : {})}
+>
+  <span>{label}</span>
+  <span class="btn__wipe" aria-hidden="true">
+    {label}
+  </span>
+</a>
+
+<style>
+  .btn {
+    --btn-px: 30px;
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 17px var(--btn-px);
+    border-radius: var(--radius-pill);
+    background: var(--accent);
+    color: var(--on-accent);
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 1;
+    text-decoration: none;
+    white-space: nowrap;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn__wipe {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 var(--btn-px);
+    background: var(--apricot);
+    color: var(--on-apricot);
+    clip-path: inset(0 100% 0 0);
+    transition: clip-path 360ms cubic-bezier(0.65, 0, 0.35, 1);
+    pointer-events: none;
+  }
+  /* without script the wipe still runs from the left */
+  .btn:hover .btn__wipe {
+    clip-path: inset(0 0 0 0);
+  }
+  .btn--l {
+    --btn-px: 36px;
+    padding-block: 20px;
+    font-size: 20px;
+  }
+  .btn--s {
+    --btn-px: 20px;
+    padding-block: 12px;
+    font-size: 15px;
+  }
+  .btn--xs {
+    --btn-px: 16px;
+    padding-block: 10px;
+    font-size: 14px;
+  }
+  .btn--block {
+    --btn-px: 14px;
+    display: flex;
+    width: 100%;
+    padding-block: 14px;
+    font-size: 16px;
+  }
+</style>
+
+<script>
+  import { bindWipe } from '../scripts/button-wipe';
+  document.querySelectorAll<HTMLElement>('[data-wipe]').forEach(bindWipe);
+</script>

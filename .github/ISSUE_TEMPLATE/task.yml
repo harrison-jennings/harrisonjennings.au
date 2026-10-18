@@ -1,0 +1,25 @@
+name: Task
+description: A planned change to the site (for the site owner).
+labels: ['task']
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: What should be true when this is done?
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope and notes
+  - type: checkboxes
+    id: areas
+    attributes:
+      label: Areas
+      options:
+        - label: Design or brand
+        - label: Content
+        - label: Analytics or consent
+        - label: Infrastructure or deployment
+        - label: SEO

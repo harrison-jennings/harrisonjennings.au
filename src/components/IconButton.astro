@@ -1,0 +1,46 @@
+---
+// Icon-only link for the two platforms. 44px target; 48px outlined in the mobile menu.
+import Icon from './Icon.astro';
+
+interface Props {
+  href: string;
+  label: string;
+  icon: 'github' | 'linkedin';
+  outline?: boolean;
+}
+
+const { href, label, icon, outline = false } = Astro.props;
+const size = icon === 'github' ? (outline ? 22 : 20) : outline ? 21 : 19;
+---
+
+<a
+  class:list={['icon-btn', { 'icon-btn--outline': outline }]}
+  href={href}
+  aria-label={label}
+  rel="me noopener"
+  target="_blank"
+>
+  <Icon name={icon} size={size} />
+</a>
+
+<style>
+  .icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: var(--target);
+    height: var(--target);
+    border-radius: var(--radius-pill);
+    color: var(--text);
+    transition: color 150ms ease;
+  }
+  .icon-btn:hover {
+    color: var(--link);
+  }
+  .icon-btn--outline {
+    width: var(--target-touch);
+    height: var(--target-touch);
+    border: 1px solid var(--line);
+  }
+</style>

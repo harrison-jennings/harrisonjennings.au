@@ -1,0 +1,71 @@
+---
+import Button from '../components/Button.astro';
+import Logo from '../components/Logo.astro';
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="not found" noindex>
+  <section class="container lost">
+    <div class="lost__field" aria-hidden="true"></div>
+    <Logo size={96} class="lost__mark" />
+    <h1 class="lost__title">nothing here.</h1>
+    <p class="lost__text">
+      That page has moved or never existed. The site was rebuilt in 2026, so older links may have
+      changed.
+    </p>
+    <Button href="/" label="back to home" />
+  </section>
+</Base>
+
+<style>
+  .lost {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-22);
+    padding-block: 120px;
+  }
+  .lost__field {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: var(--radius-lg);
+    background:
+      radial-gradient(60% 80% at 82% 18%, var(--cloud-brick), transparent 70%),
+      radial-gradient(50% 70% at 98% 92%, var(--cloud-apricot), transparent 70%);
+  }
+  .lost :global(.lost__mark .mark__dot) {
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+    animation: bounce 1s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  }
+  .lost__title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 46px;
+    font-weight: 500;
+    line-height: 1.12;
+    letter-spacing: -0.05em;
+  }
+  .lost__text {
+    margin: 0;
+    max-width: 480px;
+  }
+  @keyframes bounce {
+    0%,
+    100% {
+      transform: translateY(-4px) scale(0.94, 1.06);
+    }
+    48% {
+      transform: translateY(10px) scale(1);
+    }
+    56% {
+      transform: translateY(12px) scale(1.22, 0.74);
+    }
+    64% {
+      transform: translateY(10px) scale(0.96, 1.04);
+    }
+  }
+</style>

@@ -1,0 +1,94 @@
+---
+// One deployed project in the "built and shipped" list.
+import { getEntry, type CollectionEntry } from 'astro:content';
+import { postPath } from '../lib/posts';
+import LiveSignal from './LiveSignal.astro';
+import TextLink from './TextLink.astro';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+}
+
+const { project } = Astro.props;
+const { name, summary, host, repo, status } = project.data;
+const story = project.data.story ? await getEntry(project.data.story) : undefined;
+---
+
+<article class="project">
+  <div class="project__text">
+    <h3 class="project__name">{name}</h3>
+    <p class="project__desc">{summary}</p>
+    <div class="project__links">
+      {host && status === 'live' && <LiveSignal host={host} />}
+      {repo && (
+        <TextLink href={repo} external>
+          source on github
+        </TextLink>
+      )}
+      {story && <TextLink href={postPath(story)}>read the story</TextLink>}
+    </div>
+  </div>
+  <div class="project__shot" aria-hidden="true">
+    <slot name="screenshot">
+      <span>{name}</span>
+    </slot>
+  </div>
+</article>
+
+<style>
+  .project {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 420px;
+    gap: var(--space-40);
+    align-items: center;
+    padding: var(--space-28) 0;
+    border-top: 1px solid var(--line);
+  }
+  .project__text {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .project__name {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 34px;
+    font-weight: 500;
+    line-height: 1.1;
+    letter-spacing: -0.05em;
+  }
+  .project__desc {
+    margin: 0;
+    max-width: 560px;
+    font-size: 17px;
+    line-height: 1.55;
+  }
+  .project__links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-22);
+    font-size: 15px;
+  }
+  .project__shot {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 220px;
+    overflow: hidden;
+    border: 1px dashed var(--line);
+    border-radius: var(--radius-md);
+    font-family: var(--font-display);
+    font-size: 14px;
+    color: var(--muted);
+  }
+  @media (max-width: 760px) {
+    .project {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--space-20);
+    }
+    .project__name {
+      font-size: 28px;
+    }
+  }
+</style>

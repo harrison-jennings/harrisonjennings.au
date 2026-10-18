@@ -1,0 +1,51 @@
+---
+// The live dot: a brick point with a halo that pulses. The words carry the meaning.
+interface Props {
+  host: string;
+}
+
+const { host } = Astro.props;
+---
+
+<span class="live">
+  <span class="live__dot" aria-hidden="true"></span>live at {host}
+</span>
+
+<style>
+  .live {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-8);
+    font-size: 14px;
+    line-height: 1.4;
+    color: var(--muted);
+  }
+  .live__dot {
+    position: relative;
+    flex: none;
+    width: 8px;
+    height: 8px;
+    border-radius: var(--radius-pill);
+    background: var(--accent);
+    box-shadow: var(--shadow-signal);
+  }
+  .live__dot::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    border: 1.5px solid var(--accent);
+    animation: pulse 1.8s ease-out infinite;
+  }
+  @keyframes pulse {
+    0% {
+      transform: scale(1);
+      opacity: 0.7;
+    }
+    80%,
+    100% {
+      transform: scale(3);
+      opacity: 0;
+    }
+  }
+</style>

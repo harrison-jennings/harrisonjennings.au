@@ -1,0 +1,16 @@
+# Permanent redirects from the WordPress URLs. One explicit line per URL: no wildcards, so nothing
+# new can be caught by accident. Filled in during the content migration from the crawl of the live site.
+# The bare domain to www redirect lives in Cloudflare (a redirect rule), not here.
+
+# Old Yoast and WordPress sitemaps → the new sitemap index
+/sitemap_index.xml     /sitemap-index.xml  301
+/post-sitemap.xml      /sitemap-index.xml  301
+/page-sitemap.xml      /sitemap-index.xml  301
+/category-sitemap.xml  /sitemap-index.xml  301
+/wp-sitemap.xml        /sitemap-index.xml  301
+
+# Posts: /YYYY/MM/<slug>/ → /blog/<slug>/
+# /2026/08/example-post/  /blog/example-post/  301
+
+# Categories (and any tags): /category/<slug>/ → /blog/topic/<id>/, or /blog/ if merged away
+# /category/example/  /blog/topic/example/  301

@@ -1,0 +1,7 @@
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[astro]": { "editor.defaultFormatter": "astro-build.astro-vscode" },
+  "files.associations": { "wrangler.jsonc": "jsonc" },
+  "search.exclude": { "dist": true, ".astro": true, "package-lock.json": true }
+}

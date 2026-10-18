@@ -1,0 +1,36 @@
+---
+// Outlined topic chip; a link when it points at a topic page.
+interface Props {
+  href?: string;
+}
+
+const { href } = Astro.props;
+---
+
+{href ? (
+  <a class="tag" href={href}>
+    <slot />
+  </a>
+) : (
+  <span class="tag">
+    <slot />
+  </span>
+)}
+
+<style>
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 10px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-pill);
+    font-size: 12px;
+    line-height: 1.2;
+    color: var(--text);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  a.tag:hover {
+    color: var(--link);
+  }
+</style>

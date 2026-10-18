@@ -1,0 +1,46 @@
+{
+  "name": "harrisonjennings.au",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Source for harrisonjennings.au: an Astro site deployed on Cloudflare Workers.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Harrison Jennings (https://www.harrisonjennings.au)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/harrison-jennings/harrisonjennings.au.git"
+  },
+  "engines": {
+    "node": ">=22.22.0"
+  },
+  "scripts": {
+    "tokens": "node scripts/build-tokens.mjs",
+    "predev": "npm run tokens",
+    "dev": "astro dev",
+    "prebuild": "npm run tokens",
+    "build": "astro build",
+    "preview": "npm run build && wrangler dev",
+    "check": "npm run tokens && astro check",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "verify": "npm run format:check && npm run lint && npm run check && npm run build",
+    "deploy": "npm run build && wrangler deploy"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.4",
+    "astro": "^7.4.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.13.0",
+    "eslint-plugin-astro": "^3.2.1",
+    "globals": "^17.13.0",
+    "prettier": "^3.9.10",
+    "prettier-plugin-astro": "^1.1.1",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.71.2",
+    "wrangler": "^4.151.1"
+  }
+}
