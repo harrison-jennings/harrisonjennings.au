@@ -15,6 +15,9 @@ export const NAV = [
 
 export const BOOKING_URL = 'https://cal.com/harrison-jennings-jodnbf/30min';
 
+/** Every "book a call" links here: the booking band on the home page (see src/scripts/booking.ts). */
+export const BOOK_HREF = '/#book';
+
 export const SOCIAL = {
   github: { label: 'GitHub profile', href: 'https://github.com/harrison-jennings' },
   linkedin: { label: 'LinkedIn profile', href: 'https://www.linkedin.com/in/harrison-jennings/' },

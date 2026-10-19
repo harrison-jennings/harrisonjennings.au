@@ -1,7 +1,7 @@
 ---
 // Three columns on surface: who, where to go, where else. The logo draws when the footer comes into
 // view and again on hover. "cookie settings" reopens the consent preferences, on every page.
-import { BOOKING_URL, LEGAL, SITE, SOCIAL } from '../consts';
+import { BOOK_HREF, LEGAL, SITE, SOCIAL } from '../consts';
 import Icon from './Icon.astro';
 import Logo from './Logo.astro';
 
@@ -20,7 +20,7 @@ const year = new Date().getFullYear();
     <nav class="footer__col" aria-label="Footer">
       <a href="/blog/">blog</a>
       <a href="/projects/">projects</a>
-      <a href={BOOKING_URL} target="_blank" rel="noopener">
+      <a href={BOOK_HREF} data-book-call>
         book a call
       </a>
     </nav>

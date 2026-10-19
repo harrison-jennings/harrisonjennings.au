@@ -1,0 +1,94 @@
+---
+// A post on a card: date, title (the underline grows in on hover), its description and its main
+// topic as a tag (a link once the topic has its own page, a dashed label until then).
+import { getEntry, type CollectionEntry } from 'astro:content';
+import { formatDate, isoDate } from '../lib/dates';
+import { mainTopic, postPath, topicPath } from '../lib/posts';
+import Tag from './Tag.astro';
+
+interface Props {
+  post: CollectionEntry<'posts'>;
+  /** Ids of the topics that have their own page. */
+  topicPages: ReadonlySet<string>;
+}
+
+const { post, topicPages } = Astro.props;
+const { title, description, published } = post.data;
+const topicRef = mainTopic(post);
+const topic = topicRef ? await getEntry(topicRef) : undefined;
+---
+
+<article class="post">
+  <time class="post__date" datetime={isoDate(published)}>
+    {formatDate(published)}
+  </time>
+  <h3 class="post__title">
+    <a href={postPath(post)}>{title}</a>
+  </h3>
+  <p class="post__desc">{description}</p>
+  {topic && (
+    <div class="post__tags">
+      {topicPages.has(topic.id) ? (
+        <Tag href={topicPath(topic)}>{topic.data.name}</Tag>
+      ) : (
+        <Tag label>{topic.data.name}</Tag>
+      )}
+    </div>
+  )}
+</article>
+
+<style>
+  .post {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-10);
+    padding-top: var(--space-22);
+    border-top: 1px solid var(--line);
+  }
+  .post__date {
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .post__title {
+    margin: 0;
+    font-size: 21px;
+    font-weight: 600;
+    line-height: 1.28;
+    letter-spacing: -0.02em;
+    text-wrap: pretty;
+  }
+  .post__title a {
+    color: var(--text);
+    text-decoration: none;
+    background-image: linear-gradient(var(--accent), var(--accent));
+    background-size: 0% 1.5px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition:
+      background-size 240ms cubic-bezier(0.65, 0, 0.35, 1),
+      color 150ms ease;
+  }
+  .post__title a:hover {
+    background-size: 100% 1.5px;
+    color: var(--link);
+  }
+  .post__desc {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--muted);
+    text-wrap: pretty;
+  }
+  .post__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-8);
+    margin-top: auto;
+    padding-top: 4px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .post__title a {
+      transition: none;
+    }
+  }
+</style>

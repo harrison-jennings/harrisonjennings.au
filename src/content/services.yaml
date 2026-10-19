@@ -1,0 +1,19 @@
+# "what I do" on the home page, in `order`. Each service: a name, a short paragraph (up to 200
+# characters) and exactly three short tools.
+- id: marketing-automation
+  name: marketing automation
+  description: Lead journeys in Adobe Marketo Engage that move prospects towards a purchase, joined up with the CRM and pipeline you already run.
+  tools: [marketo engage, lead scoring, crm]
+  order: 1
+
+- id: analytics-and-measurement
+  name: analytics and measurement
+  description: Full-funnel tracking built for efficiency and privacy, client- and server-side, with dashboards that put the insight within reach.
+  tools: [google analytics, tag manager, server-side]
+  order: 2
+
+- id: creative-and-media-strategy
+  name: creative and media strategy
+  description: Brand positioning and a media plan across above- and below-the-line channels, with agencies kept on brand and accountable.
+  tools: [positioning, atl and btl media, agencies]
+  order: 3

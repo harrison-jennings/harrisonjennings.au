@@ -1,0 +1,46 @@
+---
+// A project's screenshot, 16:9 on `ground` in a screenshot frame. A still image, never a link.
+// Until a project has one, a dashed frame holds its name.
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+  /** Pixel widths the image is served at (the layout decides which one the browser picks). */
+  sizes?: string;
+}
+
+const { project, sizes = '(max-width: 760px) 100vw, 680px' } = Astro.props;
+const { image, name } = project.data;
+---
+
+<div class:list={['shot', { 'shot--empty': !image }]}>
+  {image ? (
+    <Image src={image} alt={`${name}, screenshot`} widths={[400, 800, 1200]} sizes={sizes} />
+  ) : (
+    <span aria-hidden="true">{name}</span>
+  )}
+</div>
+
+<style>
+  .shot {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-radius: var(--radius-md);
+    background: var(--ground);
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .shot--empty {
+    border: 1px dashed var(--line);
+  }
+  .shot :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top left;
+  }
+</style>

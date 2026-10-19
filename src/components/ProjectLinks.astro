@@ -1,0 +1,34 @@
+---
+// A project's links, each only if the project has it: "live at {host}" (live projects with a URL),
+// "source on github" (a repository), "read the story" (a post).
+import { getEntry, type CollectionEntry } from 'astro:content';
+import { postPath } from '../lib/posts';
+import LiveSignal from './LiveSignal.astro';
+import TextLink from './TextLink.astro';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+}
+
+const { host, url, repo, status, story: storyRef } = Astro.props.project.data;
+const story = storyRef ? await getEntry(storyRef) : undefined;
+const live = status === 'live' && host && url;
+---
+
+{(live || repo || story) && (
+  <div class="links">
+    {live && <LiveSignal host={host} href={url} />}
+    {repo && <TextLink href={repo}>source on github</TextLink>}
+    {story && <TextLink href={postPath(story)}>read the story</TextLink>}
+  </div>
+)}
+
+<style>
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-22);
+    font-size: 15px;
+  }
+</style>

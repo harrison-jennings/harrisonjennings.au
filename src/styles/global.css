@@ -93,6 +93,74 @@ a {
   padding-inline: calc(var(--space-16) + var(--space-22)) calc(var(--space-16) + var(--space-10));
 }
 
+/* Page sections (home): 96px apart (72px on phones), each with a head: the title on the left and a
+   quiet link or controls on the right. */
+.section ~ .section {
+  margin-top: 96px;
+}
+.section__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-16);
+  margin-bottom: var(--space-28);
+}
+.section__title {
+  margin: 0;
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+.section__after {
+  margin: var(--space-20) 0 0;
+  font-size: 15px;
+}
+.phone-only {
+  display: none;
+}
+
+/* A row of cards that swipes sideways on phones (cards 84% wide, so the next one peeks in), running
+   to the screen edges. Desktop lays its children out as the component says. */
+@media (max-width: 760px) {
+  .section ~ .section {
+    margin-top: var(--space-72);
+  }
+  .section__head {
+    margin-bottom: var(--space-20);
+  }
+  .section__title {
+    font-size: 26px;
+  }
+  .phone-only {
+    display: block;
+  }
+  .desktop-only {
+    display: none;
+  }
+  .swipe {
+    display: grid;
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: 84%;
+    column-gap: var(--space-16);
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    margin-inline: calc(-1 * (var(--space-16) + var(--space-22)))
+      calc(-1 * (var(--space-16) + var(--space-10)));
+    padding: 0 calc(var(--space-16) + var(--space-10)) 4px calc(var(--space-16) + var(--space-22));
+    scroll-padding-left: calc(var(--space-16) + var(--space-22));
+  }
+  .swipe::-webkit-scrollbar {
+    display: none;
+  }
+  .swipe > * {
+    scroll-snap-align: start;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

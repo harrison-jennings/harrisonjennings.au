@@ -1,0 +1,223 @@
+---
+// "built and shipped": the featured projects, one at a time. Desktop: numbered tabs beside the chosen
+// project (screenshot, description, links). Phones: one full-width card per project in a swipe row,
+// so long names wrap instead of being cut off.
+import { getCollection } from 'astro:content';
+import Arrows from '../Arrows.astro';
+import ProjectLinks from '../ProjectLinks.astro';
+import ProjectShot from '../ProjectShot.astro';
+import TextLink from '../TextLink.astro';
+
+const projects = (await getCollection('projects', ({ data }) => data.featured)).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+const number = (i: number) => String(i + 1).padStart(2, '0');
+---
+
+{projects.length > 0 && (
+  <section class="section column" aria-labelledby="built-and-shipped">
+    <div class="switch" data-switch>
+      <div class="switch__side">
+        <h2 id="built-and-shipped" class="section__title">
+          built and shipped
+        </h2>
+        <div class="switch__tabs" role="tablist" aria-labelledby="built-and-shipped">
+          {projects.map((project, i) => (
+            <button
+              class="switch__tab"
+              type="button"
+              role="tab"
+              id={`tab-${project.id}`}
+              aria-controls={`pane-${project.id}`}
+              aria-selected={i === 0 ? 'true' : 'false'}
+              tabindex={i === 0 ? 0 : -1}
+            >
+              <span class="switch__n">{number(i)}</span>
+              <span class="switch__name">{project.data.name}</span>
+            </button>
+          ))}
+        </div>
+        <p class="switch__all">
+          <TextLink href="/projects/" quiet>
+            all projects
+          </TextLink>
+        </p>
+      </div>
+      <div class="switch__stage">
+        {projects.map((project, i) => (
+          <div
+            class="switch__pane"
+            role="tabpanel"
+            id={`pane-${project.id}`}
+            aria-labelledby={`tab-${project.id}`}
+            hidden={i > 0}
+          >
+            <ProjectShot project={project} />
+            <p class="switch__desc">{project.data.summary}</p>
+            <ProjectLinks project={project} />
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div class="pcards">
+      <div class="section__head">
+        <h2 class="section__title">built and shipped</h2>
+        <Arrows swipe="projects" noun="project" />
+      </div>
+      <div class="pcards__row swipe" id="swipe-projects" data-swipe="projects">
+        {projects.map((project) => (
+          <article class="pcard">
+            <ProjectShot project={project} sizes="100vw" />
+            <h3 class="pcard__name">{project.data.name}</h3>
+            <p class="pcard__desc">{project.data.summary}</p>
+            <ProjectLinks project={project} />
+          </article>
+        ))}
+      </div>
+      <p class="section__after">
+        <TextLink href="/projects/" quiet>
+          all projects
+        </TextLink>
+      </p>
+    </div>
+  </section>
+)}
+
+<style>
+  .switch {
+    display: grid;
+    grid-template-columns: 320px minmax(0, 1fr);
+    gap: 48px;
+    padding: var(--space-40);
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+  }
+  .switch__side {
+    display: flex;
+    flex-direction: column;
+  }
+  .switch__tabs {
+    display: flex;
+    flex-direction: column;
+    margin-top: var(--space-28);
+  }
+  .switch__tab {
+    display: grid;
+    grid-template-columns: 28px minmax(0, 1fr);
+    align-items: baseline;
+    padding: var(--space-16) 0;
+    border: 0;
+    border-top: 1px solid var(--line);
+    background: none;
+    font-family: var(--font-display);
+    text-align: left;
+    color: var(--muted);
+    cursor: pointer;
+    transition: color 150ms ease;
+  }
+  .switch__tab:last-child {
+    border-bottom: 1px solid var(--line);
+  }
+  .switch__n {
+    font-size: 12px;
+  }
+  .switch__name {
+    font-size: 21px;
+    font-weight: 500;
+    line-height: 1.25;
+    letter-spacing: -0.04em;
+  }
+  .switch__tab:hover,
+  .switch__tab[aria-selected='true'] {
+    color: var(--text);
+  }
+  .switch__tab[aria-selected='true'] .switch__n {
+    color: var(--link);
+  }
+  .switch__tab:focus-visible {
+    outline-offset: 4px;
+    border-radius: 4px;
+  }
+  .switch__all {
+    margin: var(--space-22) 0 0;
+    font-size: 15px;
+  }
+  .switch__stage {
+    display: grid;
+  }
+  /* The outgoing project fades out as the next fades in and rises 8px. */
+  .switch__pane {
+    grid-area: 1 / 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-20);
+    transition:
+      opacity 280ms ease,
+      transform 280ms cubic-bezier(0.65, 0, 0.35, 1);
+  }
+  .switch__pane[hidden] {
+    display: flex;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(8px);
+  }
+  .switch__desc,
+  .pcard__desc {
+    margin: 0;
+    max-width: 620px;
+    font-size: 17px;
+    line-height: 1.55;
+  }
+
+  .pcards {
+    display: none;
+    padding: 24px 20px;
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+  }
+  .pcard {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .pcard__name {
+    margin: 4px 0 0;
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: -0.04em;
+  }
+
+  @media (max-width: 760px) {
+    .switch {
+      display: none;
+    }
+    .pcards {
+      display: block;
+    }
+    /* full-width cards, inside the panel's padding */
+    .pcards__row {
+      grid-auto-columns: 100%;
+      column-gap: var(--space-40);
+      margin-inline: -20px;
+      padding: 0 20px 4px;
+      scroll-padding-left: 20px;
+    }
+    .pcard__desc {
+      font-size: 16px;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .switch__pane,
+    .switch__tab {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  import { bindSwitcher } from '../../scripts/switcher';
+  document.querySelectorAll<HTMLElement>('[data-switch]').forEach(bindSwitcher);
+</script>

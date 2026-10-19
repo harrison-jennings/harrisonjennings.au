@@ -2,12 +2,15 @@
 
 Everything is Markdown or YAML in `src/content/`, checked against the schemas in `src/content.config.ts` at build time. A missing date or a misspelt topic fails the build instead of going live.
 
-| collection | stored as                           | publishes at                              |
-| ---------- | ----------------------------------- | ----------------------------------------- |
-| posts      | `src/content/posts/<slug>/index.md` | `/blog/<slug>/`                           |
-| pages      | `src/content/pages/<slug>.md`       | `/<slug>/` (privacy, terms)               |
-| topics     | `src/content/topics.yaml`           | `/blog/topic/<id>/`, once it has 2+ posts |
-| projects   | `src/content/projects.yaml`         | `/projects/` and the home page            |
+| collection   | stored as                           | publishes at                              |
+| ------------ | ----------------------------------- | ----------------------------------------- |
+| posts        | `src/content/posts/<slug>/index.md` | `/blog/<slug>/`                           |
+| pages        | `src/content/pages/<slug>.md`       | `/<slug>/` (privacy, terms)               |
+| topics       | `src/content/topics.yaml`           | `/blog/topic/<id>/`, once it has 2+ posts |
+| projects     | `src/content/projects.yaml`         | `/projects/` and the home page            |
+| services     | `src/content/services.yaml`         | "what I do" on the home page              |
+| testimonials | `src/content/testimonials.yaml`     | "what people are saying" on the home page |
+| home         | `src/content/home.yaml`             | the home page's hero and booking band     |
 
 A post's URL is its folder name. Don't rename the folder after the post is live; if you must, add a 301 from the old URL in `public/_redirects`.
 
@@ -49,6 +52,16 @@ Use `index.mdx` instead when a post needs a component (a callout, an embed, a di
 ## a project
 
 Add an entry to `src/content/projects.yaml` with an `id`, `name`, `summary` and, if it's deployed, `host` and `url`. `featured: true` puts it in "built and shipped" on the home page, ordered by `order`. `repo` adds "source on github"; `story` (a post's id) adds "read the story".
+
+## the home page
+
+Every word on the home page comes from a content file, so it can change without touching code:
+
+- `home.yaml`: the headline (one line per entry; the last line ends in the brick stop, so leave off its full stop), the two-line subtitle, and the booking band's title and note.
+- `services.yaml`: each service's name, a paragraph up to 200 characters, and exactly three tools.
+- `testimonials.yaml`: `quote` (up to 280 characters; trim a longer one to its best part), `name`, `role` and `order`. From five quotes the home page shows them as a moving row with a pause button; with fewer they sit still, side by side.
+- `projects.yaml`: `featured: true` puts a project in "built and shipped". Its links appear only when it has them: `url` and `host` for "live at", `repo` for "source on github", `story` for "read the story". Add `image` (a 16:9 screenshot beside the YAML) to replace the dashed placeholder.
+- "latest posts" shows the three newest posts once there are any, each with its `description` and its first topic.
 
 ## publishing
 

@@ -7,9 +7,11 @@ interface Props {
   size?: 'l' | 'm' | 's' | 'xs' | 'block';
   external?: boolean;
   class?: string;
+  /** Extra attributes for the element, such as aria-expanded on an in-page toggle. */
+  attrs?: Record<string, string>;
 }
 
-const { href, label, size = 'm', external = false, class: className } = Astro.props;
+const { href, label, size = 'm', external = false, class: className, attrs = {} } = Astro.props;
 ---
 
 {href ? (
@@ -18,6 +20,7 @@ const { href, label, size = 'm', external = false, class: className } = Astro.pr
     href={href}
     data-wipe
     {...(external ? { target: '_blank', rel: 'noopener' } : {})}
+    {...attrs}
   >
     <span>{label}</span>
     <span class="btn__wipe" aria-hidden="true">
@@ -25,7 +28,7 @@ const { href, label, size = 'm', external = false, class: className } = Astro.pr
     </span>
   </a>
 ) : (
-  <button class:list={['btn', `btn--${size}`, className]} type="button" data-wipe>
+  <button class:list={['btn', `btn--${size}`, className]} type="button" data-wipe {...attrs}>
     <span>{label}</span>
     <span class="btn__wipe" aria-hidden="true">
       {label}

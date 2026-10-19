@@ -32,3 +32,6 @@ export async function getTopicPages(): Promise<
     }))
     .filter((entry) => entry.posts.length >= TOPIC_PAGE_MIN_POSTS);
 }
+
+/** A post's main topic: the first in its `topics` list (shown above the title and on its cards). */
+export const mainTopic = (post: CollectionEntry<'posts'>) => post.data.topics[0];

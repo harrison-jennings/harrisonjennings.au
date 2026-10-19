@@ -1,0 +1,9 @@
+# The home page's wording. The headline's last line ends in the brick stop, so leave off its full stop.
+home:
+  headline: ['marketing,', 'engineered']
+  lead: Strategy and the stack, from one person.
+  intro: I'm Harrison, a marketing technology consultant in Melbourne.
+  booking:
+    title: ready to jump in? book a call
+    # DRAFT: the call length is still to be confirmed.
+    note: A 30-minute video call to talk through what you're working on.
