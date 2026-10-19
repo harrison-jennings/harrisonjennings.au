@@ -136,6 +136,9 @@ test('the booking calendar opens in the band and only then loads Cal.com', async
   await expect(panel).toBeHidden();
   await expect(toggle).toHaveAttribute('aria-expanded', 'false');
   await expect(toggle).toHaveAccessibleName('view availability');
+
+  // Cal.com's embed turns any [data-cal-link] element into a popup trigger; nothing of ours may have it.
+  await expect(page.locator('[data-cal-link]')).toHaveCount(0);
 });
 
 test.describe('phone', () => {

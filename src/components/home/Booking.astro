@@ -11,10 +11,12 @@ const home = await getEntry('home', 'home');
 if (!home) throw new Error('src/content/home.yaml: missing the `home` entry');
 const { title, note } = home.data.booking;
 const calLink = new URL(BOOKING_URL).pathname.replace(/^\//, '');
+// Passed as data-booking-link, never data-cal-link: Cal.com's embed turns any element with that
+// attribute into a "click to open the popup" trigger, which would hijack clicks in the band.
 ---
 
 <section class="section column" aria-labelledby="book-title">
-  <div class="book" data-book data-cal-link={calLink}>
+  <div class="book" data-book data-booking-link={calLink}>
     <div class="book__text">
       <h2 id="book-title" class="book__title">
         {title}
@@ -179,5 +181,5 @@ const calLink = new URL(BOOKING_URL).pathname.replace(/^\//, '');
   import { bindBooking } from '../../scripts/booking';
   document
     .querySelectorAll<HTMLElement>('[data-book]')
-    .forEach((band) => bindBooking(band, band.dataset['calLink'] ?? ''));
+    .forEach((band) => bindBooking(band, band.dataset['bookingLink'] ?? ''));
 </script>
