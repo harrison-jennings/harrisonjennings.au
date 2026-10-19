@@ -70,7 +70,7 @@ The draft post `src/content/posts/formatting-reference/index.mdx` shows every el
 
 ## a project
 
-Add an entry to `src/content/projects.yaml` with an `id`, `name`, `summary` and, if it's deployed, `host` and `url`. Every project shows on `/projects/`, ordered by `order`; `featured: true` also puts it in "built and shipped" on the home page. `kind` ("VS Code extension") and `built` (the year) fill in its facts. `repo` adds "source on github"; `story` (a post's id) adds "read the story" and becomes where its name links (otherwise the live site). `image` is a 16:9 screenshot beside the YAML; it's shown still, never as a link.
+Add an entry to `src/content/projects.yaml` with an `id`, `name`, `summary` and, if it's deployed, `host` and `url`. Every project shows on `/projects/`, ordered by `order`; `featured: true` also puts it in "built and shipped" on the home page. `kind` ("VS Code extension") and `built` (the year) fill in its facts. `repo` adds "source on github"; `story` (a post's id) adds "read the story" and becomes where its name links (otherwise the live site). `image` is a screenshot in `src/content/projects/`, shown at 16:9 and cropped from the top left, so keep the important part there; it's shown still, never as a link.
 
 To retire a project, set `status: archived`. It moves to the "archived" list at the bottom of the page (which appears only once something is archived), with its `summary` as the one line on what it was; its live link goes, and the source and story stay.
 
@@ -101,7 +101,7 @@ Every word on the home page comes from a content file, so it can change without 
 - `home.yaml`: the headline (one line per entry; the last line ends in the brick stop, so leave off its full stop), the two-line subtitle, the booking band's title and note, and `shareLine`, the second line on the share card.
 - `services.yaml`: each service's name, a paragraph up to 200 characters, and exactly three tools.
 - `testimonials.yaml`: `quote` (up to 280 characters; trim a longer one to its best part), `name`, `role` and `order`. From five quotes the home page shows them as a moving row with a pause button; with fewer they sit still, side by side.
-- `projects.yaml`: `featured: true` puts a project in "built and shipped". Its links appear only when it has them: `url` and `host` for "live at", `repo` for "source on github", `story` for "read the story". Add `image` (a 16:9 screenshot beside the YAML) to replace the dashed placeholder.
+- `projects.yaml`: `featured: true` puts a project in "built and shipped". Its links appear only when it has them: `url` and `host` for "live at", `repo` for "source on github", `story` for "read the story". Add `image` (a screenshot in `src/content/projects/`) to replace the dashed placeholder.
 - "latest posts" shows the three newest posts once there are any, each with its `description` and its first topic.
 
 ## share cards

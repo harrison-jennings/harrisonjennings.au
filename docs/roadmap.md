@@ -73,7 +73,7 @@ Built in five stages, one pull request each, from `design/` (see `design/README.
 - [x] Turn the 8 populated categories (and any tags) into a short `topics.yaml`; merge any that overlap
 - [x] A 301 in `public/_redirects` for every old post URL (`/YYYY/MM/<slug>/` → `/blog/<slug>/`) and category URL, from the crawl
 - [x] Redirect tests: a Playwright test that every source in `public/_redirects` returns a single 301 to a page that returns 200, and that no rule uses a wildcard
-- [ ] Projects, services and testimonials into their files (project repos and stories done; screenshots, testimonials still to come)
+- [x] Projects, services and testimonials into their files
 
 ## 7. analytics and consent
 
