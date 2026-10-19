@@ -11,7 +11,16 @@ test.describe('the legal pages', () => {
     await expect(page.locator('.legal-meta')).toContainText(/^Last updated \d{1,2} \w+ \d{4}/);
     await expect(page.locator('.legal-meta a')).toHaveAttribute('href', '/terms-of-use/');
     await expect(page.locator('.short li').first()).toBeVisible();
-    await expect(page.locator('.legal-contact')).toBeVisible();
+    await expect(page.locator('.legal-contact a')).toHaveAttribute(
+      'href',
+      'mailto:privacy@harrisonjennings.au',
+    );
+  });
+
+  test('privacy: the cookie tables, one per kind of cookie', async ({ page }) => {
+    await page.goto('/privacy-policy/');
+    await expect(page.locator('.prose table')).toHaveCount(3);
+    await expect(page.locator('.prose table').first()).toContainText('cf_clearance');
   });
 
   test('privacy: the cookies section reopens the consent choices', async ({ page }) => {
@@ -36,5 +45,9 @@ test.describe('the legal pages', () => {
     await expect(page.locator('.legal-meta')).toContainText(/^Effective \d{1,2} \w+ \d{4}/);
     await expect(page.locator('.legal-meta a')).toHaveAttribute('href', '/privacy-policy/');
     await expect(page.locator('.short')).toHaveCount(0);
+    await expect(page.locator('.legal-contact a')).toHaveAttribute(
+      'href',
+      'mailto:contact@harrisonjennings.au',
+    );
   });
 });
