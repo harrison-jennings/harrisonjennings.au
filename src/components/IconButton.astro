@@ -1,20 +1,21 @@
 ---
-// Icon-only link for the two platforms. 44px target; 48px outlined in the mobile menu.
+// Icon-only link for the two platforms: text at rest, link on hover and focus. 44px target;
+// `large` is the 48px plain version for the mobile menu.
 import Icon from './Icon.astro';
 
 interface Props {
   href: string;
   label: string;
   icon: 'github' | 'linkedin';
-  outline?: boolean;
+  large?: boolean;
 }
 
-const { href, label, icon, outline = false } = Astro.props;
-const size = icon === 'github' ? (outline ? 22 : 20) : outline ? 21 : 19;
+const { href, label, icon, large = false } = Astro.props;
+const size = icon === 'github' ? (large ? 22 : 20) : large ? 21 : 19;
 ---
 
 <a
-  class:list={['icon-btn', { 'icon-btn--outline': outline }]}
+  class:list={['icon-btn', { 'icon-btn--lg': large }]}
   href={href}
   aria-label={label}
   rel="me noopener"
@@ -33,14 +34,15 @@ const size = icon === 'github' ? (outline ? 22 : 20) : outline ? 21 : 19;
     height: var(--target);
     border-radius: var(--radius-pill);
     color: var(--text);
+    text-decoration: none;
     transition: color 150ms ease;
   }
-  .icon-btn:hover {
+  .icon-btn:hover,
+  .icon-btn:focus-visible {
     color: var(--link);
   }
-  .icon-btn--outline {
+  .icon-btn--lg {
     width: var(--target-touch);
     height: var(--target-touch);
-    border: 1px solid var(--line);
   }
 </style>

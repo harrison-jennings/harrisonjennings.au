@@ -86,9 +86,25 @@ export function draw(svg: SVGSVGElement): void {
   requestAnimationFrame(frame);
 }
 
-/** Plays once now, then again whenever the closest `[data-logo-draw]` host (or the mark) is hovered. */
-export function bindDraw(svg: SVGSVGElement): void {
-  draw(svg);
+/**
+ * Plays the draw once (now, or when the mark first comes into view), then again whenever the closest
+ * `[data-logo-draw]` host (or the mark) is hovered.
+ */
+export function bindDraw(svg: SVGSVGElement, when: 'load' | 'view' = 'load'): void {
   const host = svg.closest<HTMLElement>('[data-logo-draw]') ?? svg;
+  if (when === 'view' && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          io.disconnect();
+          draw(svg);
+        }
+      },
+      { threshold: 0.6 },
+    );
+    io.observe(host);
+  } else {
+    draw(svg);
+  }
   host.addEventListener('pointerenter', () => draw(svg));
 }

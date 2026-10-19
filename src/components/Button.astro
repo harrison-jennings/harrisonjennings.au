@@ -1,7 +1,8 @@
 ---
 // Solid brick pill. Apricot wipes in from the side the pointer enters and out the side it leaves.
 interface Props {
-  href: string;
+  /** Leave out for an in-page action: renders a <button>. */
+  href?: string;
   label: string;
   size?: 'l' | 'm' | 's' | 'xs' | 'block';
   external?: boolean;
@@ -11,17 +12,26 @@ interface Props {
 const { href, label, size = 'm', external = false, class: className } = Astro.props;
 ---
 
-<a
-  class:list={['btn', `btn--${size}`, className]}
-  href={href}
-  data-wipe
-  {...(external ? { target: '_blank', rel: 'noopener' } : {})}
->
-  <span>{label}</span>
-  <span class="btn__wipe" aria-hidden="true">
-    {label}
-  </span>
-</a>
+{href ? (
+  <a
+    class:list={['btn', `btn--${size}`, className]}
+    href={href}
+    data-wipe
+    {...(external ? { target: '_blank', rel: 'noopener' } : {})}
+  >
+    <span>{label}</span>
+    <span class="btn__wipe" aria-hidden="true">
+      {label}
+    </span>
+  </a>
+) : (
+  <button class:list={['btn', `btn--${size}`, className]} type="button" data-wipe>
+    <span>{label}</span>
+    <span class="btn__wipe" aria-hidden="true">
+      {label}
+    </span>
+  </button>
+)}
 
 <style>
   .btn {
@@ -33,6 +43,7 @@ const { href, label, size = 'm', external = false, class: className } = Astro.pr
     align-items: center;
     justify-content: center;
     padding: 17px var(--btn-px);
+    border: 0;
     border-radius: var(--radius-pill);
     background: var(--accent);
     color: var(--on-accent);
@@ -42,6 +53,7 @@ const { href, label, size = 'm', external = false, class: className } = Astro.pr
     line-height: 1;
     text-decoration: none;
     white-space: nowrap;
+    cursor: pointer;
     -webkit-tap-highlight-color: transparent;
   }
   .btn__wipe {

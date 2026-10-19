@@ -36,6 +36,10 @@ The working summary of the identity. The design system has live previews of ever
 - Never white text on the dark-theme brick (4.17:1).
 - No drop shadows. The only shadow is the live dot's halo.
 
+## theme
+
+Dark on every first visit, whatever the device is set to. The sun/moon toggle in the nav switches theme and remembers the choice. Light is an equal, finished theme with its own deeper brick, not an inversion.
+
 ## ember
 
 The brick-to-apricot gradient is atmosphere only: the hero field, social share images and the 404 page. Never on text, the logo, buttons or small UI. Two radial clouds over `ground`:
@@ -69,6 +73,6 @@ Everything is still under `prefers-reduced-motion`.
 
 `Button`, `TextLink`, `IconButton`, `Nav` (with the mobile menu), `Footer`, `ProjectRow`, `LiveSignal`, `Tag`, `Logo`, `Icon`. Each file starts with a one-line description; the design system has the full guidelines.
 
-## not yet designed
+## the full design
 
-The hero, and the expanding project screenshot. The home page is a placeholder until the mockups are approved.
+Every page is designed and approved (18–19 October 2026). `design/system/README.md` is the design system, with a note per component in `design/system/components/`; `design/mockups/screenshots/` has every page at 1440 and 390px. Where this summary and the design system differ, the design system wins.

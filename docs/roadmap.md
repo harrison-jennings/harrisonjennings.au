@@ -9,8 +9,8 @@ From WordPress on VentraIP to this repo, live before the hosting renews on **11 
 | 1   | inventory and backup      | by 20 Oct      | to do       |
 | 2   | brand identity and tokens | 18 Oct         | done        |
 | 3   | scaffold and pipeline     | 18–20 Oct      | in progress |
-| 4   | page mockups              | 19–24 Oct      | next        |
-| 5   | page build                | 22–30 Oct      |             |
+| 4   | page mockups              | 19–24 Oct      | done        |
+| 5   | page build                | 22–30 Oct      | in progress |
 | 6   | content migration         | 22–30 Oct      |             |
 | 7   | analytics and consent     | 27 Oct – 1 Nov |             |
 | 8   | SEO parity and quality    | 30 Oct – 3 Nov |             |
@@ -44,16 +44,23 @@ From WordPress on VentraIP to this repo, live before the hosting renews on **11 
 
 The hero first, then each page, approved before it's built.
 
-- [ ] Hero: giant Martian Mono over a signal-particle field that reacts to the pointer, with a designed phone version and a still version for reduced motion
-- [ ] Home: hero, services, built and shipped, testimonials, latest posts, booking
-- [ ] Blog index and topic pages, with how topics show on a post
-- [ ] Post page: title, meta, cover, body styles (headings, lists, quotes, code, images, callouts), related posts
-- [ ] Projects index, with the expanding screenshot treatment
-- [ ] Privacy, terms and 404
-- [ ] Social share card
+- [x] Hero: giant Martian Mono over a signal-particle field that reacts to the pointer, with a designed phone version and a still version for reduced motion
+- [x] Home: hero, services, built and shipped, testimonials, latest posts, booking
+- [x] Blog index and topic pages, with how topics show on a post
+- [x] Post page: title, meta, cover, body styles (headings, lists, quotes, code, images, callouts), related posts
+- [x] Projects index (the expanding screenshot was tried and dropped: screenshots stay still)
+- [x] Privacy, terms and 404
+- [x] Social share card
 
 ## 5. page build
 
+Built in five stages, one pull request each, from `design/` (see `design/README.md`).
+
+- [x] Stage 1, foundations: tokens, dark-first theme and toggle, fonts, the shared column, nav, mobile menu, footer, shared components
+- [ ] Stage 2, home
+- [ ] Stage 3, blog: index, topic pages, posts, code blocks, image viewer
+- [ ] Stage 4, projects, RSS, legal pages, 404
+- [ ] Stage 5, social share cards
 - [ ] Each approved mockup built as a page, from the existing components and tokens
 - [ ] Phone, keyboard, focus, contrast and reduced-motion checks on every page
 - [ ] Booking: Cal.com embed with the bounce loader
@@ -106,5 +113,7 @@ The hero first, then each page, approved before it's built.
 - [ ] Registrar lock and DNSSEC on; check SPF, DKIM and DMARC
 
 ## after launch
+
+- [ ] Style guide at `/styleguide/`: the full design system, page mockups and formatting reference, built from the real components
 
 Front Matter CMS (optional), site search with Pagefind once there are 20+ posts, a contact form with Turnstile, uptime monitoring, and a decision on AI crawlers in Cloudflare.

@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Hero a, aligned to the nav</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Martian+Mono:wght@400;500&amp;family=Schibsted+Grotesk:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0}
+a{color:inherit}
+.btn .wipe{clip-path:inset(0 100% 0 0);transition:clip-path 360ms cubic-bezier(.65,0,.35,1)}
+.btn:hover .wipe,.btn:focus-visible .wipe{clip-path:inset(0 0 0 0)}
+.tl{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:5px;transition:color 150ms ease,text-decoration-thickness 150ms ease}
+.tl:hover{text-decoration-thickness:2px}
+.nl{position:relative;padding:6px 0;text-decoration:none}
+.nl::after{content:"";position:absolute;left:0;right:0;bottom:2px;height:1.5px;border-radius:2px;background:var(--accent);transform:scaleX(0);transform-origin:left center;transition:transform 240ms cubic-bezier(.65,0,.35,1)}
+.nl:hover::after,.nl:focus-visible::after,.nl[aria-current=page]::after{transform:scaleX(1)}
+.nav-menu{display:none}
+[data-hero]{min-height:640px;min-height:clamp(640px,100svh,1080px)}
+.ib{transition:color 150ms ease}
+.tt svg{position:absolute;top:12px;left:12px;transition:opacity 200ms ease,transform 320ms cubic-bezier(.65,0,.35,1)}
+.tt[data-mode=dark] .sun,.tt[data-mode=light] .moon{opacity:0;transform:rotate(-90deg) scale(.6)}
+.tt[data-mode=dark] .moon,.tt[data-mode=light] .sun{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.tt svg{transition:none}}
+.ib:hover,.ib:focus-visible{color:var(--link)!important}
+:focus-visible{outline:2px solid #C85A52;outline-offset:3px}
+@media (max-width:760px){.nav-links,.nav-icons,.nav-cta{display:none!important}.nav-name{font-size:15px}.nav-menu{display:inline-flex!important;margin-left:0!important}.nav-theme{margin-left:auto}[data-hero]{min-height:clamp(560px,100svh,1080px)!important}.hero-inner{padding-top:112px!important;padding-bottom:52px!important;gap:24px!important}.cue-wrap{bottom:18px!important}.hero-title{font-size:44px!important}.hero-sub{font-size:17px!important}.hero-actions{gap:24px!important}.cta-row{width:100%;flex-direction:column-reverse;align-items:stretch!important;gap:18px!important}.cta-row .btn{justify-content:center}.cta-row .tl{align-self:center}}
+@media (prefers-reduced-motion:reduce){.btn .wipe,.tl,.nl::after{transition:none}}
+</style>
+</helmet>
+<div data-hero="" style="--accent: {{c.accent}}; --link: {{c.link}}; position: relative; width: 100%; overflow: hidden; background: {{c.ground}}; color: {{c.text}}; font-family: 'Schibsted Grotesk', system-ui, sans-serif; display: flex; flex-direction: column">
+<div aria-hidden="true" style="position: absolute; inset: 0; background: radial-gradient(60% 80% at 82% 18%, {{c.cloudA}}, transparent 70%), radial-gradient(50% 70% at 98% 92%, {{c.cloudB}}, transparent 70%); opacity: 0.7"></div>
+<canvas data-field="" aria-hidden="true" style="position: absolute; inset: 0; width: 100%; height: 100%; display: block"></canvas>
+
+<header style="position: absolute; top: 16px; left: 0; right: 0; z-index: 5; display: flex; justify-content: center; padding: 0 16px">
+<nav aria-label="Main" style="display: flex; align-items: center; gap: 28px; width: 100%; max-width: 1152px; box-sizing: border-box; background: {{c.ground}}; border: 1px solid {{c.line}}; border-radius: 999px; padding: 10px 10px 10px 22px">
+<a href="#" onPointerEnter="{{replay}}" style="display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 17px; letter-spacing: -0.02em; color: {{c.text}}; text-decoration: none; white-space: nowrap"><svg width="26" height="26" viewBox="0 0 100 100" overflow="visible" aria-hidden="true"><path d="M30 10 V90 V58 C30 44 39 38 50 38 C61 38 70 44 70 58 V72" fill="none" stroke="{{c.text}}" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="{{logo.dash}}" stroke-dashoffset="{{logo.off}}"></path><circle cx="{{logo.x}}" cy="{{logo.y}}" r="8.5" fill="{{c.accent}}"></circle></svg><span class="nav-name">harrison jennings</span></a>
+<div class="nav-links" style="display: flex; gap: 26px; margin-left: auto; font-size: 15px">
+<a class="nl" href="#" aria-current="page" style="color: {{c.text}}">home</a>
+<a class="nl" href="#" style="color: {{c.text}}">blog</a>
+<a class="nl" href="#" style="color: {{c.text}}">projects</a>
+</div>
+<button class="nav-theme ib tt" data-mode="{{themeMode}}" type="button" onClick="{{toggle}}" aria-label="{{themeLabel}}" style="position: relative; width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; flex: none; padding: 0; border: 0; border-radius: 999px; background: transparent; color: {{c.text}}; cursor: pointer"><svg class="sun" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"></circle><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg><svg class="moon" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"></path></svg></button>
+<div class="nav-icons" style="display: flex; gap: 2px; padding-left: 12px; border-left: 1px solid {{c.line}}">
+<a class="ib" href="#" aria-label="GitHub profile" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 999px; color: {{c.text}}"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56v-2c-3.2.7-3.87-1.37-3.87-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.69 1.25 3.35.96.1-.75.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.46.11-3.04 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.58.23 2.75.11 3.04.74.81 1.18 1.84 1.18 3.1 0 4.42-2.69 5.39-5.25 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"></path></svg></a>
+<a class="ib" href="#" aria-label="LinkedIn profile" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 999px; color: {{c.text}}"><svg width="19" height="19" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45z"></path></svg></a>
+</div>
+<a class="btn nav-cta" href="#" style="position: relative; overflow: hidden; display: inline-flex; align-items: center; text-decoration: none; background: {{c.accent}}; color: {{c.onAccent}}; font-weight: 600; font-size: 15px; line-height: 1; padding: 12px 20px; border-radius: 999px; white-space: nowrap"><span>book a call</span><span class="wipe" aria-hidden="true" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: #E8A27A; color: {{c.onApricot}}">book a call</span></a>
+<button class="nav-menu" type="button" onClick="{{openMenu}}" aria-expanded="{{menuOpen}}" aria-haspopup="dialog" aria-label="Open menu" style="margin-left: auto; width: 44px; height: 44px; align-items: center; justify-content: center; padding: 0; border: 1px solid {{c.line}}; border-radius: 999px; background: transparent; color: {{c.text}}"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h16M4 16h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg></button>
+</nav>
+</header>
+
+<main class="hero-inner" style="position: relative; z-index: 2; flex-grow: 1; width: 100%; max-width: 1184px; margin: 0 auto; box-sizing: border-box; padding: 168px 26px 84px 38px; display: flex; flex-direction: column; justify-content: flex-end; gap: 36px; pointer-events: none">
+<h1 class="hero-title" style="margin: 0 0 0 -0.045em; font-family: 'Martian Mono', ui-monospace, monospace; font-size: clamp(40px, 6.6vw, 96px); font-weight: 500; line-height: 1.12; letter-spacing: -0.05em">marketing,<br>engineered<span data-stop="" aria-hidden="true" style="display: inline-block; width: 0.19em; height: 0.19em; margin-left: 0.3em; border-radius: 999px; background: {{c.accent}}; vertical-align: baseline"></span></h1>
+<div class="hero-actions" style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 28px">
+<p class="hero-sub" style="margin: 0; max-width: 600px; text-wrap: pretty; font-size: 19px; line-height: 1.55; color: {{c.muted}}"><span style="color: {{c.text}}">Strategy and the stack, from one person.</span><br>I'm Harrison, a marketing technology consultant in Melbourne.</p>
+<div class="cta-row" style="display: flex; flex-wrap: wrap; align-items: center; gap: 28px; pointer-events: auto">
+<a class="tl" href="#" style="font-size: 17px; color: {{c.text}}; text-decoration-color: {{c.accent}}">read the blog</a>
+<a class="btn" href="#" style="position: relative; overflow: hidden; display: inline-flex; align-items: center; text-decoration: none; background: {{c.accent}}; color: {{c.onAccent}}; font-weight: 600; font-size: 20px; line-height: 1; padding: 20px 36px; border-radius: 999px; white-space: nowrap"><span>book a call</span><span class="wipe" aria-hidden="true" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: #E8A27A; color: {{c.onApricot}}">book a call</span></a>
+</div>
+</div>
+</main>
+
+<div class="cue-wrap" aria-hidden="true" style="position: absolute; left: 0; right: 0; bottom: 24px; z-index: 2; pointer-events: none">
+<div style="max-width: 1184px; margin: 0 auto; box-sizing: border-box; padding: 0 26px 0 38px; display: flex; align-items: center; gap: 8px">
+<svg class="cue-chev" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" style="display: block; flex: none; color: {{c.muted}}"><path d="M5 9l7 7 7-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+<span style="font-size: 13px; line-height: 1; letter-spacing: 0.02em; color: {{c.muted}}">scroll</span>
+</div>
+</div>
+
+<sc-if value="{{menuOpen}}" hint-placeholder-val="{{false}}">
+<div role="dialog" aria-modal="true" aria-label="Menu" style="position: absolute; inset: 0; z-index: 20; box-sizing: border-box; padding: 16px 16px 32px; display: flex; flex-direction: column; gap: 28px; background: {{c.ground}}; color: {{c.text}}">
+<div style="display: flex; align-items: center; justify-content: space-between; padding: 11px 11px 11px 23px">
+<a href="#" onClick="{{closeMenu}}" style="display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 15px; letter-spacing: -0.02em; color: {{c.text}}; text-decoration: none; white-space: nowrap"><svg width="26" height="26" viewBox="0 0 100 100" aria-hidden="true"><path d="M30 10 V90 M30 58 C30 44 39 38 50 38 C61 38 70 44 70 58 V72" fill="none" stroke="{{c.text}}" stroke-width="12" stroke-linecap="round"></path><circle cx="70" cy="88" r="8.5" fill="{{c.accent}}"></circle></svg>harrison jennings</a>
+<button type="button" onClick="{{closeMenu}}" aria-label="Close menu" style="width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; padding: 0; border: 1px solid {{c.line}}; border-radius: 999px; background: transparent; color: {{c.text}}; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg></button>
+</div>
+<nav aria-label="Menu links" style="display: flex; flex-direction: column; gap: 14px; padding: 12px 23px 0; font-family: 'Martian Mono', ui-monospace, monospace; font-size: 30px; font-weight: 500; line-height: 1.2; letter-spacing: -0.05em">
+<a href="#" onClick="{{closeMenu}}" aria-current="page" style="align-self: flex-start; color: {{c.text}}; text-decoration: underline; text-decoration-color: {{c.accent}}; text-decoration-thickness: 2px; text-underline-offset: 8px">home</a>
+<a href="#" onClick="{{closeMenu}}" style="align-self: flex-start; color: {{c.text}}; text-decoration: none">blog</a>
+<a href="#" onClick="{{closeMenu}}" style="align-self: flex-start; color: {{c.text}}; text-decoration: none">projects</a>
+</nav>
+<div style="padding: 0 7px">
+<a class="btn" href="#" style="position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; text-decoration: none; background: {{c.accent}}; color: {{c.onAccent}}; font-weight: 600; font-size: 16px; line-height: 1; padding: 16px; border-radius: 999px"><span>book a call</span><span class="wipe" aria-hidden="true" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: #E8A27A; color: {{c.onApricot}}">book a call</span></a>
+</div>
+<div style="margin-top: auto; display: flex; align-items: center; gap: 4px; padding: 0 0 0 10px">
+<a class="ib" href="#" aria-label="GitHub profile" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 999px; color: {{c.text}}"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56v-2c-3.2.7-3.87-1.37-3.87-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.69 1.25 3.35.96.1-.75.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.46.11-3.04 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.58.23 2.75.11 3.04.74.81 1.18 1.84 1.18 3.1 0 4.42-2.69 5.39-5.25 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"></path></svg></a>
+<a class="ib" href="#" aria-label="LinkedIn profile" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 999px; color: {{c.text}}"><svg width="21" height="21" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45z"></path></svg></a>
+</div>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"mode":{"editor":"enum","options":["dark","light"],"default":"dark"},"still":{"editor":"boolean","default":false},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  pal() {
+    var light = this.mode() === 'light';
+    return light ? {
+      ground: '#F4EFEB', surface: '#FBF8F5', line: '#E3D9D2', text: '#1A1615', muted: '#655D59',
+      accent: '#A8443D', link: '#A8443D', onAccent: '#FFFFFF', onApricot: '#1A1615',
+      cloudA: 'rgba(214,88,76,0.68)', cloudB: 'rgba(242,150,98,0.75)',
+      dot: 'rgba(26,22,21,0.38)', glow: [168, 68, 61], acc: [168, 68, 61], cueLine: [26, 22, 21, 0.32]
+    } : {
+      ground: '#121110', surface: '#1C1A19', line: '#2E2A28', text: '#EFEAE6', muted: '#A39C97',
+      accent: '#C85A52', link: '#D9665D', onAccent: '#121110', onApricot: '#121110',
+      cloudA: 'rgba(200,90,82,0.75)', cloudB: 'rgba(232,162,122,0.55)',
+      dot: 'rgba(239,234,230,0.17)', glow: [217, 102, 93], acc: [200, 90, 82], cueLine: [239, 234, 230, 0.3]
+    };
+  }
+  still() {
+    var r = false;
+    try { r = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+    return r || !!this.props.still;
+  }
+  componentDidMount() {
+    var self = this, tries = 0;
+    var boot = function () {
+      var host = document.querySelector('[data-hero]');
+      var cv = document.querySelector('canvas[data-field]');
+      if (!host || !cv) { if (tries++ < 120) requestAnimationFrame(boot); return; }
+      self.host = host; self.cv = cv; self.ctx = cv.getContext('2d');
+      self.ptr = { x: 0, y: 0, on: false, last: 0 };
+      self.rings = []; self.lastRing = 0;
+      var at = function (e) { var r = host.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
+      host.addEventListener('pointermove', function (e) { var p = at(e); self.ptr.x = p[0]; self.ptr.y = p[1]; self.ptr.on = true; self.ptr.last = performance.now(); });
+      host.addEventListener('pointerleave', function () { self.ptr.on = false; });
+      host.addEventListener('pointerdown', function (e) { var p = at(e); self.rings.push({ x: p[0], y: p[1], t: performance.now() }); });
+      self.cueFade = 1;
+      var fade = function () {
+        var o = Math.max(0, 1 - (window.scrollY || 0) / 160);
+        self.cueFade = o;
+        var wrap = document.querySelector('.cue-wrap');
+        if (wrap) wrap.style.opacity = String(o);
+      };
+      window.addEventListener('scroll', fade, { passive: true });
+      fade();
+      self.resize();
+      if (window.ResizeObserver) { self.ro = new ResizeObserver(function () { self.resize(); }); self.ro.observe(host); }
+      var loop = function (now) { self.frame(now); self.raf = requestAnimationFrame(loop); };
+      self.raf = requestAnimationFrame(loop);
+    };
+    boot();
+    this.playLogo();
+  }
+  componentWillUnmount() {
+    if (this.raf) cancelAnimationFrame(this.raf);
+    if (this.lraf) cancelAnimationFrame(this.lraf);
+    if (this.ro) this.ro.disconnect();
+  }
+  resize() {
+    var r = this.host.getBoundingClientRect();
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    if (Math.abs(r.width - (this.w || 0)) < 1 && Math.abs(r.height - (this.h || 0)) < 1) return;
+    this.w = r.width; this.h = r.height; this.dpr = dpr;
+    this.cv.width = Math.round(r.width * dpr); this.cv.height = Math.round(r.height * dpr);
+    var gap = r.width < 600 ? 22 : 26, seed = 11, pts = [];
+    var rnd = function () { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
+    for (var y = gap / 2; y < r.height; y += gap) {
+      for (var x = gap / 2; x < r.width; x += gap) {
+        var hx = x + (rnd() - 0.5) * 9, hy = y + (rnd() - 0.5) * 9;
+        pts.push({ hx: hx, hy: hy, x: hx, y: hy, vx: 0, vy: 0, ph: rnd() * 6.283, g: 0 });
+      }
+    }
+    this.pts = pts;
+  }
+  frame(now) {
+    if (!this.pts) return;
+    var ctx = this.ctx, p = this.pal(), still = this.still(), w = this.w, h = this.h;
+    ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+    var t = still ? 0 : now, P = this.ptr;
+    var idle = !P.on || now - P.last > 2500;
+    var px, py, k;
+    if (still) { px = w * 0.8; py = h * 0.28; k = 0.7; }
+    else if (idle) { px = w * (0.64 + 0.2 * Math.sin(t * 0.00019)); py = h * (0.42 + 0.22 * Math.sin(t * 0.00031 + 1.3)); k = 0.5; }
+    else { px = P.x; py = P.y; k = 1; }
+    if (!still && now - this.lastRing > (idle ? 2800 : 1500)) { this.rings.push({ x: px, y: py, t: now }); this.lastRing = now; }
+    var rings = [];
+    for (var i = 0; i < this.rings.length; i++) {
+      var age = (now - this.rings[i].t) / 1900;
+      if (age < 1) rings.push({ x: this.rings[i].x, y: this.rings[i].y, r: age * 320, a: (1 - age) * (1 - age) });
+    }
+    this.rings = this.rings.filter(function (r) { return now - r.t < 1900; });
+    if (still) rings = [];
+    var R = w < 600 ? 120 : 180;
+    ctx.fillStyle = p.dot;
+    var lit = [];
+    for (var j = 0; j < this.pts.length; j++) {
+      var q = this.pts[j];
+      var dx = q.x - px, dy = q.y - py, d = Math.sqrt(dx * dx + dy * dy) || 1;
+      var e = d < R ? 1 - d / R : 0;
+      var g = 0;
+      if (!still) {
+        if (e > 0) { var f = e * e * 2.4 * k; q.vx += dx / d * f; q.vy += dy / d * f; }
+        for (var m = 0; m < rings.length; m++) {
+          var rr = rings[m], rx = q.x - rr.x, ry = q.y - rr.y, rd = Math.sqrt(rx * rx + ry * ry) || 1;
+          var band = 1 - Math.abs(rd - rr.r) / 18;
+          if (band > 0) { var s = band * rr.a; g = Math.max(g, s); q.vx += rx / rd * s * 1.1; q.vy += ry / rd * s * 1.1; }
+        }
+        var ox = Math.sin(t * 0.0007 + q.ph) * 1.6, oy = Math.cos(t * 0.0006 + q.ph * 1.3) * 1.6;
+        q.vx += (q.hx + ox - q.x) * 0.035; q.vy += (q.hy + oy - q.y) * 0.035;
+        q.vx *= 0.84; q.vy *= 0.84; q.x += q.vx; q.y += q.vy;
+        q.g = Math.max(q.g * 0.94, e * k, g);
+      } else {
+        q.x = q.hx; q.y = q.hy; q.g = e * k * 0.8;
+      }
+      if (q.g > 0.06) lit.push(q);
+      else ctx.fillRect(q.x - 0.9, q.y - 0.9, 1.8, 1.8);
+    }
+    var c = p.glow;
+    for (var n = 0; n < lit.length; n++) {
+      var L = lit[n], a = Math.min(1, 0.25 + L.g * 0.9), rad = 0.9 + L.g * 1.7;
+      ctx.fillStyle = 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + a.toFixed(3) + ')';
+      ctx.beginPath(); ctx.arc(L.x, L.y, rad, 0, 6.2832); ctx.fill();
+    }
+    if (!this.stop || now - (this.stopAt || 0) > 500) { this.stop = this.stopPoint(); this.stopAt = now; }
+    if (this.stop && !still) {
+      for (var s2 = 0; s2 < 2; s2++) {
+        var sa = ((now / 2200) + s2 * 0.5) % 1;
+        ctx.strokeStyle = 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + ((1 - sa) * 0.6).toFixed(3) + ')';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.arc(this.stop.x, this.stop.y, this.stop.r + sa * 24, 0, 6.2832); ctx.stroke();
+      }
+    }
+    if (!this.chev || !this.chev.isConnected) this.chev = document.querySelector('.cue-chev');
+    if (this.chev) {
+      var bob = 0;
+      if (!still) { var ph = (now % 2400) / 2400; bob = ph < 0.5 ? Math.sin(ph / 0.5 * Math.PI) * 3 : 0; }
+      this.chev.style.transform = 'translateY(' + bob.toFixed(2) + 'px)';
+    }
+  }
+  cueRect() {
+    var el = document.querySelector('[data-cue]');
+    if (!el || !this.host) return null;
+    var a = el.getBoundingClientRect(), b = this.host.getBoundingClientRect();
+    if (!a.height) return null;
+    return { x: a.left - b.left + a.width * 0.5, y: a.top - b.top, h: a.height };
+  }
+  stopPoint() {
+    var el = document.querySelector('[data-stop]');
+    if (!el || !this.host) return null;
+    var a = el.getBoundingClientRect(), b = this.host.getBoundingClientRect();
+    return { x: a.left - b.left + a.width * 0.5, y: a.top - b.top + a.height * 0.5, r: a.width * 0.5 };
+  }
+  logoPts() {
+    if (this._lp) return this._lp;
+    var pts = [], acc = 0, prev = null, i, u, a;
+    var push = function (x, y) { if (prev) acc += Math.hypot(x - prev[0], y - prev[1]); prev = [x, y]; pts.push([x, y, acc]); };
+    for (i = 0; i <= 80; i++) push(30, 10 + i);
+    for (i = 1; i <= 32; i++) push(30, 90 - i);
+    for (i = 1; i <= 200; i++) { u = i / 200; a = 1 - u; push(a*a*a*30 + 3*a*a*u*30 + 3*a*u*u*39 + u*u*u*50, a*a*a*58 + 3*a*a*u*44 + 3*a*u*u*38 + u*u*u*38); }
+    for (i = 1; i <= 200; i++) { u = i / 200; a = 1 - u; push(a*a*a*50 + 3*a*a*u*61 + 3*a*u*u*70 + u*u*u*70, a*a*a*38 + 3*a*a*u*38 + 3*a*u*u*44 + u*u*u*58); }
+    for (i = 1; i <= 30; i++) push(70, 58 + i);
+    this._lp = { pts: pts, lineEnd: acc - 16 };
+    return this._lp;
+  }
+  logoAt(d) {
+    var pts = this.logoPts().pts;
+    for (var i = 1; i < pts.length; i++) {
+      if (pts[i][2] >= d) {
+        var p0 = pts[i - 1], p1 = pts[i], r = (d - p0[2]) / ((p1[2] - p0[2]) || 1);
+        return [p0[0] + (p1[0] - p0[0]) * r, p0[1] + (p1[1] - p0[1]) * r];
+      }
+    }
+    return [70, 88];
+  }
+  playLogo() {
+    if (this.still() || this.state && this.state.lg != null) return;
+    var self = this, start = null;
+    var step = function (now) {
+      if (start === null) start = now;
+      var g = Math.min((now - start) / 2040, 1);
+      if (g < 1) { self.setState({ lg: g }); self.lraf = requestAnimationFrame(step); }
+      else { self.setState({ lg: null }); }
+    };
+    this.lraf = requestAnimationFrame(step);
+  }
+  logoVals() {
+    var lg = this.state && this.state.lg != null ? this.state.lg : null;
+    if (lg == null) return { dash: 'none', off: 0, x: 70, y: 88 };
+    var L = this.logoPts().lineEnd;
+    var e = lg < 0.5 ? 2 * lg * lg : 1 - Math.pow(-2 * lg + 2, 2) / 2;
+    var tip = L * e, pt = this.logoAt(tip + 16);
+    return { dash: L.toFixed(2) + ' ' + L.toFixed(2), off: (L - tip).toFixed(2), x: pt[0].toFixed(2), y: pt[1].toFixed(2) };
+  }
+  mode() {
+    return (this.state && this.state.mode) || this.props.mode || 'dark';
+  }
+  renderVals() {
+    var self = this, m = this.mode(), light = m === 'light';
+    var subs = {
+      'a. the consultant': "I'm Harrison, a marketing technology consultant in Melbourne: marketing automation, analytics and measurement, creative and media strategy.",
+      'b. campaigns and systems': "I'm Harrison. I plan the campaigns, then build the systems that run them: marketing automation, analytics and measurement, creative and media strategy.",
+      'c. the systems behind': "I'm Harrison, a Melbourne consultant who builds the systems behind good marketing: Marketo automation, privacy-safe analytics, and the strategy that ties them together.",
+      'd. strategy and the stack': "Strategy and the stack, from one person.\nI'm Harrison, a marketing technology consultant in Melbourne.",
+      'e. the tools you have': "I'm Harrison. I help marketing teams get more from Marketo, Google Analytics and Tag Manager, from the strategy to the last line of code."
+    };
+    return {
+      sub: subs[this.props.subtitle] || subs['d. strategy and the stack'],
+      c: this.pal(),
+      logo: this.logoVals(),
+      replay: function () { self.playLogo(); },
+      isLight: light,
+      themeMode: light ? 'light' : 'dark',
+      menuOpen: !!(this.state && this.state.menu),
+      openMenu: function () { self.setState({ menu: true }); },
+      closeMenu: function (e) { if (e && e.preventDefault) e.preventDefault(); self.setState({ menu: false }); },
+      themeLabel: light ? 'Switch to dark mode' : 'Switch to light mode',
+      themeIcon: light ? 'M12 3.5a8.5 8.5 0 0 0 0 17z' : 'M12 3.5a8.5 8.5 0 0 1 0 17z',
+      toggle: function () { self.setState({ mode: light ? 'dark' : 'light' }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

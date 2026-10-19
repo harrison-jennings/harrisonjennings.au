@@ -19,9 +19,10 @@ test.beforeEach(async ({ page }) => {
   await expect(page.locator('[data-menu]')).toBeVisible();
 });
 
-test('the menu opens with focus inside it', async ({ page }) => {
+test('the menu opens with focus on its first link', async ({ page }) => {
   expect(await page.$eval('[data-menu]', (d: HTMLDialogElement) => d.open)).toBe(true);
   expect(await focusInMenu(page)).toBe(true);
+  await expect(page.locator('[data-menu] .menu__links a').first()).toBeFocused();
 });
 
 test('focus is trapped in the open menu', async ({ page }) => {
