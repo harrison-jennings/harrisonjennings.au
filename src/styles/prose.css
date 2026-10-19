@@ -354,7 +354,23 @@
   background: var(--surface);
   text-align: center;
 }
+.prose .video-figure {
+  margin-left: 0;
+  margin-right: 0;
+}
+/* A poster fills the frame behind the play button. */
+.prose .video__poster {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.prose .video-figure--poster .video {
+  padding: 0;
+}
 .prose .video__play {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;

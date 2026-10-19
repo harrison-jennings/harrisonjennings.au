@@ -5,6 +5,8 @@ published: 2026-10-19
 draft: true
 ---
 
+import poster from './video-poster.jpg';
+
 Everything a post can contain, as it renders. This post is a draft, so it shows in `npm run dev` and never on the live site. Copy from it when writing.
 
 ## headings
@@ -127,6 +129,10 @@ Right-align a column (`---:`) to set its numbers in Martian Mono.
 ## embeds and extras
 
 <YouTube id="dQw4w9WgXcQ" title="A sample video" />
+
+With a still frame saved beside the post and imported at the top (`import poster from './video-poster.jpg';`), it shows behind the play button, served from this site:
+
+<YouTube id="dQw4w9WgXcQ" title="A sample video with a poster" poster={poster} />
 
 <details>
 <summary>show the full script</summary>

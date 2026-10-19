@@ -138,11 +138,23 @@ test.describe('a post', () => {
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
     await page.waitForTimeout(300);
     expect(requests).toEqual([]);
-    await page.getByRole('button', { name: /^Play video/ }).click();
+    await page.getByRole('button', { name: 'Play video: A sample video', exact: true }).click();
     const frame = page.locator('.video iframe');
     await expect(frame).toHaveAttribute(
       'src',
       /^https:\/\/www\.youtube-nocookie\.com\/embed\/dQw4w9WgXcQ/,
+    );
+  });
+
+  test('a video poster is served from this site, not YouTube', async ({ page }) => {
+    await page.goto(REF);
+    const poster = page.locator('.video__poster');
+    await poster.scrollIntoViewIfNeeded();
+    await expect(poster).toBeVisible();
+    const src = await poster.evaluate((img: HTMLImageElement) => img.currentSrc || img.src);
+    expect(new URL(src).origin).toBe(new URL(page.url()).origin);
+    await expect(page.locator('.video-figure--poster figcaption')).toContainText(
+      'Nothing loads from YouTube',
     );
   });
 });

@@ -61,7 +61,7 @@ The draft post `src/content/posts/formatting-reference/index.mdx` shows every el
 - **Images:** `![alt](./image.png "caption")`. Every image opens the image viewer, and portrait images are capped at 560px tall. Add `{nozoom}` straight after an image to leave it out of the viewer; in an `.mdx` post write `\{nozoom}`, because braces are code in MDX. Export diagrams large (2–3× their shown size, or SVG): the viewer loads the largest size only when it opens.
 - **Two or three images side by side** (`.mdx` only): `<Figures cols={2} caption="…">` with the images inside, closed with `</Figures>`. They stack on phones.
 - **Tables:** Markdown tables. Right-align a column (`---:`) to set its numbers in Martian Mono.
-- **Video** (`.mdx` only): `<YouTube id="…" title="what it shows" />`. Nothing loads from YouTube until it's played.
+- **Video** (`.mdx` only): `<YouTube id="…" title="what it shows" />`. Nothing loads from YouTube until it's played, not even its thumbnail (that would be a request to Google before consent). For a still frame, save one beside the post (16:9) and import it at the top: `import poster from './video-poster.jpg';`, then `<YouTube id="…" title="…" poster={poster} />`. It's served from this site.
 - **Extras:** `<details><summary>…</summary>…</details>` for long scripts, `[^1]` footnotes, and `---` for the three-dot break.
 
 ## a project
