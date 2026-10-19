@@ -10,6 +10,8 @@ consent:
     title: cookie preferences
     intro: Choose which cookies this site can use. Anything optional stays off until you turn it on.
     end: Questions about cookies or your information? See the [privacy policy].
+    # Shown instead of a cookie table when a category sets none.
+    noCookies: Nothing in this category sets a cookie at the moment.
   buttons:
     acceptAll: accept all
     rejectAll: reject non-essential
@@ -17,37 +19,62 @@ consent:
     save: save choices
     close: close cookie preferences
     alwaysOn: always on
+  # The cookie list: shown in the dialog (cookie, what it does, kept for) and, with the domain, in the
+  # privacy policy's tables (::cookie-table{category="…"}), so the two always agree. Checked against
+  # what the site sets on 20 October 2026: before a choice, nothing; after "reject non-essential",
+  # only cc_cookie.
   categories:
     - id: necessary
       name: essential
       description: Needed for the site to work, and to remember the choices you make here. These can't be turned off.
       cookies:
         - name: cc_cookie
+          domain: www.harrisonjennings.au
           purpose: Remembers your cookie choices.
           kept: 6 months
+        # Set by Cloudflare's bot protection on this site's analytics server (measure.harrisonjennings.au).
+        - name: cf_clearance
+          domain: .harrisonjennings.au
+          purpose: Shows Cloudflare's security check has been passed, so it isn't asked again.
+          kept: 1 year
+        # The next three are Cal.com's, set only when someone opens the booking calendar.
+        - name: __cf_bm
+          domain: .cal.com
+          purpose: Cloudflare's bot protection for the booking calendar.
+          kept: 30 minutes
+        - name: __Secure-next-auth.callback-url
+          domain: .cal.com
+          purpose: Returns you to the right place in the booking calendar.
+          kept: browser session
+        - name: __Secure-next-auth.csrf-token
+          domain: .cal.com
+          purpose: Stops other sites sending forged requests to the booking calendar.
+          kept: browser session
     - id: analytics
       name: analytics
       description: Google Analytics shows which pages and posts get read and how people find the site, so I know what's worth writing more of.
       cookies:
         - name: _ga
+          domain: .harrisonjennings.au
           purpose: Tells one visitor's visits apart from another's.
           kept: 2 years
         - name: _ga_<id>
+          domain: .harrisonjennings.au
           purpose: Keeps track of the current visit.
           kept: 2 years
-        # Set by this site's own analytics server (measure.harrisonjennings.au); not in the mockup.
+        # FPID and FPLC come from this site's own analytics server (measure.harrisonjennings.au).
         - name: FPID
+          domain: .harrisonjennings.au
           purpose: Tells one visitor's visits apart, from this site's own analytics server.
           kept: 400 days
         - name: FPLC
+          domain: .harrisonjennings.au
           purpose: Carries that visitor ID between this site's subdomains.
           kept: 20 hours
     - id: advertising
       name: advertising
       description: Lets ad platforms tell whether a campaign brought you here, and may be used to show you related ads on other sites.
-      # TO CONFIRM: no advertising tag is active in Tag Manager today (both conversion linkers are paused),
-      # so nothing in this category sets a cookie yet. Replace this row when one is switched on.
-      cookies:
-        - name: to confirm
-          purpose: Listed here before any advertising tag is switched on.
-          kept: to confirm
+      # No advertising tag sets a cookie today (both conversion linkers are paused in Tag Manager), so
+      # the dialog and the policy say so. When one is switched on, add its cookies here: the conversion
+      # linkers set _gcl_au (.harrisonjennings.au, 90 days) and FPAU (.harrisonjennings.au, 90 days).
+      cookies: []

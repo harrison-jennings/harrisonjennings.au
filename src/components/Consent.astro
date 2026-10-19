@@ -93,24 +93,28 @@ const withLink = (text: string) =>
             </div>
             <div class="cat__more" id={`cat-${category.id}`} hidden={!open}>
               <p>{category.description}</p>
-              <table class="cookies">
-                <thead>
-                  <tr>
-                    <th scope="col">cookie</th>
-                    <th scope="col">what it does</th>
-                    <th scope="col">kept for</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {category.cookies.map((cookie) => (
+              {category.cookies.length > 0 ? (
+                <table class="cookies">
+                  <thead>
                     <tr>
-                      <td>{cookie.name}</td>
-                      <td>{cookie.purpose}</td>
-                      <td>{cookie.kept}</td>
+                      <th scope="col">cookie</th>
+                      <th scope="col">what it does</th>
+                      <th scope="col">kept for</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {category.cookies.map((cookie) => (
+                      <tr>
+                        <td>{cookie.name}</td>
+                        <td>{cookie.purpose}</td>
+                        <td>{cookie.kept}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ) : (
+                <p class="cat__none">{dialog.noCookies}</p>
+              )}
             </div>
           </div>
         );
@@ -462,6 +466,12 @@ const withLink = (text: string) =>
     background: var(--on-accent);
   }
 
+  .cat__more .cat__none {
+    margin-top: var(--space-16);
+    padding-top: var(--space-10);
+    border-top: 1px solid var(--line);
+    font-size: 14px;
+  }
   .cookies {
     width: 100%;
     margin-top: var(--space-16);

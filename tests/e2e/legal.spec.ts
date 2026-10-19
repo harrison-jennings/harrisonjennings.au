@@ -17,10 +17,22 @@ test.describe('the legal pages', () => {
     );
   });
 
-  test('privacy: the cookie tables, one per kind of cookie', async ({ page }) => {
+  test('privacy: the cookie tables come from the same list as the cookie preferences', async ({
+    page,
+  }) => {
     await page.goto('/privacy-policy/');
-    await expect(page.locator('.prose table')).toHaveCount(3);
-    await expect(page.locator('.prose table').first()).toContainText('cf_clearance');
+    const tables = page.locator('.prose table.cookie-table');
+    await expect(tables).toHaveCount(2);
+    await expect(tables.first()).toContainText('cc_cookie');
+    await expect(tables.nth(1)).toContainText('_ga');
+    await expect(page.locator('.prose .cookie-none')).toHaveText(
+      'Nothing in this category sets a cookie at the moment.',
+    );
+    // The dialog lists the same cookies.
+    await page.getByRole('contentinfo').getByRole('button', { name: 'cookie settings' }).click();
+    await expect(page.locator('[data-consent-dialog] .cookies').first()).toContainText(
+      'cf_clearance',
+    );
   });
 
   test('privacy: the cookies section opens the cookie preferences', async ({ page }) => {

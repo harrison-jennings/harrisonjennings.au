@@ -1,7 +1,6 @@
 ---
 title: terms of use
 description: The terms for using this site, its subdomains and the projects on it.
-# Carried across from the WordPress site unchanged, apart from layout.
 updated: 2026-09-27
 updatedLabel: Effective
 contact:

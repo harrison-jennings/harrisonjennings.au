@@ -1,10 +1,9 @@
 ---
 title: privacy policy
 description: How this site handles personal information, what runs in your browser and when, and how to ask about it.
-# Carried across from the WordPress site unchanged, apart from layout. Before launch, update what
-# describes WordPress: VentraIP hosting, "the primary WordPress website", and the Pressidium consent
-# cookie (the new consent banner in phase 7 uses its own). Then change the date below.
-updated: 2026-09-27
+# Updated for the new site: hosting on Cloudflare, the consent records, and the cookie tables (built
+# from src/content/consent.yaml). Set the date to the day it goes live.
+updated: 2026-10-20
 # DRAFT: the short version is new; check it says only what the policy says.
 summary:
   - You can read the site without telling me who you are.
@@ -40,7 +39,7 @@ The types of personal information collected or received may include:
 - information concerning a consulting enquiry or proposed engagement;
 - IP address, browser type, device type, operating system, referral information, pages viewed and timestamps;
 - website interaction and analytics events;
-- cookie and consent preferences; and
+- cookie and consent preferences, and a record of each consent choice; and
 - technical, diagnostic and security information associated with use of the Site.
 
 The Site does not collect payment-card, bank-account or government identity-document information.
@@ -92,17 +91,13 @@ Necessary technologies may be used to:
 
 These technologies may operate without optional analytics or marketing consent where they are reasonably necessary for the requested functionality or the security of the Site.
 
-| cookie and domain                                          | expires    | purpose                                            |
-| ---------------------------------------------------------- | ---------- | -------------------------------------------------- |
-| `pressidium_cookie_consent`<br />`www.harrisonjennings.au` | 182 days   | Remembers the visitor’s consent choices            |
-| `cf_clearance`<br />`.harrisonjennings.au`                 | 1 year     | Cloudflare security/challenge clearance            |
-| `__cf_bm`<br />`.cal.com`                                  | 30 minutes | Cloudflare bot protection for Cal.com              |
-| `__Secure-next-auth.callback-url`<br />`.cal.com`          | Session    | Maintains Cal.com’s authentication return location |
-| `__Secure-next-auth.csrf-token`<br />`.cal.com`            | Session    | Prevents forged requests to Cal.com                |
+When a visitor makes or changes a cookie choice, a record of that choice is kept so the Site can show what was agreed and when. The record holds the choice made for each category, a random consent identifier (also stored in the visitor's `cc_cookie`), the date and time, the page the choice was made on, the visitor's approximate location (country and region) and browser details (user agent). The IP address itself is not stored: only a one-way keyed hash of it, which can be matched against an address the visitor provides but cannot be turned back into that address. These records are stored with Cloudflare and kept only for as long as reasonably necessary to demonstrate the consent given.
+
+::cookie-table{category="necessary"}
 
 ### analytics
 
-The primary WordPress website uses Google Analytics and related measurement services to understand matters such as visitor numbers, pages viewed and general interaction with the website.
+The Site uses Google Analytics and related measurement services, loaded through Google Tag Manager from the Site's own measurement subdomain (measure.harrisonjennings.au), to understand matters such as visitor numbers, pages viewed and general interaction with the website.
 
 The Site uses Advanced Google Consent Mode. If optional consent is refused, Google may receive limited measurements without cookies for aggregated measurement and modelling. Analytics or advertising cookies are not stored or accessed unless the visitor grants the corresponding consent.
 
@@ -112,12 +107,7 @@ Google Signals is enabled in Google Analytics. Where a visitor grants Advertisin
 
 Analytics and advertising consent can be granted, refused or withdrawn at any time using the Site’s cookie settings. Visitors may also use Google’s advertising controls and the Google Analytics opt-out browser add-on.
 
-| cookie and domain                              | expires  | purpose                                                                       |
-| ---------------------------------------------- | -------- | ----------------------------------------------------------------------------- |
-| `_ga_*`<br />`.harrisonjennings.au`            | 2 years  | Distinguishes visitors and maintains session information for Google Analytics |
-| `FPID`<br />`.harrisonjennings.au`             | 400 days | Server-managed GA4 visitor identifier                                         |
-| `FPLC`<br />`.harrisonjennings.au`             | 20 hours | Readable linker derived from FPID                                             |
-| `sessionsCount`<br />`www.harrisonjennings.au` | 395 days | Counts sessions                                                               |
+::cookie-table{category="analytics"}
 
 ### advertising and remarketing
 
@@ -127,10 +117,7 @@ Google Analytics advertising features may use advertising cookies or identifiers
 
 If advertising or remarketing through Google, Meta or another provider is introduced, this policy and the Site’s consent controls will be updated before those technologies are activated.
 
-| cookie and domain                     | expires | purpose                                                                                                                                      |
-| ------------------------------------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| `_gcl_au`<br />`.harrisonjennings.au` | 90 days | Stores information used by Google to measure advertising effectiveness and attribute website actions to previous ad interactions.            |
-| `FPAU`<br />`.harrisonjennings.au`    | 90 days | Stores a first-party advertising identifier used by the server-side Google tagging setup to support advertising attribution and measurement. |
+::cookie-table{category="advertising"}
 
 ::cookie-settings
 
@@ -154,8 +141,7 @@ Further information is available in the [Cal.com Privacy Policy](https://cal.com
 
 Personal information may be handled by service providers that assist with operating, securing and communicating through the Site. Current providers include:
 
-- **VentraIP**, for Australian website hosting;
-- **Cloudflare**, for DNS, content delivery, traffic management and website security;
+- **Cloudflare**, for website hosting, DNS, content delivery, traffic management, website security and storing cookie-consent records;
 - **Google**, including Google Analytics, Google Tag Manager and Google Cloud services used in the Site’s measurement architecture;
 - **Vercel**, for hosting and cookieless Web Analytics associated with selected project or demonstration sites;
 - **GitHub**, for static GitHub Pages hosting associated with selected project, demonstration or reference sites;
