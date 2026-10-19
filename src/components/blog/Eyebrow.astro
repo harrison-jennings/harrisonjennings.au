@@ -1,0 +1,44 @@
+---
+// The small breadcrumb above a page or post title: "blog / topic", "blog / marketing automation".
+interface Props {
+  items: Array<{ label: string; href?: string | undefined }>;
+}
+
+const { items } = Astro.props;
+---
+
+<nav class="eyebrow" aria-label="Breadcrumb">
+  {items.map((item, i) => (
+    <>
+      {i > 0 && <span aria-hidden="true">/</span>}
+      {item.href ? <a href={item.href}>{item.label}</a> : <span>{item.label}</span>}
+    </>
+  ))}
+</nav>
+
+<style>
+  .eyebrow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-10);
+    margin: 0 0 18px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .eyebrow a {
+    color: var(--muted);
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-underline-offset: 4px;
+    transition: color 150ms ease;
+  }
+  .eyebrow a:hover {
+    color: var(--link);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .eyebrow a {
+      transition: none;
+    }
+  }
+</style>

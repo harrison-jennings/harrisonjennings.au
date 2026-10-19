@@ -40,6 +40,10 @@ The working summary of the identity. The design system has live previews of ever
 
 Dark on every first visit, whatever the device is set to. The sun/moon toggle in the nav switches theme and remembers the choice. Light is an equal, finished theme with its own deeper brick, not an inversion.
 
+## code
+
+Code blocks always use the dark treatment (dark surface, hairline, and the dark syntax colours), in both themes: on a light page they sit as dark panels. Inline code follows the page's theme.
+
 ## ember
 
 The brick-to-apricot gradient is atmosphere only: the hero field, social share images and the 404 page. Never on text, the logo, buttons or small UI. Two radial clouds over `ground`:
@@ -71,7 +75,7 @@ Everything is still under `prefers-reduced-motion`.
 
 ## components
 
-`Button`, `TextLink`, `IconButton`, `ThemeToggle`, `Nav` (with the mobile menu), `Footer`, `Arrows`, `PostCard`, `ProjectShot`, `ProjectLinks`, `LiveSignal`, `Tag`, `Logo`, `Icon`, and the home sections in `src/components/home/`. Each file starts with a one-line description; the design system has the full guidelines.
+`Button`, `TextLink`, `IconButton`, `ThemeToggle`, `Nav` (with the mobile menu), `Footer`, `Arrows`, `PostCard`, `ProjectShot`, `ProjectLinks`, `LiveSignal`, `Tag`, `Logo`, `Icon`, the home sections in `src/components/home/`, the blog's in `src/components/blog/`, and `<Figures>` and `<YouTube>` for posts in `src/components/prose/`. Each file starts with a one-line description; the design system has the full guidelines.
 
 ## the full design
 

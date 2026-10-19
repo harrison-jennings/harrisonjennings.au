@@ -35,19 +35,34 @@ coverAlt: A Marketo email preview open beside its rendered result
 If you work in marketing automation, you probably have a version of the same pre-send ritual…
 ```
 
-| field         | required | notes                                                             |
-| ------------- | -------- | ----------------------------------------------------------------- |
-| `title`       | yes      | lowercase, like every heading on the site                         |
-| `description` | yes      | up to 180 characters; used for search results and shares          |
-| `published`   | yes      | `YYYY-MM-DD`                                                      |
-| `updated`     | no       | set when a post changes meaningfully                              |
-| `topics`      | no       | ids from `topics.yaml`; several is fine                           |
-| `draft`       | no       | `true` shows the post in `npm run dev` only                       |
-| `cover`       | no       | an image beside the post; add `coverAlt` with it                  |
-| `socialImage` | no       | overrides the generated social card                               |
-| `wpId`        | no       | migrated posts only: the WordPress ID, so feeds don't repeat them |
+| field         | required | notes                                                                       |
+| ------------- | -------- | --------------------------------------------------------------------------- |
+| `title`       | yes      | lowercase, like every heading on the site                                   |
+| `description` | yes      | up to 180 characters: the dek under the title, card excerpt and meta tag    |
+| `published`   | yes      | `YYYY-MM-DD`                                                                |
+| `updated`     | no       | set when a post changes meaningfully                                        |
+| `topics`      | no       | ids from `topics.yaml`; the first is the post's main topic                  |
+| `draft`       | no       | `true` shows the post in `npm run dev` only                                 |
+| `cover`       | no       | an image beside the post; add `coverAlt` with it                            |
+| `toc`         | no       | `false` hides "on this page" (it's hidden anyway with fewer than three h2s) |
+| `related`     | no       | up to three post ids, to hand-pick "keep reading"                           |
+| `socialImage` | no       | overrides the generated social card                                         |
+| `wpId`        | no       | migrated posts only: the WordPress ID, so feeds don't repeat them           |
 
-Use `index.mdx` instead when a post needs a component (a callout, an embed, a diagram). Code blocks are highlighted at build time.
+The site works out the rest at build: the reading time (prose words ÷ 230, rounded up; code doesn't count), "on this page" from the `##` and `###` headings, and "keep reading" (the three posts sharing the most topics, newest first on a tie, topped up with the latest).
+
+## writing a post
+
+The draft post `src/content/posts/formatting-reference/index.mdx` shows every element with the Markdown that makes it. It never builds for the live site; open it with `npm run dev` at `/blog/formatting-reference/`.
+
+- **Headings:** `##` and `###` (listed in "on this page"), `####` for minor headings. `#####` and `######` render as `####`.
+- **Callouts:** wrap paragraphs in `:::note`, `:::tip` or `:::warning` (shown as "heads up"), closed with `:::`.
+- **Code:** the language goes after the fence and is never guessed (no language means plain text). `title="src/app.js"` adds a file name; `{2-3}` highlights lines. In ` ```sh ` blocks a leading `$ ` is a prompt, muted and left out of the copy button. Velocity (` ```vtl `) is highlighted too. Code is left exactly as written: the formatter doesn't touch code in posts.
+- **Images:** `![alt](./image.png "caption")`. Every image opens the image viewer, and portrait images are capped at 560px tall. Add `{nozoom}` straight after an image to leave it out of the viewer; in an `.mdx` post write `\{nozoom}`, because braces are code in MDX. Export diagrams large (2–3× their shown size, or SVG): the viewer loads the largest size only when it opens.
+- **Two or three images side by side** (`.mdx` only): `<Figures cols={2} caption="…">` with the images inside, closed with `</Figures>`. They stack on phones.
+- **Tables:** Markdown tables. Right-align a column (`---:`) to set its numbers in Martian Mono.
+- **Video** (`.mdx` only): `<YouTube id="…" title="what it shows" />`. Nothing loads from YouTube until it's played, not even its thumbnail (that would be a request to Google before consent). For a still frame, save one beside the post (16:9) and import it at the top: `import poster from './video-poster.jpg';`, then `<YouTube id="…" title="…" poster={poster} />`. It's served from this site.
+- **Extras:** `<details><summary>…</summary>…</details>` for long scripts, `[^1]` footnotes, and `---` for the three-dot break.
 
 ## a project
 

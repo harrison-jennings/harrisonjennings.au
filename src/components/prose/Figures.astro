@@ -1,0 +1,21 @@
+---
+// Two or three images side by side with one caption, in a post (.mdx):
+//   <Figures cols={2} caption="Before and after.">
+//   ![before](./before.png)
+//   ![after](./after.png)
+//   </Figures>
+// Stacks on phones. Each image still opens the image viewer.
+interface Props {
+  cols?: 2 | 3;
+  caption?: string;
+}
+
+const { cols = 2, caption } = Astro.props;
+---
+
+<figure class="figures">
+  <div class:list={['figures__row', `figures__row--${cols}`]}>
+    <slot />
+  </div>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>

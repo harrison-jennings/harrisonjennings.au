@@ -1,0 +1,91 @@
+---
+// The author panel under every post: the mark, "written by harrison jennings", a one-line bio, and
+// github and linkedin. No booking button (that was tried and dropped).
+import { getEntry } from 'astro:content';
+import { SITE, SOCIAL } from '../../consts';
+import Icon from '../Icon.astro';
+import Logo from '../Logo.astro';
+
+const blog = await getEntry('blog', 'blog');
+if (!blog) throw new Error('src/content/blog.yaml: missing the `blog` entry');
+---
+
+<aside class="author" aria-labelledby="author-name">
+  <Logo size={40} />
+  <div>
+    <h2 class="author__name" id="author-name">
+      written by {SITE.name}
+    </h2>
+    <p class="author__bio">{blog.data.author.bio}</p>
+  </div>
+  <div class="author__links">
+    <a href={SOCIAL.github.href} rel="me noopener" target="_blank">
+      <Icon name="github" size={18} />
+      github
+    </a>
+    <a href={SOCIAL.linkedin.href} rel="me noopener" target="_blank">
+      <Icon name="linkedin" size={17} />
+      linkedin
+    </a>
+  </div>
+</aside>
+
+<style>
+  .author {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: start;
+    gap: 18px 24px;
+    margin-top: var(--space-40);
+    padding: var(--space-40);
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+  }
+  .author__name {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  .author__bio {
+    margin: 6px 0 0;
+    max-width: 520px;
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--muted);
+  }
+  .author__links {
+    grid-column: 2;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+  .author__links a {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-10);
+    min-height: var(--target);
+    font-size: 15px;
+    color: var(--text);
+    text-decoration: none;
+    transition: color 150ms ease;
+  }
+  .author__links a:hover {
+    color: var(--link);
+  }
+  @media (max-width: 760px) {
+    .author {
+      grid-template-columns: minmax(0, 1fr);
+      padding: 24px 20px;
+    }
+    .author__links {
+      grid-column: 1;
+      gap: var(--space-20);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .author__links a {
+      transition: none;
+    }
+  }
+</style>

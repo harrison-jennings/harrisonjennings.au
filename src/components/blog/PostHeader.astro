@@ -1,0 +1,110 @@
+---
+// A post's header: "blog / {main topic}", the title, the dek (its description), "date, N min read"
+// with its topics, and an optional cover image.
+import { Image } from 'astro:assets';
+import { getEntry, type CollectionEntry } from 'astro:content';
+import { formatDate, isoDate } from '../../lib/dates';
+import { mainTopic, topicPath } from '../../lib/posts';
+import Eyebrow from './Eyebrow.astro';
+import PostTags from './PostTags.astro';
+
+interface Props {
+  post: CollectionEntry<'posts'>;
+  readingTime: number;
+  topicPages: ReadonlySet<string>;
+}
+
+const { post, readingTime, topicPages } = Astro.props;
+const { title, description, published, cover, coverAlt } = post.data;
+const topicRef = mainTopic(post);
+const topic = topicRef ? await getEntry(topicRef) : undefined;
+const eyebrow = [
+  { label: 'blog', href: '/blog/' },
+  ...(topic
+    ? [{ label: topic.data.name, href: topicPages.has(topic.id) ? topicPath(topic) : undefined }]
+    : []),
+];
+---
+
+<header class="posthead">
+  <Eyebrow items={eyebrow} />
+  <h1 class="posthead__title">{title}</h1>
+  <p class="posthead__dek">{description}</p>
+  <div class="posthead__meta">
+    <span>
+      <time datetime={isoDate(published)}>{formatDate(published)}</time>, {readingTime} min read
+    </span>
+    <PostTags post={post} topicPages={topicPages} />
+  </div>
+</header>
+{cover && (
+  <figure class="cover">
+    <Image
+      src={cover}
+      alt={coverAlt ?? ''}
+      widths={[680, 1152, 1600]}
+      sizes="(max-width: 760px) 100vw, 1120px"
+      loading="eager"
+    />
+  </figure>
+)}
+
+<style>
+  .posthead {
+    max-width: 920px;
+    padding-top: 120px;
+  }
+  .posthead__title {
+    margin: 0;
+    font-size: 46px;
+    font-weight: 600;
+    line-height: 1.12;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+  .posthead__dek {
+    margin: 22px 0 0;
+    max-width: 680px;
+    font-size: 20px;
+    line-height: 1.5;
+    color: var(--muted);
+    text-wrap: pretty;
+  }
+  .posthead__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 20px;
+    margin-top: var(--space-28);
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .cover {
+    margin: 48px 0 0;
+  }
+  .cover :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-md);
+  }
+  @media (max-width: 760px) {
+    .posthead {
+      padding-top: var(--space-72);
+    }
+    .posthead__title {
+      font-size: 32px;
+      line-height: 1.15;
+    }
+    .posthead__dek {
+      font-size: 18px;
+    }
+    .cover {
+      margin-inline: calc(-1 * (var(--space-16) + var(--space-22)))
+        calc(-1 * (var(--space-16) + var(--space-10)));
+    }
+    .cover :global(img) {
+      border-radius: 0;
+    }
+  }
+</style>

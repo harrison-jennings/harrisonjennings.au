@@ -1,0 +1,40 @@
+---
+// A post's topics as tags, in the post's own order: links for topics with a page, dashed labels
+// for the rest.
+import { getEntries, type CollectionEntry } from 'astro:content';
+import { topicPath } from '../../lib/posts';
+import Tag from '../Tag.astro';
+
+interface Props {
+  post: CollectionEntry<'posts'>;
+  topicPages: ReadonlySet<string>;
+}
+
+const { post, topicPages } = Astro.props;
+const topics = post.data.topics.length ? await getEntries(post.data.topics) : [];
+---
+
+{topics.length > 0 && (
+  <ul class="tags" aria-label="Topics">
+    {topics.map((topic) => (
+      <li>
+        {topicPages.has(topic.id) ? (
+          <Tag href={topicPath(topic)}>{topic.data.name}</Tag>
+        ) : (
+          <Tag label>{topic.data.name}</Tag>
+        )}
+      </li>
+    ))}
+  </ul>
+)}
+
+<style>
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-8);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+</style>

@@ -1,0 +1,87 @@
+---
+// The header of the blog index and topic pages: an optional eyebrow ("blog / topic"), the title in
+// Martian Mono ending in the brick stop, the intro, and a quiet link on the right ("rss feed").
+import TextLink from '../TextLink.astro';
+import Eyebrow from './Eyebrow.astro';
+
+interface Props {
+  title: string;
+  intro?: string;
+  /** Breadcrumb above the title; items with an href are links. */
+  eyebrow?: Array<{ label: string; href?: string }>;
+  link?: { label: string; href: string };
+}
+
+const { title, intro, eyebrow, link } = Astro.props;
+---
+
+<header class="pagehead">
+  {eyebrow && <Eyebrow items={eyebrow} />}
+  <div class="pagehead__row">
+    <div>
+      <h1 class="pagehead__title">
+        {title}
+        <span class="pagehead__stop" aria-hidden="true"></span>
+      </h1>
+      {intro && <p class="pagehead__intro">{intro}</p>}
+      <slot />
+    </div>
+    {link && (
+      <TextLink href={link.href} quiet>
+        {link.label}
+      </TextLink>
+    )}
+  </div>
+</header>
+
+<style>
+  .pagehead {
+    padding-top: 120px;
+  }
+  .pagehead__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 24px;
+  }
+  .pagehead__title {
+    margin: 0 0 0 -0.045em;
+    font-family: var(--font-display);
+    font-size: 46px;
+    font-weight: 500;
+    line-height: 1.12;
+    letter-spacing: -0.05em;
+  }
+  .pagehead__stop {
+    display: inline-block;
+    width: 0.19em;
+    height: 0.19em;
+    margin-left: 0.25em;
+    border-radius: var(--radius-pill);
+    background: var(--accent);
+  }
+  .pagehead__intro {
+    margin: 20px 0 0;
+    max-width: 600px;
+    font-size: 19px;
+    line-height: 1.55;
+    color: var(--muted);
+    text-wrap: pretty;
+  }
+  @media (max-width: 760px) {
+    .pagehead {
+      padding-top: var(--space-72);
+    }
+    .pagehead__title {
+      font-size: 34px;
+    }
+    .pagehead__intro {
+      font-size: 17px;
+    }
+    .pagehead__row {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-16);
+    }
+  }
+</style>

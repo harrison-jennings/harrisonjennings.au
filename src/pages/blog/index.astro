@@ -1,0 +1,34 @@
+---
+// The blog: "blog." with its intro and the RSS link, the topic chips, then every post by year.
+// No booking band on blog pages ("book a call" lives in the nav and footer).
+import { getEntry } from 'astro:content';
+import PageHead from '../../components/blog/PageHead.astro';
+import PostArchive from '../../components/blog/PostArchive.astro';
+import TopicChips from '../../components/blog/TopicChips.astro';
+import Base from '../../layouts/Base.astro';
+import { getPosts } from '../../lib/posts';
+import { topicChips, topicPageIds } from '../../lib/topics';
+
+const blog = await getEntry('blog', 'blog');
+if (!blog) throw new Error('src/content/blog.yaml: missing the `blog` entry');
+const posts = await getPosts();
+---
+
+<Base title="blog" description={blog.data.intro}>
+  <div class="column">
+    <PageHead title="blog" intro={blog.data.intro} link={{ label: 'rss feed', href: '/rss/' }} />
+    <TopicChips total={posts.length} topics={await topicChips()} />
+    {posts.length > 0 ? (
+      <PostArchive posts={posts} topicPages={await topicPageIds()} />
+    ) : (
+      <p class="empty">{blog.data.empty}</p>
+    )}
+  </div>
+</Base>
+
+<style>
+  .empty {
+    margin: 64px 0 0;
+    color: var(--muted);
+  }
+</style>

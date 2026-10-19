@@ -1,0 +1,45 @@
+---
+// A YouTube video in a post (.mdx). Nothing loads from YouTube until someone presses play: no
+// player, and no thumbnail from YouTube either (that's a request to Google, before consent). Then
+// it plays from youtube-nocookie.com.
+//
+//   <YouTube id="dQw4w9WgXcQ" title="What the video shows" />
+//
+// For a still frame, save one beside the post and import it, so it's served from this site:
+//
+//   import poster from './video-poster.jpg';
+//   <YouTube id="dQw4w9WgXcQ" title="What the video shows" poster={poster} />
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+
+interface Props {
+  id: string;
+  title?: string;
+  /** A still frame saved beside the post (16:9 works best). */
+  poster?: ImageMetadata;
+}
+
+const { id, title = 'YouTube video', poster } = Astro.props;
+const note = 'Plays from YouTube. Nothing loads from YouTube until you press play.';
+---
+
+<figure class:list={['video-figure', { 'video-figure--poster': poster }]}>
+  <div class="video" data-video={id} data-video-title={title}>
+    {poster && (
+      <Image
+        class="video__poster"
+        src={poster}
+        alt=""
+        widths={[680, 1360]}
+        sizes="(max-width: 760px) 100vw, 680px"
+      />
+    )}
+    <button class="video__play" type="button" aria-label={`Play video: ${title}`}>
+      <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M8 5v14l11-7z" fill="currentColor"></path>
+      </svg>
+    </button>
+    {!poster && <p class="video__note">{note}</p>}
+  </div>
+  {poster && <figcaption>{note}</figcaption>}
+</figure>

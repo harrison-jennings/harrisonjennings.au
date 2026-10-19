@@ -5,6 +5,9 @@
   "plugins": ["prettier-plugin-astro"],
   "overrides": [
     { "files": "*.astro", "options": { "parser": "astro" } },
-    { "files": ["*.md", "*.mdx"], "options": { "proseWrap": "preserve" } }
+    {
+      "files": ["*.md", "*.mdx"],
+      "options": { "proseWrap": "preserve", "embeddedLanguageFormatting": "off" }
+    }
   ]
 }

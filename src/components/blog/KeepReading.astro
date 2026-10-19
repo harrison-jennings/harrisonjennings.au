@@ -1,0 +1,55 @@
+---
+// "keep reading" under a post: three posts (see keepReading in src/lib/blog.ts), as cards like the
+// home page's latest posts; a swipe row on phones.
+import type { CollectionEntry } from 'astro:content';
+import Arrows from '../Arrows.astro';
+import PostCard from '../PostCard.astro';
+import TextLink from '../TextLink.astro';
+
+interface Props {
+  posts: Array<CollectionEntry<'posts'>>;
+  topicPages: ReadonlySet<string>;
+}
+
+const { posts, topicPages } = Astro.props;
+---
+
+{posts.length > 0 && (
+  <section class="keep" aria-labelledby="keep-reading">
+    <div class="section__head">
+      <h2 id="keep-reading" class="section__title">
+        keep reading
+      </h2>
+      <TextLink href="/blog/" quiet class="desktop-only">
+        all posts
+      </TextLink>
+      <Arrows swipe="keep" noun="post" />
+    </div>
+    <div class="keep__row swipe" id="swipe-keep" data-swipe="keep">
+      {posts.map((post) => (
+        <PostCard post={post} topicPages={topicPages} />
+      ))}
+    </div>
+  </section>
+)}
+
+<style>
+  .keep {
+    margin-top: 96px;
+  }
+  .keep__row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-40);
+  }
+  @media (max-width: 760px) {
+    .keep {
+      margin-top: var(--space-72);
+    }
+    /* the global .swipe row takes over */
+    .keep__row {
+      grid-template-columns: none;
+      gap: 0 var(--space-16);
+    }
+  }
+</style>

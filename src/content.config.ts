@@ -19,6 +19,10 @@ const posts = defineCollection({
       socialImage: image().optional(),
       /** The WordPress post ID, kept so feed readers don't show migrated posts as new. */
       wpId: z.number().int().optional(),
+      /** Hand-picks "keep reading" (up to three); otherwise posts sharing the most topics. */
+      related: z.array(reference('posts')).max(3).optional(),
+      /** "on this page" beside the text; also hidden when there are fewer than three h2s. */
+      toc: z.boolean().default(true),
     }),
 });
 
@@ -82,6 +86,16 @@ const testimonials = defineCollection({
   }),
 });
 
+// The blog's own wording: the index intro and the author panel under each post.
+const blog = defineCollection({
+  loader: file('src/content/blog.yaml'),
+  schema: z.object({
+    intro: z.string(),
+    empty: z.string(),
+    author: z.object({ bio: z.string() }),
+  }),
+});
+
 // The home page's own wording: the hero and the booking band.
 const home = defineCollection({
   loader: file('src/content/home.yaml'),
@@ -93,4 +107,13 @@ const home = defineCollection({
   }),
 });
 
-export const collections = { posts, pages, topics, projects, services, testimonials, home };
+export const collections = {
+  posts,
+  pages,
+  topics,
+  projects,
+  services,
+  testimonials,
+  home,
+  blog,
+};

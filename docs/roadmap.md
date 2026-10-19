@@ -58,7 +58,7 @@ Built in five stages, one pull request each, from `design/` (see `design/README.
 
 - [x] Stage 1, foundations: tokens, dark-first theme and toggle, fonts, the shared column, nav, mobile menu, footer, shared components
 - [x] Stage 2, home
-- [ ] Stage 3, blog: index, topic pages, posts, code blocks, image viewer
+- [x] Stage 3, blog: index, topic pages, posts, code blocks, image viewer
 - [ ] Stage 4, projects, RSS, legal pages, 404
 - [ ] Stage 5, social share cards
 - [ ] Each approved mockup built as a page, from the existing components and tokens

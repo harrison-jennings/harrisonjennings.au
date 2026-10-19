@@ -1,0 +1,170 @@
+---
+// "on this page": the post's h2s and, indented, its h3s. Desktop: beside the text, staying in view
+// and marking the section being read. Phones: a closed panel above the text.
+import type { MarkdownHeading } from 'astro';
+
+interface Props {
+  headings: MarkdownHeading[];
+  /** The phone panel (above the text) instead of the desktop column. */
+  phone?: boolean;
+}
+
+const { headings, phone = false } = Astro.props;
+const items: Array<{ heading: MarkdownHeading; subs: MarkdownHeading[] }> = [];
+for (const h of headings) {
+  if (h.depth === 2 || !items.length) items.push({ heading: h, subs: [] });
+  else items.at(-1)?.subs.push(h);
+}
+---
+
+{phone ? (
+  <details class="toc-phone">
+    <summary>
+      on this page
+      <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+        <path
+          d="M6 9l6 6 6-6"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+    </summary>
+    <ol>
+      {items.map(({ heading, subs }) => (
+        <li>
+          <a href={`#${heading.slug}`}>{heading.text}</a>
+          {subs.length > 0 && (
+            <ol>
+              {subs.map((s) => (
+                <li>
+                  <a href={`#${s.slug}`}>{s.text}</a>
+                </li>
+              ))}
+            </ol>
+          )}
+        </li>
+      ))}
+    </ol>
+  </details>
+) : (
+  <nav class="toc" aria-labelledby="toc-label" data-toc>
+    <p class="toc__label" id="toc-label">
+      on this page
+    </p>
+    <ol>
+      {items.map(({ heading, subs }) => (
+        <li>
+          <a href={`#${heading.slug}`}>{heading.text}</a>
+          {subs.length > 0 && (
+            <ol class="toc__sub">
+              {subs.map((s) => (
+                <li>
+                  <a href={`#${s.slug}`}>{s.text}</a>
+                </li>
+              ))}
+            </ol>
+          )}
+        </li>
+      ))}
+    </ol>
+  </nav>
+)}
+
+<style>
+  .toc {
+    position: sticky;
+    top: 112px;
+    align-self: start;
+    font-size: 14px;
+    line-height: 1.45;
+  }
+  .toc__label {
+    margin: 0 0 12px;
+    font-family: var(--font-display);
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .toc ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .toc > ol {
+    border-left: 1px solid var(--line);
+  }
+  .toc a {
+    display: block;
+    margin-left: -1px;
+    padding: 6px 0 6px 16px;
+    border-left: 1.5px solid transparent;
+    color: var(--muted);
+    text-decoration: none;
+    transition:
+      color 150ms ease,
+      border-color 150ms ease;
+  }
+  .toc a:hover {
+    color: var(--text);
+  }
+  .toc a[aria-current='true'] {
+    color: var(--text);
+    border-left-color: var(--accent);
+  }
+  .toc .toc__sub a {
+    padding-left: 30px;
+    font-size: 13px;
+  }
+
+  .toc-phone {
+    margin-bottom: var(--space-28);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+  }
+  .toc-phone summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 48px;
+    padding: 0 16px;
+    list-style: none;
+    font-size: 15px;
+    cursor: pointer;
+  }
+  .toc-phone summary::-webkit-details-marker {
+    display: none;
+  }
+  .toc-phone[open] summary svg {
+    transform: rotate(180deg);
+  }
+  .toc-phone ol {
+    margin: 0;
+    padding: 4px 16px 14px 36px;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  .toc-phone ol ol {
+    padding: 4px 0 0 20px;
+  }
+  .toc-phone li + li {
+    margin-top: 6px;
+  }
+  .toc-phone a {
+    color: var(--text);
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-underline-offset: 4px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .toc a {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  import { bindToc } from '../../scripts/toc';
+  document.querySelectorAll<HTMLElement>('[data-toc]').forEach(bindToc);
+</script>

@@ -1,0 +1,43 @@
+---
+// After a post's text: when it was published (and updated), and the way back to the blog.
+import type { CollectionEntry } from 'astro:content';
+import { formatDate, isoDate } from '../../lib/dates';
+import TextLink from '../TextLink.astro';
+
+interface Props {
+  post: CollectionEntry<'posts'>;
+}
+
+const { published, updated } = Astro.props.post.data;
+---
+
+<div class="postend">
+  <p>
+    Published <time datetime={isoDate(published)}>{formatDate(published)}</time>.
+    {updated && (
+      <>
+        {' '}
+        Updated <time datetime={isoDate(updated)}>{formatDate(updated)}</time>.
+      </>
+    )}
+  </p>
+  <TextLink href="/blog/">back to all posts</TextLink>
+</div>
+
+<style>
+  .postend {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-16);
+    margin-top: 56px;
+    padding-top: var(--space-28);
+    border-top: 1px solid var(--line);
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .postend p {
+    margin: 0;
+  }
+</style>
