@@ -33,3 +33,4 @@ When the design system and a mockup disagree, the design system wins: it was upd
 | 10-privacy, 11-terms | Legal pages | `/privacy-policy/`, `/terms-of-use/` |
 | 12-404 | Not found | any missing URL |
 | 13-share-cards | Social share images | `/og/…png` |
+| 14-consent | Cookie banner and preferences dialog | every page, until a choice is made |

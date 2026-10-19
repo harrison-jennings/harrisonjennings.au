@@ -25,7 +25,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "vitest run",
-    "test:e2e": "INCLUDE_DRAFTS=true npm run build && playwright test",
+    "test:e2e": "INCLUDE_DRAFTS=true npm run build && npm run db:local && playwright test",
+    "db:local": "wrangler d1 migrations apply CONSENT_DB --local",
     "verify": "npm run format:check && npm run lint && npm run check && npm run test && npm run test:e2e",
     "deploy": "npm run build && wrangler deploy"
   },
@@ -38,7 +39,8 @@
     "remark-directive": "^4.0.0",
     "satori": "0.33.5",
     "sharp": "^0.35.5",
-    "unist-util-visit": "^5.1.0"
+    "unist-util-visit": "^5.1.0",
+    "vanilla-cookieconsent": "3.1.0"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",

@@ -1,13 +1,26 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  // Static assets only for now. The consent-logging Worker and its D1 binding arrive in a later change.
+  // Static assets, plus one small Worker for the consent log (src/worker/). The Worker runs only for
+  // /api/*: never set run_worker_first to true, or every page view would count against the free plan.
   "name": "harrisonjennings-au",
   "compatibility_date": "2026-10-01",
+  "main": "src/worker/index.ts",
   "assets": {
     "directory": "./dist",
+    "binding": "ASSETS",
     "html_handling": "auto-trailing-slash",
     "not_found_handling": "404-page",
+    "run_worker_first": ["/api/*"],
   },
+  // The consent log. Schema in migrations/; the IP hashing key is the CONSENT_IP_KEY secret.
+  "d1_databases": [
+    {
+      "binding": "CONSENT_DB",
+      "database_name": "harrisonjennings-consent",
+      "database_id": "57c02de5-f774-4914-a67e-e153baeb69c8",
+      "migrations_dir": "migrations",
+    },
+  ],
   "observability": {
     "enabled": true,
   },
@@ -15,7 +28,17 @@
   // Branch previews get workers.dev URLs, behind Cloudflare Access. See docs/deployment.md.
   "workers_dev": false,
   "preview_urls": true,
-  // Required by `wrangler preview`, which Workers Builds runs for every non-production branch.
-  // Empty: previews use the same assets and settings as production.
-  "previews": {},
+  // Required by `wrangler preview`, which Workers Builds runs for every non-production branch. Previews
+  // don't inherit production bindings: they write to their own consent database, so test clicks never
+  // reach the production log. Create its table with wrangler.preview-migrations.jsonc. Previews have
+  // no CONSENT_IP_KEY, so their rows store no IP hash.
+  "previews": {
+    "d1_databases": [
+      {
+        "binding": "CONSENT_DB",
+        "database_name": "harrisonjennings-consent-preview",
+        "database_id": "8bc922ab-8a8d-4862-b9b5-c43aed84a14c",
+      },
+    ],
+  },
 }

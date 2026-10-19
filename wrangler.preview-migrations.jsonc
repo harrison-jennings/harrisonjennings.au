@@ -1,0 +1,15 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  // Only for applying migrations to the Previews' consent database:
+  //   npx wrangler d1 migrations apply CONSENT_DB --remote -c wrangler.preview-migrations.jsonc
+  // Keep the name and ID in step with `previews.d1_databases` in wrangler.jsonc.
+  "name": "harrisonjennings-au-preview-migrations",
+  "d1_databases": [
+    {
+      "binding": "CONSENT_DB",
+      "database_name": "harrisonjennings-consent-preview",
+      "database_id": "8bc922ab-8a8d-4862-b9b5-c43aed84a14c",
+      "migrations_dir": "migrations",
+    },
+  ],
+}

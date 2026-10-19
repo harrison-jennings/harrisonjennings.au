@@ -1,11 +1,15 @@
 ---
 import '../styles/global.css';
+import { getEntry } from 'astro:content';
+import Consent from '../components/Consent.astro';
 import Footer from '../components/Footer.astro';
 import Nav from '../components/Nav.astro';
 import { SITE } from '../consts';
 import { feedPath } from '../lib/feed';
 import { WIDTH, HEIGHT } from '../lib/og/card';
+import { CONSENT_COOKIE } from '../lib/consent';
 import { shareImageFor } from '../lib/og/cards';
+import { tagManagerEnvironment, tagManagerSrc } from '../lib/tag-manager';
 
 interface Props {
   title?: string;
@@ -18,6 +22,8 @@ interface Props {
   feeds?: Array<{ title: string; href: string }>;
   /** Replaces the page's share card, such as a post's own `socialImage`. */
   image?: { src: string; width: number; height: number } | undefined;
+  /** What the page tells Tag Manager about itself (the data layer keys the WordPress site used). */
+  dataLayer?: { page_type?: string; categories?: string; post_id?: string } | undefined;
 }
 
 const {
@@ -27,6 +33,7 @@ const {
   float = false,
   feeds = [],
   image,
+  dataLayer = {},
 } = Astro.props;
 const pageTitle = title ? `${title} · ${SITE.name}` : SITE.name;
 const canonical = new URL(Astro.url.pathname, Astro.site);
@@ -37,6 +44,38 @@ const share = image ?? {
   height: HEIGHT,
 };
 const shareUrl = new URL(share.src, Astro.site);
+
+// Google Consent Mode (advanced): everything optional is denied until the visitor chooses. A returning
+// visitor's saved choice (CookieConsent's cookie, same revision) is applied here too, before Tag
+// Manager loads, so their first page view isn't sent as if they'd refused. Then the page's data layer
+// keys, then Tag Manager itself (Live on production, Testing on previews, nothing locally).
+const consent = await getEntry('consent', 'consent');
+if (!consent) throw new Error('src/content/consent.yaml: missing the `consent` entry');
+const consentHead = `window.dataLayer = window.dataLayer || [];
+function gtag() { dataLayer.push(arguments); }
+gtag('consent', 'default', { analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', personalization_storage: 'denied', functionality_storage: 'granted', security_storage: 'granted', wait_for_update: 500 });
+gtag('set', 'ads_data_redaction', true);
+try {
+  const saved = document.cookie.match(/(?:^|;\\s*)${CONSENT_COOKIE}=([^;]+)/);
+  const choice = saved && JSON.parse(decodeURIComponent(saved[1]));
+  if (choice && choice.revision === ${consent.data.revision} && Array.isArray(choice.categories)) {
+    const analytics = choice.categories.includes('analytics') ? 'granted' : 'denied';
+    const ads = choice.categories.includes('advertising') ? 'granted' : 'denied';
+    gtag('consent', 'update', { analytics_storage: analytics, ad_storage: ads, ad_user_data: ads, ad_personalization: ads });
+  }
+} catch {}
+dataLayer.push(${JSON.stringify({
+  page_name: pageTitle,
+  page_type: dataLayer.page_type ?? 'page',
+  post_author: 'Harrison Jennings',
+  categories: dataLayer.categories ?? '',
+  tags: '',
+  post_id: dataLayer.post_id ?? '',
+})});`;
+const tagManager = tagManagerEnvironment();
+const tagManagerHead =
+  tagManager &&
+  `(function (w, d, s, l) { w[l] = w[l] || []; w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' }); const f = d.getElementsByTagName(s)[0]; const j = d.createElement(s); j.async = true; j.src = ${JSON.stringify(tagManagerSrc(tagManager))}; f.parentNode.insertBefore(j, f); })(window, document, 'script', 'dataLayer');`;
 ---
 
 <!doctype html>
@@ -56,6 +95,8 @@ const shareUrl = new URL(share.src, Astro.site);
         document.documentElement.setAttribute('data-theme', 'dark');
       }
     </script>
+    <script is:inline set:html={consentHead} />
+    {tagManagerHead && <script is:inline set:html={tagManagerHead} />}
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
@@ -101,6 +142,7 @@ const shareUrl = new URL(share.src, Astro.site);
     <a class="skip-link" href="#main">
       skip to content
     </a>
+    <Consent />
     <Nav float={float} />
     <main id="main">
       <slot />

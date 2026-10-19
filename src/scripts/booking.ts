@@ -20,6 +20,20 @@ declare global {
 }
 
 const EMBED = 'https://app.cal.com/embed/embed.js';
+
+/** Cal.com's own housekeeping events, left out of the data layer. */
+const CAL_INTERNAL = new Set([
+  '__dimensionChanged',
+  'heightChanged',
+  'frameDimensionChanged',
+  'resize',
+  'uiUpdated',
+  'navigatedToBooker',
+  '__windowLoadComplete',
+  'linkReady',
+  'availabilityLoaded',
+  '__routeChanged',
+]);
 const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const theme = () =>
   document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
@@ -41,6 +55,17 @@ function cal(...args: unknown[]): void {
     };
     window.Cal = api;
     api('init', { origin: 'https://cal.com' });
+    // Every other Cal.com event goes to the data layer as the WordPress site sent it ({ event,
+    // cal_raw_event }), so Tag Manager's meeting_booking tag (on bookingSuccessful) keeps working.
+    api('on', {
+      action: '*',
+      callback: (e: CustomEvent<{ type?: string; action?: string }>) => {
+        const name = e.detail?.action ?? e.detail?.type ?? '';
+        if (!name || CAL_INTERNAL.has(name)) return;
+        const layer = ((window as { dataLayer?: unknown[] }).dataLayer ??= []);
+        layer.push({ event: name, cal_raw_event: e.detail });
+      },
+    });
   }
   window.Cal(...args);
 }

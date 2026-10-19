@@ -72,9 +72,9 @@ describe('callouts', () => {
 });
 
 describe('cookie settings', () => {
-  it('turns ::cookie-settings into the button that reopens the consent choices', async () => {
+  it('turns ::cookie-settings into the button that opens the cookie preferences', async () => {
     expect(await render('::cookie-settings')).toBe(
-      '<p class="cookie-settings"><button type="button" class="copy" data-cc="show-preferencesModal">cookie settings</button></p>',
+      '<p class="cookie-settings"><button type="button" class="copy" data-consent-preferences="" aria-haspopup="dialog">cookie settings</button></p>',
     );
   });
 });

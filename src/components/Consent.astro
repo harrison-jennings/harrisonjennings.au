@@ -1,0 +1,623 @@
+---
+// Cookie consent: the banner on a first visit, and the preferences dialog behind "manage preferences"
+// and every "cookie settings" button ([data-consent-preferences]). CookieConsent keeps the choice
+// (src/scripts/consent.ts); this is the design's own markup. The banner is a labelled region, never a
+// modal: the page stays usable behind it. Wording: src/content/consent.yaml.
+import { getEntry } from 'astro:content';
+import Button from './Button.astro';
+import Icon from './Icon.astro';
+
+const entry = await getEntry('consent', 'consent');
+if (!entry) throw new Error('src/content/consent.yaml: missing the `consent` entry');
+const { revision, banner, dialog, buttons, categories } = entry.data;
+
+const escape = (text: string) =>
+  text.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
+/** "[privacy policy]" in the wording becomes the link. */
+const withLink = (text: string) =>
+  escape(text).replace(/\[([^\]]+)\]/g, '<a class="consent-link" href="/privacy-policy/">$1</a>');
+---
+
+<section
+  class="consent"
+  aria-labelledby="consent-title"
+  data-consent-banner
+  data-consent-revision={revision}
+  hidden
+>
+  <div>
+    <p class="consent__title" id="consent-title">
+      {banner.title}
+      <span class="consent__stop" aria-hidden="true"></span>
+    </p>
+    <p class="consent__text" set:html={withLink(banner.text)} />
+  </div>
+  <div class="consent__actions">
+    <button type="button" class="choice" data-consent-accept>
+      {buttons.acceptAll}
+    </button>
+    <button type="button" class="choice" data-consent-reject>
+      {buttons.rejectAll}
+    </button>
+    <button type="button" class="choice" data-consent-preferences aria-haspopup="dialog">
+      {buttons.manage}
+    </button>
+  </div>
+</section>
+
+<dialog class="prefs" aria-labelledby="prefs-title" data-consent-dialog>
+  <div class="prefs__head">
+    <h2 class="prefs__title" id="prefs-title">
+      {dialog.title}
+    </h2>
+    <button type="button" class="prefs__close" aria-label={buttons.close} data-consent-close>
+      <Icon name="close" />
+    </button>
+  </div>
+  <div class="prefs__body">
+    <p class="prefs__intro">{dialog.intro}</p>
+    <div class="cats">
+      {categories.map((category) => {
+        const open = category.id === 'analytics';
+        return (
+          <div class="cat">
+            <div class="cat__row">
+              <button
+                type="button"
+                class="cat__toggle"
+                aria-expanded={open ? 'true' : 'false'}
+                aria-controls={`cat-${category.id}`}
+                data-consent-expand
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M6 9l6 6 6-6" />
+                </svg>
+                <span id={`cat-${category.id}-name`}>{category.name}</span>
+              </button>
+              {category.id === 'necessary' ? (
+                <span class="cat__always">{buttons.alwaysOn}</span>
+              ) : (
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked="false"
+                  aria-labelledby={`cat-${category.id}-name`}
+                  class="onoff"
+                  data-consent-switch={category.id}
+                >
+                  <span class="onoff__track">
+                    <span class="onoff__knob" />
+                  </span>
+                </button>
+              )}
+            </div>
+            <div class="cat__more" id={`cat-${category.id}`} hidden={!open}>
+              <p>{category.description}</p>
+              <table class="cookies">
+                <thead>
+                  <tr>
+                    <th scope="col">cookie</th>
+                    <th scope="col">what it does</th>
+                    <th scope="col">kept for</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {category.cookies.map((cookie) => (
+                    <tr>
+                      <td>{cookie.name}</td>
+                      <td>{cookie.purpose}</td>
+                      <td>{cookie.kept}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+    <p class="prefs__more" set:html={withLink(dialog.end)} />
+  </div>
+  <div class="prefs__foot">
+    <button type="button" class="choice" data-consent-accept>
+      {buttons.acceptAll}
+    </button>
+    <button type="button" class="choice" data-consent-reject>
+      {buttons.rejectAll}
+    </button>
+    <Button label={buttons.save} size="s" class="prefs__save" attrs={{ 'data-consent-save': '' }} />
+  </div>
+</dialog>
+
+<style>
+  /* The banner: a 400px card 24px from the bottom-right corner, so the hero's headline and the nav stay
+     clear; across the bottom of the screen on phones. */
+  .consent {
+    position: fixed;
+    z-index: 90;
+    right: 24px;
+    bottom: 24px;
+    box-sizing: border-box;
+    width: 400px;
+    max-width: calc(100% - 48px);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 22px;
+    padding: 26px 24px 24px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    color: var(--text);
+    animation: consent-in 320ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+  .consent[hidden] {
+    display: none;
+  }
+  @keyframes consent-in {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  .consent__title {
+    margin: 0 0 var(--space-10);
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: -0.04em;
+  }
+  .consent__stop {
+    display: inline-block;
+    width: 0.19em;
+    height: 0.19em;
+    margin-left: 0.25em;
+    border-radius: var(--radius-pill);
+    background: var(--accent);
+  }
+  .consent__text {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--muted);
+    text-wrap: pretty;
+  }
+  .consent__actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-10);
+  }
+  .consent__actions .choice {
+    width: 100%;
+  }
+  .consent :global(.consent-link),
+  .prefs :global(.consent-link) {
+    color: var(--text);
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-underline-offset: 4px;
+    transition: color 150ms ease;
+  }
+  .consent :global(.consent-link:hover),
+  .prefs :global(.consent-link:hover) {
+    color: var(--link);
+  }
+
+  /* "accept all", "reject non-essential", "manage preferences": outlined, of equal weight. */
+  .choice {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-height: var(--target);
+    padding: 0 var(--space-20);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.2;
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+      border-color 150ms ease,
+      color 150ms ease;
+  }
+  .choice:hover {
+    border-color: var(--link);
+    color: var(--link);
+  }
+
+  /* The preferences dialog: a native modal, so focus stays inside and Esc closes it. */
+  .prefs {
+    box-sizing: border-box;
+    flex-direction: column;
+    width: calc(100% - 64px);
+    max-width: 720px;
+    max-height: calc(100% - 64px);
+    margin: auto;
+    padding: 0;
+    overflow: hidden;
+    background: var(--ground);
+    color: var(--text);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    animation: prefs-in 280ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+  .prefs[open] {
+    display: flex;
+  }
+  /* The scrim: the ground colour, mostly opaque, in dark; the text colour, lightly, in light. */
+  .prefs::backdrop {
+    background: color-mix(in srgb, var(--ground) 72%, transparent);
+    animation: scrim-in 200ms ease both;
+  }
+  :global([data-theme='light']) .prefs::backdrop {
+    background: color-mix(in srgb, var(--text) 36%, transparent);
+  }
+  @keyframes prefs-in {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes scrim-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  .prefs__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-16);
+    padding: 22px 22px 18px var(--space-32);
+    border-bottom: 1px solid var(--line);
+  }
+  .prefs__title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 500;
+    letter-spacing: -0.04em;
+  }
+  .prefs__close {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: var(--target);
+    height: var(--target);
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+    transition: color 150ms ease;
+  }
+  .prefs__close:hover {
+    color: var(--link);
+  }
+  .prefs__body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 24px var(--space-32) var(--space-28);
+  }
+  .prefs__intro {
+    margin: 0 0 24px;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--muted);
+    text-wrap: pretty;
+  }
+  .prefs__more {
+    margin: 24px 0 0;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--muted);
+  }
+  .prefs__foot {
+    display: flex;
+    align-items: center;
+    gap: var(--space-10);
+    padding: 18px var(--space-32) var(--space-20);
+    border-top: 1px solid var(--line);
+  }
+  .prefs__foot :global(.prefs__save) {
+    margin-left: auto;
+    min-height: var(--target);
+    padding-block: 0;
+    --btn-px: 22px;
+  }
+
+  /* A category: its name opens the detail; the switch (or "always on") sits on the right. */
+  .cats {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-10);
+  }
+  .cat {
+    background: var(--surface);
+    border-radius: var(--radius-md);
+  }
+  .cat__row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 6px var(--space-10) 6px var(--space-8);
+  }
+  .cat__toggle {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 52px;
+    padding: 0 var(--space-10);
+    border: 0;
+    border-radius: var(--space-10);
+    background: transparent;
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    text-align: left;
+    cursor: pointer;
+  }
+  .cat__toggle svg {
+    flex: none;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    color: var(--muted);
+    transition: transform 240ms cubic-bezier(0.65, 0, 0.35, 1);
+  }
+  .cat__toggle[aria-expanded='true'] svg {
+    transform: rotate(180deg);
+  }
+  .cat__toggle:hover svg {
+    color: var(--link);
+  }
+  .cat__always {
+    padding-right: 12px;
+    font-family: var(--font-display);
+    font-size: 12px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .cat__more {
+    padding: 0 22px var(--space-20) 50px;
+  }
+  .cat__more p {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--muted);
+    text-wrap: pretty;
+  }
+
+  /* The switch: a 48 × 28 track in a 60 × 44 hit area. */
+  .onoff {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: var(--target);
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+  }
+  .onoff__track {
+    position: relative;
+    display: block;
+    box-sizing: border-box;
+    width: 48px;
+    height: 28px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-pill);
+    background: var(--ground);
+    transition:
+      background-color 200ms ease,
+      border-color 200ms ease;
+  }
+  .onoff__knob {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 20px;
+    height: 20px;
+    border-radius: var(--radius-pill);
+    background: var(--muted);
+    transition:
+      transform 220ms cubic-bezier(0.65, 0, 0.35, 1),
+      background-color 200ms ease;
+  }
+  .onoff:hover .onoff__track {
+    border-color: var(--link);
+  }
+  .onoff[aria-checked='true'] .onoff__track {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  .onoff[aria-checked='true'] .onoff__knob {
+    transform: translateX(20px);
+    background: var(--on-accent);
+  }
+
+  .cookies {
+    width: 100%;
+    margin-top: var(--space-16);
+    border-collapse: collapse;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .cookies th {
+    padding: 0 12px var(--space-8) 0;
+    text-align: left;
+    font-family: var(--font-display);
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--muted);
+  }
+  .cookies td {
+    padding: var(--space-10) 12px var(--space-10) 0;
+    border-top: 1px solid var(--line);
+    vertical-align: top;
+  }
+  .cookies td:first-child {
+    width: 150px;
+    font-family: var(--font-display);
+    font-size: 12px;
+    letter-spacing: -0.02em;
+  }
+  .cookies td:last-child {
+    width: 84px;
+    padding-right: 0;
+    color: var(--muted);
+  }
+
+  @media (max-width: 760px) {
+    .consent {
+      left: 12px;
+      right: 12px;
+      bottom: 12px;
+      width: auto;
+      max-width: none;
+      gap: var(--space-20);
+      padding: 22px var(--space-20) var(--space-20);
+      border-radius: 18px;
+    }
+    .consent__title {
+      font-size: 18px;
+    }
+    .prefs {
+      width: 100%;
+      max-width: none;
+      height: 100%;
+      max-height: none;
+      border: 0;
+      border-radius: 0;
+    }
+    .prefs__head {
+      padding: var(--space-16) var(--space-16) 14px var(--space-20);
+    }
+    .prefs__title {
+      font-size: 19px;
+    }
+    .prefs__body {
+      padding: var(--space-20) var(--space-16) 24px;
+    }
+    .prefs__intro {
+      margin-bottom: var(--space-20);
+      padding: 0 4px;
+      font-size: 15px;
+      line-height: 1.55;
+    }
+    .cat__row {
+      padding: 4px 2px;
+    }
+    .cat__toggle {
+      gap: var(--space-10);
+      padding: 0 var(--space-8);
+      font-size: 16px;
+    }
+    .cat__always {
+      padding-right: var(--space-10);
+    }
+    .cat__more {
+      padding: 0 var(--space-16) 18px;
+    }
+    /* Each cookie on two lines: name and time, then what it does. */
+    .cookies thead {
+      display: none;
+    }
+    .cookies tr {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 2px 12px;
+      padding: var(--space-10) 0;
+      border-top: 1px solid var(--line);
+    }
+    .cookies td,
+    .cookies td:first-child,
+    .cookies td:last-child {
+      display: block;
+      width: auto;
+      padding: 0;
+      border: 0;
+    }
+    .cookies td:nth-child(2) {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+    .cookies td:last-child {
+      text-align: right;
+    }
+    .prefs__more {
+      padding: 0 4px;
+      font-size: 14px;
+    }
+    .prefs__foot {
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--space-8);
+      padding: 14px var(--space-16) var(--space-16);
+    }
+    .prefs__foot .choice,
+    .prefs__foot :global(.prefs__save) {
+      width: 100%;
+      margin-left: 0;
+    }
+    .prefs__foot :global(.prefs__save) {
+      order: -1;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .consent,
+    .prefs,
+    .prefs::backdrop {
+      animation: none;
+    }
+    .choice,
+    .cat__toggle svg,
+    .onoff__track,
+    .onoff__knob,
+    .prefs__close {
+      transition: none;
+    }
+  }
+</style>
+
+<style is:global>
+  /* While the banner shows, the page can scroll its last content clear of it, and focus moved by the
+     keyboard stops above it (--consent-space is the banner's height, set by the script). */
+  html {
+    scroll-padding-bottom: var(--consent-space, 0px);
+  }
+  body {
+    padding-bottom: var(--consent-space, 0px);
+  }
+</style>
+
+<script>
+  import { bindConsent } from '../scripts/consent';
+  bindConsent();
+</script>
