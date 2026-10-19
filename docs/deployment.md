@@ -34,6 +34,8 @@ The consent log is a D1 database bound to the Worker as `CONSENT_DB` (`wrangler.
 2. **Apply the schema**: `npx wrangler d1 migrations apply CONSENT_DB --remote` (and again whenever a new file lands in `migrations/`).
 3. **The IP hashing key**: the Worker's **Settings → Variables and secrets → Add → Secret**, `CONSENT_IP_KEY`, a long random value (`openssl rand -hex 32`). Keep a copy in your password manager: without it, a stored hash can't be checked against an IP. Never change it unless you mean to: rows hashed with the old key stop matching.
 
+**Previews** don't inherit production bindings, so they write to their own database, `harrisonjennings-consent-preview` (`previews.d1_databases` in `wrangler.jsonc`), and test clicks never reach the production log. Create or update its table with `npx wrangler d1 migrations apply CONSENT_DB --remote -c wrangler.preview-migrations.jsonc`. Previews have no `CONSENT_IP_KEY`, so their rows store no IP hash.
+
 To look someone up, run a query in the database's **Console** tab, e.g. `SELECT * FROM consent_log WHERE consent_id = '…' ORDER BY created_at`. Rows from previews have `environment = 'preview'`.
 
 ## cutover (around 4 November)
