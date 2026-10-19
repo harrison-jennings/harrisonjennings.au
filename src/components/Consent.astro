@@ -130,21 +130,20 @@ const withLink = (text: string) =>
 </dialog>
 
 <style>
-  /* The banner: fixed to the foot of the screen, as wide as the content column. */
+  /* The banner: a 400px card 24px from the bottom-right corner, so the hero's headline and the nav stay
+     clear; across the bottom of the screen on phones. */
   .consent {
     position: fixed;
     z-index: 90;
-    left: 50%;
+    right: 24px;
     bottom: 24px;
     box-sizing: border-box;
-    width: calc(100% - 32px);
-    max-width: 1120px;
-    transform: translateX(-50%);
+    width: 400px;
+    max-width: calc(100% - 48px);
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 260px;
-    gap: 56px;
-    align-items: center;
-    padding: 30px var(--space-32);
+    grid-template-columns: minmax(0, 1fr);
+    gap: 22px;
+    padding: 26px 24px 24px;
     background: var(--surface);
     border: 1px solid var(--line);
     border-radius: var(--radius-lg);
@@ -157,11 +156,11 @@ const withLink = (text: string) =>
   @keyframes consent-in {
     from {
       opacity: 0;
-      transform: translate(-50%, 16px);
+      transform: translateY(16px);
     }
     to {
       opacity: 1;
-      transform: translate(-50%, 0);
+      transform: none;
     }
   }
   .consent__title {
@@ -169,6 +168,7 @@ const withLink = (text: string) =>
     font-family: var(--font-display);
     font-size: 20px;
     font-weight: 500;
+    line-height: 1.2;
     letter-spacing: -0.04em;
   }
   .consent__stop {
@@ -181,9 +181,8 @@ const withLink = (text: string) =>
   }
   .consent__text {
     margin: 0;
-    max-width: 640px;
-    font-size: 16px;
-    line-height: 1.6;
+    font-size: 15px;
+    line-height: 1.55;
     color: var(--muted);
     text-wrap: pretty;
   }
@@ -497,19 +496,17 @@ const withLink = (text: string) =>
 
   @media (max-width: 760px) {
     .consent {
+      left: 12px;
+      right: 12px;
       bottom: 12px;
-      width: calc(100% - 24px);
-      grid-template-columns: minmax(0, 1fr);
+      width: auto;
+      max-width: none;
       gap: var(--space-20);
       padding: 22px var(--space-20) var(--space-20);
       border-radius: 18px;
     }
     .consent__title {
       font-size: 18px;
-    }
-    .consent__text {
-      font-size: 15px;
-      line-height: 1.55;
     }
     .prefs {
       width: 100%;

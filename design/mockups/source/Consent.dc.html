@@ -72,8 +72,13 @@ button{font:inherit;color:inherit}
 .dlg-foot{display:flex;align-items:center;gap:10px;padding:18px 32px 20px;border-top:1px solid var(--line)}
 .dlg-foot .btn{margin-left:auto}
 
+/* corner (desktop) */
+.cx[data-place=corner][data-dev=desktop] .bn{left:auto;right:24px;bottom:24px;width:400px;max-width:none;transform:none;grid-template-columns:minmax(0,1fr);gap:22px;padding:26px 24px 24px;animation-name:bnUp}
+.cx[data-place=corner][data-dev=desktop] .bn p{font-size:15px;line-height:1.55}
+@keyframes bnUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
 /* phone */
-.cx[data-dev=phone] .bn{bottom:12px;width:calc(100% - 24px);grid-template-columns:minmax(0,1fr);gap:20px;padding:22px 20px 20px;border-radius:18px}
+.cx[data-dev=phone] .bn{left:12px;right:12px;bottom:12px;width:auto;transform:none;animation-name:bnUp;grid-template-columns:minmax(0,1fr);gap:20px;padding:22px 20px 20px;border-radius:18px}
 .cx[data-dev=phone] .bn h2{font-size:18px}
 .cx[data-dev=phone] .bn p{font-size:15px;line-height:1.55}
 .cx[data-dev=phone] .scrim{padding:0}
@@ -102,7 +107,7 @@ button{font:inherit;color:inherit}
 @media (prefers-reduced-motion:reduce){.bn,.scrim,.dlg{animation:none}.pill,.btn .wipe,.sw .track,.sw .knob,.cat-tog .chev,.close{transition:none}}
 </style>
 </helmet>
-<div class="cx" data-dev="{{dev}}" data-still="{{stillAttr}}" style="width: {{w}}px; height: {{h}}px; --ground: {{c.ground}}; --surface: {{c.surface}}; --line: {{c.line}}; --text: {{c.text}}; --muted: {{c.muted}}; --accent: {{c.accent}}; --link: {{c.link}}; --on-accent: {{c.onAccent}}; --on-apricot: {{c.onApricot}}; --scrim: {{c.scrim}}">
+<div class="cx" data-dev="{{dev}}" data-place="{{place}}" data-still="{{stillAttr}}" style="width: {{w}}px; height: {{h}}px; --ground: {{c.ground}}; --surface: {{c.surface}}; --line: {{c.line}}; --text: {{c.text}}; --muted: {{c.muted}}; --accent: {{c.accent}}; --link: {{c.link}}; --on-accent: {{c.onAccent}}; --on-apricot: {{c.onApricot}}; --scrim: {{c.scrim}}">
 <sc-if value="{{isDesk}}" hint-placeholder-val="{{true}}">
 <dc-import name="HeroAligned" mode="{{mode}}" still="{{still}}" hint-size="1440px,900px"></dc-import>
 </sc-if>
@@ -160,7 +165,7 @@ button{font:inherit;color:inherit}
 </sc-if>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"mode": {"editor": "enum", "options": ["dark", "light"], "default": "dark"}, "view": {"editor": "enum", "options": ["banner", "preferences"], "default": "banner"}, "device": {"editor": "enum", "options": ["desktop", "phone"], "default": "desktop"}, "still": {"editor": "boolean", "default": false}, "$preview": {"width": 1440, "height": 900}}'>
+<script type="text/x-dc" data-dc-script data-props='{"mode": {"editor": "enum", "options": ["dark", "light"], "default": "dark"}, "view": {"editor": "enum", "options": ["banner", "preferences"], "default": "banner"}, "device": {"editor": "enum", "options": ["desktop", "phone"], "default": "desktop"}, "placement": {"editor": "enum", "options": ["corner", "wide"], "default": "corner"}, "still": {"editor": "boolean", "default": false}, "$preview": {"width": 1440, "height": 900}}'>
 
 class Component extends DCLogic {
   componentWillUnmount() { clearTimeout(this.t); }
@@ -179,7 +184,7 @@ class Component extends DCLogic {
     var ex = s.ex || { essential: false, analytics: true, advertising: false };
     var v = {
       mode: this.props.mode || 'dark', still: !!this.props.still, stillAttr: this.props.still ? 'true' : 'false',
-      dev: phone ? 'phone' : 'desktop', isPhone: phone, isDesk: !phone, w: phone ? 390 : 1440, h: phone ? 844 : 900,
+      dev: phone ? 'phone' : 'desktop', place: this.props.placement || 'corner', isPhone: phone, isDesk: !phone, w: phone ? 390 : 1440, h: phone ? 844 : 900,
       showBanner: view === 'banner', showPrefs: view === 'preferences',
       c: light ? {
         ground: '#F4EFEB', surface: '#FBF8F5', line: '#E3D9D2', text: '#1A1615', muted: '#655D59',
