@@ -68,3 +68,13 @@ test('the footer logo draws when the footer comes into view, not on load', async
     .poll(() => footerMark.evaluate((p: SVGPathElement) => p.style.strokeDasharray))
     .not.toBe('');
 });
+
+for (const width of [390, 1440]) {
+  test(`at ${width}px the floating nav clears the home page heading`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 844 });
+    await page.goto('/');
+    const nav = await navBox(page);
+    const heading = (await page.locator('main h1').boundingBox())!;
+    expect(heading.y).toBeGreaterThanOrEqual(nav.y + nav.height);
+  });
+}

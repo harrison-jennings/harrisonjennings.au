@@ -4,6 +4,8 @@
 import { BOOKING_URL, LEGAL, SITE, SOCIAL } from '../consts';
 import Icon from './Icon.astro';
 import Logo from './Logo.astro';
+
+const year = new Date().getFullYear();
 ---
 
 <footer class="column footer-wrap">
@@ -38,6 +40,7 @@ import Logo from './Logo.astro';
         <button type="button" data-cc="show-preferencesModal">
           cookie settings
         </button>
+        <span>© {year}</span>
       </p>
     </div>
   </div>
