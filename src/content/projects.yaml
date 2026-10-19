@@ -6,6 +6,8 @@
   summary: Email previews and linting that understand Marketo, inside VS Code. Reads Email Editor 2.0 templates the way Marketo does, then shows how they render across 21 email clients.
   host: leadlens.harrisonjennings.au
   url: https://leadlens.harrisonjennings.au/
+  repo: https://github.com/harrison-jennings/leadlens
+  story: leadlens-email-previews-and-linting-for-marketo-inside-vs-code
   kind: VS Code extension
   built: 2026
   featured: true
@@ -16,6 +18,8 @@
   summary: A searchable reference for the Marketo Engage REST API, generated from Adobe's own specifications, with a request builder that shows exactly what a call would send.
   host: mkto-ref.harrisonjennings.au
   url: https://mkto-ref.harrisonjennings.au/
+  repo: https://github.com/harrison-jennings/api-reference-for-marketo-engage
+  story: automating-my-way-around-marketo-api-documentation
   kind: interactive API reference
   built: 2026
   featured: true

@@ -15,7 +15,20 @@
 /feed   /rss.xml  301
 
 # Posts: /YYYY/MM/<slug>/ → /blog/<slug>/
-# /2026/08/example-post/  /blog/example-post/  301
+/2025/11/whats-this-all-about/                                      /blog/whats-this-all-about/                                      301
+/2025/11/when-a-marketo-smart-campaign-isnt-smart-enough/           /blog/when-a-marketo-smart-campaign-isnt-smart-enough/           301
+/2026/08/when-your-website-gets-attacked-before-anyone-even-visits/ /blog/when-your-website-gets-attacked-before-anyone-even-visits/ 301
+/2026/08/is-sending-yourself-a-test-email-enough/                   /blog/is-sending-yourself-a-test-email-enough/                   301
+/2026/09/automating-my-way-around-marketo-api-documentation/        /blog/automating-my-way-around-marketo-api-documentation/        301
+/2026/10/leadlens-email-previews-and-linting-for-marketo-inside-vs-code/ /blog/leadlens-email-previews-and-linting-for-marketo-inside-vs-code/ 301
 
-# Categories (and any tags): /category/<slug>/ → /blog/topic/<id>/, or /blog/ if merged away
-# /category/example/  /blog/topic/example/  301
+# Categories: /category/<slug>/ → /blog/topic/<id>/, or /blog/ for those merged away (and analytics,
+# until a second post gives it a topic page). The empty categories were never in the sitemap and lapse.
+/category/adobe-marketo-engage/  /blog/topic/adobe-marketo-engage/  301
+/category/marketing-automation/  /blog/topic/adobe-marketo-engage/  301
+/category/cloud/                 /blog/topic/cloud/                 301
+/category/web-development/       /blog/topic/web-development/       301
+/category/analytics/             /blog/                             301
+/category/api/                   /blog/                             301
+/category/general/               /blog/                             301
+/category/marketing-technology/  /blog/                             301

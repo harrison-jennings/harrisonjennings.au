@@ -1,6 +1,19 @@
-# The fixed list of topics. Posts reference these ids; a typo fails the build.
-# Filled in during the content migration from the WordPress categories (and any tags).
-# - id: marketing-automation
-#   name: marketing automation
-#   description: Marketo Engage, lifecycle programs and the plumbing behind them.
-[]
+# The fixed list of topics. Posts reference these ids; a typo fails the build. A topic gets its own page
+# at /blog/topic/<id>/ once two published posts use it. Every old /category/<slug>/ URL has a 301 in
+# public/_redirects: to its topic, or to /blog/ for the categories that were merged away.
+# DRAFT: the descriptions (shown on each topic page and its share card) are still to be confirmed.
+- id: adobe-marketo-engage
+  name: adobe marketo engage
+  description: Getting more out of Marketo, and building around its edges when it runs out of road.
+
+- id: cloud
+  name: cloud
+  description: Cloud infrastructure for marketing systems, kept small, cheap and secure enough for the job.
+
+- id: web-development
+  name: web development
+  description: The tools, sites and code behind the work, built by a marketer who writes code.
+
+- id: analytics
+  name: analytics
+  description: Measurement and the plumbing behind it, from tagging to the data it produces.

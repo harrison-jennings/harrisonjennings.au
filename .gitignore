@@ -34,3 +34,6 @@ npm-debug.log*
 !.vscode/extensions.json
 !.vscode/settings.json
 
+
+# the WordPress export and migration working files (personal data: never commit)
+migration/
