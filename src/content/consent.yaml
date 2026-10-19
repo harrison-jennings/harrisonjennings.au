@@ -1,0 +1,53 @@
+# The cookie banner and the preferences dialog. Edit the wording here; the code reads it at build.
+# `revision`: raise it when the categories or what they cover change, and everyone is asked again.
+# In the banner and the end line, [privacy policy] becomes the link to /privacy-policy/.
+consent:
+  revision: 1
+  banner:
+    title: cookies
+    text: Essential cookies keep the site working and remember your choices. Analytics and advertising cookies only run if you agree, and you can change your mind any time from cookie settings in the footer. More in the [privacy policy].
+  dialog:
+    title: cookie preferences
+    intro: Choose which cookies this site can use. Anything optional stays off until you turn it on.
+    end: Questions about cookies or your information? See the [privacy policy].
+  buttons:
+    acceptAll: accept all
+    rejectAll: reject non-essential
+    manage: manage preferences
+    save: save choices
+    close: close cookie preferences
+    alwaysOn: always on
+  categories:
+    - id: necessary
+      name: essential
+      description: Needed for the site to work, and to remember the choices you make here. These can't be turned off.
+      cookies:
+        - name: cc_cookie
+          purpose: Remembers your cookie choices.
+          kept: 6 months
+    - id: analytics
+      name: analytics
+      description: Google Analytics shows which pages and posts get read and how people find the site, so I know what's worth writing more of.
+      cookies:
+        - name: _ga
+          purpose: Tells one visitor's visits apart from another's.
+          kept: 2 years
+        - name: _ga_<id>
+          purpose: Keeps track of the current visit.
+          kept: 2 years
+        # Set by this site's own analytics server (measure.harrisonjennings.au); not in the mockup.
+        - name: FPID
+          purpose: Tells one visitor's visits apart, from this site's own analytics server.
+          kept: 400 days
+        - name: FPLC
+          purpose: Carries that visitor ID between this site's subdomains.
+          kept: 20 hours
+    - id: advertising
+      name: advertising
+      description: Lets ad platforms tell whether a campaign brought you here, and may be used to show you related ads on other sites.
+      # TO CONFIRM: no advertising tag is active in Tag Manager today (both conversion linkers are paused),
+      # so nothing in this category sets a cookie yet. Replace this row when one is switched on.
+      cookies:
+        - name: to confirm
+          purpose: Listed here before any advertising tag is switched on.
+          kept: to confirm

@@ -2,7 +2,7 @@
 // A post: header, the text with "on this page" beside it, then the published line, the author
 // panel and "keep reading". No booking band on blog pages.
 import { getImage } from 'astro:assets';
-import { render } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 import AuthorPanel from '../../../components/blog/AuthorPanel.astro';
 import KeepReading from '../../../components/blog/KeepReading.astro';
 import PostEnd from '../../../components/blog/PostEnd.astro';
@@ -27,6 +27,13 @@ const { Content, headings, remarkPluginFrontmatter } = await render(post);
 const readingTime = Number(remarkPluginFrontmatter['readingTime'] ?? 1);
 const toc = tocHeadings(headings, post.data.toc);
 const topicPages = await topicPageIds();
+// For Tag Manager: the same data layer keys the WordPress site set (categories are the topics now).
+const topicNames = new Map((await getCollection('topics')).map((t) => [t.id, t.data.name]));
+const dataLayer = {
+  page_type: 'post',
+  categories: post.data.topics.flatMap((t) => topicNames.get(t.id) ?? []).join(', '),
+  post_id: post.data.wpId === undefined ? '' : String(post.data.wpId),
+};
 // A post's own `socialImage` replaces its generated share card, cropped to the card's 1200 × 630.
 const socialImage = post.data.socialImage
   ? await getImage({
@@ -45,6 +52,7 @@ const image = socialImage && { src: socialImage.src, width: 1200, height: 630 };
   description={post.data.description}
   noindex={post.data.draft}
   image={image}
+  dataLayer={dataLayer}
 >
   <div class="column">
     <PostHeader post={post} readingTime={readingTime} topicPages={topicPages} />

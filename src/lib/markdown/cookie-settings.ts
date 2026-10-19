@@ -16,7 +16,12 @@ export function remarkCookieSettings() {
           value: 'cookie settings',
           data: {
             hName: 'button',
-            hProperties: { type: 'button', className: ['copy'], dataCc: 'show-preferencesModal' },
+            hProperties: {
+              type: 'button',
+              className: ['copy'],
+              dataConsentPreferences: '',
+              ariaHaspopup: 'dialog',
+            },
             hChildren: [{ type: 'text', value: 'cookie settings' }],
           },
         },

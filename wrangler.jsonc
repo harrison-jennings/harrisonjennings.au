@@ -1,13 +1,26 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  // Static assets only for now. The consent-logging Worker and its D1 binding arrive in a later change.
+  // Static assets, plus one small Worker for the consent log (src/worker/). The Worker runs only for
+  // /api/*: never set run_worker_first to true, or every page view would count against the free plan.
   "name": "harrisonjennings-au",
   "compatibility_date": "2026-10-01",
+  "main": "src/worker/index.ts",
   "assets": {
     "directory": "./dist",
+    "binding": "ASSETS",
     "html_handling": "auto-trailing-slash",
     "not_found_handling": "404-page",
+    "run_worker_first": ["/api/*"],
   },
+  // The consent log. Schema in migrations/; the IP hashing key is the CONSENT_IP_KEY secret.
+  "d1_databases": [
+    {
+      "binding": "CONSENT_DB",
+      "database_name": "harrisonjennings-consent",
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "migrations",
+    },
+  ],
   "observability": {
     "enabled": true,
   },

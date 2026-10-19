@@ -142,6 +142,35 @@ const notFound = defineCollection({
   schema: z.object({ title: z.array(z.string()).min(1), text: z.string() }),
 });
 
+// The cookie banner and preferences dialog (see src/components/Consent.astro). The category ids are the
+// ones CookieConsent and the consent log use; their order is the order in the dialog.
+const consent = defineCollection({
+  loader: file('src/content/consent.yaml'),
+  schema: z.object({
+    revision: z.number().int().positive(),
+    banner: z.object({ title: z.string(), text: z.string() }),
+    dialog: z.object({ title: z.string(), intro: z.string(), end: z.string() }),
+    buttons: z.object({
+      acceptAll: z.string(),
+      rejectAll: z.string(),
+      manage: z.string(),
+      save: z.string(),
+      close: z.string(),
+      alwaysOn: z.string(),
+    }),
+    categories: z
+      .array(
+        z.object({
+          id: z.enum(['necessary', 'analytics', 'advertising']),
+          name: z.string(),
+          description: z.string(),
+          cookies: z.array(z.object({ name: z.string(), purpose: z.string(), kept: z.string() })),
+        }),
+      )
+      .length(3),
+  }),
+});
+
 export const collections = {
   posts,
   pages,
@@ -154,4 +183,5 @@ export const collections = {
   projectsPage,
   rss,
   notFound,
+  consent,
 };

@@ -23,10 +23,10 @@ test.describe('the legal pages', () => {
     await expect(page.locator('.prose table').first()).toContainText('cf_clearance');
   });
 
-  test('privacy: the cookies section reopens the consent choices', async ({ page }) => {
+  test('privacy: the cookies section opens the cookie preferences', async ({ page }) => {
     await page.goto('/privacy-policy/');
-    const button = page.locator('.prose').getByRole('button', { name: 'cookie settings' });
-    await expect(button).toHaveAttribute('data-cc', 'show-preferencesModal');
+    await page.locator('.prose').getByRole('button', { name: 'cookie settings' }).click();
+    await expect(page.getByRole('dialog', { name: 'cookie preferences' })).toBeVisible();
   });
 
   test('"on this page" lists the h2s only, beside the text', async ({ page }) => {
