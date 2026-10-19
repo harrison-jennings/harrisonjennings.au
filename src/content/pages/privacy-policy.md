@@ -1,10 +1,9 @@
 ---
 title: privacy policy
 description: How this site handles personal information, what runs in your browser and when, and how to ask about it.
-# Carried across from the WordPress site unchanged, apart from layout. Before launch, update what
-# describes WordPress: VentraIP hosting, "the primary WordPress website", and the Pressidium consent
-# cookie (the new consent banner in phase 7 uses its own). Then change the date below.
-updated: 2026-09-27
+# Updated for the new site: hosting on Cloudflare, the consent records, and the cookie tables (built
+# from src/content/consent.yaml). Set the date to the day it goes live.
+updated: 2026-10-20
 # DRAFT: the short version is new; check it says only what the policy says.
 summary:
   - You can read the site without telling me who you are.
@@ -40,7 +39,7 @@ The types of personal information collected or received may include:
 - information concerning a consulting enquiry or proposed engagement;
 - IP address, browser type, device type, operating system, referral information, pages viewed and timestamps;
 - website interaction and analytics events;
-- cookie and consent preferences; and
+- cookie and consent preferences, and a record of each consent choice; and
 - technical, diagnostic and security information associated with use of the Site.
 
 The Site does not collect payment-card, bank-account or government identity-document information.
@@ -92,11 +91,13 @@ Necessary technologies may be used to:
 
 These technologies may operate without optional analytics or marketing consent where they are reasonably necessary for the requested functionality or the security of the Site.
 
+When a visitor makes or changes a cookie choice, a record of that choice is kept so the Site can show what was agreed and when. The record holds the choice made for each category, a random consent identifier (also stored in the visitor's `cc_cookie`), the date and time, the page the choice was made on, the visitor's approximate location (country and region) and browser details (user agent). The IP address itself is not stored: only a one-way keyed hash of it, which can be matched against an address the visitor provides but cannot be turned back into that address. These records are stored with Cloudflare and kept only for as long as reasonably necessary to demonstrate the consent given.
+
 ::cookie-table{category="necessary"}
 
 ### analytics
 
-The primary WordPress website uses Google Analytics and related measurement services to understand matters such as visitor numbers, pages viewed and general interaction with the website.
+The Site uses Google Analytics and related measurement services, loaded through Google Tag Manager from the Site's own measurement subdomain (measure.harrisonjennings.au), to understand matters such as visitor numbers, pages viewed and general interaction with the website.
 
 The Site uses Advanced Google Consent Mode. If optional consent is refused, Google may receive limited measurements without cookies for aggregated measurement and modelling. Analytics or advertising cookies are not stored or accessed unless the visitor grants the corresponding consent.
 
@@ -140,8 +141,7 @@ Further information is available in the [Cal.com Privacy Policy](https://cal.com
 
 Personal information may be handled by service providers that assist with operating, securing and communicating through the Site. Current providers include:
 
-- **VentraIP**, for Australian website hosting;
-- **Cloudflare**, for DNS, content delivery, traffic management and website security;
+- **Cloudflare**, for website hosting, DNS, content delivery, traffic management, website security and storing cookie-consent records;
 - **Google**, including Google Analytics, Google Tag Manager and Google Cloud services used in the Site’s measurement architecture;
 - **Vercel**, for hosting and cookieless Web Analytics associated with selected project or demonstration sites;
 - **GitHub**, for static GitHub Pages hosting associated with selected project, demonstration or reference sites;
