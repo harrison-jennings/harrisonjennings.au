@@ -67,7 +67,7 @@ Everything is still under `prefers-reduced-motion`.
 - **Signal:** the live dot's pulse, 1.8s.
 - **Button wipe:** apricot in from the side the pointer enters, out the side it leaves, 360ms, cubic ease; once on tap.
 - **Links and icons:** 150ms colour and underline.
-- **Nav:** compacts after 80px of scroll; hover or focus opens it back up.
+- **Nav:** compacts after 80px of scroll and stays compact under the pointer; keyboard focus opens it back up.
 
 ## components
 

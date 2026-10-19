@@ -32,7 +32,9 @@ test('on the home page the nav floats over the top of the page', async ({ page }
   expect(await page.locator('main').evaluate((m) => m.getBoundingClientRect().top)).toBe(0);
 });
 
-test('the nav compacts after 80px of scroll and opens back up on hover', async ({ page }) => {
+test('the nav compacts after 80px of scroll and stays compact under the pointer', async ({
+  page,
+}) => {
   await page.goto('/');
   await page.mouse.move(720, 700);
   await page.evaluate(() => window.scrollTo(0, 79));
@@ -41,10 +43,27 @@ test('the nav compacts after 80px of scroll and opens back up on hover', async (
   await expect.poll(() => isCompact(page)).toBe(true);
   await expect(page.locator('.nav__name')).toBeHidden();
 
-  const box = await navBox(page);
-  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
-  await expect.poll(() => isCompact(page)).toBe(false);
+  // Hovering mustn't move the links out from under the pointer.
+  await page.waitForTimeout(400); // let the compacting transition finish
+  const blog = page.locator('.nav__links a', { hasText: 'blog' });
+  const before = (await blog.boundingBox())!;
+  await page.mouse.move(before.x + before.width / 2, before.y + before.height / 2);
+  await page.waitForTimeout(300);
+  expect(await isCompact(page)).toBe(true);
+  expect((await blog.boundingBox())!.x).toBe(before.x);
+});
+
+test('keyboard focus opens the compact nav, so its icons stay reachable', async ({ page }) => {
+  await page.goto('/');
   await page.mouse.move(720, 700);
+  await page.evaluate(() => window.scrollTo(0, 120));
+  await expect.poll(() => isCompact(page)).toBe(true);
+  await page.locator('.nav__brand').focus();
+  await page.keyboard.press('Tab');
+  await expect.poll(() => isCompact(page)).toBe(false);
+  await expect(page.locator('.nav__icons')).toBeVisible();
+  await page.locator('main').focus();
+  await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
   await expect.poll(() => isCompact(page)).toBe(true);
 });
 

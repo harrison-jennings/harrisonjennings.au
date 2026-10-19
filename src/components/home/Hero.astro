@@ -3,7 +3,7 @@
 // subtitle, "read the blog" and "book a call", and a scroll cue that fades over the first 160px.
 // The nav floats over it (Base's `home`).
 import { getEntry } from 'astro:content';
-import { BOOKING_URL } from '../../consts';
+import { BOOK_HREF } from '../../consts';
 import Button from '../Button.astro';
 import TextLink from '../TextLink.astro';
 
@@ -40,7 +40,7 @@ const last = headline.length - 1;
       </p>
       <div class="hero__actions">
         <TextLink href="/blog/">read the blog</TextLink>
-        <Button href={BOOKING_URL} label="book a call" size="l" external />
+        <Button href={BOOK_HREF} label="book a call" size="l" attrs={{ 'data-book-call': '' }} />
       </div>
     </div>
   </div>

@@ -1,8 +1,9 @@
 ---
-// Floating pill navigation and the full-screen phone menu. Compacts after 80px of scroll and opens
-// back up on hover or focus. On the home page it floats over the hero; elsewhere it sits 16px from
-// the top. Either way it stays in view while scrolling, so the compact state is seen.
-import { BOOKING_URL, NAV, SOCIAL, SITE } from '../consts';
+// Floating pill navigation and the full-screen phone menu. Compacts after 80px of scroll; keyboard
+// focus opens it back up (hover doesn't, so links never move under the pointer). On the home page it
+// floats over the hero; elsewhere it sits 16px from the top. Either way it stays in view while
+// scrolling, so the compact state is seen.
+import { BOOK_HREF, NAV, SOCIAL, SITE } from '../consts';
 import Button from './Button.astro';
 import Icon from './Icon.astro';
 import IconButton from './IconButton.astro';
@@ -37,7 +38,13 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
       <IconButton href={SOCIAL.github.href} label={SOCIAL.github.label} icon="github" />
       <IconButton href={SOCIAL.linkedin.href} label={SOCIAL.linkedin.label} icon="linkedin" />
     </div>
-    <Button href={BOOKING_URL} label="book a call" size="s" class="nav__cta" external />
+    <Button
+      href={BOOK_HREF}
+      label="book a call"
+      size="s"
+      class="nav__cta"
+      attrs={{ 'data-book-call': '' }}
+    />
     <button
       class="control nav__menu"
       type="button"
@@ -68,7 +75,12 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
         ))}
       </div>
       <div class="menu__cta">
-        <Button href={BOOKING_URL} label="book a call" size="block" external />
+        <Button
+          href={BOOK_HREF}
+          label="book a call"
+          size="block"
+          attrs={{ 'data-book-call': '' }}
+        />
       </div>
       <div class="menu__social">
         <IconButton href={SOCIAL.github.href} label={SOCIAL.github.label} icon="github" large />
@@ -315,7 +327,10 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
 </style>
 
 <script>
+  import { bindBookCall } from '../scripts/booking';
   import { bindNav } from '../scripts/nav';
+  // Every "book a call" on the page (nav, menu, hero, footer).
+  document.querySelectorAll<HTMLAnchorElement>('a[data-book-call]').forEach(bindBookCall);
   document.querySelectorAll<HTMLElement>('[data-nav]').forEach((nav) => bindNav(nav));
 
   const menu = document.querySelector<HTMLDialogElement>('[data-menu]');

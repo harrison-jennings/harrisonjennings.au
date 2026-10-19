@@ -2,7 +2,7 @@
 // The booking band at the foot of the home page. "view availability" opens the calendar inside the
 // band and only then loads Cal.com; the logo's dot bounces while it loads.
 import { getEntry } from 'astro:content';
-import { BOOKING_URL, SOCIAL } from '../../consts';
+import { SOCIAL } from '../../consts';
 import Button from '../Button.astro';
 import Logo from '../Logo.astro';
 import TextLink from '../TextLink.astro';
@@ -10,13 +10,11 @@ import TextLink from '../TextLink.astro';
 const home = await getEntry('home', 'home');
 if (!home) throw new Error('src/content/home.yaml: missing the `home` entry');
 const { title, note } = home.data.booking;
-const calLink = new URL(BOOKING_URL).pathname.replace(/^\//, '');
-// Passed as data-booking-link, never data-cal-link: Cal.com's embed turns any element with that
-// attribute into a "click to open the popup" trigger, which would hijack clicks in the band.
 ---
 
-<section class="section column" aria-labelledby="book-title">
-  <div class="book" data-book data-booking-link={calLink}>
+<section class="section column" id="book" aria-labelledby="book-title">
+  <!-- Never data-cal-link here: Cal.com's embed turns any element with it into a popup trigger. -->
+  <div class="book" data-book>
     <div class="book__text">
       <h2 id="book-title" class="book__title">
         {title}
@@ -48,6 +46,8 @@ const calLink = new URL(BOOKING_URL).pathname.replace(/^\//, '');
 
 <style>
   .book {
+    /* "book a call" scrolls the band here, clear of the floating nav */
+    scroll-margin-top: calc(2 * var(--space-16) + var(--target) + 2 * var(--space-10) + 2px);
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     gap: var(--space-20) 48px;
@@ -179,7 +179,5 @@ const calLink = new URL(BOOKING_URL).pathname.replace(/^\//, '');
 
 <script>
   import { bindBooking } from '../../scripts/booking';
-  document
-    .querySelectorAll<HTMLElement>('[data-book]')
-    .forEach((band) => bindBooking(band, band.dataset['bookingLink'] ?? ''));
+  document.querySelectorAll<HTMLElement>('[data-book]').forEach((band) => bindBooking(band));
 </script>

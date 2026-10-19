@@ -20,7 +20,10 @@ test.describe('desktop', () => {
       'href',
       '/blog/',
     );
-    await expect(actions.getByRole('link', { name: 'book a call' })).toBeVisible();
+    await expect(actions.getByRole('link', { name: 'book a call' })).toHaveAttribute(
+      'href',
+      '/#book',
+    );
   });
 
   test('the scroll cue fades out over the first 160px', async ({ page }) => {
@@ -139,6 +142,42 @@ test('the booking calendar opens in the band and only then loads Cal.com', async
 
   // Cal.com's embed turns any [data-cal-link] element into a popup trigger; nothing of ours may have it.
   await expect(page.locator('[data-cal-link]')).toHaveCount(0);
+});
+
+test('every book a call stays on the site', async ({ page }) => {
+  await page.goto('/');
+  const links = page.locator('a', { hasText: 'book a call' });
+  expect(await links.count()).toBeGreaterThanOrEqual(3);
+  for (const link of await links.all()) {
+    await expect(link).toHaveAttribute('href', '/#book');
+    await expect(link).not.toHaveAttribute('target', '_blank');
+  }
+});
+
+test('on the home page, book a call scrolls to the band and opens its calendar', async ({
+  page,
+}) => {
+  await page.route('https://app.cal.com/**', (route) => route.abort());
+  await page.goto('/');
+  await page.locator('.nav [data-book-call]').click();
+  await expect(page.locator('[data-book-cal]')).toBeVisible();
+  await expect(page.locator('[data-book-toggle]')).toBeFocused();
+  await expect(page).toHaveURL(/#book$/);
+  // Clear of the floating nav.
+  await expect
+    .poll(async () => Math.round((await page.locator('[data-book]').boundingBox())!.y))
+    .toBeGreaterThanOrEqual(82);
+});
+
+test('elsewhere, book a call opens the calendar over the page', async ({ page }) => {
+  await page.route('https://app.cal.com/**', (route) => route.abort());
+  const requests = thirdParty(page);
+  await page.goto('/does-not-exist/');
+  await page.locator('.nav [data-book-call]').click();
+  await expect
+    .poll(() => requests.some((u) => u.startsWith('https://app.cal.com/embed/embed.js')))
+    .toBe(true);
+  await expect(page).toHaveURL(/\/does-not-exist\/$/);
 });
 
 test.describe('phone', () => {
