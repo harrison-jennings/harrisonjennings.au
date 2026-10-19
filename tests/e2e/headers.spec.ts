@@ -2,7 +2,8 @@ import { readFileSync } from 'node:fs';
 import { expect, test } from '@playwright/test';
 import { firstFileIn } from './site';
 
-// Every rule in public/_headers is checked against a real response from that path.
+// Every rule in the built _headers (public/_headers plus the Content-Security-Policy the build adds) is
+// checked against a real response from that path.
 type Rule = { pattern: string; headers: Array<[name: string, value: string]> };
 
 function parseHeaders(text: string): Rule[] {
@@ -19,7 +20,7 @@ function parseHeaders(text: string): Rule[] {
   return rules;
 }
 
-const rules = parseHeaders(readFileSync(new URL('../../public/_headers', import.meta.url), 'utf8'));
+const rules = parseHeaders(readFileSync(new URL('../../dist/_headers', import.meta.url), 'utf8'));
 
 test('_headers sets the core security headers on every path', () => {
   const all = rules.find((r) => r.pattern === '/*');
@@ -29,6 +30,8 @@ test('_headers sets the core security headers on every path', () => {
       'strict-transport-security',
       'x-content-type-options',
       'x-frame-options',
+      'content-security-policy-report-only',
+      'reporting-endpoints',
     ]),
   );
 });

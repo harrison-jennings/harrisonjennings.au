@@ -3,6 +3,7 @@ import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import { defineConfig } from 'astro/config';
 import remarkDirective from 'remark-directive';
+import { csp } from './src/lib/csp-build.ts';
 import { remarkCallouts } from './src/lib/markdown/callouts.ts';
 import { remarkCookieSettings } from './src/lib/markdown/cookie-settings.ts';
 import { remarkCookieTable } from './src/lib/markdown/cookie-table.ts';
@@ -22,7 +23,8 @@ export default defineConfig({
   site: 'https://www.harrisonjennings.au',
   output: 'static',
   trailingSlash: 'always',
-  integrations: [mdx(), sitemap()],
+  // csp() last: it reads the finished pages and writes the Content-Security-Policy into dist/_headers.
+  integrations: [mdx(), sitemap(), csp()],
   build: {
     format: 'directory',
   },
@@ -31,6 +33,13 @@ export default defineConfig({
   image: {
     layout: 'constrained',
     responsiveStyles: false,
+  },
+  // Component scripts always ship as files, never inlined into the page, so the Content-Security-Policy
+  // needs hashes for the page head's own scripts alone (src/lib/csp-build.ts). Stylesheets are unaffected.
+  vite: {
+    build: {
+      assetsInlineLimit: (file) => (file.endsWith('.js') ? false : undefined),
+    },
   },
   prefetch: {
     prefetchAll: false,

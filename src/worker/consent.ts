@@ -14,7 +14,7 @@ export interface ConsentEnv {
   CONSENT_IP_KEY?: string;
 }
 
-const PRODUCTION_HOST = 'www.harrisonjennings.au';
+export const PRODUCTION_HOST = 'www.harrisonjennings.au';
 const MAX_BYTES = 2048;
 
 /** HMAC-SHA256 of the IP with the secret key, as hex. */

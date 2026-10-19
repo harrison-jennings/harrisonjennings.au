@@ -49,6 +49,9 @@ const shareUrl = new URL(share.src, Astro.site);
 // visitor's saved choice (CookieConsent's cookie, same revision) is applied here too, before Tag
 // Manager loads, so their first page view isn't sent as if they'd refused. Then the page's data layer
 // keys, then Tag Manager itself (Live on production, Testing on previews, nothing locally).
+//
+// The script is the same on every page, so the Content-Security-Policy allows it by one hash
+// (src/lib/csp-build.ts). The page's own keys come from the JSON just before it, which never runs.
 const consent = await getEntry('consent', 'consent');
 if (!consent) throw new Error('src/content/consent.yaml: missing the `consent` entry');
 const consentHead = `window.dataLayer = window.dataLayer || [];
@@ -64,14 +67,16 @@ try {
     gtag('consent', 'update', { analytics_storage: analytics, ad_storage: ads, ad_user_data: ads, ad_personalization: ads });
   }
 } catch {}
-dataLayer.push(${JSON.stringify({
+dataLayer.push(JSON.parse(document.querySelector('script[data-page-layer]').textContent));`;
+// `<` escaped, so a title can never close the script element early.
+const pageLayer = JSON.stringify({
   page_name: pageTitle,
   page_type: dataLayer.page_type ?? 'page',
   post_author: 'Harrison Jennings',
   categories: dataLayer.categories ?? '',
   tags: '',
   post_id: dataLayer.post_id ?? '',
-})});`;
+}).replaceAll('<', '\\u003c');
 const tagManager = tagManagerEnvironment();
 const tagManagerHead =
   tagManager &&
@@ -95,6 +100,7 @@ const tagManagerHead =
         document.documentElement.setAttribute('data-theme', 'dark');
       }
     </script>
+    <script is:inline type="application/json" data-page-layer set:html={pageLayer} />
     <script is:inline set:html={consentHead} />
     {tagManagerHead && <script is:inline set:html={tagManagerHead} />}
     <title>{pageTitle}</title>
