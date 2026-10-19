@@ -86,8 +86,8 @@ Built in five stages, one pull request each, from `design/` (see `design/README.
 - [ ] Records confirmed arriving in the production D1
 - [ ] Pressidium records exported and archived off-site
 - [ ] Content-Security-Policy in `_headers`
-- [ ] Cookie list as data (`src/content/cookies.yaml`: name, domain, expiry, purpose, category), feeding both the consent banner's cookie table and the privacy policy (a `::cookie-table{category="…"}` directive replacing the hand-written tables); laid out as a table on desktop and stacked on phones
-- [ ] Update the privacy policy for the new site: hosting on Cloudflare rather than VentraIP, no WordPress, the new consent cookie in the necessary-cookies table; then its date
+- [x] Cookie list as data (`src/content/consent.yaml`), feeding both the cookie preferences dialog and the privacy policy (`::cookie-table{category="…"}`); a table on desktop, stacked on phones
+- [x] Update the privacy policy for the new site: Cloudflare hosting, no WordPress, the consent records, the new consent cookie; set its date at cutover
 
 ## 8. SEO parity and quality
 

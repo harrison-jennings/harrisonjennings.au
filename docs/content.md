@@ -88,11 +88,11 @@ Each is one Markdown file in `src/content/pages/` (`privacy-policy.md`, `terms-o
 | `summary`      | no       | four or five plain-language points for "the short version" panel                     |
 | `contact`      | yes      | `text` (the closing line) and `email`; until there is one it shows "[email address]" |
 
-Put `::cookie-settings` on a line of its own where the "cookie settings" button should go (the cookies section).
+Put `::cookie-settings` on a line of its own where the "cookie settings" button should go (the cookies section). The cookie tables are `::cookie-table{category="necessary"}` (or `analytics`, `advertising`): they're built from the cookie list in `consent.yaml`, so change a cookie there and the policy and the cookie preferences both follow.
 
 ## the cookie banner
 
-`consent.yaml` holds every word of the banner and the preferences dialog: the banner text, the dialog's intro and end line, the button labels, and each category's sentence and cookie rows (name, what it does, how long it's kept). `[privacy policy]` in the text becomes the link. When the categories or what they cover change, raise `revision`: everyone sees the banner again and chooses afresh.
+`consent.yaml` holds every word of the banner and the preferences dialog: the banner text, the dialog's intro and end line, the button labels, and each category's sentence and cookie rows (name, domain, what it does, how long it's kept). The same rows make the privacy policy's cookie tables; a category with no cookies shows the `noCookies` line instead. `[privacy policy]` in the text becomes the link. When the categories or what they cover change, raise `revision`: everyone sees the banner again and chooses afresh.
 
 ## the rss page and the 404
 
