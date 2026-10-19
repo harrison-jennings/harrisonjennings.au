@@ -30,7 +30,7 @@ design/tokens.json ──scripts/build-tokens.mjs──▶ src/styles/tokens.css
 - **Booking** (`src/scripts/booking.ts`, the calendar from `BOOKING_URL`): nothing from Cal.com loads with the page. In the booking band, "view availability" opens the calendar inside the band and only then loads Cal.com's embed. Every "book a call" (nav, phone menu, hero, footer) links to `/#book`: on the home page it scrolls to the band and opens its calendar; on any other page it opens the same calendar in Cal.com's modal, with focus moved onto the modal's close button and back to the link when it closes. Never put `data-cal-link` on our own elements: Cal.com's embed turns them into popup triggers.
 - **Design reference** (`design/system/`, `design/mockups/`): the approved design system, component notes and page screenshots. Reference only: Prettier, ESLint and `astro check` skip it.
 - **Headers** (`public/_headers`): security headers on every response, and long immutable caching for hashed assets and fonts.
-- **Redirects** (`public/_redirects`): one explicit 301 per old WordPress post and category URL, plus the old sitemap and feed URLs. No wildcards.
+- **Redirects** (`public/_redirects`): one explicit 301 per old WordPress post and category URL, plus the old sitemap and feed URLs. No wildcards; the `redirects` end-to-end test checks every rule.
 - **404**: `src/pages/404.astro` builds `404.html`, which Workers serves for any unknown path (`not_found_handling: 404-page`). It's the one inner page with the ember clouds and the bouncing dot (`<Logo loading>`), with the latest three posts; wording in `src/content/not-found.yaml`. WordPress-only URLs (`?p=` shortlinks, `wp-content` uploads) are left to lapse.
 
 ## tests
@@ -50,6 +50,7 @@ design/tokens.json ──scripts/build-tokens.mjs──▶ src/styles/tokens.css
   - `rss`: `/rss.xml` is raw RSS with no stylesheet, `/feed/` 301s to it, every page names it in `<head>`; the `/rss/` page copies the full address (and drops "https://www." on phones) and lists the latest posts.
   - `legal`: the privacy policy's date, link to the terms, short version, cookie settings button and h2-only "on this page"; the terms' "Effective" date and no short version.
   - `not-found`: the 404's links and latest posts, the dot bouncing (and resting under reduced motion), never clipped.
+  - `redirects`: every rule in `public/_redirects` is an explicit path (no wildcards) that returns one 301 to a page answering 200.
   - `share`: each page names its card (its own, or the home card) in `og:image` and `twitter:image`, and the card is a 1200 × 630 PNG.
   - `theme`: dark on a first visit even when the device prefers light; the toggle switches, relabels and is remembered on the next page.
   - `a11y`: an axe scan (WCAG 2.2 A and AA rules) of every page and the 404 page, in dark and light (chosen through `hj-theme`, as the toggle does).

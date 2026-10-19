@@ -20,9 +20,9 @@ From WordPress on VentraIP to this repo, live before the hosting renews on **11 
 ## 1. inventory and backup
 
 - [ ] Full backup from VentraIP (files and database), kept offline
-- [ ] WordPress export (Tools → Export → All content)
+- [x] WordPress export (Tools → Export → All content)
 - [ ] Plugin list, Yoast and Pressidium settings, the Pressidium consent records, both Tag Manager containers
-- [ ] Crawl the live site and save the full URL list
+- [x] Crawl the live site and save the full URL list (the Yoast sitemaps: 6 posts, 4 pages, 8 categories)
 - [ ] Audit every DNS record in Cloudflare and note what each points at; leave the iCloud mail records (MX, SPF, DKIM) alone
 - [ ] Passkeys or hardware keys on GitHub, Cloudflare, the registrar and Tag Manager
 
@@ -67,13 +67,13 @@ Built in five stages, one pull request each, from `design/` (see `design/README.
 
 ## 6. content migration
 
-- [ ] Convert the export with `wordpress-export-to-markdown` (it downloads images too)
-- [ ] Clean up block-editor markup and code blocks in each of the 6 posts; keep each post's WordPress ID as `wpId` (the `?p=` number in the live feed's `<guid>`)
+- [x] Convert the export (images downloaded at full size, renamed and given alt text)
+- [x] Clean up block-editor markup and code blocks in each of the 6 posts; keep each post's WordPress ID as `wpId` (the `?p=` number in the live feed's `<guid>`)
 - [ ] Privacy and terms into `src/content/pages/`: the text, dates, the short version and the contact email
-- [ ] Turn the 8 populated categories (and any tags) into a short `topics.yaml`; merge any that overlap
-- [ ] A 301 in `public/_redirects` for every old post URL (`/YYYY/MM/<slug>/` → `/blog/<slug>/`) and category URL, from the crawl
-- [ ] Redirect tests: a Playwright test that every source in `public/_redirects` returns a single 301 to a page that returns 200, and that no rule uses a wildcard
-- [ ] Projects, services and testimonials into their files
+- [x] Turn the 8 populated categories (and any tags) into a short `topics.yaml`; merge any that overlap
+- [x] A 301 in `public/_redirects` for every old post URL (`/YYYY/MM/<slug>/` → `/blog/<slug>/`) and category URL, from the crawl
+- [x] Redirect tests: a Playwright test that every source in `public/_redirects` returns a single 301 to a page that returns 200, and that no rule uses a wildcard
+- [ ] Projects, services and testimonials into their files (project repos and stories done; screenshots, testimonials still to come)
 
 ## 7. analytics and consent
 
