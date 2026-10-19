@@ -40,7 +40,9 @@ test.describe('a post', () => {
     await expect(page.locator('h1')).toHaveText('formatting reference');
     await expect(page.locator('h1')).toHaveCount(1);
     await expect(page.locator('.posthead__dek')).toContainText('cheat sheet');
-    await expect(page.locator('.posthead__meta')).toHaveText(/^\d{1,2} \w+ \d{4}, \d+ min read$/);
+    await expect(page.locator('.posthead__meta > span')).toHaveText(
+      /^\d{1,2} \w+ \d{4}, \d+ min read$/,
+    );
   });
 
   test('"on this page" lists the sections and marks the one being read', async ({ page }) => {
