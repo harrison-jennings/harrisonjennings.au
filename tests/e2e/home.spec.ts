@@ -94,12 +94,13 @@ test.describe('desktop', () => {
   });
 });
 
+/** Requests to anywhere other than the site itself. */
 const thirdParty = (page: Page) => {
+  const own = new URL(test.info().project.use.baseURL ?? 'http://127.0.0.1').origin;
   const requests: string[] = [];
   page.on('request', (r) => {
     const url = new URL(r.url());
-    if (!['127.0.0.1', 'localhost'].includes(url.hostname) && url.protocol.startsWith('http'))
-      requests.push(r.url());
+    if (url.protocol.startsWith('http') && url.origin !== own) requests.push(r.url());
   });
   return requests;
 };
