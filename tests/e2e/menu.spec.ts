@@ -19,10 +19,36 @@ test.beforeEach(async ({ page }) => {
   await expect(page.locator('[data-menu]')).toBeVisible();
 });
 
-test('the menu opens with focus on its first link', async ({ page }) => {
+test('opened by a tap or click, focus is in the menu but no link shows a ring', async ({
+  page,
+}) => {
   expect(await page.$eval('[data-menu]', (d: HTMLDialogElement) => d.open)).toBe(true);
   expect(await focusInMenu(page)).toBe(true);
-  await expect(page.locator('[data-menu] .menu__links a').first()).toBeFocused();
+  await expect(page.locator('[data-menu]')).toBeFocused();
+  expect(await page.locator('[data-menu] :focus-visible').count()).toBe(0);
+  // The next Tab reaches the menu's controls.
+  await page.keyboard.press('Tab');
+  expect(await focusInMenu(page)).toBe(true);
+});
+
+test('opened from the keyboard, focus goes to the first link', async ({ page }) => {
+  await page.keyboard.press('Escape');
+  await expect(page.locator('[data-menu-open]')).toBeFocused();
+  await page.keyboard.press('Enter');
+  const first = page.locator('[data-menu] .menu__links a').first();
+  await expect(first).toBeFocused();
+  // Shown with the brand's hover treatment (link colour), not a ring.
+  await expect(first).toHaveCSS('outline-style', 'none');
+  const link = await page.evaluate(() => {
+    const probe = document.createElement('span');
+    probe.style.color = 'var(--link)';
+    document.body.append(probe);
+    const colour = getComputedStyle(probe).color;
+    probe.remove();
+    return colour;
+  });
+  // After the colour's 150ms transition.
+  await expect.poll(() => first.evaluate((a) => getComputedStyle(a).color)).toBe(link);
 });
 
 test('focus is trapped in the open menu', async ({ page }) => {

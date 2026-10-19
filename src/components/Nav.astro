@@ -56,7 +56,7 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
     </button>
   </nav>
 
-  <dialog class="menu" aria-label="Menu" data-menu>
+  <dialog class="menu" aria-label="Menu" tabindex="-1" data-menu>
     <div class="menu__inner">
       <div class="menu__top">
         <a class="menu__brand" href="/">
@@ -273,6 +273,10 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
   .menu::backdrop {
     background: var(--ground);
   }
+  /* Focus rests on the menu itself only after a tap or click. */
+  .menu:focus {
+    outline: none;
+  }
   .menu__inner {
     display: flex;
     flex-direction: column;
@@ -309,6 +313,16 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
   .menu__links a:hover {
     color: var(--link);
   }
+  /* Keyboard focus takes the hover treatment (brick text and underline) instead of the ring; on the
+     current page, already underlined, the colour change is what shows it. */
+  .menu__links a:focus-visible {
+    outline: none;
+    color: var(--link);
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 8px;
+  }
   .menu__links a[aria-current='page'] {
     text-decoration: underline;
     text-decoration-color: var(--accent);
@@ -335,9 +349,16 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
 
   const menu = document.querySelector<HTMLDialogElement>('[data-menu]');
   const opener = document.querySelector<HTMLButtonElement>('[data-menu-open]');
-  opener?.addEventListener('click', () => {
-    menu?.showModal();
-    menu?.querySelector<HTMLAnchorElement>('.menu__links a')?.focus();
+  // From the keyboard (a click with no pointer: detail 0), focus goes to the first link, ring and all.
+  // From a tap or click it goes to the menu itself: screen readers still land in the menu and the next
+  // Tab reaches the first link, but no link shows a focus ring the person didn't ask for (iOS Safari
+  // shows one on any focused link).
+  opener?.addEventListener('click', (e) => {
+    if (!menu) return;
+    menu.showModal();
+    const first = menu.querySelector<HTMLAnchorElement>('.menu__links a');
+    if (e.detail === 0 && first) first.focus();
+    else menu.focus();
   });
   menu?.querySelector('[data-menu-close]')?.addEventListener('click', () => menu.close());
   // Any link closes the menu (an in-page link wouldn't navigate away).
