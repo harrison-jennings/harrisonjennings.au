@@ -196,7 +196,8 @@ const footer = (detail: string): El =>
     h(
       'div',
       {
-        maxWidth: 680,
+        // The room beside the lockup: a topic page's full address fits.
+        maxWidth: 740,
         overflow: 'hidden',
         whiteSpace: 'nowrap',
         textOverflow: 'ellipsis',
