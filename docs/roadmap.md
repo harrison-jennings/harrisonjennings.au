@@ -57,13 +57,13 @@ The hero first, then each page, approved before it's built.
 Built in five stages, one pull request each, from `design/` (see `design/README.md`).
 
 - [x] Stage 1, foundations: tokens, dark-first theme and toggle, fonts, the shared column, nav, mobile menu, footer, shared components
-- [ ] Stage 2, home
+- [x] Stage 2, home
 - [ ] Stage 3, blog: index, topic pages, posts, code blocks, image viewer
 - [ ] Stage 4, projects, RSS, legal pages, 404
 - [ ] Stage 5, social share cards
 - [ ] Each approved mockup built as a page, from the existing components and tokens
 - [ ] Phone, keyboard, focus, contrast and reduced-motion checks on every page
-- [ ] Booking: Cal.com embed with the bounce loader
+- [x] Booking: Cal.com embed with the bounce loader
 
 ## 6. content migration
 

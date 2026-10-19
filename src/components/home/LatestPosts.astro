@@ -1,0 +1,50 @@
+---
+// "latest posts": the three newest, side by side; a swipe row on phones, where "all posts" moves
+// under the row. Hidden until there are posts.
+import { getPosts, getTopicPages } from '../../lib/posts';
+import Arrows from '../Arrows.astro';
+import PostCard from '../PostCard.astro';
+import TextLink from '../TextLink.astro';
+
+const posts = (await getPosts()).slice(0, 3);
+const topicPages = new Set((await getTopicPages()).map(({ topic }) => topic.id));
+---
+
+{posts.length > 0 && (
+  <section class="section column" aria-labelledby="latest-posts">
+    <div class="section__head">
+      <h2 id="latest-posts" class="section__title">
+        latest posts
+      </h2>
+      <TextLink href="/blog/" quiet class="desktop-only">
+        all posts
+      </TextLink>
+      <Arrows swipe="posts" noun="post" />
+    </div>
+    <div class="posts swipe" id="swipe-posts" data-swipe="posts">
+      {posts.map((post) => (
+        <PostCard post={post} topicPages={topicPages} />
+      ))}
+    </div>
+    <p class="section__after phone-only">
+      <TextLink href="/blog/" quiet>
+        all posts
+      </TextLink>
+    </p>
+  </section>
+)}
+
+<style>
+  .posts {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-40);
+  }
+  @media (max-width: 760px) {
+    /* the global .swipe row takes over */
+    .posts {
+      grid-template-columns: none;
+      gap: 0 var(--space-16);
+    }
+  }
+</style>

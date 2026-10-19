@@ -71,7 +71,7 @@ Everything is still under `prefers-reduced-motion`.
 
 ## components
 
-`Button`, `TextLink`, `IconButton`, `Nav` (with the mobile menu), `Footer`, `ProjectRow`, `LiveSignal`, `Tag`, `Logo`, `Icon`. Each file starts with a one-line description; the design system has the full guidelines.
+`Button`, `TextLink`, `IconButton`, `ThemeToggle`, `Nav` (with the mobile menu), `Footer`, `Arrows`, `PostCard`, `ProjectShot`, `ProjectLinks`, `LiveSignal`, `Tag`, `Logo`, `Icon`, and the home sections in `src/components/home/`. Each file starts with a one-line description; the design system has the full guidelines.
 
 ## the full design
 

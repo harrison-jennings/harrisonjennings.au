@@ -1,0 +1,183 @@
+---
+// The booking band at the foot of the home page. "view availability" opens the calendar inside the
+// band and only then loads Cal.com; the logo's dot bounces while it loads.
+import { getEntry } from 'astro:content';
+import { BOOKING_URL, SOCIAL } from '../../consts';
+import Button from '../Button.astro';
+import Logo from '../Logo.astro';
+import TextLink from '../TextLink.astro';
+
+const home = await getEntry('home', 'home');
+if (!home) throw new Error('src/content/home.yaml: missing the `home` entry');
+const { title, note } = home.data.booking;
+const calLink = new URL(BOOKING_URL).pathname.replace(/^\//, '');
+---
+
+<section class="section column" aria-labelledby="book-title">
+  <div class="book" data-book data-cal-link={calLink}>
+    <div class="book__text">
+      <h2 id="book-title" class="book__title">
+        {title}
+        <span class="book__stop" aria-hidden="true"></span>
+      </h2>
+      <p class="book__note">{note}</p>
+    </div>
+    <div class="book__actions">
+      <Button
+        label="view availability"
+        attrs={{ 'data-book-toggle': '', 'aria-expanded': 'false', 'aria-controls': 'book-cal' }}
+      />
+      <p class="book__alt">
+        or say hello on{' '}
+        <TextLink href={SOCIAL.linkedin.href} external>
+          linkedin
+        </TextLink>
+      </p>
+    </div>
+    <div class="book__cal" id="book-cal" hidden data-book-cal>
+      <div class="book__loading" role="status">
+        <Logo size={44} class="mark--loading" />
+        <span>loading the booking calendar</span>
+      </div>
+      <div class="book__embed" data-book-embed></div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .book {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--space-20) 48px;
+    align-items: center;
+    padding: var(--space-40);
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+  }
+  .book__text {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .book__title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 40px;
+    font-weight: 500;
+    line-height: 1.12;
+    letter-spacing: -0.05em;
+  }
+  .book__stop {
+    display: inline-block;
+    width: 0.19em;
+    height: 0.19em;
+    margin-left: 0.25em;
+    border-radius: var(--radius-pill);
+    background: var(--accent);
+  }
+  .book__note {
+    margin: 0;
+    max-width: 520px;
+    font-size: 17px;
+    line-height: 1.55;
+    color: var(--muted);
+  }
+  .book__actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 14px;
+  }
+  .book__alt {
+    margin: 0;
+    font-size: 15px;
+    color: var(--muted);
+  }
+  .book__cal {
+    grid-column: 1 / -1;
+    position: relative;
+    min-height: 440px;
+    margin-top: 12px;
+    overflow: hidden;
+    background: var(--ground);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+  }
+  .book__cal[hidden] {
+    display: none;
+  }
+  .book__loading {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: var(--space-32);
+    font-size: 14px;
+    color: var(--muted);
+    text-align: center;
+  }
+  .book__cal[data-ready] .book__loading {
+    display: none;
+  }
+  /* Cal.com draws its own spinner while it loads; keep it hidden so only the mark shows. */
+  .book__cal:not([data-ready]) .book__embed {
+    visibility: hidden;
+  }
+  .book__embed {
+    position: relative;
+    width: 100%;
+    min-height: 440px;
+  }
+  /* The dot squashes and bounces at the foot of the leg while the calendar loads. */
+  .book__loading :global(.mark--loading .mark__dot) {
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+    animation: bounce 1s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  }
+  @keyframes bounce {
+    0%,
+    100% {
+      transform: translateY(-4px) scale(0.94, 1.06);
+    }
+    48% {
+      transform: translateY(10px) scale(1);
+    }
+    56% {
+      transform: translateY(12px) scale(1.22, 0.74);
+    }
+    64% {
+      transform: translateY(10px) scale(0.96, 1.04);
+    }
+  }
+
+  @media (max-width: 760px) {
+    .book {
+      grid-template-columns: minmax(0, 1fr);
+      padding: 24px 20px;
+    }
+    .book__title {
+      font-size: 28px;
+      line-height: 1.15;
+    }
+    .book__actions {
+      align-items: stretch;
+    }
+    .book__alt {
+      text-align: center;
+    }
+    .book__cal,
+    .book__embed {
+      min-height: 360px;
+    }
+  }
+</style>
+
+<script>
+  import { bindBooking } from '../../scripts/booking';
+  document
+    .querySelectorAll<HTMLElement>('[data-book]')
+    .forEach((band) => bindBooking(band, band.dataset['calLink'] ?? ''));
+</script>

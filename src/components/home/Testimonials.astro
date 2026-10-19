@@ -1,0 +1,221 @@
+---
+// "what people are saying". With five or more quotes: a row that drifts left on an 80s loop across
+// the full page width, pausing on hover and focus, with a pause button (WCAG 2.2.2). With fewer: the
+// cards sit still, side by side (a swipe row on phones). Cards in a row share the tallest card's
+// height, so the names line up.
+import { getCollection } from 'astro:content';
+import Arrows from '../Arrows.astro';
+
+const TICKER_MIN = 5;
+const quotes = (await getCollection('testimonials')).sort((a, b) => a.data.order - b.data.order);
+const moving = quotes.length >= TICKER_MIN;
+---
+
+{quotes.length > 0 && (
+  <section class="section" aria-labelledby="what-people-are-saying">
+    <div class="column">
+      <div class="section__head">
+        <h2 id="what-people-are-saying" class="section__title">
+          what people are saying
+        </h2>
+        {moving ? (
+          <button
+            class="pause"
+            type="button"
+            data-pause="testimonials"
+            aria-pressed="false"
+            aria-label="Pause testimonials"
+          >
+            <svg class="pause__bars" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" />
+            </svg>
+            <svg class="pause__play" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M7 4.5v15l12-7.5z" />
+            </svg>
+          </button>
+        ) : (
+          <Arrows swipe="testimonials" noun="testimonial" />
+        )}
+      </div>
+      {!moving && (
+        <div
+          class="still swipe"
+          id="swipe-testimonials"
+          data-swipe="testimonials"
+          data-swipe-label="Testimonials"
+        >
+          {quotes.map(({ data }) => (
+            <figure class="quote">
+              <blockquote>{data.quote}</blockquote>
+              <figcaption>
+                <span class="quote__name">{data.name}</span>
+                <span class="quote__role">{data.role}</span>
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+      )}
+    </div>
+    {moving && (
+      <div
+        class="ticker"
+        id="testimonials"
+        role="region"
+        aria-label="Testimonials"
+        tabindex="0"
+        data-paused="false"
+        data-ticker
+      >
+        <div class="ticker__track">
+          {[false, true].map((copy) =>
+            quotes.map(({ data }) => (
+              <figure class="quote" aria-hidden={copy ? 'true' : undefined}>
+                <blockquote>{data.quote}</blockquote>
+                <figcaption>
+                  <span class="quote__name">{data.name}</span>
+                  <span class="quote__role">{data.role}</span>
+                </figcaption>
+              </figure>
+            )),
+          )}
+        </div>
+      </div>
+    )}
+  </section>
+)}
+
+<style>
+  .quote {
+    box-sizing: border-box;
+    flex: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 24px;
+    width: 420px;
+    margin: 0;
+    padding: var(--space-28);
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+  }
+  .quote blockquote {
+    margin: 0;
+    font-size: 18px;
+    line-height: 1.5;
+    letter-spacing: -0.005em;
+    text-wrap: pretty;
+  }
+  .quote figcaption {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-size: 15px;
+  }
+  .quote__name {
+    font-weight: 600;
+  }
+  .quote__role {
+    font-size: 14px;
+    color: var(--muted);
+  }
+
+  /* fewer than five: still, side by side */
+  .still {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 420px));
+    gap: var(--space-20);
+  }
+  .still .quote {
+    width: auto;
+  }
+
+  /* five or more: the moving row, fading at both edges */
+  .ticker {
+    position: relative;
+    overflow: hidden;
+    mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  }
+  .ticker__track {
+    display: flex;
+    gap: var(--space-20);
+    width: max-content;
+    padding: 4px 0;
+    animation: tick 80s linear infinite;
+  }
+  .ticker:hover .ticker__track,
+  .ticker:focus-within .ticker__track,
+  .ticker[data-paused='true'] .ticker__track {
+    animation-play-state: paused;
+  }
+  @keyframes tick {
+    to {
+      transform: translateX(calc(-50% - var(--space-10)));
+    }
+  }
+
+  .pause {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: var(--target);
+    height: var(--target);
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+    transition:
+      border-color 150ms ease,
+      color 150ms ease;
+  }
+  .pause:hover {
+    border-color: var(--link);
+    color: var(--link);
+  }
+  .pause svg {
+    display: block;
+    fill: currentColor;
+  }
+  .pause .pause__play,
+  .pause[aria-pressed='true'] .pause__bars {
+    display: none;
+  }
+  .pause[aria-pressed='true'] .pause__play {
+    display: block;
+  }
+
+  @media (max-width: 760px) {
+    .quote {
+      width: 300px;
+      padding: var(--space-22);
+    }
+    .quote blockquote {
+      font-size: 16px;
+    }
+    /* the global .swipe row takes over */
+    .still {
+      grid-template-columns: none;
+      gap: 0 var(--space-16);
+    }
+  }
+  /* Under reduced motion the row sits still and scrolls by hand. */
+  @media (prefers-reduced-motion: reduce) {
+    .ticker {
+      overflow-x: auto;
+      mask-image: none;
+    }
+    .ticker__track {
+      animation: none;
+    }
+    .pause {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  import { bindTicker } from '../../scripts/ticker';
+  document.querySelectorAll<HTMLElement>('[data-ticker]').forEach(bindTicker);
+</script>

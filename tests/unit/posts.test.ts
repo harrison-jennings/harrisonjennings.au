@@ -5,6 +5,7 @@ import {
   getPosts,
   getTopicPages,
   isPublished,
+  mainTopic,
   postPath,
   postSlug,
   topicPath,
@@ -57,6 +58,16 @@ describe('postSlug and postPath', () => {
 describe('topicPath', () => {
   it('publishes topics at /blog/topic/<id>/', () => {
     expect(topicPath(topic('analytics'))).toBe('/blog/topic/analytics/');
+  });
+});
+
+describe('mainTopic', () => {
+  it('is the first topic listed', () => {
+    expect(mainTopic(post('a', '2026-01-01', { topics: ['api', 'analytics'] }))?.id).toBe('api');
+  });
+
+  it('is undefined for a post without topics', () => {
+    expect(mainTopic(post('a', '2026-01-01'))).toBeUndefined();
   });
 });
 

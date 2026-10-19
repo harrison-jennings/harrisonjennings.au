@@ -1,0 +1,95 @@
+---
+// ‹ › buttons for a swipe row (phones only). `swipe` matches the row's data-swipe; `noun` names one
+// card in the labels ("Next post").
+interface Props {
+  swipe: string;
+  noun: string;
+}
+
+const { swipe, noun } = Astro.props;
+---
+
+<div class="arrows">
+  <button
+    class="arrow"
+    type="button"
+    data-swipe-prev={swipe}
+    aria-controls={`swipe-${swipe}`}
+    aria-label={`Previous ${noun}`}
+    aria-disabled="true"
+  >
+    <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M15 5l-7 7 7 7"></path>
+    </svg>
+  </button>
+  <button
+    class="arrow"
+    type="button"
+    data-swipe-next={swipe}
+    aria-controls={`swipe-${swipe}`}
+    aria-label={`Next ${noun}`}
+  >
+    <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M9 5l7 7-7 7"></path>
+    </svg>
+  </button>
+</div>
+
+<style>
+  .arrows {
+    display: none;
+    flex: none;
+    gap: var(--space-8);
+  }
+  .arrow {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: var(--target);
+    height: var(--target);
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+    transition:
+      border-color 150ms ease,
+      color 150ms ease,
+      opacity 150ms ease;
+  }
+  .arrow svg {
+    display: block;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .arrow:hover {
+    border-color: var(--link);
+    color: var(--link);
+  }
+  .arrow[aria-disabled='true'] {
+    opacity: 0.35;
+    cursor: default;
+    border-color: var(--line);
+    color: var(--text);
+  }
+  @media (max-width: 760px) {
+    .arrows {
+      display: inline-flex;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .arrow {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  import { bindSwipe } from '../scripts/swipe';
+  document.querySelectorAll<HTMLElement>('[data-swipe]').forEach(bindSwipe);
+</script>

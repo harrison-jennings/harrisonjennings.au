@@ -1,0 +1,99 @@
+---
+// "what I do": three services in one row, their rows shared (subgrid) so every tools line starts
+// level however long the paragraphs run. Phones: a swipe row with ‹ › arrows.
+import { getCollection } from 'astro:content';
+import Arrows from '../Arrows.astro';
+
+const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<section class="section column" aria-labelledby="what-i-do">
+  <div class="section__head">
+    <h2 id="what-i-do" class="section__title">
+      what I do
+    </h2>
+    <Arrows swipe="services" noun="service" />
+  </div>
+  <div
+    class="services swipe"
+    id="swipe-services"
+    data-swipe="services"
+    data-swipe-label="What I do"
+  >
+    {services.map(({ data }) => (
+      <article class="service">
+        <h3 class="service__name">{data.name}</h3>
+        <p class="service__desc">{data.description}</p>
+        <ul class="tools">
+          {data.tools.map((tool) => (
+            <li>{tool}</li>
+          ))}
+        </ul>
+      </article>
+    ))}
+  </div>
+</section>
+
+<style>
+  .services {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: auto auto auto;
+    column-gap: var(--space-40);
+  }
+  .service {
+    grid-row: span 3;
+    display: grid;
+    grid-template-rows: subgrid;
+    row-gap: 12px;
+    padding-top: var(--space-22);
+    border-top: 1px solid var(--line);
+  }
+  @media (max-width: 760px) {
+    /* the global .swipe row takes over */
+    .services {
+      grid-template-columns: none;
+      column-gap: var(--space-16);
+    }
+  }
+  .service__name {
+    margin: 0;
+    font-size: 21px;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+  .service__desc {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  /* Martian Mono 12px, each after a 4px brick dot and never split, so a wrapped line still starts
+     with a dot. */
+  .tools {
+    align-self: start;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px var(--space-16);
+    margin: 6px 0 0;
+    padding: 0;
+    list-style: none;
+    font-family: var(--font-display);
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+  .tools li {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-8);
+    white-space: nowrap;
+  }
+  .tools li::before {
+    content: '';
+    width: 4px;
+    height: 4px;
+    border-radius: var(--radius-pill);
+    background: var(--accent);
+  }
+</style>

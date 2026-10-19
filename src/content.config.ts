@@ -59,4 +59,38 @@ const projects = defineCollection({
     }),
 });
 
-export const collections = { posts, pages, topics, projects };
+// "what I do" on the home page: each service has a short paragraph and exactly three tools.
+const services = defineCollection({
+  loader: file('src/content/services.yaml'),
+  schema: z.object({
+    name: z.string(),
+    description: z.string().max(200),
+    tools: z.array(z.string()).length(3),
+    order: z.number().default(100),
+  }),
+});
+
+// "what people are saying". The home page shows them as a moving row once there are five or more;
+// with fewer they sit still, side by side.
+const testimonials = defineCollection({
+  loader: file('src/content/testimonials.yaml'),
+  schema: z.object({
+    quote: z.string().max(280),
+    name: z.string(),
+    role: z.string(),
+    order: z.number().default(100),
+  }),
+});
+
+// The home page's own wording: the hero and the booking band.
+const home = defineCollection({
+  loader: file('src/content/home.yaml'),
+  schema: z.object({
+    headline: z.array(z.string()).min(1),
+    lead: z.string(),
+    intro: z.string(),
+    booking: z.object({ title: z.string(), note: z.string() }),
+  }),
+});
+
+export const collections = { posts, pages, topics, projects, services, testimonials, home };

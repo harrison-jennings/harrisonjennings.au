@@ -1,106 +1,34 @@
 ---
-// Placeholder home page: proves the components and the deploy pipeline end to end.
-// The real hero and page layout arrive with the approved mockups.
-import { getCollection } from 'astro:content';
-import Button from '../components/Button.astro';
-import ProjectRow from '../components/ProjectRow.astro';
-import TextLink from '../components/TextLink.astro';
-import { BOOKING_URL } from '../consts';
+// Home: the hero, then what I do, built and shipped, what people are saying, latest posts and the
+// booking band. All wording lives in src/content/ (home.yaml, services.yaml, testimonials.yaml,
+// projects.yaml and the posts).
+import Booking from '../components/home/Booking.astro';
+import BuiltAndShipped from '../components/home/BuiltAndShipped.astro';
+import Hero from '../components/home/Hero.astro';
+import LatestPosts from '../components/home/LatestPosts.astro';
+import Services from '../components/home/Services.astro';
+import Testimonials from '../components/home/Testimonials.astro';
 import Base from '../layouts/Base.astro';
-
-const projects = (await getCollection('projects', ({ data }) => data.featured)).sort(
-  (a, b) => a.data.order - b.data.order,
-);
 ---
 
 <Base noindex home>
-  <section class="column hero">
-    <h1 class="hero__title">
-      standing out,
-      <br />
-      making noise.
-    </h1>
-    <p class="hero__lede">
-      Tech-led marketing consultant: marketing automation, analytics and measurement, creative and
-      media strategy.
-    </p>
-    <div class="hero__actions">
-      <Button href={BOOKING_URL} label="book a call" size="l" external />
-      <TextLink href="/blog/">read the blog</TextLink>
-    </div>
-  </section>
-
-  <section class="column" aria-labelledby="built-and-shipped">
-    <div class="projects">
-      <div class="projects__head">
-        <h2 id="built-and-shipped" class="projects__title">
-          built and shipped
-        </h2>
-        <TextLink href="/projects/" quiet>
-          all projects
-        </TextLink>
-      </div>
-      {projects.map((project) => (
-        <ProjectRow project={project} />
-      ))}
-    </div>
-  </section>
+  <Hero />
+  <div class="sections">
+    <Services />
+    <BuiltAndShipped />
+    <Testimonials />
+    <LatestPosts />
+    <Booking />
+  </div>
 </Base>
 
 <style>
-  .hero {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-28);
-    padding-block: 120px var(--space-56);
-  }
-  .hero__title {
-    margin: 0;
-    font-family: var(--font-display);
-    font-size: clamp(40px, 7vw, 76px);
-    font-weight: 500;
-    line-height: 1.12;
-    letter-spacing: -0.05em;
-  }
-  .hero__lede {
-    margin: 0;
-    max-width: 560px;
-    color: var(--muted);
-  }
-  .hero__actions {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--space-28);
-  }
-  .projects {
-    display: flex;
-    flex-direction: column;
-    padding: var(--space-40);
-    background: var(--surface);
-    border-radius: var(--radius-lg);
-  }
-  .projects__head {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 16px;
-    padding-bottom: var(--space-20);
-    font-size: 15px;
-  }
-  .projects__title {
-    margin: 0;
-    font-size: 30px;
-    font-weight: 600;
-    line-height: 1.15;
-    letter-spacing: -0.02em;
+  .sections {
+    padding-top: 96px;
   }
   @media (max-width: 760px) {
-    .hero {
-      padding-block: 112px var(--space-40);
-    }
-    .projects {
-      padding: 24px 20px;
+    .sections {
+      padding-top: var(--space-72);
     }
   }
 </style>
