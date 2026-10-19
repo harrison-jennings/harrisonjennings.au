@@ -11,6 +11,10 @@ Everything is Markdown or YAML in `src/content/`, checked against the schemas in
 | services     | `src/content/services.yaml`         | "what I do" on the home page              |
 | testimonials | `src/content/testimonials.yaml`     | "what people are saying" on the home page |
 | home         | `src/content/home.yaml`             | the home page's hero and booking band     |
+| blog         | `src/content/blog.yaml`             | the blog's intro and the author panel     |
+| projectsPage | `src/content/projects-page.yaml`    | the projects page's intro                 |
+| rss          | `src/content/rss.yaml`              | the wording on `/rss/`                    |
+| notFound     | `src/content/not-found.yaml`        | the 404 page's title and text             |
 
 A post's URL is its folder name. Don't rename the folder after the post is live; if you must, add a 301 from the old URL in `public/_redirects`.
 
@@ -47,7 +51,7 @@ If you work in marketing automation, you probably have a version of the same pre
 | `toc`         | no       | `false` hides "on this page" (it's hidden anyway with fewer than three h2s) |
 | `related`     | no       | up to three post ids, to hand-pick "keep reading"                           |
 | `socialImage` | no       | overrides the generated social card                                         |
-| `wpId`        | no       | migrated posts only: the WordPress ID, so feeds don't repeat them           |
+| `wpId`        | no       | migrated posts only: the WordPress ID, so feed readers don't repeat them    |
 
 The site works out the rest at build: the reading time (prose words ÷ 230, rounded up; code doesn't count), "on this page" from the `##` and `###` headings, and "keep reading" (the three posts sharing the most topics, newest first on a tie, topped up with the latest).
 
@@ -66,7 +70,29 @@ The draft post `src/content/posts/formatting-reference/index.mdx` shows every el
 
 ## a project
 
-Add an entry to `src/content/projects.yaml` with an `id`, `name`, `summary` and, if it's deployed, `host` and `url`. `featured: true` puts it in "built and shipped" on the home page, ordered by `order`. `repo` adds "source on github"; `story` (a post's id) adds "read the story".
+Add an entry to `src/content/projects.yaml` with an `id`, `name`, `summary` and, if it's deployed, `host` and `url`. Every project shows on `/projects/`, ordered by `order`; `featured: true` also puts it in "built and shipped" on the home page. `kind` ("VS Code extension") and `built` (the year) fill in its facts. `repo` adds "source on github"; `story` (a post's id) adds "read the story" and becomes where its name links (otherwise the live site). `image` is a 16:9 screenshot beside the YAML; it's shown still, never as a link.
+
+To retire a project, set `status: archived`. It moves to the "archived" list at the bottom of the page (which appears only once something is archived), with its `summary` as the one line on what it was; its live link goes, and the source and story stay.
+
+## the privacy policy and terms
+
+Each is one Markdown file in `src/content/pages/` (`privacy-policy.md`, `terms-of-use.md`), edited like a post. Sections are `##` headings (listed in "on this page") with `###` inside them.
+
+| field          | required | notes                                                                                |
+| -------------- | -------- | ------------------------------------------------------------------------------------ |
+| `title`        | yes      | lowercase                                                                            |
+| `description`  | yes      | the one-line intro under the title (and the meta description)                        |
+| `updated`      | yes      | `YYYY-MM-DD`                                                                         |
+| `updatedLabel` | no       | the words before the date: "Last updated" (the default) or "Effective"               |
+| `summary`      | no       | four or five plain-language points for "the short version" panel                     |
+| `contact`      | yes      | `text` (the closing line) and `email`; until there is one it shows "[email address]" |
+
+Put `::cookie-settings` on a line of its own where the "cookie settings" button should go (the cookies section).
+
+## the rss page and the 404
+
+- `rss.yaml`: the intro, the note under the feed address, the three "how it works" steps and the line above the topic feeds. The addresses, the topic list (every topic with a page) and the latest posts fill themselves in.
+- `not-found.yaml`: the 404's title (one line per entry; the last ends in the brick stop) and the line under it.
 
 ## the home page
 

@@ -75,7 +75,7 @@ Everything is still under `prefers-reduced-motion`.
 
 ## components
 
-`Button`, `TextLink`, `IconButton`, `ThemeToggle`, `Nav` (with the mobile menu), `Footer`, `Arrows`, `PostCard`, `ProjectShot`, `ProjectLinks`, `LiveSignal`, `Tag`, `Logo`, `Icon`, the home sections in `src/components/home/`, the blog's in `src/components/blog/`, and `<Figures>` and `<YouTube>` for posts in `src/components/prose/`. Each file starts with a one-line description; the design system has the full guidelines.
+`Button`, `TextLink`, `IconButton`, `ThemeToggle`, `Nav` (with the mobile menu), `Footer`, `Arrows`, `PostCard`, `ProjectShot`, `ProjectLinks`, `LiveSignal` (and `LiveDot`), `CopyButton`, `Tag`, `Logo`, `Icon`, the home sections in `src/components/home/`, the blog's in `src/components/blog/`, and `<Figures>` and `<YouTube>` for posts in `src/components/prose/`. Each file starts with a one-line description; the design system has the full guidelines.
 
 ## the full design
 
