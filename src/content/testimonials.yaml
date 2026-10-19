@@ -1,16 +1,15 @@
 # "what people are saying" on the home page, in `order`. A quote is up to 280 characters (about
 # seven lines on a card); trim a longer one to its best part. With five or more, the home page shows
 # them as a moving row; with fewer they sit still, side by side.
-#
-# DRAFT: both quotes are cut short until the full wording is confirmed.
 - id: ben-stubbs
-  quote: Harrison's deep understanding of data-driven strategies, coupled with his ability to develop complex analytics solutions…
+  # The second sentence of the full quote (the whole quote runs past 280 characters).
+  quote: Harrison has a rare talent for transforming raw data into actionable insights, enabling the business to optimise marketing efforts with precision and confidence.
   name: Ben Stubbs
   role: Chief Information Officer, Ateco Group
   order: 1
 
 - id: elena-woods
-  quote: Harrison has championed the use of Adobe Marketo Engage, developing a robust lead scoring model…
+  quote: Harrison has championed the use of Adobe Marketo Engage, developing a robust lead scoring model and complex lead nurture program. He has played a crucial role in improving database quality, increasing lead engagement, and driving conversion rates throughout the customer journey.
   name: Elena Woods
   role: Marketing Director, Renault Australia
   order: 2
