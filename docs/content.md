@@ -98,11 +98,15 @@ Put `::cookie-settings` on a line of its own where the "cookie settings" button 
 
 Every word on the home page comes from a content file, so it can change without touching code:
 
-- `home.yaml`: the headline (one line per entry; the last line ends in the brick stop, so leave off its full stop), the two-line subtitle, and the booking band's title and note.
+- `home.yaml`: the headline (one line per entry; the last line ends in the brick stop, so leave off its full stop), the two-line subtitle, the booking band's title and note, and `shareLine`, the second line on the share card.
 - `services.yaml`: each service's name, a paragraph up to 200 characters, and exactly three tools.
 - `testimonials.yaml`: `quote` (up to 280 characters; trim a longer one to its best part), `name`, `role` and `order`. From five quotes the home page shows them as a moving row with a pause button; with fewer they sit still, side by side.
 - `projects.yaml`: `featured: true` puts a project in "built and shipped". Its links appear only when it has them: `url` and `host` for "live at", `repo` for "source on github", `story` for "read the story". Add `image` (a 16:9 screenshot beside the YAML) to replace the dashed placeholder.
 - "latest posts" shows the three newest posts once there are any, each with its `description` and its first topic.
+
+## share cards
+
+When a link to the site is shared (LinkedIn, Slack, iMessage), the preview image is a card made at build from the page's own words: a post's title, main topic and date; a page's title and intro; the home page's headline. Nothing to do when writing. To use a picture instead on a post, set `socialImage` to an image beside it; it's cropped to 1200 × 630, so keep the subject near the middle.
 
 ## publishing
 

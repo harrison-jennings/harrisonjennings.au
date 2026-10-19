@@ -60,7 +60,7 @@ Built in five stages, one pull request each, from `design/` (see `design/README.
 - [x] Stage 2, home
 - [x] Stage 3, blog: index, topic pages, posts, code blocks, image viewer
 - [x] Stage 4, projects, RSS, legal pages, 404
-- [ ] Stage 5, social share cards
+- [x] Stage 5, social share cards
 - [ ] Each approved mockup built as a page, from the existing components and tokens
 - [ ] Phone, keyboard, focus, contrast and reduced-motion checks on every page
 - [x] Booking: Cal.com embed with the bounce loader
