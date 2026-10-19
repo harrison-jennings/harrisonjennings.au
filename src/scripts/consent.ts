@@ -160,8 +160,13 @@ export function bindConsent(): void {
       default: 'en',
       translations: { en: { consentModal: {}, preferencesModal: { sections: [] } } },
     },
+    // Consent Mode is updated before the interaction event is pushed (CookieConsent calls onFirstConsent
+    // before onConsent), so Tag Manager handles the event with the new choice already in force.
     onConsent: () => gtag('consent', 'update', consentSignals(accepted())),
-    onFirstConsent: () => record(action),
+    onFirstConsent: () => {
+      gtag('consent', 'update', consentSignals(accepted()));
+      record(action);
+    },
     onChange: () => {
       gtag('consent', 'update', consentSignals(accepted()));
       record(action);
