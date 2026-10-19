@@ -61,8 +61,8 @@ Built in five stages, one pull request each, from `design/` (see `design/README.
 - [x] Stage 3, blog: index, topic pages, posts, code blocks, image viewer
 - [x] Stage 4, projects, RSS, legal pages, 404
 - [x] Stage 5, social share cards
-- [ ] Each approved mockup built as a page, from the existing components and tokens
-- [ ] Phone, keyboard, focus, contrast and reduced-motion checks on every page
+- [x] Each approved mockup built as a page, from the existing components and tokens
+- [x] Phone, keyboard, focus, contrast and reduced-motion checks on every page (automated checks and phone testing; no separate screen-reader pass)
 - [x] Booking: Cal.com embed with the bounce loader
 
 ## 6. content migration
@@ -77,10 +77,13 @@ Built in five stages, one pull request each, from `design/` (see `design/README.
 
 ## 7. analytics and consent
 
-- [ ] CookieConsent v3 with Google Consent Mode (advanced); consent reset at launch
-- [ ] Tag Manager and the data layer, loading through `measure.harrisonjennings.au`
+- [x] CookieConsent v3 with Google Consent Mode (advanced); consent reset at launch (a new cookie, revision 1)
+- [x] Cookie banner and preferences dialog, to the `14-consent` mockups
+- [x] Tag Manager and the data layer, loading through `measure.harrisonjennings.au` (Live on production, Testing on previews)
+- [ ] In Tag Manager: remove the Pressidium consent tag and publish that to Testing now and Live at cutover; confirm the advertising cookies once an ad tag is switched on
 - [ ] Every consent state tested in Tag Manager preview and GA4 DebugView
-- [ ] D1 consent logger (a Worker route; pages stay static); records confirmed arriving
+- [x] D1 consent logger (a Worker route; pages stay static)
+- [ ] Records confirmed arriving in the production D1
 - [ ] Pressidium records exported and archived off-site
 - [ ] Content-Security-Policy in `_headers`
 - [ ] Cookie list as data (`src/content/cookies.yaml`: name, domain, expiry, purpose, category), feeding both the consent banner's cookie table and the privacy policy (a `::cookie-table{category="…"}` directive replacing the hand-written tables); laid out as a table on desktop and stacked on phones

@@ -26,6 +26,16 @@ Done on 18 October 2026. Kept here to rebuild it if needed.
 4. **Lock the previews.** The Worker's **Access** tab → **Protect this Worker behind Access** → **Previews only** (never **All traffic**: that would put a login in front of the live site once the route is added). Policy: **Cloudflare account**, so only members of the account (just Harrison) can sign in.
 5. **Service token for automated checks.** **Zero Trust → Access controls → Service credentials → Service Tokens**: `preview-checks`, valid for a year. A **Service Auth** policy (`preview-checks service token`) that includes it sits alongside the account policy. Scripts send `CF-Access-Client-Id` and `CF-Access-Client-Secret`; locally they live in `.env.preview` (ignored by git). Renew the token before it expires in October 2027.
 
+## the consent log (D1)
+
+The consent log is a D1 database bound to the Worker as `CONSENT_DB` (`wrangler.jsonc`), with its schema in `migrations/`. One-time setup:
+
+1. **Storage & databases → D1 → Create database**: `harrisonjennings-consent`, location Oceania. Its ID goes in `database_id` in `wrangler.jsonc`.
+2. **Apply the schema**: `npx wrangler d1 migrations apply CONSENT_DB --remote` (and again whenever a new file lands in `migrations/`).
+3. **The IP hashing key**: the Worker's **Settings → Variables and secrets → Add → Secret**, `CONSENT_IP_KEY`, a long random value (`openssl rand -hex 32`). Keep a copy in your password manager: without it, a stored hash can't be checked against an IP. Never change it unless you mean to: rows hashed with the old key stop matching.
+
+To look someone up, run a query in the database's **Console** tab, e.g. `SELECT * FROM consent_log WHERE consent_id = '…' ORDER BY created_at`. Rows from previews have `environment = 'preview'`.
+
 ## cutover (around 4 November)
 
 1. Lower the TTL on the `www` DNS record a day ahead.

@@ -15,6 +15,7 @@ Everything is Markdown or YAML in `src/content/`, checked against the schemas in
 | projectsPage | `src/content/projects-page.yaml`    | the projects page's intro                 |
 | rss          | `src/content/rss.yaml`              | the wording on `/rss/`                    |
 | notFound     | `src/content/not-found.yaml`        | the 404 page's title and text             |
+| consent      | `src/content/consent.yaml`          | the cookie banner and preferences dialog  |
 
 A post's URL is its folder name. Don't rename the folder after the post is live; if you must, add a 301 from the old URL in `public/_redirects`.
 
@@ -88,6 +89,10 @@ Each is one Markdown file in `src/content/pages/` (`privacy-policy.md`, `terms-o
 | `contact`      | yes      | `text` (the closing line) and `email`; until there is one it shows "[email address]" |
 
 Put `::cookie-settings` on a line of its own where the "cookie settings" button should go (the cookies section).
+
+## the cookie banner
+
+`consent.yaml` holds every word of the banner and the preferences dialog: the banner text, the dialog's intro and end line, the button labels, and each category's sentence and cookie rows (name, what it does, how long it's kept). `[privacy policy]` in the text becomes the link. When the categories or what they cover change, raise `revision`: everyone sees the banner again and chooses afresh.
 
 ## the rss page and the 404
 
