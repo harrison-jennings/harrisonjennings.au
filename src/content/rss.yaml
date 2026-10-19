@@ -1,0 +1,14 @@
+# The RSS page's wording (/rss/). The feed addresses, topic list and latest posts fill themselves in.
+rss:
+  intro: "Follow the blog in a feed reader: new posts arrive there as they're published. No account, no email list, nothing tracked."
+  note: Most readers also find it on their own if you paste in harrisonjennings.au.
+  # "how it works": exactly three steps.
+  steps:
+    - title: pick a feed reader
+      text: An app that collects posts from the sites you follow. NetNewsWire, Feedly, Inoreader and Reeder are popular; most are free.
+    - title: add the address
+      text: Paste the feed address above into the reader's "add feed" or "subscribe" box.
+    - title: read as they land
+      text: New posts show up in your reader alongside everything else you follow. Unsubscribe there whenever you like.
+  # "just one topic"
+  topics: Each topic with its own page has its own feed too.

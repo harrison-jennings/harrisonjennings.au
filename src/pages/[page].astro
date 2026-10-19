@@ -1,0 +1,156 @@
+---
+// The privacy policy and terms of use: one template, one Markdown file each in src/content/pages/.
+// The header carries the date and a link to the other page; privacy adds "the short version" from
+// its `summary`. The text sits beside "on this page" (its h2s) and ends with the contact line.
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import TextLink from '../components/TextLink.astro';
+import PageHead from '../components/blog/PageHead.astro';
+import Toc from '../components/blog/Toc.astro';
+import Base from '../layouts/Base.astro';
+import { formatDate, isoDate } from '../lib/dates';
+import '../styles/prose.css';
+
+export async function getStaticPaths() {
+  const pages = await getCollection('pages');
+  return pages.map((page) => ({
+    params: { page: page.id },
+    props: { page, others: pages.filter((p) => p.id !== page.id) },
+  }));
+}
+
+interface Props {
+  page: CollectionEntry<'pages'>;
+  others: Array<CollectionEntry<'pages'>>;
+}
+
+const { page, others } = Astro.props;
+const { title, description, updated, updatedLabel, summary, contact } = page.data;
+const { Content, headings } = await render(page);
+const toc = headings.filter((h) => h.depth === 2 && h.slug !== 'footnote-label');
+---
+
+<Base title={title} description={description}>
+  <div class="column">
+    <div class="legal-head">
+      <PageHead title={title} intro={description}>
+        <p class="legal-meta">
+          <span>
+            {updatedLabel} <time datetime={isoDate(updated)}>{formatDate(updated)}</time>
+          </span>
+          {others.map((other) => (
+            <TextLink href={`/${other.id}/`}>{other.data.title}</TextLink>
+          ))}
+        </p>
+      </PageHead>
+      {summary && (
+        <section class="short" aria-labelledby="short-version">
+          <h2 class="short__label" id="short-version">
+            the short version
+          </h2>
+          <ul>
+            {summary.map((point) => (
+              <li>{point}</li>
+            ))}
+          </ul>
+        </section>
+      )}
+    </div>
+    <div class:list={['article', { 'article--toc': toc.length > 0 }]}>
+      <div>
+        {toc.length > 0 && <Toc headings={toc} phone />}
+        <div class="prose">
+          <Content />
+        </div>
+        <p class="legal-contact">
+          {contact.text}{' '}
+          {contact.email ? (
+            <TextLink href={`mailto:${contact.email}`}>{contact.email}</TextLink>
+          ) : (
+            <span>[email address]</span>
+          )}
+        </p>
+      </div>
+      {toc.length > 0 && <Toc headings={toc} />}
+    </div>
+  </div>
+</Base>
+
+<style>
+  .legal-head {
+    max-width: 920px;
+  }
+  .legal-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+    margin: var(--space-20) 0 0;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .short {
+    box-sizing: border-box;
+    max-width: 680px;
+    margin-top: var(--space-40);
+    padding: var(--space-28) var(--space-32);
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+  }
+  .short__label {
+    margin: 0 0 14px;
+    font-family: var(--font-display);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--link);
+  }
+  .short ul {
+    margin: 0;
+    padding-left: 1.2em;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  .short li + li {
+    margin-top: var(--space-8);
+  }
+  .short li::marker {
+    color: var(--accent);
+  }
+  .legal-contact {
+    margin: 56px 0 0;
+    padding-top: var(--space-28);
+    border-top: 1px solid var(--line);
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  .article {
+    max-width: 680px;
+    margin-top: 48px;
+  }
+  .article--toc {
+    display: grid;
+    grid-template-columns: minmax(0, 680px) 240px;
+    justify-content: space-between;
+    gap: 64px;
+    max-width: none;
+  }
+  .article :global(.toc-phone) {
+    display: none;
+  }
+  @media (max-width: 760px) {
+    .short {
+      margin-top: var(--space-28);
+      padding: 22px var(--space-20);
+    }
+    .article,
+    .article--toc {
+      display: block;
+      margin-top: var(--space-32);
+    }
+    .article :global(.toc) {
+      display: none;
+    }
+    .article :global(.toc-phone) {
+      display: block;
+    }
+  }
+</style>

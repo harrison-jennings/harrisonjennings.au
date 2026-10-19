@@ -9,6 +9,7 @@ import { createHighlighter } from 'shiki';
 import { unified } from 'unified';
 import { describe, expect, it } from 'vitest';
 import { remarkCallouts } from '../../src/lib/markdown/callouts';
+import { remarkCookieSettings } from '../../src/lib/markdown/cookie-settings';
 import {
   codeLangs,
   codeTheme,
@@ -29,6 +30,7 @@ const render = async (md: string) =>
       .use(remarkGfm)
       .use(remarkDirective)
       .use(remarkCallouts)
+      .use(remarkCookieSettings)
       .use(remarkNoZoom)
       .use(remarkRehype)
       .use(rehypeHeadingCeiling)
@@ -66,6 +68,14 @@ describe('callouts', () => {
 
   it('leaves unknown directives alone', async () => {
     expect(await render(':::other\nText.\n:::')).not.toContain('callout');
+  });
+});
+
+describe('cookie settings', () => {
+  it('turns ::cookie-settings into the button that reopens the consent choices', async () => {
+    expect(await render('::cookie-settings')).toBe(
+      '<p class="cookie-settings"><button type="button" class="copy" data-cc="show-preferencesModal">cookie settings</button></p>',
+    );
   });
 });
 

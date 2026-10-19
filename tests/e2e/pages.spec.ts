@@ -24,7 +24,7 @@ for (const path of [UNKNOWN_PATH, '/this-page-does-not-exist']) {
       headers: { 'Sec-Fetch-Mode': 'navigate', Accept: 'text/html' },
     });
     expect(response.status()).toBe(404);
-    expect(await response.text()).toContain('nothing here.');
+    expect(await response.text()).toContain('this page has');
   });
 
   test(`${path} returns 404 to any other request`, async ({ request }) => {

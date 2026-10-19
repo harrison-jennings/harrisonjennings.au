@@ -4,6 +4,7 @@ import sitemap from '@astrojs/sitemap';
 import { defineConfig } from 'astro/config';
 import remarkDirective from 'remark-directive';
 import { remarkCallouts } from './src/lib/markdown/callouts.ts';
+import { remarkCookieSettings } from './src/lib/markdown/cookie-settings.ts';
 import {
   codeLangs,
   codeTheme,
@@ -34,9 +35,15 @@ export default defineConfig({
     prefetchAll: false,
     defaultStrategy: 'hover',
   },
-  // Posts: see src/lib/markdown/ and docs/content.md for what each plugin adds.
+  // Posts and pages: see src/lib/markdown/ and docs/content.md for what each plugin adds.
   markdown: {
-    remarkPlugins: [remarkDirective, remarkCallouts, remarkNoZoom, remarkReadingTime],
+    remarkPlugins: [
+      remarkDirective,
+      remarkCallouts,
+      remarkCookieSettings,
+      remarkNoZoom,
+      remarkReadingTime,
+    ],
     rehypePlugins: [rehypeHeadingCeiling, rehypeTables, rehypeFigures, rehypeCodeBlocks],
     remarkRehype: {
       footnoteLabel: 'Footnotes',

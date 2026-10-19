@@ -1,0 +1,43 @@
+---
+// An outlined pill that copies `text` and reads "copied" for 1.6s. Leave out `text` for any other
+// small action in the same style, with its own attributes. The styles are global (`.copy` in
+// global.css), so Markdown-made buttons such as the legal pages' "cookie settings" share them.
+interface Props {
+  label?: string;
+  /** What gets copied. */
+  text?: string;
+  /** Finishes the accessible name for screen readers: "copy" + " the cloud feed address". */
+  context?: string;
+  /** The copy icon before the label. */
+  icon?: boolean;
+  class?: string;
+  attrs?: Record<string, string>;
+}
+
+const {
+  label = 'copy',
+  text,
+  context,
+  icon = text !== undefined,
+  class: className,
+  attrs = {},
+} = Astro.props;
+---
+
+<button type="button" class:list={['copy', className]} data-copy-text={text} {...attrs}>
+  {icon && (
+    <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+      <rect x="9" y="9" width="11" height="11" rx="2"></rect>
+      <path d="M5 15V6a2 2 0 0 1 2-2h9"></path>
+    </svg>
+  )}
+  <span aria-live={text === undefined ? undefined : 'polite'} data-copy-label>
+    {label}
+  </span>
+  {context && <span class="visually-hidden">{context}</span>}
+</button>
+
+<script>
+  import { bindCopyText } from '../scripts/copy-text';
+  document.querySelectorAll<HTMLButtonElement>('button[data-copy-text]').forEach(bindCopyText);
+</script>

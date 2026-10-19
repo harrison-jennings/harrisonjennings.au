@@ -161,6 +161,39 @@ a {
   }
 }
 
+/* The outlined pill for small actions: copy an address, cookie settings (see CopyButton). */
+.copy {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-8);
+  flex: none;
+  min-height: var(--target);
+  padding: 0 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  cursor: pointer;
+  transition:
+    border-color 150ms ease,
+    color 150ms ease;
+}
+.copy:hover,
+.copy[data-copied] {
+  border-color: var(--link);
+  color: var(--link);
+}
+.copy svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

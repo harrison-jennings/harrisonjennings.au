@@ -1,71 +1,203 @@
 ---
+// The 404: the one inner page with the ember clouds (fading out before the footer) and the one place
+// the logo's dot keeps bouncing. The nav floats over the clouds. Wording: src/content/not-found.yaml.
+import { getEntry } from 'astro:content';
 import Button from '../components/Button.astro';
 import Logo from '../components/Logo.astro';
+import TextLink from '../components/TextLink.astro';
 import Base from '../layouts/Base.astro';
+import { getPosts, postPath } from '../lib/posts';
+
+const copy = await getEntry('notFound', 'not-found');
+if (!copy) throw new Error('src/content/not-found.yaml: missing the `not-found` entry');
+const { title, text } = copy.data;
+const last = title.length - 1;
+const latest = (await getPosts()).slice(0, 3);
 ---
 
-<Base title="not found" noindex>
-  <section class="column lost">
-    <div class="lost__field" aria-hidden="true"></div>
-    <Logo size={96} class="lost__mark" />
-    <h1 class="lost__title">nothing here.</h1>
-    <p class="lost__text">
-      That page has moved or never existed. The site was rebuilt in 2026, so older links may have
-      changed.
-    </p>
-    <Button href="/" label="back to home" />
+<Base title="not found" noindex float>
+  <section class="lost" aria-labelledby="lost-title">
+    <div class="lost__clouds" aria-hidden="true"></div>
+    <div class="column lost__body">
+      <div>
+        <span class="lost__code">404</span>
+        <h1 class="lost__title" id="lost-title">
+          {title.map((line, i) => (
+            <>
+              {line}
+              {i < last ? (
+                <>
+                  {' '}
+                  <br />
+                </>
+              ) : (
+                <span class="lost__stop" aria-hidden="true" />
+              )}
+            </>
+          ))}
+        </h1>
+        <p class="lost__sub">{text}</p>
+        <div class="lost__actions">
+          <TextLink href="/blog/">read the blog</TextLink>
+          <Button href="/" label="go home" />
+        </div>
+        {latest.length > 0 && (
+          <nav class="lost__more" aria-labelledby="lost-more">
+            <p id="lost-more">or one of the latest posts</p>
+            <ul>
+              {latest.map((post) => (
+                <li>
+                  <a href={postPath(post)}>{post.data.title}</a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )}
+      </div>
+      <Logo size={220} loading class="lost__mark" />
+    </div>
   </section>
 </Base>
 
 <style>
+  /* Fills the screen above the footer; the floating nav sits over its top. */
   .lost {
+    --nav-space: calc(var(--space-16) + var(--target) + 2 * var(--space-10) + 2px);
     position: relative;
     isolation: isolate;
+    min-height: 100svh;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    gap: var(--space-22);
-    padding-block: 120px;
   }
-  .lost__field {
+  .lost__clouds {
     position: absolute;
     inset: 0;
     z-index: -1;
-    border-radius: var(--radius-lg);
+    opacity: 0.7;
+    pointer-events: none;
     background:
       radial-gradient(60% 80% at 82% 18%, var(--cloud-brick), transparent 70%),
       radial-gradient(50% 70% at 98% 92%, var(--cloud-apricot), transparent 70%);
+    /* Fades out towards the bottom, so it never meets the footer as an edge (a mask: only alpha counts). */
+    mask-image: linear-gradient(180deg, black 60%, transparent);
   }
-  .lost :global(.lost__mark .mark__dot) {
-    transform-box: fill-box;
-    transform-origin: 50% 100%;
-    animation: bounce 1s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  .lost__body {
+    flex: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 48px;
+    align-items: center;
+    padding-block: calc(var(--nav-space) + 96px) 96px;
+  }
+  .lost__code {
+    display: block;
+    margin-bottom: 18px;
+    font-family: var(--font-display);
+    font-size: 13px;
+    color: var(--link);
   }
   .lost__title {
-    margin: 0;
+    margin: 0 0 0 -0.045em;
     font-family: var(--font-display);
-    font-size: 46px;
+    font-size: clamp(40px, 5.2vw, 72px);
     font-weight: 500;
     line-height: 1.12;
     letter-spacing: -0.05em;
   }
-  .lost__text {
-    margin: 0;
-    max-width: 480px;
+  .lost__stop {
+    display: inline-block;
+    width: 0.19em;
+    height: 0.19em;
+    margin-left: 0.25em;
+    border-radius: var(--radius-pill);
+    background: var(--accent);
   }
-  @keyframes bounce {
-    0%,
-    100% {
-      transform: translateY(-4px) scale(0.94, 1.06);
+  .lost__sub {
+    margin: 24px 0 0;
+    max-width: 560px;
+    font-size: 19px;
+    line-height: 1.55;
+    color: var(--muted);
+    text-wrap: pretty;
+  }
+  .lost__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-20) var(--space-28);
+    margin-top: 36px;
+    font-size: 17px;
+  }
+  .lost__body :global(.lost__mark) {
+    width: 220px;
+    height: 220px;
+    margin-bottom: var(--space-28);
+  }
+  .lost__more {
+    margin-top: 56px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+    max-width: 680px;
+  }
+  .lost__more p {
+    margin: 0 0 12px;
+    font-family: var(--font-display);
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .lost__more ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-10);
+    font-size: 17px;
+  }
+  .lost__more a {
+    color: var(--text);
+    text-decoration: none;
+    transition: color 150ms ease;
+  }
+  .lost__more a:hover {
+    color: var(--link);
+  }
+  @media (max-width: 760px) {
+    .lost__body {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 24px;
+      padding-block: calc(var(--nav-space) + 48px) 56px;
     }
-    48% {
-      transform: translateY(10px) scale(1);
+    .lost__body :global(.lost__mark) {
+      order: -1;
+      width: 96px;
+      height: 96px;
+      margin-bottom: 12px;
     }
-    56% {
-      transform: translateY(12px) scale(1.22, 0.74);
+    .lost__title {
+      font-size: 40px;
     }
-    64% {
-      transform: translateY(10px) scale(0.96, 1.04);
+    .lost__sub {
+      font-size: 17px;
+    }
+    .lost__actions {
+      flex-direction: column-reverse;
+      align-items: stretch;
+      gap: 18px;
+    }
+    .lost__actions :global(.btn) {
+      width: 100%;
+    }
+    .lost__actions :global(.link) {
+      align-self: center;
+    }
+    .lost__more {
+      margin-top: var(--space-40);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .lost__more a {
+      transition: none;
     }
   }
 </style>

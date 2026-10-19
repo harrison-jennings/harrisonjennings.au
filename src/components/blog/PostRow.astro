@@ -1,0 +1,116 @@
+---
+// One post as a row: the date on the left, then the title, description and (when given the topic
+// pages) its topics. Phones: one column. In the archive the year heads each group, so the date shows
+// its year only on phones; `fullDate` shows it everywhere.
+import type { CollectionEntry } from 'astro:content';
+import { formatDate, isoDate } from '../../lib/dates';
+import { postPath } from '../../lib/posts';
+import PostTags from './PostTags.astro';
+
+interface Props {
+  post: CollectionEntry<'posts'>;
+  topicPages?: ReadonlySet<string>;
+  fullDate?: boolean;
+}
+
+const { post, topicPages, fullDate = false } = Astro.props;
+const { published, title, description } = Astro.props.post.data;
+const dayMonth = new Intl.DateTimeFormat('en-AU', {
+  day: 'numeric',
+  month: 'long',
+  timeZone: 'UTC',
+});
+---
+
+<article class="row">
+  <time class="row__date" datetime={isoDate(published)}>
+    {fullDate ? (
+      formatDate(published)
+    ) : (
+      <>
+        {dayMonth.format(published)}
+        <span class="row__year"> {published.getUTCFullYear()}</span>
+      </>
+    )}
+  </time>
+  <div>
+    <h3 class="row__title">
+      <a href={postPath(post)}>{title}</a>
+    </h3>
+    <p class="row__desc">{description}</p>
+    {topicPages && <PostTags post={post} topicPages={topicPages} />}
+  </div>
+</article>
+
+<style>
+  .row {
+    display: grid;
+    grid-template-columns: 132px minmax(0, 1fr);
+    gap: 24px;
+    padding: var(--space-28) 0;
+    border-top: 1px solid var(--line);
+  }
+  .row__date {
+    font-size: 14px;
+    line-height: 1.9;
+    color: var(--muted);
+  }
+  .row__year {
+    display: none;
+  }
+  .row__title {
+    margin: 0 0 var(--space-8);
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    text-wrap: pretty;
+  }
+  .row__title a {
+    color: var(--text);
+    text-decoration: none;
+    background-image: linear-gradient(var(--accent), var(--accent));
+    background-size: 0% 1.5px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition:
+      background-size 240ms cubic-bezier(0.65, 0, 0.35, 1),
+      color 150ms ease;
+  }
+  .row__title a:hover {
+    background-size: 100% 1.5px;
+    color: var(--link);
+  }
+  .row__desc {
+    margin: 0 0 14px;
+    max-width: 680px;
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--muted);
+    text-wrap: pretty;
+  }
+  .row__desc:last-child {
+    margin-bottom: 0;
+  }
+  @media (max-width: 760px) {
+    .row {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 6px;
+      padding: 22px 0;
+    }
+    .row__year {
+      display: inline;
+    }
+    .row__title {
+      font-size: 21px;
+    }
+    .row__desc {
+      font-size: 16px;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .row__title a {
+      transition: none;
+    }
+  }
+</style>

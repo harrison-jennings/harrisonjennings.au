@@ -1,12 +1,10 @@
 ---
-// Posts grouped by year: the year on the left (sticky), each post as a row of date, title,
+// Posts grouped by year: the year on the left (sticky), each post as a row (PostRow) of date, title,
 // description and topics. Phones: one column, the date gains its year, and each year gets one
 // line above it and none below.
 import type { CollectionEntry } from 'astro:content';
 import { byYear } from '../../lib/blog';
-import { isoDate } from '../../lib/dates';
-import { postPath } from '../../lib/posts';
-import PostTags from './PostTags.astro';
+import PostRow from './PostRow.astro';
 
 interface Props {
   posts: Array<CollectionEntry<'posts'>>;
@@ -14,11 +12,6 @@ interface Props {
 }
 
 const { posts, topicPages } = Astro.props;
-const dayMonth = new Intl.DateTimeFormat('en-AU', {
-  day: 'numeric',
-  month: 'long',
-  timeZone: 'UTC',
-});
 ---
 
 <div class="archive">
@@ -29,19 +22,7 @@ const dayMonth = new Intl.DateTimeFormat('en-AU', {
       </h2>
       <div>
         {list.map((post) => (
-          <article class="row">
-            <time class="row__date" datetime={isoDate(post.data.published)}>
-              {dayMonth.format(post.data.published)}
-              <span class="row__year"> {year}</span>
-            </time>
-            <div>
-              <h3 class="row__title">
-                <a href={postPath(post)}>{post.data.title}</a>
-              </h3>
-              <p class="row__desc">{post.data.description}</p>
-              <PostTags post={post} topicPages={topicPages} />
-            </div>
-          </article>
+          <PostRow post={post} topicPages={topicPages} />
         ))}
       </div>
     </section>
@@ -72,54 +53,8 @@ const dayMonth = new Intl.DateTimeFormat('en-AU', {
   .year + .year .year__label {
     border-top: 1px solid var(--line);
   }
-  .row {
-    display: grid;
-    grid-template-columns: 132px minmax(0, 1fr);
-    gap: 24px;
-    padding: var(--space-28) 0;
-    border-top: 1px solid var(--line);
-  }
-  .year:last-child .row:last-child {
+  .year:last-child :global(.row:last-child) {
     border-bottom: 1px solid var(--line);
-  }
-  .row__date {
-    font-size: 14px;
-    line-height: 1.9;
-    color: var(--muted);
-  }
-  .row__year {
-    display: none;
-  }
-  .row__title {
-    margin: 0 0 var(--space-8);
-    font-size: 24px;
-    font-weight: 600;
-    line-height: 1.25;
-    letter-spacing: -0.02em;
-    text-wrap: pretty;
-  }
-  .row__title a {
-    color: var(--text);
-    text-decoration: none;
-    background-image: linear-gradient(var(--accent), var(--accent));
-    background-size: 0% 1.5px;
-    background-position: 0 100%;
-    background-repeat: no-repeat;
-    transition:
-      background-size 240ms cubic-bezier(0.65, 0, 0.35, 1),
-      color 150ms ease;
-  }
-  .row__title a:hover {
-    background-size: 100% 1.5px;
-    color: var(--link);
-  }
-  .row__desc {
-    margin: 0 0 14px;
-    max-width: 680px;
-    font-size: 17px;
-    line-height: 1.6;
-    color: var(--muted);
-    text-wrap: pretty;
   }
   @media (max-width: 760px) {
     .archive {
@@ -132,31 +67,12 @@ const dayMonth = new Intl.DateTimeFormat('en-AU', {
       padding: var(--space-20) 0 2px;
       border-top: 1px solid var(--line);
     }
-    .year .row:first-child {
+    .year :global(.row:first-child) {
       border-top: 0;
       padding-top: 14px;
     }
-    .year:last-child .row:last-child {
+    .year:last-child :global(.row:last-child) {
       border-bottom: 0;
-    }
-    .row {
-      grid-template-columns: minmax(0, 1fr);
-      gap: 6px;
-      padding: 22px 0;
-    }
-    .row__year {
-      display: inline;
-    }
-    .row__title {
-      font-size: 21px;
-    }
-    .row__desc {
-      font-size: 16px;
-    }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .row__title a {
-      transition: none;
     }
   }
 </style>

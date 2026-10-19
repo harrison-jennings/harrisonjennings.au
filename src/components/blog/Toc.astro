@@ -146,19 +146,27 @@ for (const h of headings) {
     line-height: 1.5;
   }
   .toc-phone ol ol {
-    padding: 4px 0 0 20px;
+    padding: 0 0 0 20px;
+    font-size: 14px;
   }
-  .toc-phone li + li {
-    margin-top: 6px;
-  }
+  /* Plain links, as in the mockups. Each fills its row (the mockups' 8px gap becomes padding), so
+     the whole line is the tap target. */
   .toc-phone a {
+    display: block;
+    padding: 4px 0;
     color: var(--text);
-    text-decoration: underline;
-    text-decoration-color: var(--accent);
-    text-underline-offset: 4px;
+    text-decoration: none;
+    transition: color 150ms ease;
+  }
+  .toc-phone a:hover {
+    color: var(--link);
+  }
+  .toc-phone ol ol a {
+    color: var(--muted);
   }
   @media (prefers-reduced-motion: reduce) {
-    .toc a {
+    .toc a,
+    .toc-phone a {
       transition: none;
     }
   }

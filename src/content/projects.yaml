@@ -1,9 +1,13 @@
-# Deployed projects. `featured` ones appear in "built and shipped" on the home page, by `order`.
+# Every project, on /projects/ by `order`. `featured` ones also appear in "built and shipped" on the
+# home page. Set `status: archived` to move one to the quiet "archived" list (its summary becomes the
+# one line on what it was). `kind` is what it is, in a few words; `built` is the year.
 - id: leadlens
   name: leadlens
   summary: Email previews and linting that understand Marketo, inside VS Code. Reads Email Editor 2.0 templates the way Marketo does, then shows how they render across 21 email clients.
   host: leadlens.harrisonjennings.au
   url: https://leadlens.harrisonjennings.au/
+  kind: VS Code extension
+  built: 2026
   featured: true
   order: 1
 
@@ -12,5 +16,7 @@
   summary: A searchable reference for the Marketo Engage REST API, generated from Adobe's own specifications, with a request builder that shows exactly what a call would send.
   host: mkto-ref.harrisonjennings.au
   url: https://mkto-ref.harrisonjennings.au/
+  kind: interactive API reference
+  built: 2026
   featured: true
   order: 2

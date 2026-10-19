@@ -59,7 +59,7 @@ Built in five stages, one pull request each, from `design/` (see `design/README.
 - [x] Stage 1, foundations: tokens, dark-first theme and toggle, fonts, the shared column, nav, mobile menu, footer, shared components
 - [x] Stage 2, home
 - [x] Stage 3, blog: index, topic pages, posts, code blocks, image viewer
-- [ ] Stage 4, projects, RSS, legal pages, 404
+- [x] Stage 4, projects, RSS, legal pages, 404
 - [ ] Stage 5, social share cards
 - [ ] Each approved mockup built as a page, from the existing components and tokens
 - [ ] Phone, keyboard, focus, contrast and reduced-motion checks on every page
@@ -68,8 +68,8 @@ Built in five stages, one pull request each, from `design/` (see `design/README.
 ## 6. content migration
 
 - [ ] Convert the export with `wordpress-export-to-markdown` (it downloads images too)
-- [ ] Clean up block-editor markup and code blocks in each of the 6 posts; keep each post's WordPress ID as `wpId`
-- [ ] Privacy and terms into `src/content/pages/`
+- [ ] Clean up block-editor markup and code blocks in each of the 6 posts; keep each post's WordPress ID as `wpId` (the `?p=` number in the live feed's `<guid>`)
+- [ ] Privacy and terms into `src/content/pages/`: the text, dates, the short version and the contact email
 - [ ] Turn the 8 populated categories (and any tags) into a short `topics.yaml`; merge any that overlap
 - [ ] A 301 in `public/_redirects` for every old post URL (`/YYYY/MM/<slug>/` → `/blog/<slug>/`) and category URL, from the crawl
 - [ ] Redirect tests: a Playwright test that every source in `public/_redirects` returns a single 301 to a page that returns 200, and that no rule uses a wildcard
@@ -90,7 +90,7 @@ Built in five stages, one pull request each, from `design/` (see `design/README.
 - [ ] Old Yoast and WordPress sitemap URLs 301 to the new sitemap index (already in `_redirects`)
 - [ ] After launch, watch Search Console for the moved posts being re-indexed at their new URLs
 - [ ] Titles and descriptions for every page, post and topic
-- [ ] Sitemap, RSS at `/feed/`, social cards and structured data validated
+- [ ] Sitemap, the feeds (`/rss.xml`, and `/feed/` redirecting to it), social cards and structured data validated
 - [ ] Lighthouse 95+ on performance, accessibility and SEO
 - [ ] Lighthouse CI on every pull request, failing below 95 on performance, accessibility and SEO
 - [ ] Remove `noindex` from the placeholder home page
