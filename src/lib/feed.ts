@@ -12,8 +12,15 @@ export const feedPath = (topicId?: string): string =>
 /** The same address in full, for people to copy into a reader. */
 export const feedUrl = (topicId?: string): string => new URL(feedPath(topicId), SITE.url).href;
 
+const escapeHtml = (text: string): string =>
+  text.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
+
+/** The words on the link that ends each feed item. */
+export const READ_ON_SITE = 'read the full post on harrisonjennings.au';
+
 /**
- * One post as a feed item. A migrated post keeps the guid WordPress gave it
+ * One post as a feed item: its description, and (what feed apps show when an item is opened) the
+ * description followed by a link to the full post. A migrated post keeps the guid WordPress gave it
  * (https://www.harrisonjennings.au/?p=<wpId>), so readers don't show it again as new.
  */
 export function feedItem(
@@ -21,9 +28,11 @@ export function feedItem(
   topicNames: ReadonlyMap<string, string>,
 ): RSSFeedItem {
   const { title, description, published, topics, wpId } = post.data;
+  const url = new URL(postPath(post), SITE.url).href;
   return {
     title,
     description,
+    content: `<p>${escapeHtml(description)}</p><p><a href="${url}">${READ_ON_SITE}</a></p>`,
     pubDate: published,
     link: postPath(post),
     categories: topics.flatMap((t) => topicNames.get(t.id) ?? []),

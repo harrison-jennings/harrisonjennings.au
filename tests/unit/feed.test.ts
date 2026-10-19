@@ -42,6 +42,18 @@ describe('feed items', () => {
     expect(item.customData).toBeUndefined();
   });
 
+  it('ends with a link to the full post on the site, the description escaped', () => {
+    const item = feedItem(post('new-post', '2026-10-16'), names);
+    expect(item.content).toBe(
+      '<p>description of new-post</p><p><a href="https://www.harrisonjennings.au/blog/new-post/">read the full post on harrisonjennings.au</a></p>',
+    );
+    const tricky = post('tricky', '2026-10-16');
+    tricky.data.description = 'Tags & <b>things</b>';
+    expect(feedItem(tricky, names).content).toContain(
+      '<p>Tags &amp; &lt;b&gt;things&lt;/b&gt;</p>',
+    );
+  });
+
   it("keeps a migrated post's WordPress guid, so readers don't show it again", async () => {
     const response = await rss(
       feedOptions({

@@ -11,6 +11,10 @@ test.describe('the feeds', () => {
       '<link>https://www.harrisonjennings.au/blog/formatting-reference/</link>',
     );
     expect(xml).not.toContain('xml-stylesheet');
+    // Each item ends with a link to the full post (HTML, escaped inside the XML).
+    expect(xml).toContain(
+      '&lt;a href=&quot;https://www.harrisonjennings.au/blog/formatting-reference/&quot;&gt;read the full post on harrisonjennings.au&lt;/a&gt;',
+    );
   });
 
   for (const path of ['/feed/', '/feed']) {
