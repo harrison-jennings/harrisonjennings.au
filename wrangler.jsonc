@@ -17,7 +17,7 @@
     {
       "binding": "CONSENT_DB",
       "database_name": "harrisonjennings-consent",
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      "database_id": "57c02de5-f774-4914-a67e-e153baeb69c8",
       "migrations_dir": "migrations",
     },
   ],
