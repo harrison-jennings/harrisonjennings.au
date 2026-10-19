@@ -10,10 +10,12 @@ interface Props {
    * of the closest `[data-logo-draw]` element.
    */
   draw?: boolean | 'view';
+  /** The dot squashes and bounces at the foot of the leg (loading, and the 404). Still under reduced motion. */
+  loading?: boolean;
   class?: string;
 }
 
-const { size = 26, label, draw = false, class: className } = Astro.props;
+const { size = 26, label, draw = false, loading = false, class: className } = Astro.props;
 
 const weights: Array<[number, number, number]> = [
   [40, 11, 7.5],
@@ -26,7 +28,7 @@ const H = 'M30 10 V90 M30 58 C30 44 39 38 50 38 C61 38 70 44 70 58 V72';
 ---
 
 <svg
-  class:list={['mark', className]}
+  class:list={['mark', { 'mark--loading': loading }, className]}
   width={size}
   height={size}
   viewBox="0 0 100 100"
@@ -52,6 +54,32 @@ const H = 'M30 10 V90 M30 58 C30 44 39 38 50 38 C61 38 70 44 70 58 V72';
   }
   .mark__dot {
     fill: var(--accent);
+  }
+  /* The mark lets its contents overflow, so the lowest point of the bounce is never clipped. */
+  .mark--loading .mark__dot {
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+    animation: bounce 1s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  }
+  @keyframes bounce {
+    0%,
+    100% {
+      transform: translateY(-4px) scale(0.94, 1.06);
+    }
+    48% {
+      transform: translateY(10px) scale(1);
+    }
+    56% {
+      transform: translateY(12px) scale(1.22, 0.74);
+    }
+    64% {
+      transform: translateY(10px) scale(0.96, 1.04);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .mark--loading .mark__dot {
+      animation: none;
+    }
   }
 </style>
 

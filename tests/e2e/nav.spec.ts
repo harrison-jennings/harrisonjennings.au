@@ -11,7 +11,7 @@ test('on an inner page the nav sits 16px from the top and stays there while scro
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 500 });
-  await page.goto(UNKNOWN_PATH);
+  await page.goto('/projects/');
   expect((await navBox(page)).y).toBe(16);
   const mainTop = await page.locator('main').evaluate((m) => m.getBoundingClientRect().top);
   expect(mainTop).toBeGreaterThanOrEqual(16 + (await navBox(page)).height);
@@ -26,11 +26,13 @@ test('on an inner page the nav sits 16px from the top and stays there while scro
   );
 });
 
-test('on the home page the nav floats over the top of the page', async ({ page }) => {
-  await page.goto('/');
-  expect((await navBox(page)).y).toBe(16);
-  expect(await page.locator('main').evaluate((m) => m.getBoundingClientRect().top)).toBe(0);
-});
+for (const path of ['/', UNKNOWN_PATH]) {
+  test(`on ${path} the nav floats over the top of the page`, async ({ page }) => {
+    await page.goto(path);
+    expect((await navBox(page)).y).toBe(16);
+    expect(await page.locator('main').evaluate((m) => m.getBoundingClientRect().top)).toBe(0);
+  });
+}
 
 test('the nav compacts after 80px of scroll and stays compact under the pointer', async ({
   page,

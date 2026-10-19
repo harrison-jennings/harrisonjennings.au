@@ -3,7 +3,9 @@
 import PageHead from '../../../components/blog/PageHead.astro';
 import PostArchive from '../../../components/blog/PostArchive.astro';
 import TopicChips from '../../../components/blog/TopicChips.astro';
+import { SITE } from '../../../consts';
 import Base from '../../../layouts/Base.astro';
+import { feedPath } from '../../../lib/feed';
 import { getPosts, getTopicPages } from '../../../lib/posts';
 import { topicChips, topicPageIds } from '../../../lib/topics';
 
@@ -19,7 +21,11 @@ const total = (await getPosts()).length;
 const count = `${posts.length} ${posts.length === 1 ? 'post' : 'posts'}.`;
 ---
 
-<Base title={topic.data.name} description={topic.data.description}>
+<Base
+  title={topic.data.name}
+  description={topic.data.description}
+  feeds={[{ title: `${topic.data.name} · ${SITE.name}`, href: feedPath(topic.id) }]}
+>
   <div class="column">
     <PageHead
       title={topic.data.name}

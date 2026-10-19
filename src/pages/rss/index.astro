@@ -1,0 +1,254 @@
+---
+// The RSS page: a normal page about the feed, not a styled feed file (Chrome drops XSLT, the usual
+// way to style one, on 17 November 2026). Every "rss feed" link on the site points here; the feeds
+// themselves stay raw XML for readers. Wording lives in src/content/rss.yaml.
+import { getEntry } from 'astro:content';
+import CopyButton from '../../components/CopyButton.astro';
+import TextLink from '../../components/TextLink.astro';
+import PageHead from '../../components/blog/PageHead.astro';
+import PostRow from '../../components/blog/PostRow.astro';
+import Base from '../../layouts/Base.astro';
+import { feedUrl } from '../../lib/feed';
+import { getPosts, getTopicPages, topicPath } from '../../lib/posts';
+
+const copy = await getEntry('rss', 'rss');
+if (!copy) throw new Error('src/content/rss.yaml: missing the `rss` entry');
+const { intro, note, steps, topics: topicsIntro } = copy.data;
+
+// On phones the address drops its "https://www." so it fits; the button still copies all of it.
+const url = feedUrl();
+const scheme = url.match(/^https?:\/\/(www\.)?/)?.[0] ?? '';
+const [host = '', ...rest] = url.slice(scheme.length).split('/');
+const path = `/${rest.join('/')}`;
+
+const topicPages = await getTopicPages();
+const latest = (await getPosts()).slice(0, 3);
+---
+
+<Base title="rss feed" description={intro}>
+  <div class="column">
+    <PageHead
+      title="rss feed"
+      intro={intro}
+      eyebrow={[{ label: 'blog', href: '/blog/' }, { label: 'rss feed' }]}
+    />
+    <div class="feedbox">
+      <div>
+        <span class="feedbox__label">feed address</span>
+        <!-- prettier-ignore -->
+        <code class="feedbox__url"><span class="feedbox__scheme">{scheme}</span>{host}<wbr />{path}</code>
+      </div>
+      <CopyButton label="copy address" text={url} />
+    </div>
+    <p class="feed-note">{note}</p>
+
+    <section class="rss-sec" aria-labelledby="how-it-works">
+      <div class="section__head">
+        <h2 id="how-it-works" class="section__title">
+          how it works
+        </h2>
+      </div>
+      <ol class="steps">
+        {steps.map((step, i) => (
+          <li>
+            <span class="steps__n" aria-hidden="true">
+              {String(i + 1).padStart(2, '0')}
+            </span>
+            <h3>{step.title}</h3>
+            <p>{step.text}</p>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    {topicPages.length > 0 && (
+      <section class="rss-sec" aria-labelledby="one-topic">
+        <div class="section__head">
+          <h2 id="one-topic" class="section__title">
+            just one topic
+          </h2>
+        </div>
+        <p class="rss-sec__intro">{topicsIntro}</p>
+        <div>
+          {topicPages.map(({ topic }) => (
+            <div class="tfeed" id={`topic-${topic.id}`}>
+              <a href={topicPath(topic)}>{topic.data.name}</a>
+              <code>{feedUrl(topic.id)}</code>
+              <CopyButton
+                text={feedUrl(topic.id)}
+                context={` the ${topic.data.name} feed address`}
+              />
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+
+    {latest.length > 0 && (
+      <section class="rss-sec latest" aria-labelledby="latest-in-feed">
+        <div class="section__head">
+          <h2 id="latest-in-feed" class="section__title">
+            latest in the feed
+          </h2>
+          <TextLink href="/blog/" quiet>
+            all posts
+          </TextLink>
+        </div>
+        <div>
+          {latest.map((post) => (
+            <PostRow post={post} fullDate />
+          ))}
+        </div>
+      </section>
+    )}
+  </div>
+</Base>
+
+<style>
+  .feedbox {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin-top: var(--space-40);
+    padding: var(--space-28) var(--space-32);
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+  }
+  .feedbox > div {
+    min-width: 0;
+  }
+  .feedbox__label {
+    display: block;
+    margin-bottom: var(--space-8);
+    font-family: var(--font-display);
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .feedbox__url {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 20px;
+    letter-spacing: -0.03em;
+    overflow-wrap: anywhere;
+  }
+  .feed-note {
+    margin: var(--space-16) 0 0;
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--muted);
+  }
+
+  .rss-sec {
+    margin-top: 96px;
+  }
+  .rss-sec__intro {
+    margin: -12px 0 24px;
+    max-width: 600px;
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--muted);
+  }
+
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-40);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .steps li {
+    border-top: 1px solid var(--line);
+    padding-top: var(--space-22);
+  }
+  .steps__n {
+    display: block;
+    margin-bottom: var(--space-10);
+    font-family: var(--font-display);
+    font-size: 12px;
+    color: var(--link);
+  }
+  .steps h3 {
+    margin: 0 0 var(--space-8);
+    font-size: 21px;
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+  }
+  .steps p {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--muted);
+  }
+
+  .tfeed {
+    display: grid;
+    grid-template-columns: 240px minmax(0, 1fr) auto;
+    gap: 24px;
+    align-items: center;
+    padding: var(--space-16) 0;
+    border-top: 1px solid var(--line);
+    scroll-margin-top: 112px;
+  }
+  .tfeed:last-child {
+    border-bottom: 1px solid var(--line);
+  }
+  .tfeed a {
+    font-size: 17px;
+    color: var(--text);
+    text-decoration: none;
+    transition: color 150ms ease;
+  }
+  .tfeed a:hover {
+    color: var(--link);
+  }
+  .tfeed code {
+    font-family: var(--font-display);
+    font-size: 13px;
+    color: var(--muted);
+    overflow-wrap: anywhere;
+  }
+  .latest :global(.row:last-child) {
+    border-bottom: 1px solid var(--line);
+  }
+
+  @media (max-width: 760px) {
+    .feedbox {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 18px;
+      padding: 22px var(--space-20);
+    }
+    .feedbox__url {
+      font-size: 16px;
+    }
+    .feedbox__scheme {
+      display: none;
+    }
+    .feedbox :global(.copy) {
+      width: 100%;
+    }
+    .rss-sec {
+      margin-top: var(--space-72);
+    }
+    .steps {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 24px;
+    }
+    .tfeed {
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: var(--space-16);
+      padding: 14px 0;
+    }
+    .tfeed code {
+      display: none;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .tfeed a {
+      transition: none;
+    }
+  }
+</style>

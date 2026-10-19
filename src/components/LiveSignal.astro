@@ -1,5 +1,7 @@
 ---
-// The live dot: a brick point with a halo that pulses. The words carry the meaning.
+// "live at {host}" after the live dot. The words carry the meaning.
+import LiveDot from './LiveDot.astro';
+
 interface Props {
   host: string;
   /** The live URL: the host becomes a link, underlined like a text link. */
@@ -11,11 +13,13 @@ const { host, href } = Astro.props;
 
 {href ? (
   <a class="live" href={href}>
-    <span class="live__dot" aria-hidden="true"></span>live at <span class="live__host">{host}</span>
+    <LiveDot />
+    live at <span class="live__host">{host}</span>
   </a>
 ) : (
   <span class="live">
-    <span class="live__dot" aria-hidden="true"></span>live at {host}
+    <LiveDot />
+    live at {host}
   </span>
 )}
 
@@ -43,33 +47,5 @@ const { host, href } = Astro.props;
     color: var(--link);
     text-decoration-color: var(--link);
     text-decoration-thickness: 2px;
-  }
-  .live__dot {
-    position: relative;
-    flex: none;
-    width: 8px;
-    height: 8px;
-    border-radius: var(--radius-pill);
-    background: var(--accent);
-    box-shadow: var(--shadow-signal);
-  }
-  .live__dot::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    border: 1.5px solid var(--accent);
-    animation: pulse 1.8s ease-out infinite;
-  }
-  @keyframes pulse {
-    0% {
-      transform: scale(1);
-      opacity: 0.7;
-    }
-    80%,
-    100% {
-      transform: scale(3);
-      opacity: 0;
-    }
   }
 </style>

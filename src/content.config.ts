@@ -26,13 +26,19 @@ const posts = defineCollection({
     }),
 });
 
-// Standalone pages such as the privacy policy and terms of use.
+// The privacy policy and terms of use, at /<file name>/. The description is the intro under the title.
 const pages = defineCollection({
   loader: glob({ base: './src/content/pages', pattern: '*.{md,mdx}' }),
   schema: z.object({
     title: z.string(),
     description: z.string().max(180),
     updated: z.coerce.date(),
+    /** The words before the date: "Last updated" (privacy) or "Effective" (terms). */
+    updatedLabel: z.string().default('Last updated'),
+    /** "the short version": four or five plain-language points above the policy. */
+    summary: z.array(z.string()).optional(),
+    /** The closing line, followed by the contact email. */
+    contact: z.object({ text: z.string(), email: z.email().optional() }),
   }),
 });
 
@@ -57,6 +63,10 @@ const projects = defineCollection({
       repo: z.url().optional(),
       story: reference('posts').optional(),
       image: image().optional(),
+      /** What it is, in a few words: "VS Code extension", "interactive API reference". */
+      kind: z.string().optional(),
+      /** The year it was built. */
+      built: z.number().int().optional(),
       featured: z.boolean().default(false),
       order: z.number().default(100),
       status: z.enum(['live', 'archived']).default('live'),
@@ -107,6 +117,29 @@ const home = defineCollection({
   }),
 });
 
+// The projects page's own wording.
+const projectsPage = defineCollection({
+  loader: file('src/content/projects-page.yaml'),
+  schema: z.object({ intro: z.string() }),
+});
+
+// The RSS page (/rss/): what a feed is and how to follow one.
+const rss = defineCollection({
+  loader: file('src/content/rss.yaml'),
+  schema: z.object({
+    intro: z.string(),
+    note: z.string(),
+    steps: z.array(z.object({ title: z.string(), text: z.string() })).length(3),
+    topics: z.string(),
+  }),
+});
+
+// The 404 page's wording. The title ends in the brick stop, so leave off its full stop.
+const notFound = defineCollection({
+  loader: file('src/content/not-found.yaml'),
+  schema: z.object({ title: z.array(z.string()).min(1), text: z.string() }),
+});
+
 export const collections = {
   posts,
   pages,
@@ -116,4 +149,7 @@ export const collections = {
   testimonials,
   home,
   blog,
+  projectsPage,
+  rss,
+  notFound,
 };

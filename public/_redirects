@@ -9,6 +9,11 @@
 /category-sitemap.xml  /sitemap-index.xml  301
 /wp-sitemap.xml        /sitemap-index.xml  301
 
+# The WordPress feed → the new feed, so existing subscribers carry over (posts keep their WordPress
+# guids through `wpId`, so they don't arrive again as new)
+/feed/  /rss.xml  301
+/feed   /rss.xml  301
+
 # Posts: /YYYY/MM/<slug>/ → /blog/<slug>/
 # /2026/08/example-post/  /blog/example-post/  301
 

@@ -36,7 +36,7 @@ const { title, note } = home.data.booking;
     </div>
     <div class="book__cal" id="book-cal" hidden data-book-cal>
       <div class="book__loading" role="status">
-        <Logo size={44} class="mark--loading" />
+        <Logo size={44} loading />
         <span>loading the booking calendar</span>
       </div>
       <div class="book__embed" data-book-embed></div>
@@ -133,28 +133,6 @@ const { title, note } = home.data.booking;
     width: 100%;
     min-height: 440px;
   }
-  /* The dot squashes and bounces at the foot of the leg while the calendar loads. */
-  .book__loading :global(.mark--loading .mark__dot) {
-    transform-box: fill-box;
-    transform-origin: 50% 100%;
-    animation: bounce 1s cubic-bezier(0.45, 0, 0.55, 1) infinite;
-  }
-  @keyframes bounce {
-    0%,
-    100% {
-      transform: translateY(-4px) scale(0.94, 1.06);
-    }
-    48% {
-      transform: translateY(10px) scale(1);
-    }
-    56% {
-      transform: translateY(12px) scale(1.22, 0.74);
-    }
-    64% {
-      transform: translateY(10px) scale(0.96, 1.04);
-    }
-  }
-
   @media (max-width: 760px) {
     .book {
       grid-template-columns: minmax(0, 1fr);

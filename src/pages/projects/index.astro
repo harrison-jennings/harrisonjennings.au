@@ -1,0 +1,274 @@
+---
+// Every project by `order`: a large still screenshot (not a link, no scroll effect), then its number,
+// name, facts, description and links. Archived projects follow as quiet rows, once there are any.
+import { Image } from 'astro:assets';
+import { getCollection, getEntry } from 'astro:content';
+import LiveDot from '../../components/LiveDot.astro';
+import ProjectLinks from '../../components/ProjectLinks.astro';
+import PageHead from '../../components/blog/PageHead.astro';
+import Base from '../../layouts/Base.astro';
+import { postPath } from '../../lib/posts';
+
+const copy = await getEntry('projectsPage', 'projects');
+if (!copy) throw new Error('src/content/projects-page.yaml: missing the `projects` entry');
+
+const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+const live = projects.filter((p) => p.data.status === 'live');
+const archived = projects.filter((p) => p.data.status === 'archived');
+
+/** The name links to the story if there is one, otherwise the live site. */
+const nameHref = async (project: (typeof projects)[number]) => {
+  const story = project.data.story ? await getEntry(project.data.story) : undefined;
+  return story ? postPath(story) : project.data.url;
+};
+const number = (i: number) => String(i + 1).padStart(2, '0');
+---
+
+<Base title="projects" description={copy.data.intro}>
+  <div class="column">
+    <PageHead title="projects" intro={copy.data.intro} />
+
+    <div class="pjlist">
+      {live.map(async (project, i) => {
+        const { name, image, kind, built, summary } = project.data;
+        const href = await nameHref(project);
+        return (
+          <article class="pj" aria-labelledby={`pj-${project.id}`}>
+            <div class:list={['pj__shot', { 'pj__shot--empty': !image }]}>
+              {image ? (
+                <Image
+                  src={image}
+                  alt={`${name}, screenshot`}
+                  widths={[640, 1120, 1600, 2240]}
+                  sizes="(max-width: 760px) 100vw, 1120px"
+                />
+              ) : (
+                <span aria-hidden="true">{name}</span>
+              )}
+            </div>
+            <div class="pj__body">
+              <div>
+                <span class="pj__n" aria-hidden="true">
+                  {number(i)}
+                </span>
+                <h2 class="pj__name" id={`pj-${project.id}`}>
+                  {href ? <a href={href}>{name}</a> : name}
+                </h2>
+                <dl class="pj__facts">
+                  <dt>status</dt>
+                  <dd class="pj__status">
+                    <LiveDot />
+                    live
+                  </dd>
+                  {kind && (
+                    <>
+                      <dt>what it is</dt>
+                      <dd>{kind}</dd>
+                    </>
+                  )}
+                  {built && (
+                    <>
+                      <dt>built</dt>
+                      <dd>{built}</dd>
+                    </>
+                  )}
+                </dl>
+              </div>
+              <div>
+                <p class="pj__desc">{summary}</p>
+                <div class="pj__links">
+                  <ProjectLinks project={project} />
+                </div>
+              </div>
+            </div>
+          </article>
+        );
+      })}
+    </div>
+
+    {archived.length > 0 && (
+      <section class="archived" aria-labelledby="archived">
+        <div class="section__head">
+          <h2 id="archived" class="section__title">
+            archived
+          </h2>
+        </div>
+        {archived.map((project) => (
+          <div class="archived__row">
+            <h3 class="archived__name">{project.data.name}</h3>
+            <div>
+              <p class="archived__desc">{project.data.summary}</p>
+              <div class="pj__links">
+                <ProjectLinks project={project} />
+              </div>
+            </div>
+          </div>
+        ))}
+      </section>
+    )}
+  </div>
+</Base>
+
+<style>
+  .pjlist {
+    margin-top: var(--space-72);
+    display: flex;
+    flex-direction: column;
+    gap: 112px;
+  }
+  .pj {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-32);
+  }
+  .pj__shot {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--line);
+    background: var(--surface);
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .pj__shot--empty {
+    border-style: dashed;
+  }
+  .pj__shot :global(img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top left;
+  }
+  .pj__body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 600px);
+    gap: 48px;
+    align-items: start;
+  }
+  .pj__n {
+    display: block;
+    margin-bottom: var(--space-10);
+    font-family: var(--font-display);
+    font-size: 12px;
+    color: var(--link);
+  }
+  .pj__name {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 34px;
+    font-weight: 500;
+    line-height: 1.1;
+    letter-spacing: -0.05em;
+    text-wrap: balance;
+  }
+  .pj__name a {
+    color: var(--text);
+    text-decoration: none;
+    transition: color 150ms ease;
+  }
+  .pj__name a:hover {
+    color: var(--link);
+  }
+  .pj__facts {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: var(--space-8) var(--space-20);
+    margin: 22px 0 0;
+    font-size: 14px;
+  }
+  .pj__facts dt {
+    color: var(--muted);
+  }
+  .pj__facts dd {
+    margin: 0;
+  }
+  .pj__status {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-8);
+  }
+  .pj__desc {
+    margin: 0;
+    font-size: 19px;
+    line-height: 1.55;
+    text-wrap: pretty;
+  }
+  .pj__links:not(:empty) {
+    margin-top: 22px;
+  }
+
+  .archived {
+    margin-top: 112px;
+  }
+  .archived__row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 600px);
+    gap: 48px;
+    padding: 24px 0;
+    border-top: 1px solid var(--line);
+  }
+  .archived__row:last-child {
+    border-bottom: 1px solid var(--line);
+  }
+  .archived__name {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 21px;
+    font-weight: 500;
+    line-height: 1.25;
+    letter-spacing: -0.04em;
+    color: var(--muted);
+  }
+  .archived__desc {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--muted);
+  }
+  .archived .pj__links:not(:empty) {
+    margin-top: var(--space-14);
+  }
+
+  @media (max-width: 760px) {
+    .pjlist {
+      margin-top: 44px;
+      gap: var(--space-72);
+    }
+    .pj {
+      gap: var(--space-20);
+    }
+    .pj__shot {
+      aspect-ratio: 4 / 3;
+      border-radius: var(--radius-md);
+    }
+    .pj__body {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--space-16);
+    }
+    .pj__name {
+      font-size: 28px;
+    }
+    .pj__facts {
+      margin-top: var(--space-14);
+    }
+    .pj__desc {
+      font-size: 17px;
+    }
+    .archived {
+      margin-top: var(--space-72);
+    }
+    .archived__row {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--space-8);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pj__name a {
+      transition: none;
+    }
+  }
+</style>
