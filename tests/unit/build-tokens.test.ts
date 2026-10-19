@@ -58,9 +58,8 @@ describe('buildTokensCss with design/tokens.json', () => {
     expect(themed).toBe(real.color.tokens.length + (real.shadow?.tokens.length ?? 0));
   });
 
-  it('writes each other theme for the system setting and for data-theme', () => {
+  it('writes each other theme under its data-theme attribute only', () => {
     for (const { id } of real.color.themes.slice(1)) {
-      expect(css).toContain(`@media (prefers-color-scheme: ${id}) {`);
       const forced = blockAfter(css, `[data-theme='${id}']`);
       for (const t of real.color.tokens) {
         const value = typeof t.value === 'string' ? t.value : (t.value[id] ?? t.value[primary]);
@@ -102,11 +101,11 @@ describe('buildTokensCss', () => {
     expect(blockAfter(css, "[data-theme='light']")).toContain('--shadow-1: 0 1px 2px #0002;');
   });
 
-  it('nests the system-setting block inside its media query', () => {
+  it('ignores the device setting: dark is the default and light needs data-theme', () => {
     const { css } = buildTokensCss(fixture());
-    expect(css).toContain(
-      '@media (prefers-color-scheme: light) {\n  :root:not([data-theme]) {\n    --ground: #fff;',
-    );
+    expect(css).not.toContain('prefers-color-scheme');
+    expect(blockAfter(css, ":root, [data-theme='dark']")).toContain('--ground: #000;');
+    expect(blockAfter(css, "[data-theme='light']")).toContain('--ground: #fff;');
   });
 
   it('points every font at a woff2 in /fonts/, defaulting to normal style', () => {

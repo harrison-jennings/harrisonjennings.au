@@ -15,6 +15,8 @@ export default defineConfig(
       'test-results/',
       'playwright-report/',
       'blob-report/',
+      'design/system/',
+      'design/mockups/',
     ],
   },
   js.configs.recommended,

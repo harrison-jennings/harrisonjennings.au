@@ -9,25 +9,37 @@ interface Props {
   description?: string;
   /** Keep a page out of search results (drafts, previews, utility pages). */
   noindex?: boolean;
+  /** The home page: the nav floats over the hero instead of sitting above the page. */
+  home?: boolean;
 }
 
-const { title, description = SITE.description, noindex = false } = Astro.props;
+const { title, description = SITE.description, noindex = false, home = false } = Astro.props;
 const pageTitle = title ? `${title} · ${SITE.name}` : SITE.name;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 ---
 
 <!doctype html>
-<html lang={SITE.locale}>
+<html lang={SITE.locale} data-theme="dark">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#121110" />
+    <!-- Dark on every first visit; a saved choice (the nav's theme toggle) applies before first paint. -->
+    <script is:inline>
+      try {
+        const saved = localStorage.getItem('hj-theme');
+        document.documentElement.setAttribute('data-theme', saved === 'light' ? 'light' : 'dark');
+        if (saved === 'light')
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#f4efeb');
+      } catch {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    </script>
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     {noindex && <meta name="robots" content="noindex" />}
 
-    <meta name="theme-color" content="#121110" media="(prefers-color-scheme: dark)" />
-    <meta name="theme-color" content="#f4efeb" media="(prefers-color-scheme: light)" />
     <link rel="icon" href="/favicon.ico" sizes="48x48" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -59,7 +71,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <a class="skip-link" href="#main">
       skip to content
     </a>
-    <Nav />
+    <Nav home={home} />
     <main id="main">
       <slot />
     </main>

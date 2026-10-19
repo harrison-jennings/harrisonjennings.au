@@ -1,4 +1,5 @@
 import { readFileSync, readdirSync } from 'node:fs';
+import type { Page } from '@playwright/test';
 
 const dist = new URL('../../dist/', import.meta.url);
 
@@ -19,3 +20,8 @@ export function firstFileIn(folder: string): string | undefined {
 
 /** A path that no page, asset or redirect uses. */
 export const UNKNOWN_PATH = '/this-page-does-not-exist/';
+
+/** Chooses a theme the way the nav's toggle does (saved in localStorage), before the page loads. */
+export async function useTheme(page: Page, theme: 'dark' | 'light'): Promise<void> {
+  await page.addInitScript((t) => localStorage.setItem('hj-theme', t), theme);
+}

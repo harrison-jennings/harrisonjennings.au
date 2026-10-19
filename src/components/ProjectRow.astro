@@ -10,7 +10,7 @@ interface Props {
 }
 
 const { project } = Astro.props;
-const { name, summary, host, repo, status } = project.data;
+const { name, summary, host, url, repo, status } = project.data;
 const story = project.data.story ? await getEntry(project.data.story) : undefined;
 ---
 
@@ -19,7 +19,7 @@ const story = project.data.story ? await getEntry(project.data.story) : undefine
     <h3 class="project__name">{name}</h3>
     <p class="project__desc">{summary}</p>
     <div class="project__links">
-      {host && status === 'live' && <LiveSignal host={host} />}
+      {host && status === 'live' && <LiveSignal host={host} href={url} />}
       {repo && (
         <TextLink href={repo} external>
           source on github

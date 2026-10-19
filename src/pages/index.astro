@@ -13,8 +13,8 @@ const projects = (await getCollection('projects', ({ data }) => data.featured)).
 );
 ---
 
-<Base noindex>
-  <section class="container hero">
+<Base noindex home>
+  <section class="column hero">
     <h1 class="hero__title">
       standing out,
       <br />
@@ -30,7 +30,7 @@ const projects = (await getCollection('projects', ({ data }) => data.featured)).
     </div>
   </section>
 
-  <section class="container" aria-labelledby="built-and-shipped">
+  <section class="column" aria-labelledby="built-and-shipped">
     <div class="projects">
       <div class="projects__head">
         <h2 id="built-and-shipped" class="projects__title">
@@ -97,7 +97,7 @@ const projects = (await getCollection('projects', ({ data }) => data.featured)).
   }
   @media (max-width: 760px) {
     .hero {
-      padding-block: 64px var(--space-40);
+      padding-block: 112px var(--space-40);
     }
     .projects {
       padding: 24px 20px;

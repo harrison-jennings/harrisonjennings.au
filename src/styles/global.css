@@ -8,9 +8,13 @@
 }
 
 html {
-  color-scheme: dark light;
+  color-scheme: dark;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+}
+
+html[data-theme='light'] {
+  color-scheme: light;
 }
 
 body {
@@ -74,17 +78,19 @@ a {
   top: var(--space-16);
 }
 
-.container {
+/* The shared column. The nav pill sits in .shell (container wide, with space-16 gutters); page content
+   sits in .column, starting under the nav's logo (22px in) and ending under its button (10px in). */
+.shell,
+.column {
   width: 100%;
-  max-width: 1296px;
+  max-width: calc(var(--container) + 2 * var(--space-16));
   margin-inline: auto;
-  padding-inline: var(--space-72);
 }
-
-@media (max-width: 760px) {
-  .container {
-    padding-inline: var(--space-16);
-  }
+.shell {
+  padding-inline: var(--space-16);
+}
+.column {
+  padding-inline: calc(var(--space-16) + var(--space-22)) calc(var(--space-16) + var(--space-10));
 }
 
 @media (prefers-reduced-motion: reduce) {

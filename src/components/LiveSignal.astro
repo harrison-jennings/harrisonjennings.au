@@ -2,14 +2,22 @@
 // The live dot: a brick point with a halo that pulses. The words carry the meaning.
 interface Props {
   host: string;
+  /** The live URL: the host becomes a link, underlined like a text link. */
+  href?: string | undefined;
 }
 
-const { host } = Astro.props;
+const { host, href } = Astro.props;
 ---
 
-<span class="live">
-  <span class="live__dot" aria-hidden="true"></span>live at {host}
-</span>
+{href ? (
+  <a class="live" href={href}>
+    <span class="live__dot" aria-hidden="true"></span>live at <span class="live__host">{host}</span>
+  </a>
+) : (
+  <span class="live">
+    <span class="live__dot" aria-hidden="true"></span>live at {host}
+  </span>
+)}
 
 <style>
   .live {
@@ -19,6 +27,22 @@ const { host } = Astro.props;
     font-size: 14px;
     line-height: 1.4;
     color: var(--muted);
+    text-decoration: none;
+  }
+  .live__host {
+    color: var(--text);
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 5px;
+    transition:
+      color 150ms ease,
+      text-decoration-color 150ms ease;
+  }
+  a.live:hover .live__host {
+    color: var(--link);
+    text-decoration-color: var(--link);
+    text-decoration-thickness: 2px;
   }
   .live__dot {
     position: relative;

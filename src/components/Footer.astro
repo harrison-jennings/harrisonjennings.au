@@ -1,5 +1,6 @@
 ---
-// Three columns on surface: who, where to go, where else.
+// Three columns on surface: who, where to go, where else. The logo draws when the footer comes into
+// view and again on hover. "cookie settings" reopens the consent preferences, on every page.
 import { BOOKING_URL, LEGAL, SITE, SOCIAL } from '../consts';
 import Icon from './Icon.astro';
 import Logo from './Logo.astro';
@@ -7,11 +8,11 @@ import Logo from './Logo.astro';
 const year = new Date().getFullYear();
 ---
 
-<footer class="container footer-wrap">
+<footer class="column footer-wrap">
   <div class="footer">
     <div class="footer__col">
-      <a class="footer__brand" href="/">
-        <Logo size={28} />
+      <a class="footer__brand" href="/" data-logo-draw>
+        <Logo size={28} draw="view" />
         {SITE.name}
       </a>
       <p class="footer__tagline">{SITE.tagline}</p>
@@ -47,7 +48,7 @@ const year = new Date().getFullYear();
 
 <style>
   .footer-wrap {
-    margin-top: var(--space-56);
+    margin-top: 96px;
     margin-bottom: var(--space-32);
   }
   .footer {
@@ -96,7 +97,7 @@ const year = new Date().getFullYear();
   .footer__legal {
     display: flex;
     flex-wrap: wrap;
-    gap: 4px 12px;
+    gap: 4px var(--space-16);
     margin: 0;
     font-size: 13px;
     line-height: 1.4;
@@ -113,12 +114,19 @@ const year = new Date().getFullYear();
     text-decoration-color: var(--accent);
     text-underline-offset: 4px;
     cursor: pointer;
+    transition:
+      color 150ms ease,
+      text-decoration-color 150ms ease;
   }
   .footer__legal a:hover,
   .footer__legal button:hover {
     color: var(--link);
+    text-decoration-color: var(--link);
   }
   @media (max-width: 760px) {
+    .footer-wrap {
+      margin-top: var(--space-72);
+    }
     .footer {
       grid-template-columns: minmax(0, 1fr);
       padding: 28px 22px;

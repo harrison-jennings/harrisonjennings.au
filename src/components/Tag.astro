@@ -1,18 +1,20 @@
 ---
-// Outlined topic chip; a link when it points at a topic page.
+// Outlined topic chip: a link when it points at a topic page. A topic without a page (fewer than
+// two posts) is a `label`: dashed outline, muted text, not a link.
 interface Props {
   href?: string;
+  label?: boolean;
 }
 
-const { href } = Astro.props;
+const { href, label = false } = Astro.props;
 ---
 
-{href ? (
+{href && !label ? (
   <a class="tag" href={href}>
     <slot />
   </a>
 ) : (
-  <span class="tag">
+  <span class:list={['tag', { 'tag--label': label }]}>
     <slot />
   </span>
 )}
@@ -29,8 +31,16 @@ const { href } = Astro.props;
     color: var(--text);
     text-decoration: none;
     white-space: nowrap;
+    transition:
+      border-color 150ms ease,
+      color 150ms ease;
   }
   a.tag:hover {
+    border-color: var(--link);
     color: var(--link);
+  }
+  .tag--label {
+    border-style: dashed;
+    color: var(--muted);
   }
 </style>

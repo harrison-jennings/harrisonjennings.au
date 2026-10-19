@@ -5,8 +5,11 @@ interface Props {
   size?: number;
   /** Accessible name when the mark stands alone; omit when the name is set beside it. */
   label?: string;
-  /** Play the draw on load and on hover of the closest `[data-logo-draw]` element. */
-  draw?: boolean;
+  /**
+   * Play the draw on load (`true`) or when the mark comes into view (`'view'`), and again on hover
+   * of the closest `[data-logo-draw]` element.
+   */
+  draw?: boolean | 'view';
   class?: string;
 }
 
@@ -30,7 +33,7 @@ const H = 'M30 10 V90 M30 58 C30 44 39 38 50 38 C61 38 70 44 70 58 V72';
   role={label ? 'img' : undefined}
   aria-label={label}
   aria-hidden={label ? undefined : 'true'}
-  data-mark-draw={draw ? '' : undefined}
+  data-mark-draw={draw === 'view' ? 'view' : draw ? 'load' : undefined}
 >
   <path class="mark__h" d={H} stroke-width={stroke}></path>
   <circle class="mark__dot" cx="70" cy="88" r={dot}></circle>
@@ -54,5 +57,7 @@ const H = 'M30 10 V90 M30 58 C30 44 39 38 50 38 C61 38 70 44 70 58 V72';
 
 <script>
   import { bindDraw } from '../scripts/logo-draw';
-  document.querySelectorAll<SVGSVGElement>('svg[data-mark-draw]').forEach(bindDraw);
+  document
+    .querySelectorAll<SVGSVGElement>('svg[data-mark-draw]')
+    .forEach((svg) => bindDraw(svg, svg.dataset['markDraw'] === 'view' ? 'view' : 'load'));
 </script>

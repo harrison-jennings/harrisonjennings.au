@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Blog: index and topic</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Martian+Mono:wght@400;500&amp;family=Schibsted+Grotesk:ital,wght@0,400;0,500;0,600;1,400&amp;display=swap">
+<style>
+body{margin:0}
+a{color:inherit}
+button{font:inherit;color:inherit}
+.root{position:relative;box-sizing:border-box;min-height:100vh;background:var(--ground);color:var(--text);font-family:'Schibsted Grotesk',system-ui,sans-serif;padding:16px 0 32px;overflow-x:clip}
+.col{box-sizing:border-box;width:100%;max-width:1184px;margin:0 auto;padding:0 26px 0 38px}
+.mono{font-family:'Martian Mono',ui-monospace,monospace}
+.muted{color:var(--muted)}
+.ph-only{display:none}
+.yr-ph{display:none}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.tl{color:var(--text);text-decoration:underline;text-decoration-color:var(--accent);text-decoration-thickness:1px;text-underline-offset:5px;transition:color 150ms ease,text-decoration-thickness 150ms ease}
+.tl:hover{color:var(--link);text-decoration-color:var(--link);text-decoration-thickness:2px}
+.tl.quiet{color:var(--link)}
+.stop{display:inline-block;width:0.19em;height:0.19em;margin-left:0.25em;border-radius:999px;background:var(--accent)}
+.btn{position:relative;overflow:hidden;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;border:0;cursor:pointer;text-decoration:none;background:var(--accent);color:var(--on-accent);font-weight:600;line-height:1;border-radius:999px;white-space:nowrap}
+.btn .wipe{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#E8A27A;color:var(--on-apricot);clip-path:inset(0 100% 0 0);transition:clip-path 360ms cubic-bezier(.65,0,.35,1)}
+.btn:hover .wipe{clip-path:inset(0 0 0 0)}
+
+/* nav */
+.navwrap{display:flex;justify-content:center;padding:0 16px}
+.nav{display:flex;align-items:center;gap:28px;width:100%;max-width:1152px;box-sizing:border-box;background:var(--ground);border:1px solid var(--line);border-radius:999px;padding:10px 10px 10px 22px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:17px;letter-spacing:-0.02em;text-decoration:none;white-space:nowrap}
+.nav-links{display:flex;gap:26px;margin-left:auto;font-size:15px}
+.nl{position:relative;padding:6px 0;text-decoration:none}
+.nl::after{content:"";position:absolute;left:0;right:0;bottom:2px;height:1.5px;border-radius:2px;background:var(--accent);transform:scaleX(0);transform-origin:left center;transition:transform 240ms cubic-bezier(.65,0,.35,1)}
+.nl:hover::after,.nl:focus-visible::after,.nl[aria-current=page]::after{transform:scaleX(1)}
+.ib{width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;flex:none;padding:0;border:0;border-radius:999px;background:transparent;cursor:pointer;transition:color 150ms ease}
+.ib:hover,.ib:focus-visible{color:var(--link)}
+.ib svg{display:block}
+.tt{position:relative}
+.tt svg{position:absolute;top:12px;left:12px;transition:opacity 200ms ease,transform 320ms cubic-bezier(.65,0,.35,1)}
+.tt[data-mode=dark] .sun,.tt[data-mode=light] .moon{opacity:0;transform:rotate(-90deg) scale(.6)}
+.tt[data-mode=dark] .moon,.tt[data-mode=light] .sun{opacity:1;transform:none}
+.nav-icons{display:flex;gap:2px;padding-left:12px;border-left:1px solid var(--line)}
+.nav-menu{display:none;width:44px;height:44px;align-items:center;justify-content:center;padding:0;border:1px solid var(--line);border-radius:999px;background:transparent;cursor:pointer}
+.menu{position:absolute;top:0;left:0;right:0;height:844px;z-index:20;box-sizing:border-box;padding:16px 16px 32px;display:flex;flex-direction:column;gap:28px;background:var(--ground)}
+.menu-links{display:flex;flex-direction:column;gap:14px;padding:12px 23px 0;font-family:'Martian Mono',ui-monospace,monospace;font-size:30px;font-weight:500;line-height:1.2;letter-spacing:-0.05em}
+.menu-links a{align-self:flex-start;text-decoration:none}
+.menu-links a[aria-current=page]{text-decoration:underline;text-decoration-color:var(--accent);text-decoration-thickness:2px;text-underline-offset:8px}
+
+/* page header */
+.ph{padding-top:120px}
+.eyebrow{display:flex;align-items:center;gap:10px;margin:0 0 18px;font-size:14px;color:var(--muted)}
+.eyebrow a{color:var(--muted);text-decoration:underline;text-decoration-color:var(--accent);text-underline-offset:4px;transition:color 150ms ease}
+.eyebrow a:hover{color:var(--link)}
+.pt{margin:0 0 0 -0.045em;font-size:46px;font-weight:500;line-height:1.12;letter-spacing:-0.05em}
+.intro{margin:20px 0 0;max-width:600px;font-size:19px;line-height:1.55;color:var(--muted);text-wrap:pretty}
+.ph-row{display:flex;justify-content:space-between;align-items:flex-end;gap:24px}
+
+/* topic filter */
+.topics{display:flex;flex-wrap:wrap;gap:8px;margin-top:40px}
+.chip{display:inline-flex;align-items:center;gap:8px;min-height:40px;box-sizing:border-box;padding:0 14px;border:1px solid var(--line);border-radius:999px;font-size:14px;text-decoration:none;white-space:nowrap;transition:border-color 150ms ease,color 150ms ease}
+.chip .ct{font-family:'Martian Mono',ui-monospace,monospace;font-size:11px;color:var(--muted)}
+.chip:hover{border-color:var(--link);color:var(--link)}
+.chip[aria-current=page]{border-color:var(--text);background:var(--surface)}
+
+/* list */
+.year{display:grid;grid-template-columns:120px minmax(0,1fr);gap:0 32px;margin-top:64px}
+.year+.year{margin-top:0}
+.year+.year .row:first-child{border-top-color:var(--line)}
+.yr{margin:0;padding-top:28px;font-size:14px;font-weight:500;letter-spacing:0;color:var(--muted)}
+.yr span{position:sticky;top:24px}
+.rows{display:flex;flex-direction:column}
+.row{display:grid;grid-template-columns:132px minmax(0,1fr);gap:24px;padding:28px 0;border-top:1px solid var(--line)}
+.year:last-of-type .row:last-child{border-bottom:1px solid var(--line)}
+.year+.year .yr{border-top:1px solid var(--line)}
+.row time{font-size:14px;line-height:1.9;color:var(--muted)}
+.row h2{margin:0 0 8px;font-size:24px;font-weight:600;line-height:1.25;letter-spacing:-0.02em;text-wrap:pretty}
+.row h2 a,.card h3 a{text-decoration:none;background-image:linear-gradient(var(--accent),var(--accent));background-size:0% 1.5px;background-position:0 100%;background-repeat:no-repeat;transition:background-size 240ms cubic-bezier(.65,0,.35,1),color 150ms ease}
+.row h2 a:hover,.card h3 a:hover{background-size:100% 1.5px;color:var(--link)}
+.row p{margin:0 0 14px;max-width:680px;font-size:17px;line-height:1.6;color:var(--muted);text-wrap:pretty}
+.tags{display:flex;flex-wrap:wrap;gap:8px}
+.tag{display:inline-flex;padding:5px 10px;border:1px solid var(--line);border-radius:999px;font-size:12px;line-height:1.2;text-decoration:none;transition:border-color 150ms ease,color 150ms ease}
+.tag:hover{border-color:var(--link);color:var(--link)}
+.tag.plain{border-style:dashed;color:var(--muted)}
+.tag.plain:hover{border-color:var(--line);color:var(--muted)}
+
+/* booking band */
+.sec{margin-top:96px}
+.panel{background:var(--surface);border-radius:20px;padding:40px}
+.book{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:20px 48px;align-items:center}
+.book h2{margin:0;font-size:40px;font-weight:500;line-height:1.12;letter-spacing:-0.05em}
+.book-act{display:flex;flex-direction:column;align-items:flex-end;gap:14px}
+
+/* footer */
+.foot{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) minmax(0,1fr);gap:32px;padding:36px 40px;background:var(--surface);border-radius:20px}
+.foot .c{display:flex;flex-direction:column;align-items:flex-start;gap:10px;font-size:15px;line-height:1.5}
+.foot .c a{text-decoration:none;transition:color 150ms ease}
+.foot .c a:hover{color:var(--link)}
+.legal{display:flex;flex-wrap:wrap;gap:4px 16px;margin:0;font-size:13px}
+.foot .c .legal a{color:var(--muted);text-decoration:underline;text-decoration-color:var(--accent);text-underline-offset:4px}
+.foot .c .legal a:hover{color:var(--link);text-decoration-color:var(--link)}
+
+/* post */
+.post-head{padding-top:120px;max-width:920px}
+.post-title{margin:0;font-size:46px;font-weight:600;line-height:1.12;letter-spacing:-0.03em;text-wrap:balance}
+.dek{margin:22px 0 0;max-width:680px;font-size:20px;line-height:1.5;color:var(--muted);text-wrap:pretty}
+.meta{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;margin-top:28px;font-size:14px;color:var(--muted)}
+.cover{margin:48px 0 0}
+.cover .img{aspect-ratio:2/1;border-radius:14px;border:1px dashed var(--line);background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--muted)}
+.cover figcaption,.fig figcaption{margin-top:12px;font-size:14px;line-height:1.5;color:var(--muted)}
+.layout{display:grid;grid-template-columns:minmax(0,680px) 240px;justify-content:space-between;gap:64px;margin-top:56px}
+.prose{font-size:17px;line-height:1.7;min-width:0}
+.prose>*{margin:0}
+.prose>*+*{margin-top:1.15em}
+.prose h2{margin-top:2.2em;font-size:26px;font-weight:600;line-height:1.25;letter-spacing:-0.02em;scroll-margin-top:24px}
+.prose h3{margin-top:1.8em;font-size:20px;font-weight:600;line-height:1.3;letter-spacing:-0.015em;scroll-margin-top:24px}
+.prose h4{margin-top:1.6em;font-size:17px;font-weight:600;line-height:1.4;letter-spacing:-0.01em}
+.prose h2+*,.prose h3+*,.prose h4+*{margin-top:0.6em}
+.prose em{font-style:italic}
+.prose hr{border:0;margin:2.4em 0;text-align:center;line-height:1}
+.prose hr::after{content:"\00B7  \00B7  \00B7";white-space:pre;color:var(--accent);font-size:20px}
+.prose sup a{font-family:'Martian Mono',ui-monospace,monospace;font-size:11px;text-decoration:none;color:var(--link);padding:0 2px}
+.fns{margin-top:2.4em!important;padding-top:20px;border-top:1px solid var(--line);font-size:14px;line-height:1.55;color:var(--muted)}
+.fns ol{margin:0;padding-left:1.4em}
+.fn-back{text-decoration:none!important;color:var(--link)}
+.fig2,.fig3{display:grid;gap:16px}
+.fig2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.fig3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.fig2 .img,.fig3 .img{aspect-ratio:4/3}
+.fig .img.tall{aspect-ratio:9/16}
+.note.warn{box-shadow:inset 2px 0 0 var(--accent)}
+.note.plain b{color:var(--muted)}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+.tbl{width:100%;border-collapse:collapse;font-size:15px;line-height:1.45}
+.tbl th{padding:12px 16px;text-align:left;font-family:'Martian Mono',ui-monospace,monospace;font-size:11.5px;font-weight:500;color:var(--muted);background:var(--surface);border-bottom:1px solid var(--line);white-space:nowrap}
+.tbl td{padding:12px 16px;border-bottom:1px solid var(--line);vertical-align:top}
+.tbl tr:last-child td{border-bottom:0}
+.tbl .num{text-align:right;font-family:'Martian Mono',ui-monospace,monospace;font-size:13px;white-space:nowrap}
+.video{position:relative;aspect-ratio:16/9;border-radius:14px;background:var(--surface);border:1px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:24px}
+.play{width:64px;height:64px;border:0;border-radius:999px;background:var(--accent);color:var(--on-accent);display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
+.video p{margin:0;max-width:360px;font-size:13px;line-height:1.5;color:var(--muted)}
+.prose details{border:1px solid var(--line);border-radius:14px}
+.prose summary{display:flex;justify-content:space-between;align-items:center;min-height:48px;padding:0 16px;cursor:pointer;list-style:none;font-size:16px;font-weight:500}
+.prose summary::-webkit-details-marker{display:none}
+.prose details[open] summary svg{transform:rotate(180deg)}
+.prose details .inner{padding:0 16px 16px}
+.spec{display:flex;gap:12px;align-items:baseline;margin:2.6em 0 0!important;padding-top:10px;border-top:1px dashed var(--line);font-family:'Martian Mono',ui-monospace,monospace;font-size:11.5px;line-height:1.5;color:var(--muted)}
+.spec+*{margin-top:0.9em!important}
+.spec b{flex:none;max-width:45%;font-weight:500;color:var(--link);overflow-wrap:anywhere}
+.prose h2+*,.prose h3+*{margin-top:0.6em}
+.prose a{text-decoration:underline;text-decoration-color:var(--accent);text-decoration-thickness:1px;text-underline-offset:4px;transition:color 150ms ease}
+.prose a:hover{color:var(--link);text-decoration-thickness:2px;text-decoration-color:var(--link)}
+.prose ul,.prose ol{padding-left:1.3em}
+.prose li+li{margin-top:0.45em}
+.prose ul li::marker{color:var(--accent)}
+.prose ol li::marker{font-family:'Martian Mono',ui-monospace,monospace;font-size:13px;color:var(--muted)}
+.prose :not(pre)>code{font-family:'Martian Mono',ui-monospace,monospace;font-size:0.8em;padding:2px 6px;border-radius:6px;background:var(--surface);border:1px solid var(--line)}
+.prose blockquote{padding:4px 0 4px 22px;border-left:2px solid var(--accent);font-size:20px;line-height:1.5;letter-spacing:-0.01em}
+.prose strong{font-weight:600}
+.code{position:relative;border:1px solid var(--line);border-radius:12px;background:var(--surface);overflow:hidden}
+.code-bar{display:flex;justify-content:space-between;align-items:center;padding:8px 8px 8px 16px;border-bottom:1px solid var(--line);font-family:'Martian Mono',ui-monospace,monospace;font-size:11.5px;color:var(--muted)}
+.copy{min-height:32px;padding:0 12px;border:1px solid var(--line);border-radius:999px;background:transparent;font-size:12px;cursor:pointer;transition:border-color 150ms ease,color 150ms ease}
+.copy:hover{border-color:var(--link);color:var(--link)}
+.code pre{margin:0;padding:16px;overflow-x:auto;font-family:'Martian Mono',ui-monospace,monospace;font-size:12.5px;line-height:1.7}
+.code .k{color:var(--kw)}
+.code .s{color:var(--str)}
+.code .n{color:var(--num)}
+.code .cm{color:var(--muted)}
+.code .pr{color:var(--muted);user-select:none}
+.code code{display:inline-block;min-width:100%}
+.code .ln{display:block;min-height:1.7em;white-space:pre}
+.code .ind{display:inline-block}
+.code .ln.hl{margin:0 -16px;padding:0 16px;background:var(--hlbg);box-shadow:inset 2px 0 0 var(--accent)}
+.code-bar .lang{color:var(--muted)}
+.code-bar .file{color:var(--text)}
+.code-bar .meta2{display:flex;gap:12px;align-items:center}
+.fig .img{aspect-ratio:16/9;border-radius:14px;border:1px dashed var(--line);background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--muted)}
+.note{padding:18px 20px;border-radius:14px;background:var(--surface);font-size:16px;line-height:1.6}
+.note b{display:block;margin-bottom:4px;font-family:'Martian Mono',ui-monospace,monospace;font-size:12px;font-weight:500;color:var(--link)}
+.toc{position:sticky;top:32px;align-self:start;font-size:14px;line-height:1.45}
+.toc p{margin:0 0 12px;font-family:'Martian Mono',ui-monospace,monospace;font-size:12px;color:var(--muted)}
+.toc ol{list-style:none;margin:0;padding:0;border-left:1px solid var(--line)}
+.toc li a{display:block;padding:6px 0 6px 16px;margin-left:-1px;border-left:1.5px solid transparent;color:var(--muted);text-decoration:none;transition:color 150ms ease,border-color 150ms ease}
+.toc li a:hover{color:var(--text)}
+.toc li a[aria-current=true]{color:var(--text);border-left-color:var(--accent)}
+.toc li.sub a{padding-left:30px;font-size:13px}
+.toc-ph{display:none}
+.end{margin-top:56px;padding-top:28px;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;font-size:14px;color:var(--muted)}
+.author{display:grid;grid-template-columns:auto minmax(0,1fr);gap:18px 24px;align-items:start;margin-top:40px}
+.author-act{grid-column:2}
+.author h2{margin:0;font-size:20px;font-weight:600;letter-spacing:-0.02em}
+.author p{margin:6px 0 0;max-width:520px;font-size:16px;line-height:1.55;color:var(--muted)}
+.author-act{display:flex;align-items:center;gap:24px}
+.author-act a{display:inline-flex;align-items:center;gap:10px;min-height:44px;font-size:15px;text-decoration:none;transition:color 150ms ease}
+.author-act a:hover{color:var(--link)}
+.author-act svg{fill:currentColor}
+.sh{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:28px}
+.t{margin:0;font-size:30px;font-weight:600;line-height:1.15;letter-spacing:-0.02em}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:40px}
+.card{border-top:1px solid var(--line);padding-top:22px;display:flex;flex-direction:column;gap:10px}
+.card time{font-size:14px;color:var(--muted)}
+.card h3{margin:0;font-size:21px;font-weight:600;line-height:1.28;letter-spacing:-0.02em;text-wrap:pretty}
+.card p{margin:0;font-size:16px;line-height:1.6;color:var(--muted)}
+.card .tags{margin-top:auto;padding-top:4px}
+.arrows{display:none;gap:8px;flex:none}
+.arr{width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;padding:0;border:1px solid var(--line);border-radius:999px;background:transparent;cursor:pointer;transition:border-color 150ms ease,color 150ms ease,opacity 150ms ease}
+.arr:hover{border-color:var(--link);color:var(--link)}
+.arr[aria-disabled=true]{opacity:0.35;cursor:default;border-color:var(--line);color:var(--text)}
+.arr svg{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+@media (max-width:760px){
+.nav{gap:12px}
+.nav-links,.nav-icons,.nav-cta{display:none!important}
+.brand .nm{font-size:15px}
+.nav-theme{margin-left:auto}
+.nav-menu{display:inline-flex}
+.ph,.post-head{padding-top:72px}
+.pt{font-size:34px}
+.intro{font-size:17px}
+.ph-row{flex-direction:column;align-items:flex-start;gap:16px}
+.topics{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:28px -26px 0 -38px;padding:0 26px 0 38px}
+.topics::-webkit-scrollbar{display:none}
+.year{grid-template-columns:minmax(0,1fr);margin-top:40px}
+.year+.year{margin-top:40px}
+.yr{padding:20px 0 2px;border-top:1px solid var(--line)}
+.year .row:first-child{border-top:0;padding-top:14px}
+.year+.year .yr{border-top-color:var(--line)}
+.row{grid-template-columns:minmax(0,1fr);gap:6px;padding:22px 0}
+.row h2{font-size:21px}
+.row p{font-size:16px}
+.sec{margin-top:72px}
+.panel{padding:24px 20px}
+.book{grid-template-columns:minmax(0,1fr)}
+.book h2{font-size:28px;line-height:1.15}
+.book-act{align-items:stretch}
+.book-act .muted{text-align:center}
+.foot{grid-template-columns:minmax(0,1fr);padding:28px 22px}
+.post-title{font-size:32px;line-height:1.15}
+.dek{font-size:18px}
+.cover{margin:32px -26px 0 -38px}
+.cover .img{border-radius:0;border-left:0;border-right:0}
+.cover figcaption{padding:0 26px 0 38px}
+.layout{grid-template-columns:minmax(0,1fr);gap:0;margin-top:32px}
+.toc{display:none}
+.toc-ph{display:block;margin-bottom:28px;border:1px solid var(--line);border-radius:14px}
+.toc-ph summary{display:flex;justify-content:space-between;align-items:center;min-height:48px;padding:0 16px;cursor:pointer;list-style:none;font-size:15px}
+.toc-ph summary::-webkit-details-marker{display:none}
+.toc-ph ol{margin:0;padding:4px 16px 14px 36px;font-size:15px;line-height:1.5}
+.toc-ph li+li{margin-top:8px}
+.toc-ph a{text-decoration:none}
+.prose blockquote{font-size:18px}
+.code{margin-left:-38px!important;margin-right:-26px;border-radius:0;border-left:0;border-right:0}
+.spec{flex-direction:column;gap:2px}
+.spec b{max-width:none}
+.code-bar{padding-left:38px}
+.code pre{padding-left:38px;padding-right:44px;-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 32px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 32px),transparent)}
+.code .ln.hl{margin:0 -44px 0 -38px;padding:0 44px 0 38px}
+.fig2,.fig3{grid-template-columns:minmax(0,1fr)}
+.arrows{display:inline-flex}
+.author{grid-template-columns:minmax(0,1fr)}
+.author-act{grid-column:1;gap:20px}
+.author-act .btn{width:100%}
+.author-act .tl{align-self:center}
+.cards{display:grid;grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:84%;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;margin:0 -26px 0 -38px;padding:0 26px 4px 38px;scroll-padding-left:38px}
+.cards::-webkit-scrollbar{display:none}
+.cards>*{scroll-snap-align:start}
+.t{font-size:26px}
+.ph-only{display:block}
+.yr-ph{display:inline}
+.dt-only{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+.btn .wipe,.tl,.nl::after,.tt svg,.chip,.tag,.row h2 a,.card h3 a,.toc li a,.copy,.arr,.author-act a{transition:none}
+.root{scroll-behavior:auto!important}
+}
+</style>
+</helmet>
+<div class="root" style="--ground: {{c.ground}}; --surface: {{c.surface}}; --line: {{c.line}}; --text: {{c.text}}; --muted: {{c.muted}}; --accent: {{c.accent}}; --link: {{c.link}}; --on-accent: {{c.onAccent}}; --on-apricot: {{c.onApricot}}; --str: {{c.str}}; --kw: {{c.kw}}; --num: {{c.num}}; --hlbg: {{c.hl}}; {{frameStyle}}">
+<header class="navwrap">
+<nav class="nav" aria-label="Main">
+<a class="brand" href="#" onPointerEnter="{{replay}}"><svg width="26" height="26" viewBox="0 0 100 100" overflow="visible" aria-hidden="true"><path d="M30 10 V90 V58 C30 44 39 38 50 38 C61 38 70 44 70 58 V72" fill="none" stroke="{{c.text}}" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="{{logo.dash}}" stroke-dashoffset="{{logo.off}}"></path><circle cx="{{logo.x}}" cy="{{logo.y}}" r="8.5" fill="{{c.accent}}"></circle></svg><span class="nm">harrison jennings</span></a>
+<div class="nav-links"><a class="nl" href="#">home</a><a class="nl" href="#" aria-current="page">blog</a><a class="nl" href="#">projects</a></div>
+<button class="ib tt nav-theme" data-mode="{{themeMode}}" type="button" onClick="{{toggle}}" aria-label="{{themeLabel}}"><svg class="sun" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"></circle><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg><svg class="moon" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"></path></svg></button>
+<div class="nav-icons"><a class="ib" href="#" aria-label="GitHub profile"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56v-2c-3.2.7-3.87-1.37-3.87-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.69 1.25 3.35.96.1-.75.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.46.11-3.04 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.58.23 2.75.11 3.04.74.81 1.18 1.84 1.18 3.1 0 4.42-2.69 5.39-5.25 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"></path></svg></a><a class="ib" href="#" aria-label="LinkedIn profile"><svg width="19" height="19" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45z"></path></svg></a></div>
+<a class="btn nav-cta" href="#" style="font-size: 15px; padding: 12px 20px"><span>book a call</span><span class="wipe" aria-hidden="true">book a call</span></a>
+<button class="nav-menu" type="button" onClick="{{openMenu}}" aria-expanded="{{menuOpen}}" aria-haspopup="dialog" aria-label="Open menu"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h16M4 16h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg></button>
+</nav>
+</header>
+<sc-if value="{{menuOpen}}" hint-placeholder-val="{{false}}">
+<div class="menu" role="dialog" aria-modal="true" aria-label="Menu">
+<div style="display: flex; align-items: center; justify-content: space-between; padding: 11px 11px 11px 23px"><a class="brand" href="#" onClick="{{closeMenu}}" style="font-size: 15px"><svg width="26" height="26" viewBox="0 0 100 100" aria-hidden="true"><path d="M30 10 V90 M30 58 C30 44 39 38 50 38 C61 38 70 44 70 58 V72" fill="none" stroke="{{c.text}}" stroke-width="12" stroke-linecap="round"></path><circle cx="70" cy="88" r="8.5" fill="{{c.accent}}"></circle></svg>harrison jennings</a><button class="nav-menu" type="button" onClick="{{closeMenu}}" aria-label="Close menu" style="display: inline-flex"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg></button></div>
+<nav class="menu-links" aria-label="Menu links"><a href="#" onClick="{{closeMenu}}">home</a><a href="#" onClick="{{closeMenu}}" aria-current="page">blog</a><a href="#" onClick="{{closeMenu}}">projects</a></nav>
+<div style="padding: 0 7px"><a class="btn" href="#" style="display: flex; font-size: 16px; padding: 16px"><span>book a call</span><span class="wipe" aria-hidden="true">book a call</span></a></div>
+<div style="margin-top: auto; display: flex; gap: 4px; padding-left: 10px"><a class="ib" href="#" aria-label="GitHub profile" style="width: 48px; height: 48px"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56v-2c-3.2.7-3.87-1.37-3.87-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.69 1.25 3.35.96.1-.75.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.46.11-3.04 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.58.23 2.75.11 3.04.74.81 1.18 1.84 1.18 3.1 0 4.42-2.69 5.39-5.25 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"></path></svg></a><a class="ib" href="#" aria-label="LinkedIn profile" style="width: 48px; height: 48px"><svg width="21" height="21" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45z"></path></svg></a></div>
+</div>
+</sc-if>
+<sc-if value="{{isAll}}" hint-placeholder-val="{{true}}">
+<div class="col ph">
+<div class="ph-row">
+<div>
+<h1 class="pt mono">blog<span class="stop" aria-hidden="true"></span></h1>
+<p class="intro">Notes from the work: Marketo, measurement, and the systems that hold marketing together.</p>
+</div>
+<a class="tl quiet" href="#" style="font-size: 15px; white-space: nowrap">rss feed</a>
+</div>
+<nav class="topics" aria-label="Topics"><a class="chip" href="#" aria-current="page">all posts <span class="ct">6</span></a><a class="chip" href="#">web development <span class="ct">5</span></a><a class="chip" href="#">marketing technology <span class="ct">5</span></a><a class="chip" href="#">adobe marketo engage <span class="ct">4</span></a><a class="chip" href="#">marketing automation <span class="ct">4</span></a><a class="chip" href="#">cloud <span class="ct">3</span></a></nav>
+</div>
+<div class="col"><section class="year" aria-label="2026"><h2 class="yr mono"><span>2026</span></h2><div class="rows"><article class="row"><time datetime="2026-10-16">16 October<span class="yr-ph"> 2026</span></time><div><h2><a href="#">leadlens: email previews and linting for Marketo, inside VS Code</a></h2><p>A couple of months ago I wrote about whether sending yourself a test email is enough. leadlens is my answer: Marketo-aware previews and linting, right inside VS Code.</p><div class="tags"><a class="tag" href="#">adobe marketo engage</a><a class="tag" href="#">marketing automation</a><a class="tag" href="#">web development</a></div></div></article><article class="row"><time datetime="2026-09-23">23 September<span class="yr-ph"> 2026</span></time><div><h2><a href="#">automating my way around Marketo's API documentation</a></h2><p>I use the Marketo Engage REST API reasonably often, and its documentation has always left me wanting. So I generated my own reference from Adobe's specifications.</p><div class="tags"><a class="tag" href="#">adobe marketo engage</a><a class="tag" href="#">marketing automation</a><span class="tag plain">api</span></div></div></article><article class="row"><time datetime="2026-08-13">13 August<span class="yr-ph"> 2026</span></time><div><h2><a href="#">is sending yourself a test email enough?</a></h2><p>If you work in marketing automation, you probably have a version of the same pre-send ritual. Here's what a test send catches, and what it quietly misses.</p><div class="tags"><a class="tag" href="#">adobe marketo engage</a><a class="tag" href="#">marketing automation</a><a class="tag" href="#">cloud</a></div></div></article><article class="row"><time datetime="2026-08-04">4 August<span class="yr-ph"> 2026</span></time><div><h2><a href="#">when your website gets attacked before anyone even visits</a></h2><p>I've been running server-side Google Tag Manager on this website for a while.</p><div class="tags"><span class="tag plain">analytics</span><a class="tag" href="#">cloud</a><a class="tag" href="#">web development</a></div></div></article></div></section>
+<section class="year" aria-label="2025"><h2 class="yr mono"><span>2025</span></h2><div class="rows"><article class="row"><time datetime="2025-11-17">17 November<span class="yr-ph"> 2025</span></time><div><h2><a href="#">when a Marketo smart campaign isn't smart enough</a></h2><p>If you've spent any time pushing Marketo beyond its comfort zone, you'll know the name Sanford Whiteman.</p><div class="tags"><a class="tag" href="#">adobe marketo engage</a><a class="tag" href="#">marketing automation</a><a class="tag" href="#">cloud</a></div></div></article><article class="row"><time datetime="2025-11-16">16 November<span class="yr-ph"> 2025</span></time><div><h2><a href="#">what's this all about?</a></h2><p>If you've somehow found your way here – welcome.</p><div class="tags"><span class="tag plain">general</span></div></div></article></div></section></div>
+</sc-if>
+<sc-if value="{{isTopic}}" hint-placeholder-val="{{false}}">
+<div class="col ph">
+<p class="eyebrow"><a href="#">blog</a><span aria-hidden="true">/</span><span>topic</span></p>
+<div class="ph-row">
+<div>
+<h1 class="pt mono">marketing automation<span class="stop" aria-hidden="true"></span></h1>
+<p class="intro">Marketo Engage, lifecycle programs and the plumbing behind them. 4 posts.</p>
+</div>
+<a class="tl quiet" href="#" style="font-size: 15px; white-space: nowrap">rss for this topic</a>
+</div>
+<nav class="topics" aria-label="Topics"><a class="chip" href="#">all posts <span class="ct">6</span></a><a class="chip" href="#">web development <span class="ct">5</span></a><a class="chip" href="#">marketing technology <span class="ct">5</span></a><a class="chip" href="#">adobe marketo engage <span class="ct">4</span></a><a class="chip" href="#" aria-current="page">marketing automation <span class="ct">4</span></a><a class="chip" href="#">cloud <span class="ct">3</span></a></nav>
+</div>
+<div class="col"><section class="year" aria-label="2026"><h2 class="yr mono"><span>2026</span></h2><div class="rows"><article class="row"><time datetime="2026-10-16">16 October<span class="yr-ph"> 2026</span></time><div><h2><a href="#">leadlens: email previews and linting for Marketo, inside VS Code</a></h2><p>A couple of months ago I wrote about whether sending yourself a test email is enough. leadlens is my answer: Marketo-aware previews and linting, right inside VS Code.</p><div class="tags"><a class="tag" href="#">adobe marketo engage</a><a class="tag" href="#">marketing automation</a><a class="tag" href="#">web development</a></div></div></article><article class="row"><time datetime="2026-09-23">23 September<span class="yr-ph"> 2026</span></time><div><h2><a href="#">automating my way around Marketo's API documentation</a></h2><p>I use the Marketo Engage REST API reasonably often, and its documentation has always left me wanting. So I generated my own reference from Adobe's specifications.</p><div class="tags"><a class="tag" href="#">adobe marketo engage</a><a class="tag" href="#">marketing automation</a><span class="tag plain">api</span></div></div></article><article class="row"><time datetime="2026-08-13">13 August<span class="yr-ph"> 2026</span></time><div><h2><a href="#">is sending yourself a test email enough?</a></h2><p>If you work in marketing automation, you probably have a version of the same pre-send ritual. Here's what a test send catches, and what it quietly misses.</p><div class="tags"><a class="tag" href="#">adobe marketo engage</a><a class="tag" href="#">marketing automation</a><a class="tag" href="#">cloud</a></div></div></article></div></section>
+<section class="year" aria-label="2025"><h2 class="yr mono"><span>2025</span></h2><div class="rows"><article class="row"><time datetime="2025-11-17">17 November<span class="yr-ph"> 2025</span></time><div><h2><a href="#">when a Marketo smart campaign isn't smart enough</a></h2><p>If you've spent any time pushing Marketo beyond its comfort zone, you'll know the name Sanford Whiteman.</p><div class="tags"><a class="tag" href="#">adobe marketo engage</a><a class="tag" href="#">marketing automation</a><a class="tag" href="#">cloud</a></div></div></article></div></section></div>
+</sc-if>
+<footer class="sec col" data-foot>
+<div class="foot">
+<div class="c"><a href="#" onPointerEnter="{{replayFoot}}" style="display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 20px; letter-spacing: -0.02em"><svg width="28" height="28" viewBox="0 0 100 100" overflow="visible" aria-hidden="true"><path d="M30 10 V90 V58 C30 44 39 38 50 38 C61 38 70 44 70 58 V72" fill="none" stroke="{{c.text}}" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="{{flogo.dash}}" stroke-dashoffset="{{flogo.off}}"></path><circle cx="{{flogo.x}}" cy="{{flogo.y}}" r="8.5" fill="{{c.accent}}"></circle></svg>harrison jennings</a><p style="margin: 0; font-size: 15px; color: {{c.muted}}">marketing technology consultant, melbourne</p></div>
+<nav class="c" aria-label="Footer"><a href="#">blog</a><a href="#">projects</a><a href="#">book a call</a></nav>
+<div class="c"><a href="#" style="display: flex; align-items: center; gap: 10px"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56v-2c-3.2.7-3.87-1.37-3.87-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.69 1.25 3.35.96.1-.75.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.46.11-3.04 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.58.23 2.75.11 3.04.74.81 1.18 1.84 1.18 3.1 0 4.42-2.69 5.39-5.25 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"></path></svg>github</a><a href="#" style="display: flex; align-items: center; gap: 10px"><svg width="17" height="17" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45z"></path></svg>linkedin</a><p class="legal"><a href="#">privacy</a><a href="#">terms</a><a href="#">cookie settings</a></p></div>
+</div>
+</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"mode": {"editor": "enum", "options": ["dark", "light"], "default": "dark"}, "page": {"editor": "enum", "options": ["all posts", "topic: marketing automation"], "default": "all posts"}, "still": {"editor": "boolean", "default": false}, "$preview": {"width": 1440, "height": 1876}}'>
+class Component extends DCLogic {
+  componentDidMount() { this.mountCommon(); this.mountSpy(); }
+  componentWillUnmount() { this.unmountCommon(); this.unmountSpy(); }
+
+  logoPts() {
+    if (this._lp) return this._lp;
+    var pts = [], acc = 0, prev = null, i, u, a;
+    var push = function (x, y) { if (prev) acc += Math.hypot(x - prev[0], y - prev[1]); prev = [x, y]; pts.push([x, y, acc]); };
+    for (i = 0; i <= 80; i++) push(30, 10 + i);
+    for (i = 1; i <= 32; i++) push(30, 90 - i);
+    for (i = 1; i <= 200; i++) { u = i / 200; a = 1 - u; push(a*a*a*30 + 3*a*a*u*30 + 3*a*u*u*39 + u*u*u*50, a*a*a*58 + 3*a*a*u*44 + 3*a*u*u*38 + u*u*u*38); }
+    for (i = 1; i <= 200; i++) { u = i / 200; a = 1 - u; push(a*a*a*50 + 3*a*a*u*61 + 3*a*u*u*70 + u*u*u*70, a*a*a*38 + 3*a*a*u*38 + 3*a*u*u*44 + u*u*u*58); }
+    for (i = 1; i <= 30; i++) push(70, 58 + i);
+    this._lp = { pts: pts, lineEnd: acc - 16 };
+    return this._lp;
+  }
+  logoAt(d) {
+    var pts = this.logoPts().pts;
+    for (var i = 1; i < pts.length; i++) {
+      if (pts[i][2] >= d) { var p0 = pts[i - 1], p1 = pts[i], r = (d - p0[2]) / ((p1[2] - p0[2]) || 1); return [p0[0] + (p1[0] - p0[0]) * r, p0[1] + (p1[1] - p0[1]) * r]; }
+    }
+    return [70, 88];
+  }
+  still() { return !!this.props.still || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); }
+  play(key) {
+    var s = this.state || {};
+    if (this.still() || s[key] != null) return;
+    var self = this, start = null;
+    var step = function (now) {
+      if (start === null) start = now;
+      var g = Math.min((now - start) / 2040, 1), o = {};
+      o[key] = g < 1 ? g : null;
+      self.setState(o);
+      if (g < 1) self.rafs[key] = requestAnimationFrame(step);
+    };
+    this.rafs[key] = requestAnimationFrame(step);
+  }
+  logoVals(key) {
+    var s = this.state || {}, lg = s[key] != null ? s[key] : null;
+    if (lg == null) return { dash: 'none', off: 0, x: 70, y: 88 };
+    var L = this.logoPts().lineEnd, e = lg < 0.5 ? 2 * lg * lg : 1 - Math.pow(-2 * lg + 2, 2) / 2, tip = L * e, pt = this.logoAt(tip + 16);
+    return { dash: L.toFixed(2) + ' ' + L.toFixed(2), off: (L - tip).toFixed(2), x: pt[0].toFixed(2), y: pt[1].toFixed(2) };
+  }
+  mountCommon() {
+    var self = this;
+    this.rafs = {};
+    this.play('lg');
+    var foot = document.querySelector('[data-foot]');
+    if (foot && 'IntersectionObserver' in window) {
+      this.io = new IntersectionObserver(function (es) { if (es[0].isIntersecting) { self.play('fg'); self.io.disconnect(); } }, { threshold: 0.6 });
+      this.io.observe(foot);
+    }
+  }
+  unmountCommon() {
+    var r = this.rafs || {};
+    Object.keys(r).forEach(function (k) { cancelAnimationFrame(r[k]); });
+    if (this.io) this.io.disconnect();
+  }
+  mode() { return (this.state && this.state.mode) || this.props.mode || 'dark'; }
+  common() {
+    var self = this, light = this.mode() === 'light', s = this.state || {};
+    return {
+      c: light ? {
+        ground: '#F4EFEB', surface: '#FBF8F5', line: '#E3D9D2', text: '#1A1615', muted: '#655D59',
+        accent: '#A8443D', link: '#A8443D', onAccent: '#FFFFFF', onApricot: '#1A1615', str: '#8F4F1C', kw: '#A8443D', num: '#6B5A3A', hl: 'rgba(168,68,61,0.08)'
+      } : {
+        ground: '#121110', surface: '#1C1A19', line: '#2E2A28', text: '#EFEAE6', muted: '#A39C97',
+        accent: '#C85A52', link: '#D9665D', onAccent: '#121110', onApricot: '#121110', str: '#E8A27A', kw: '#D9665D', num: '#D8C3A5', hl: 'rgba(200,90,82,0.12)'
+      },
+      themeMode: light ? 'light' : 'dark',
+      themeLabel: light ? 'Switch to dark mode' : 'Switch to light mode',
+      toggle: function () { self.setState({ mode: light ? 'dark' : 'light' }); },
+      menuOpen: !!s.menu,
+      openMenu: function () { self.setState({ menu: true }); },
+      closeMenu: function (e) { if (e && e.preventDefault) e.preventDefault(); self.setState({ menu: false }); },
+      logo: this.logoVals('lg'),
+      flogo: this.logoVals('fg'),
+      replay: function () { self.play('lg'); },
+      replayFoot: function () { self.play('fg'); }
+    };
+  }
+
+
+  framed() { return !!this.props.frame; }
+  mountSpy() {
+    var self = this;
+    this.sc = this.framed() ? document.querySelector('.root') : window;
+    this.onSc = function () {
+      if (self.sq) return;
+      self.sq = requestAnimationFrame(function () { self.sq = null; self.spy(); self.readSwipes(); });
+    };
+    this.sc.addEventListener('scroll', this.onSc, { passive: true });
+    window.addEventListener('resize', this.onSc);
+    this.sw = Array.prototype.slice.call(document.querySelectorAll('[data-swipe]'));
+    this.sw.forEach(function (el) { el.addEventListener('scroll', self.onSc, { passive: true }); });
+    this.spy(); this.readSwipes();
+  }
+  unmountSpy() {
+    var self = this;
+    if (this.sc) this.sc.removeEventListener('scroll', this.onSc);
+    window.removeEventListener('resize', this.onSc);
+    (this.sw || []).forEach(function (el) { el.removeEventListener('scroll', self.onSc); });
+    if (this.sq) cancelAnimationFrame(this.sq);
+    clearTimeout(this.ct);
+  }
+  spy() {
+    var ids = [], top = this.framed() ? document.querySelector('.root').getBoundingClientRect().top : 0;
+    var act = ids[0];
+    for (var i = 0; i < ids.length; i++) {
+      var el = document.getElementById(ids[i]);
+      if (el && el.getBoundingClientRect().top - top <= 140) act = ids[i];
+    }
+    if (!this.state || this.state.active !== act) this.setState({ active: act });
+  }
+  readSwipes() {
+    var a = {};
+    (this.sw || []).forEach(function (el) {
+      var max = el.scrollWidth - el.clientWidth;
+      a[el.getAttribute('data-swipe')] = { start: el.scrollLeft <= 4 ? 'true' : 'false', end: el.scrollLeft >= max - 4 ? 'true' : 'false' };
+    });
+    if (JSON.stringify(a) !== JSON.stringify((this.state && this.state.arrows) || {})) this.setState({ arrows: a });
+  }
+  slide(key, dir) {
+    var el = document.querySelector('[data-swipe="' + key + '"]');
+    if (!el || !el.firstElementChild) return;
+    var gap = parseFloat(getComputedStyle(el).columnGap) || 0;
+    el.scrollBy({ left: dir * (el.firstElementChild.offsetWidth + gap), behavior: this.still() ? 'auto' : 'smooth' });
+  }
+  doCopy(i) {
+    var self = this;
+    this.setState({ copied: i });
+    clearTimeout(this.ct);
+    this.ct = setTimeout(function () { self.setState({ copied: null }); }, 1600);
+  }
+  renderVals() {
+    var v = this.common();
+    var self = this, s = this.state || {}, act = s.active || '';
+    v.toc = {};
+    [].forEach(function (id) { v.toc[id] = act === id ? 'true' : 'false'; });
+    v.frameStyle = this.framed() ? 'height: 100vh; overflow-y: auto; scroll-behavior: smooth' : '';
+    var ar = s.arrows || {};
+    v.more = ar.more || { start: 'true', end: 'false' };
+    v.prevMore = function () { self.slide('more', -1); };
+    v.nextMore = function () { self.slide('more', 1); };
+    v.copyLabel = {};
+    for (var i = 0; i < 0; i++) { (function (i) { v.copyLabel['c' + i] = s.copied === i ? 'copied' : 'copy'; v['copy' + i] = function () { self.doCopy(i); }; })(i); }
+    var pg = this.props.page || 'all posts';
+    v.isAll = pg === 'all posts';
+    v.isTopic = pg !== 'all posts';
+    return v;
+  }
+}
+</script>
+</body>
+</html>
