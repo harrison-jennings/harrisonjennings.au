@@ -7,7 +7,7 @@ The site deploys from GitHub to Cloudflare with [Workers Builds](https://develop
 | `main`        | production: www.harrisonjennings.au                |
 | anything else | a Preview on workers.dev, behind Cloudflare Access |
 
-The Worker is `harrisonjennings-au`, on the `harrisonjennings-au.workers.dev` subdomain. A branch's Preview URL is `<branch>-harrisonjennings-au.harrisonjennings-au.workers.dev` (slashes become hyphens: `chore/tests` → `chore-tests-…`), and Cloudflare comments it on the pull request. The production workers.dev URL is off (`workers_dev: false`); production is reached only through the www route from cutover.
+The Worker is `harrisonjennings-au`, on the `harrisonjennings-au.workers.dev` subdomain. A branch's Preview URL is `<branch>-harrisonjennings-au.harrisonjennings-au.workers.dev` (slashes become hyphens: `chore/tests` → `chore-tests-…`), and the **Preview link** workflow (`.github/workflows/preview-link.yml`) comments it on the pull request as soon as it opens. Cloudflare's own comment only appears when the PR was already open when a build ran, so it's missing on a PR opened after its branch's first push; later pushes still get it. The production workers.dev URL is off (`workers_dev: false`); production is reached only through the www route from cutover.
 
 ## one-time setup in Cloudflare
 

@@ -1,0 +1,54 @@
+# Posts the branch's Cloudflare preview link on every pull request.
+#
+# Workers Builds only comments on a pull request when the commit it builds is already on an open PR, so
+# a PR opened after its branch's first push never gets Cloudflare's comment. This fills the gap: one
+# comment per PR, posted when it opens (and again if that comment is missing on a later push). The link
+# is the branch's stable Preview URL, so it's right before the build finishes; the page loads once the
+# "Workers Builds" check passes.
+name: Preview link
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+permissions:
+  pull-requests: write
+
+concurrency:
+  group: preview-link-${{ github.event.pull_request.number }}
+
+jobs:
+  comment:
+    name: Post the preview link
+    # Dependabot's pull requests get a read-only token, so they're skipped.
+    if: github.event.pull_request.user.login != 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Post the link unless it's already there
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+          # Passed as data, never pasted into the script: branch names can contain anything.
+          BRANCH: ${{ github.head_ref }}
+        run: |
+          marker='<!-- preview-link -->'
+          if gh api "repos/$REPO/issues/$PR/comments" --paginate --jq '.[].body' | grep -qF "$marker"; then
+            echo "Preview link already posted."
+            exit 0
+          fi
+          # Cloudflare names the Preview after the branch: lowercase, anything else becomes a hyphen.
+          slug=$(printf '%s' "$BRANCH" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+//; s/-+$//')
+          host="$slug-harrisonjennings-au"
+          if [ "${#host}" -gt 63 ]; then
+            # Long names get a shortened name and a hash from Cloudflare, so there's no link to build.
+            line="This branch name is too long to predict its Preview URL: find it under the Worker's **Previews** in the Cloudflare dashboard."
+          else
+            line="**Preview:** https://$host.harrisonjennings-au.workers.dev/"
+          fi
+          body="$marker
+          $line
+
+          Behind Cloudflare Access. It shows this branch's latest push once the **Workers Builds** check passes."
+          gh pr comment "$PR" --repo "$REPO" --body "$body"
