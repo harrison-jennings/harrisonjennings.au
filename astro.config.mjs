@@ -5,6 +5,7 @@ import { defineConfig } from 'astro/config';
 import remarkDirective from 'remark-directive';
 import { remarkCallouts } from './src/lib/markdown/callouts.ts';
 import { remarkCookieSettings } from './src/lib/markdown/cookie-settings.ts';
+import { remarkCookieTable } from './src/lib/markdown/cookie-table.ts';
 import {
   codeLangs,
   codeTheme,
@@ -41,6 +42,7 @@ export default defineConfig({
       remarkDirective,
       remarkCallouts,
       remarkCookieSettings,
+      remarkCookieTable,
       remarkNoZoom,
       remarkReadingTime,
     ],

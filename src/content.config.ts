@@ -149,7 +149,12 @@ const consent = defineCollection({
   schema: z.object({
     revision: z.number().int().positive(),
     banner: z.object({ title: z.string(), text: z.string() }),
-    dialog: z.object({ title: z.string(), intro: z.string(), end: z.string() }),
+    dialog: z.object({
+      title: z.string(),
+      intro: z.string(),
+      end: z.string(),
+      noCookies: z.string(),
+    }),
     buttons: z.object({
       acceptAll: z.string(),
       rejectAll: z.string(),
@@ -164,7 +169,14 @@ const consent = defineCollection({
           id: z.enum(['necessary', 'analytics', 'advertising']),
           name: z.string(),
           description: z.string(),
-          cookies: z.array(z.object({ name: z.string(), purpose: z.string(), kept: z.string() })),
+          cookies: z.array(
+            z.object({
+              name: z.string(),
+              domain: z.string(),
+              purpose: z.string(),
+              kept: z.string(),
+            }),
+          ),
         }),
       )
       .length(3),

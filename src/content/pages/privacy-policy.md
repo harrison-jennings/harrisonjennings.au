@@ -92,13 +92,7 @@ Necessary technologies may be used to:
 
 These technologies may operate without optional analytics or marketing consent where they are reasonably necessary for the requested functionality or the security of the Site.
 
-| cookie and domain                                          | expires    | purpose                                            |
-| ---------------------------------------------------------- | ---------- | -------------------------------------------------- |
-| `pressidium_cookie_consent`<br />`www.harrisonjennings.au` | 182 days   | Remembers the visitor’s consent choices            |
-| `cf_clearance`<br />`.harrisonjennings.au`                 | 1 year     | Cloudflare security/challenge clearance            |
-| `__cf_bm`<br />`.cal.com`                                  | 30 minutes | Cloudflare bot protection for Cal.com              |
-| `__Secure-next-auth.callback-url`<br />`.cal.com`          | Session    | Maintains Cal.com’s authentication return location |
-| `__Secure-next-auth.csrf-token`<br />`.cal.com`            | Session    | Prevents forged requests to Cal.com                |
+::cookie-table{category="necessary"}
 
 ### analytics
 
@@ -112,12 +106,7 @@ Google Signals is enabled in Google Analytics. Where a visitor grants Advertisin
 
 Analytics and advertising consent can be granted, refused or withdrawn at any time using the Site’s cookie settings. Visitors may also use Google’s advertising controls and the Google Analytics opt-out browser add-on.
 
-| cookie and domain                              | expires  | purpose                                                                       |
-| ---------------------------------------------- | -------- | ----------------------------------------------------------------------------- |
-| `_ga_*`<br />`.harrisonjennings.au`            | 2 years  | Distinguishes visitors and maintains session information for Google Analytics |
-| `FPID`<br />`.harrisonjennings.au`             | 400 days | Server-managed GA4 visitor identifier                                         |
-| `FPLC`<br />`.harrisonjennings.au`             | 20 hours | Readable linker derived from FPID                                             |
-| `sessionsCount`<br />`www.harrisonjennings.au` | 395 days | Counts sessions                                                               |
+::cookie-table{category="analytics"}
 
 ### advertising and remarketing
 
@@ -127,10 +116,7 @@ Google Analytics advertising features may use advertising cookies or identifiers
 
 If advertising or remarketing through Google, Meta or another provider is introduced, this policy and the Site’s consent controls will be updated before those technologies are activated.
 
-| cookie and domain                     | expires | purpose                                                                                                                                      |
-| ------------------------------------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| `_gcl_au`<br />`.harrisonjennings.au` | 90 days | Stores information used by Google to measure advertising effectiveness and attribute website actions to previous ad interactions.            |
-| `FPAU`<br />`.harrisonjennings.au`    | 90 days | Stores a first-party advertising identifier used by the server-side Google tagging setup to support advertising attribution and measurement. |
+::cookie-table{category="advertising"}
 
 ::cookie-settings
 

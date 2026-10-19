@@ -265,6 +265,41 @@
   font-size: 11.5px;
 }
 
+/* cookie tables (privacy policy, ::cookie-table): "kept for" stays on one line; on phones each cookie
+   stacks: name and domain with how long it's kept, then what it does */
+.prose .cookie-table td:nth-child(2) {
+  white-space: nowrap;
+  color: var(--muted);
+}
+.prose .cookie-none {
+  color: var(--muted);
+}
+@media (max-width: 760px) {
+  .prose .cookie-table thead {
+    display: none;
+  }
+  .prose .cookie-table tr {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 6px 12px;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--line);
+  }
+  .prose .cookie-table tr:last-child {
+    border-bottom: 0;
+  }
+  .prose .cookie-table td {
+    padding: 0;
+    border: 0;
+  }
+  .prose .cookie-table td:nth-child(2) {
+    text-align: right;
+  }
+  .prose .cookie-table td:nth-child(3) {
+    grid-column: 1 / -1;
+  }
+}
+
 /* code blocks: always the dark treatment (data-theme="dark" on the block re-points the tokens),
    on light pages too */
 .prose .codeblock {

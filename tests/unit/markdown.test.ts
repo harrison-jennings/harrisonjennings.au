@@ -10,6 +10,7 @@ import { unified } from 'unified';
 import { describe, expect, it } from 'vitest';
 import { remarkCallouts } from '../../src/lib/markdown/callouts';
 import { remarkCookieSettings } from '../../src/lib/markdown/cookie-settings';
+import { readConsent, remarkCookieTable } from '../../src/lib/markdown/cookie-table';
 import {
   codeLangs,
   codeTheme,
@@ -76,6 +77,54 @@ describe('cookie settings', () => {
     expect(await render('::cookie-settings')).toBe(
       '<p class="cookie-settings"><button type="button" class="copy" data-consent-preferences="" aria-haspopup="dialog">cookie settings</button></p>',
     );
+  });
+});
+
+describe('cookie tables', () => {
+  const copy = {
+    dialog: { noCookies: 'None at the moment.' },
+    categories: [
+      {
+        id: 'analytics',
+        cookies: [
+          { name: '_ga', domain: '.example.com', purpose: 'Tells visits apart.', kept: '2 years' },
+        ],
+      },
+      { id: 'advertising', cookies: [] },
+    ],
+  };
+  const table = async (md: string) =>
+    String(
+      await unified()
+        .use(remarkParse)
+        .use(remarkGfm)
+        .use(remarkDirective)
+        .use(remarkCookieTable, { read: () => copy })
+        .use(remarkRehype)
+        .use(rehypeStringify)
+        .process(md),
+    );
+
+  it("builds a category's table from the consent wording: cookie and domain, kept for, what it does", async () => {
+    const html = (await table('::cookie-table{category="analytics"}')).replace(/\n/g, '');
+    expect(html).toContain('<table class="cookie-table">');
+    expect(html).toContain('<th>cookie and domain</th><th>kept for</th><th>what it does</th>');
+    expect(html).toContain(
+      '<td><code>_ga</code><br><code>.example.com</code></td><td>2 years</td><td>Tells visits apart.</td>',
+    );
+  });
+
+  it('says so when a category sets no cookies, and fails on one that does not exist', async () => {
+    expect(await table('::cookie-table{category="advertising"}')).toBe(
+      '<p class="cookie-none">None at the moment.</p>',
+    );
+    await expect(table('::cookie-table{category="marketing"}')).rejects.toThrow(/no category/);
+  });
+
+  it('reads the real list, where every category has a table or the "none" line', () => {
+    const real = readConsent();
+    expect(real.categories.map((c) => c.id)).toEqual(['necessary', 'analytics', 'advertising']);
+    expect(real.categories[0]?.cookies.map((c) => c.name)).toContain('cc_cookie');
   });
 });
 
