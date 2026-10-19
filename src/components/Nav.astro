@@ -196,10 +196,13 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
 
   /* Compact, after 80px of scroll (desktop only): the name and icons drop away. */
   @media (min-width: 761px) {
+    /* The 44px theme toggle sets the bar's height, so the 34px button has 13px above and below it.
+       The right padding matches, so the button sits evenly in the pill's rounded end. */
     .nav.is-compact {
       max-width: max-content;
       gap: 22px;
-      padding: var(--space-8) var(--space-8) var(--space-8) var(--space-16);
+      padding: var(--space-8) calc(var(--space-8) + (var(--target) - 34px) / 2) var(--space-8)
+        var(--space-16);
     }
     .nav.is-compact .nav__name,
     .nav.is-compact .nav__icons {

@@ -78,3 +78,19 @@ for (const width of [390, 1440]) {
     expect(heading.y).toBeGreaterThanOrEqual(nav.y + nav.height);
   });
 }
+
+test('in the compact nav the button sits evenly in the pill end', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 600 });
+  await page.goto('/');
+  await page.mouse.move(720, 550);
+  await page.evaluate(() => window.scrollTo(0, 300));
+  await expect.poll(() => isCompact(page)).toBe(true);
+  await page.waitForTimeout(300); // let the padding transition finish
+  const nav = await navBox(page);
+  const cta = (await page.locator('[data-nav] .nav__cta').boundingBox())!;
+  const top = cta.y - nav.y;
+  const bottom = nav.y + nav.height - (cta.y + cta.height);
+  const right = nav.x + nav.width - (cta.x + cta.width);
+  expect(Math.abs(top - bottom)).toBeLessThanOrEqual(0.5);
+  expect(Math.abs(right - top)).toBeLessThanOrEqual(0.5);
+});
