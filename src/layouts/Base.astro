@@ -4,6 +4,8 @@ import Footer from '../components/Footer.astro';
 import Nav from '../components/Nav.astro';
 import { SITE } from '../consts';
 import { feedPath } from '../lib/feed';
+import { WIDTH, HEIGHT } from '../lib/og/card';
+import { shareImageFor } from '../lib/og/cards';
 
 interface Props {
   title?: string;
@@ -14,6 +16,8 @@ interface Props {
   float?: boolean;
   /** Feeds besides the whole blog's, such as a topic page's own. */
   feeds?: Array<{ title: string; href: string }>;
+  /** Replaces the page's share card, such as a post's own `socialImage`. */
+  image?: { src: string; width: number; height: number } | undefined;
 }
 
 const {
@@ -22,9 +26,17 @@ const {
   noindex = false,
   float = false,
   feeds = [],
+  image,
 } = Astro.props;
 const pageTitle = title ? `${title} · ${SITE.name}` : SITE.name;
 const canonical = new URL(Astro.url.pathname, Astro.site);
+// The share card: the page's own (generated at build), or the home card.
+const share = image ?? {
+  src: await shareImageFor(Astro.url.pathname),
+  width: WIDTH,
+  height: HEIGHT,
+};
+const shareUrl = new URL(share.src, Astro.site);
 ---
 
 <!doctype html>
@@ -78,6 +90,12 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta property="og:url" content={canonical} />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="en_AU" />
+    <meta property="og:image" content={shareUrl} />
+    <meta property="og:image:width" content={String(share.width)} />
+    <meta property="og:image:height" content={String(share.height)} />
+    <meta property="og:image:alt" content={title ?? SITE.name} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={shareUrl} />
   </head>
   <body>
     <a class="skip-link" href="#main">

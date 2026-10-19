@@ -113,6 +113,8 @@ const home = defineCollection({
     headline: z.array(z.string()).min(1),
     lead: z.string(),
     intro: z.string(),
+    /** The line under the lead on the share card (the home card is every page's default). */
+    shareLine: z.string(),
     booking: z.object({ title: z.string(), note: z.string() }),
   }),
 });

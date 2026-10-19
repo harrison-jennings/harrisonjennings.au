@@ -3,6 +3,8 @@ home:
   headline: ['marketing,', 'engineered']
   lead: Strategy and the stack, from one person.
   intro: I'm Harrison, a marketing technology consultant in Melbourne.
+  # The second line on the share card (the image shown when a link to the site is shared).
+  shareLine: Marketing technology consultant, Melbourne.
   booking:
     title: ready to jump in? book a call
     # DRAFT: the call length is still to be confirmed.

@@ -1,6 +1,7 @@
 ---
 // A post: header, the text with "on this page" beside it, then the published line, the author
 // panel and "keep reading". No booking band on blog pages.
+import { getImage } from 'astro:assets';
 import { render } from 'astro:content';
 import AuthorPanel from '../../../components/blog/AuthorPanel.astro';
 import KeepReading from '../../../components/blog/KeepReading.astro';
@@ -26,9 +27,25 @@ const { Content, headings, remarkPluginFrontmatter } = await render(post);
 const readingTime = Number(remarkPluginFrontmatter['readingTime'] ?? 1);
 const toc = tocHeadings(headings, post.data.toc);
 const topicPages = await topicPageIds();
+// A post's own `socialImage` replaces its generated share card, cropped to the card's 1200 × 630.
+const socialImage = post.data.socialImage
+  ? await getImage({
+      src: post.data.socialImage,
+      width: 1200,
+      height: 630,
+      fit: 'cover',
+      format: 'jpeg',
+    })
+  : undefined;
+const image = socialImage && { src: socialImage.src, width: 1200, height: 630 };
 ---
 
-<Base title={post.data.title} description={post.data.description} noindex={post.data.draft}>
+<Base
+  title={post.data.title}
+  description={post.data.description}
+  noindex={post.data.draft}
+  image={image}
+>
   <div class="column">
     <PostHeader post={post} readingTime={readingTime} topicPages={topicPages} />
     <div class:list={['article', { 'article--toc': toc.length > 0 }]}>
