@@ -70,7 +70,7 @@ The draft post `src/content/posts/formatting-reference/index.mdx` shows every el
 
 ## a project
 
-Add an entry to `src/content/projects.yaml` with an `id`, `name`, `summary` and, if it's deployed, `host` and `url`. Every project shows on `/projects/`, ordered by `order`; `featured: true` also puts it in "built and shipped" on the home page. `kind` ("VS Code extension") and `built` (the year) fill in its facts. `repo` adds "source on github"; `story` (a post's id) adds "read the story" and becomes where its name links (otherwise the live site). `image` is a screenshot in `src/content/projects/`, shown at 16:9 (4:3 on phones) and cropped from the top left, so keep the important part there; it's shown still, never as a link.
+Add an entry to `src/content/projects.yaml` with an `id`, `name`, `summary` and, if it's deployed, `host` and `url`. Every project shows on `/projects/`, ordered by `order`; `featured: true` also puts it in "built and shipped" on the home page. `kind` ("VS Code extension") and `built` (the year) fill in its facts. `repo` adds "source on github"; `story` (a post's id) adds "read the story" and becomes where its name links (otherwise the live site). `image` is a screenshot in `src/content/projects/`, shown at 16:9 and cropped from the top left, so keep the important part there; it's shown still, never as a link.
 
 To retire a project, set `status: archived`. It moves to the "archived" list at the bottom of the page (which appears only once something is archived), with its `summary` as the one line on what it was; its live link goes, and the source and story stay.
 

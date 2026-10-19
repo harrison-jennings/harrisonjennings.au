@@ -1,6 +1,7 @@
 ---
-// Every project by `order`: a large still screenshot (not a link, no scroll effect), then its number,
-// name, facts, description and links. Archived projects follow as quiet rows, once there are any.
+// Every project by `order`: a large still screenshot (16:9 at every width; not a link, no scroll
+// effect), then its number, name, facts, description and links. Archived projects follow as quiet
+// rows, once there are any.
 import { Image } from 'astro:assets';
 import { getCollection, getEntry } from 'astro:content';
 import LiveDot from '../../components/LiveDot.astro';
@@ -242,7 +243,6 @@ const number = (i: number) => String(i + 1).padStart(2, '0');
       gap: var(--space-20);
     }
     .pj__shot {
-      aspect-ratio: 4 / 3;
       border-radius: var(--radius-md);
     }
     .pj__body {

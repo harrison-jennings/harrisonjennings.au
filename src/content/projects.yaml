@@ -1,7 +1,7 @@
 # Every project, on /projects/ by `order`. `featured` ones also appear in "built and shipped" on the
 # home page. Set `status: archived` to move one to the quiet "archived" list (its summary becomes the
 # one line on what it was). `kind` is what it is, in a few words; `built` is the year. `image` is a
-# screenshot in src/content/projects/, shown at 16:9 (4:3 on phones), cropped from the top left.
+# screenshot in src/content/projects/, shown at 16:9 and cropped from the top left.
 - id: leadlens
   name: leadlens
   summary: Email previews and linting that understand Marketo, inside VS Code. Reads Email Editor 2.0 templates the way Marketo does, then shows how they render across 21 email clients.
