@@ -69,7 +69,7 @@ Built in five stages, one pull request each, from `design/` (see `design/README.
 
 - [x] Convert the export (images downloaded at full size, renamed and given alt text)
 - [x] Clean up block-editor markup and code blocks in each of the 6 posts; keep each post's WordPress ID as `wpId` (the `?p=` number in the live feed's `<guid>`)
-- [ ] Privacy and terms into `src/content/pages/`: the text, dates, the short version and the contact email
+- [x] Privacy and terms into `src/content/pages/`: the text, dates, the short version and the contact email
 - [x] Turn the 8 populated categories (and any tags) into a short `topics.yaml`; merge any that overlap
 - [x] A 301 in `public/_redirects` for every old post URL (`/YYYY/MM/<slug>/` → `/blog/<slug>/`) and category URL, from the crawl
 - [x] Redirect tests: a Playwright test that every source in `public/_redirects` returns a single 301 to a page that returns 200, and that no rule uses a wildcard
@@ -83,6 +83,8 @@ Built in five stages, one pull request each, from `design/` (see `design/README.
 - [ ] D1 consent logger (a Worker route; pages stay static); records confirmed arriving
 - [ ] Pressidium records exported and archived off-site
 - [ ] Content-Security-Policy in `_headers`
+- [ ] Cookie list as data (`src/content/cookies.yaml`: name, domain, expiry, purpose, category), feeding both the consent banner's cookie table and the privacy policy (a `::cookie-table{category="…"}` directive replacing the hand-written tables); laid out as a table on desktop and stacked on phones
+- [ ] Update the privacy policy for the new site: hosting on Cloudflare rather than VentraIP, no WordPress, the new consent cookie in the necessary-cookies table; then its date
 
 ## 8. SEO parity and quality
 
