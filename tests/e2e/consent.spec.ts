@@ -71,6 +71,21 @@ test('"accept all" grants analytics and advertising, logs it, and is remembered'
     ),
   ).toBe(true);
 
+  // The new consent is in force before Tag Manager sees the interaction event.
+  const order = await page.evaluate(() =>
+    (window.dataLayer ?? []).flatMap((entry) => {
+      if (Object.prototype.toString.call(entry) === '[object Arguments]') {
+        const args = [...(entry as IArguments)];
+        return args[0] === 'consent' && args[1] === 'update' ? ['update'] : [];
+      }
+      return (entry as Record<string, unknown>)['event'] === 'cookieConsentInteraction'
+        ? ['event']
+        : [];
+    }),
+  );
+  expect(order.indexOf('update')).toBeGreaterThan(-1);
+  expect(order.indexOf('update')).toBeLessThan(order.indexOf('event'));
+
   // Next page: no banner, and the saved choice applies in the head, before Tag Manager would load.
   await page.goto('/blog/');
   await expect(banner(page)).toBeHidden();
