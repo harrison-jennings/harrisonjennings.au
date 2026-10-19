@@ -1,0 +1,48 @@
+{
+  "name": "velocity",
+  "displayName": "Velocity",
+  "scopeName": "source.velocity",
+  "patterns": [
+    { "include": "#comment-block" },
+    { "include": "#comment-line" },
+    { "include": "#directive" },
+    { "include": "#string-double" },
+    { "include": "#string-single" },
+    { "include": "#number" },
+    { "include": "#constant" }
+  ],
+  "repository": {
+    "comment-block": {
+      "name": "comment.block.velocity",
+      "begin": "#\\*",
+      "end": "\\*#"
+    },
+    "comment-line": {
+      "name": "comment.line.double-number-sign.velocity",
+      "match": "##.*$"
+    },
+    "directive": {
+      "name": "keyword.control.velocity",
+      "match": "#\\{?(?:if|elseif|else|end|set|foreach|macro|break|stop|parse|include|evaluate|define)\\b\\}?"
+    },
+    "string-double": {
+      "name": "string.quoted.double.velocity",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [{ "match": "\\\\." }]
+    },
+    "string-single": {
+      "name": "string.quoted.single.velocity",
+      "begin": "'",
+      "end": "'"
+    },
+    "number": {
+      "name": "constant.numeric.velocity",
+      "match": "\\b-?\\d+(?:\\.\\d+)?\\b"
+    },
+    "constant": {
+      "name": "constant.language.velocity",
+      "match": "\\b(?:true|false|null)\\b"
+    }
+  }
+}

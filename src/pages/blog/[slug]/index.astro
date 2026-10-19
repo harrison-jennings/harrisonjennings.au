@@ -1,0 +1,86 @@
+---
+// A post: header, the text with "on this page" beside it, then the published line, the author
+// panel and "keep reading". No booking band on blog pages.
+import { render } from 'astro:content';
+import AuthorPanel from '../../../components/blog/AuthorPanel.astro';
+import KeepReading from '../../../components/blog/KeepReading.astro';
+import PostEnd from '../../../components/blog/PostEnd.astro';
+import PostHeader from '../../../components/blog/PostHeader.astro';
+import Toc from '../../../components/blog/Toc.astro';
+import Figures from '../../../components/prose/Figures.astro';
+import YouTube from '../../../components/prose/YouTube.astro';
+import Base from '../../../layouts/Base.astro';
+import { keepReading, tocHeadings } from '../../../lib/blog';
+import { getPosts, postSlug } from '../../../lib/posts';
+import { topicPageIds } from '../../../lib/topics';
+import '../../../styles/lightbox.css';
+import '../../../styles/prose.css';
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return posts.map((post) => ({ params: { slug: postSlug(post) }, props: { post, posts } }));
+}
+
+const { post, posts } = Astro.props;
+const { Content, headings, remarkPluginFrontmatter } = await render(post);
+const readingTime = Number(remarkPluginFrontmatter['readingTime'] ?? 1);
+const toc = tocHeadings(headings, post.data.toc);
+const topicPages = await topicPageIds();
+---
+
+<Base title={post.data.title} description={post.data.description} noindex={post.data.draft}>
+  <div class="column">
+    <PostHeader post={post} readingTime={readingTime} topicPages={topicPages} />
+    <div class:list={['article', { 'article--toc': toc.length > 0 }]}>
+      <div>
+        {toc.length > 0 && <Toc headings={toc} phone />}
+        <div class="prose">
+          <Content components={{ Figures, YouTube }} />
+        </div>
+        <PostEnd post={post} />
+        <AuthorPanel />
+      </div>
+      {toc.length > 0 && <Toc headings={toc} />}
+    </div>
+    <KeepReading posts={keepReading(post, posts)} topicPages={topicPages} />
+  </div>
+</Base>
+
+<style>
+  .article {
+    max-width: 680px;
+    margin-top: 56px;
+  }
+  .article--toc {
+    display: grid;
+    grid-template-columns: minmax(0, 680px) 240px;
+    justify-content: space-between;
+    gap: 64px;
+    max-width: none;
+  }
+  .article :global(.toc-phone) {
+    display: none;
+  }
+  @media (max-width: 760px) {
+    .article,
+    .article--toc {
+      display: block;
+      margin-top: var(--space-32);
+    }
+    .article :global(.toc) {
+      display: none;
+    }
+    .article :global(.toc-phone) {
+      display: block;
+    }
+  }
+</style>
+
+<script>
+  import { bindCopyCode } from '../../../scripts/copy-code';
+  import { bindLightbox } from '../../../scripts/lightbox';
+  import { bindVideo } from '../../../scripts/video';
+  document.querySelectorAll<HTMLButtonElement>('[data-copy-code]').forEach(bindCopyCode);
+  document.querySelectorAll<HTMLElement>('[data-video]').forEach(bindVideo);
+  bindLightbox([...document.querySelectorAll<HTMLButtonElement>('[data-zoomable]')]);
+</script>

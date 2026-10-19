@@ -10,9 +10,12 @@ export const postPath = (post: CollectionEntry<'posts'>): string => `/blog/${pos
 /** The URL for a topic's page: /blog/topic/<id>/. */
 export const topicPath = (topic: CollectionEntry<'topics'>): string => `/blog/topic/${topic.id}/`;
 
-/** Drafts show in `npm run dev` only, never in a build. */
+/**
+ * Drafts show in `npm run dev` only, never in a production build. The end-to-end tests build with
+ * INCLUDE_DRAFTS=true, so the draft formatting reference is there to test against.
+ */
 export const isPublished = (post: CollectionEntry<'posts'>): boolean =>
-  import.meta.env.DEV || !post.data.draft;
+  import.meta.env.DEV || process.env['INCLUDE_DRAFTS'] === 'true' || !post.data.draft;
 
 /** Published posts, newest first. */
 export async function getPosts(): Promise<CollectionEntry<'posts'>[]> {

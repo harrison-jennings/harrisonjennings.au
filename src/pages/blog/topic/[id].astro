@@ -1,0 +1,54 @@
+---
+// A topic page: the same template as the blog, filtered. Only topics with two or more posts get one.
+import PageHead from '../../../components/blog/PageHead.astro';
+import PostArchive from '../../../components/blog/PostArchive.astro';
+import TopicChips from '../../../components/blog/TopicChips.astro';
+import Base from '../../../layouts/Base.astro';
+import { getPosts, getTopicPages } from '../../../lib/posts';
+import { topicChips, topicPageIds } from '../../../lib/topics';
+
+export async function getStaticPaths() {
+  return (await getTopicPages()).map(({ topic, posts }) => ({
+    params: { id: topic.id },
+    props: { topic, posts },
+  }));
+}
+
+const { topic, posts } = Astro.props;
+const total = (await getPosts()).length;
+const count = `${posts.length} ${posts.length === 1 ? 'post' : 'posts'}.`;
+---
+
+<Base title={topic.data.name} description={topic.data.description}>
+  <div class="column">
+    <PageHead
+      title={topic.data.name}
+      eyebrow={[{ label: 'blog', href: '/blog/' }, { label: 'topic' }]}
+      link={{ label: 'rss for this topic', href: `/rss/#topic-${topic.id}` }}
+    >
+      <p class="intro">
+        {topic.data.description}
+        <br />
+        {count}
+      </p>
+    </PageHead>
+    <TopicChips total={total} topics={await topicChips()} current={topic.id} />
+    <PostArchive posts={posts} topicPages={await topicPageIds()} />
+  </div>
+</Base>
+
+<style>
+  .intro {
+    margin: 20px 0 0;
+    max-width: 600px;
+    font-size: 19px;
+    line-height: 1.55;
+    color: var(--muted);
+    text-wrap: pretty;
+  }
+  @media (max-width: 760px) {
+    .intro {
+      font-size: 17px;
+    }
+  }
+</style>

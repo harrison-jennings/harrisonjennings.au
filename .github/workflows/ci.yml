@@ -45,12 +45,23 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Drafts stay out of the production build
+        run: test ! -e dist/blog/formatting-reference
+
+      - name: Keep the build for review
+        uses: actions/upload-artifact@v7
+        with:
+          name: dist
+          path: dist/
+          retention-days: 7
+
       - name: Install Playwright's Chromium
         run: npx playwright install --with-deps chromium
 
-      # Runs against the dist/ built above, served by wrangler dev (see playwright.config.ts).
+      # Rebuilds with drafts included (the formatting reference), then tests dist/ served by wrangler
+      # dev (see playwright.config.ts). The production build above is what's kept for review.
       - name: End-to-end tests
-        run: npx playwright test
+        run: npm run test:e2e
         env:
           WRANGLER_SEND_METRICS: 'false'
 
@@ -62,11 +73,4 @@ jobs:
           path: |
             playwright-report/
             test-results/
-          retention-days: 7
-
-      - name: Keep the build for review
-        uses: actions/upload-artifact@v7
-        with:
-          name: dist
-          path: dist/
           retention-days: 7

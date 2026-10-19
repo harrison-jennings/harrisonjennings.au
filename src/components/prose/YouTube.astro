@@ -1,0 +1,20 @@
+---
+// A YouTube video in a post (.mdx): <YouTube id="dQw4w9WgXcQ" title="What the video shows" />.
+// Nothing loads from YouTube until someone presses play (no thumbnail either: that would be a
+// request to Google). Then it plays from youtube-nocookie.com.
+interface Props {
+  id: string;
+  title?: string;
+}
+
+const { id, title = 'YouTube video' } = Astro.props;
+---
+
+<div class="video" data-video={id} data-video-title={title}>
+  <button class="video__play" type="button" aria-label={`Play video: ${title}`}>
+    <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M8 5v14l11-7z" fill="currentColor"></path>
+    </svg>
+  </button>
+  <p class="video__note">Plays from YouTube. Nothing loads from YouTube until you press play.</p>
+</div>

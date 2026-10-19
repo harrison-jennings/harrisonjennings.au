@@ -1,0 +1,88 @@
+---
+// The topic filter: "all posts" and every topic with its own page, each with its post count. The
+// current one is marked. Scrolls sideways on phones.
+import type { CollectionEntry } from 'astro:content';
+import { topicPath } from '../../lib/posts';
+
+interface Props {
+  total: number;
+  topics: Array<{ topic: CollectionEntry<'topics'>; count: number }>;
+  /** The topic page being shown; none on the index. */
+  current?: string;
+}
+
+const { total, topics, current } = Astro.props;
+---
+
+{topics.length > 0 && (
+  <nav class="chips" aria-label="Topics">
+    <a class="chip" href="/blog/" aria-current={current ? undefined : 'page'}>
+      all posts <span class="chip__count">{total}</span>
+    </a>
+    {topics.map(({ topic, count }) => (
+      <a
+        class="chip"
+        href={topicPath(topic)}
+        aria-current={current === topic.id ? 'page' : undefined}
+      >
+        {topic.data.name} <span class="chip__count">{count}</span>
+      </a>
+    ))}
+  </nav>
+)}
+
+<style>
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-8);
+    margin-top: var(--space-40);
+  }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-8);
+    min-height: 40px;
+    padding: 0 14px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-pill);
+    font-size: 14px;
+    color: var(--text);
+    text-decoration: none;
+    white-space: nowrap;
+    transition:
+      border-color 150ms ease,
+      color 150ms ease;
+  }
+  .chip__count {
+    font-family: var(--font-display);
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .chip:hover {
+    border-color: var(--link);
+    color: var(--link);
+  }
+  .chip[aria-current='page'] {
+    border-color: var(--text);
+    background: var(--surface);
+  }
+  @media (max-width: 760px) {
+    .chips {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      scrollbar-width: none;
+      margin: var(--space-28) calc(-1 * (var(--space-16) + var(--space-10))) 0
+        calc(-1 * (var(--space-16) + var(--space-22)));
+      padding: 0 calc(var(--space-16) + var(--space-10)) 0 calc(var(--space-16) + var(--space-22));
+    }
+    .chips::-webkit-scrollbar {
+      display: none;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .chip {
+      transition: none;
+    }
+  }
+</style>
