@@ -156,6 +156,10 @@ describe('the consent log', () => {
     expect(calls[0]?.at(-1)).toBe('preview');
   });
 
+  it('says the log is unavailable, rather than failing, when no database is bound', async () => {
+    expect((await handleConsent(post(valid), {})).status).toBe(503);
+  });
+
   it('refuses other methods, other sites, other content types and bad records', async () => {
     const { calls, fake } = db();
     const env = { CONSENT_DB: fake, CONSENT_IP_KEY: 'k' };

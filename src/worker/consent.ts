@@ -8,7 +8,8 @@ export interface ConsentDb {
 }
 
 export interface ConsentEnv {
-  CONSENT_DB: ConsentDb;
+  /** Missing only if a deployment isn't bound to a database (Previews need their own binding). */
+  CONSENT_DB?: ConsentDb;
   /** The HMAC key for IP addresses (a Worker secret). Without it the IP isn't stored at all. */
   CONSENT_IP_KEY?: string;
 }
@@ -38,6 +39,7 @@ export async function handleConsent(
   env: ConsentEnv,
 ): Promise<Response> {
   if (request.method !== 'POST') return text('Method not allowed', 405, { Allow: 'POST' });
+  if (!env.CONSENT_DB) return text('Consent log unavailable', 503);
   const url = new URL(request.url);
   // Only the site's own pages may write to the log.
   if (request.headers.get('Origin') !== url.origin) return text('Forbidden', 403);
@@ -59,11 +61,13 @@ export async function handleConsent(
   const ipHash = ip && env.CONSENT_IP_KEY ? await hashIp(ip, env.CONSENT_IP_KEY) : null;
   const has = (category: string) => (record.categories.includes(category as never) ? 1 : 0);
 
-  await env.CONSENT_DB.prepare(
-    `INSERT INTO consent_log (consent_id, consent_date, url, country, region, ip_hash, user_agent,
+  const db = env.CONSENT_DB;
+  await db
+    .prepare(
+      `INSERT INTO consent_log (consent_id, consent_date, url, country, region, ip_hash, user_agent,
       necessary_consent, analytics_consent, advertising_consent, action, revision, environment)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-  )
+    )
     .bind(
       record.consentId,
       record.consentDate,
