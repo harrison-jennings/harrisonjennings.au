@@ -160,7 +160,7 @@ describe('code blocks', () => {
   it('wraps the block with a bar: file name, language and copy', async () => {
     const html = await highlight("const a = 'x';", 'js', 'title="src/app.js"');
     expect(html).toMatch(
-      /^<div class="codeblock"><div class="codeblock__bar"><span><span class="codeblock__file">src\/app\.js<\/span><span class="codeblock__lang">javascript<\/span><\/span><button type="button" class="codeblock__copy" data-copy-code(="")?>copy<\/button><\/div><pre/,
+      /^<div class="codeblock" data-theme="dark"><div class="codeblock__bar"><span><span class="codeblock__file">src\/app\.js<\/span><span class="codeblock__lang">javascript<\/span><\/span><button type="button" class="codeblock__copy" data-copy-code(="")?>copy<\/button><\/div><pre/,
     );
     expect(html).not.toContain('background-color');
   });

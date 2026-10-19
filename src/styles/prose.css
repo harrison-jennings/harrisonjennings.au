@@ -265,8 +265,11 @@
   font-size: 11.5px;
 }
 
-/* code blocks */
+/* code blocks: always the dark treatment (data-theme="dark" on the block re-points the tokens),
+   on light pages too */
 .prose .codeblock {
+  color-scheme: dark;
+  color: var(--text);
   overflow: hidden;
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
@@ -328,9 +331,9 @@
   background: var(--code-highlight);
   box-shadow: inset 2px 0 0 var(--accent);
 }
-/* In dark, brick keywords on the brick highlight band fall just short of AA (4.35:1), so on
-   highlighted lines they lift 20% towards text (5.4:1). Light passes as it is. */
-:root[data-theme='dark'] .prose .line.highlighted [style*='var(--code-keyword)'] {
+/* Brick keywords on the brick highlight band fall just short of AA (4.35:1), so on highlighted
+   lines they lift 20% towards text (5.4:1). */
+.prose .codeblock .line.highlighted [style*='var(--code-keyword)'] {
   color: color-mix(in srgb, var(--code-keyword) 80%, var(--text)) !important;
 }
 .prose .tk-prompt {

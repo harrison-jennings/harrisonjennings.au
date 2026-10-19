@@ -138,7 +138,10 @@ export function codeTransformer(): ShikiTransformer {
   };
 }
 
-/** Wraps each highlighted <pre> in the code block: a bar with the file name, language and copy. */
+/**
+ * Wraps each highlighted <pre> in the code block: a bar with the file name, language and copy.
+ * The block always takes the dark theme's tokens (data-theme="dark"), whatever the page's theme.
+ */
 export function rehypeCodeBlocks() {
   return (tree: Root) => {
     visit(tree, 'element', (el, index, parent) => {
@@ -163,7 +166,9 @@ export function rehypeCodeBlocks() {
       parent.children[index] = {
         type: 'element',
         tagName: 'div',
-        properties: { className: ['codeblock'] },
+        // Code blocks always use the dark treatment, on light pages too: the light palette's
+        // warm colours were too close to tell apart.
+        properties: { className: ['codeblock'], dataTheme: 'dark' },
         children: [
           {
             type: 'element',

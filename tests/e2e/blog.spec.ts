@@ -159,6 +159,22 @@ test.describe('a post', () => {
   });
 });
 
+test('code blocks keep the dark treatment on a light page', async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem('hj-theme', 'light'));
+  await page.goto(REF);
+  const css = (selector: string, property: string) =>
+    page
+      .locator(selector)
+      .first()
+      .evaluate((el, p) => getComputedStyle(el).getPropertyValue(p), property);
+  expect(await css('body', 'background-color')).toBe('rgb(244, 239, 235)'); // light ground
+  expect(await css('.codeblock', 'background-color')).toBe('rgb(28, 26, 25)'); // dark surface
+  expect(await css('.codeblock pre', 'color')).toBe('rgb(239, 234, 230)'); // dark text
+  expect(await css('.codeblock', 'color-scheme')).toBe('dark');
+  // Inline code follows the page.
+  expect(await css('.prose p code', 'background-color')).toBe('rgb(251, 248, 245)');
+});
+
 test.describe('a post on a phone', () => {
   test.use({ viewport: { width: 390, height: 844 } });
 
