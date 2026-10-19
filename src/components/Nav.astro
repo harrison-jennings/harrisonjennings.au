@@ -313,9 +313,15 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
   .menu__links a:hover {
     color: var(--link);
   }
-  /* The ring clears the current-page underline (8px below the text) rather than cutting through it. */
+  /* Keyboard focus takes the hover treatment (brick text and underline) instead of the ring; on the
+     current page, already underlined, the colour change is what shows it. */
   .menu__links a:focus-visible {
-    outline-offset: 14px;
+    outline: none;
+    color: var(--link);
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 8px;
   }
   .menu__links a[aria-current='page'] {
     text-decoration: underline;

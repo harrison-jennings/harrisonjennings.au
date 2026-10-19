@@ -35,7 +35,20 @@ test('opened from the keyboard, focus goes to the first link', async ({ page }) 
   await page.keyboard.press('Escape');
   await expect(page.locator('[data-menu-open]')).toBeFocused();
   await page.keyboard.press('Enter');
-  await expect(page.locator('[data-menu] .menu__links a').first()).toBeFocused();
+  const first = page.locator('[data-menu] .menu__links a').first();
+  await expect(first).toBeFocused();
+  // Shown with the brand's hover treatment (link colour), not a ring.
+  await expect(first).toHaveCSS('outline-style', 'none');
+  const link = await page.evaluate(() => {
+    const probe = document.createElement('span');
+    probe.style.color = 'var(--link)';
+    document.body.append(probe);
+    const colour = getComputedStyle(probe).color;
+    probe.remove();
+    return colour;
+  });
+  // After the colour's 150ms transition.
+  await expect.poll(() => first.evaluate((a) => getComputedStyle(a).color)).toBe(link);
 });
 
 test('focus is trapped in the open menu', async ({ page }) => {
