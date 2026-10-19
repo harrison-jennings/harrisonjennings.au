@@ -42,8 +42,10 @@ export const CSP_SOURCES: Record<string, string[]> = {
     'https://www.google.com',
     'https://app.cal.com',
   ],
-  // The calendar, a post's video once played (src/scripts/video.ts), and Tag Manager's frames.
+  // The calendar, a post's video once played (src/scripts/video.ts), and Tag Manager's frames: the
+  // server container's service worker frame comes from the measurement subdomain.
   'frame-src': [
+    MEASURE,
     'https://cal.com',
     'https://app.cal.com',
     'https://www.youtube-nocookie.com',
