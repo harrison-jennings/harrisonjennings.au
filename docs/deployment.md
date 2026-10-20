@@ -52,6 +52,20 @@ GROUP BY directive, blocked, source ORDER BY reports DESC;
 
 Each row is either a source to add to `src/lib/csp.ts` or something to remove at its origin (usually a Tag Manager tag or variable). On previews, Access may stop reports from arriving; the browser's console lists the same violations, marked `[Report Only]`. When the production list has been empty for a week, switch the header to `Content-Security-Policy` in `cspHeaders()`.
 
+## GitHub repository settings
+
+Set in GitHub, not in the repository, so recorded here.
+
+- **Ruleset "Protect main"** (**Settings → Rules → Rulesets**):
+  - `main` can't be deleted or force-pushed, and history stays linear;
+  - every change arrives through a pull request, squash-merged, with review threads resolved;
+  - three checks must pass on an up-to-date branch, each pinned to GitHub Actions as its source: `quality / Format, lint, types and build`, `end-to-end / Playwright` and `lighthouse / Lighthouse`. If a CI job is renamed, update these in the same change, or pull requests wait forever on a check that never reports;
+  - no bypass list: even an admin can't skip the rules, so changing them means editing the ruleset.
+- **Merging:** squash only, titled from the pull request; branches are deleted after merge; "update branch" is offered.
+- **Actions** (**Settings → Actions → General**): only actions published by GitHub (`actions/…`, `github/…`) and this repository's own workflows may run. A third-party action fails until it's allowed there; prefer a GitHub-owned action or a plain `run:` step. The workflow token is read-only by default and can't approve pull requests.
+- **Security:** Dependabot alerts and security updates are on. Secret scanning, push protection and code scanning need the repository to be public (or a paid plan for an organisation): CodeQL and dependency review are already wired in and start when it is.
+- **Apps:** Cloudflare Workers and Pages, with access to this repository only.
+
 ## after each deploy
 
 The **🚀 CD Orchestrator** waits for Cloudflare's production deploy of every push to `main`, then runs `scripts/smoke-test.sh` against `www.harrisonjennings.au`. It checks:
