@@ -2,7 +2,7 @@
 // sits. Every page carries the WebSite and Person; the home page adds the business, posts a
 // BlogPosting, and inner pages their breadcrumbs. Base.astro writes the graph into the page head.
 import { SITE, SOCIAL } from '../consts';
-import { isoDate } from './dates';
+import { melbourneMidnight } from './dates';
 
 export type Thing = Record<string, unknown>;
 
@@ -113,8 +113,8 @@ export function blogPosting(post: PostFacts): Thing {
     headline: post.title.slice(0, 110),
     description: post.description,
     image: [url(post.image)],
-    datePublished: isoDate(post.published),
-    dateModified: isoDate(post.updated ?? post.published),
+    datePublished: melbourneMidnight(post.published),
+    dateModified: melbourneMidnight(post.updated ?? post.published),
     author: { '@type': 'Person', '@id': ids.person, name: NAME, url: url('/') },
     publisher: { '@id': ids.person },
     isPartOf: { '@id': ids.blog },

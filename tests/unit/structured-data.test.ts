@@ -32,18 +32,18 @@ describe('structured data', () => {
     });
   });
 
-  it('describes a post with absolute addresses, plain dates and its author', () => {
+  it('describes a post with absolute addresses, Melbourne dates and its author', () => {
     expect(blogPosting(post)).toMatchObject({
       '@type': 'BlogPosting',
       url: 'https://www.harrisonjennings.au/blog/a-post/',
       image: ['https://www.harrisonjennings.au/og/blog/a-post.png'],
-      datePublished: '2026-08-13',
-      dateModified: '2026-08-13',
+      datePublished: '2026-08-13T00:00:00+10:00',
+      dateModified: '2026-08-13T00:00:00+10:00',
       author: { '@id': ids.person, name: 'Harrison Jennings' },
       keywords: ['cloud'],
     });
-    expect(blogPosting({ ...post, updated: new Date('2026-10-01') })['dateModified']).toBe(
-      '2026-10-01',
+    expect(blogPosting({ ...post, updated: new Date('2026-10-16') })['dateModified']).toBe(
+      '2026-10-16T00:00:00+11:00',
     );
   });
 

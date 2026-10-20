@@ -42,7 +42,7 @@ for (const path of sitemapPaths()) {
       expect(posting, 'a post has a BlogPosting').toBeDefined();
       expect(posting!['headline']).toBe((await page.locator('h1').textContent())?.trim());
       expect(new URL(posting!['url'] as string).pathname).toBe(path);
-      expect(posting!['datePublished']).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+      expect(posting!['datePublished']).toMatch(/^\d{4}-\d{2}-\d{2}T00:00:00\+1[01]:00$/);
       // The image is a real file on the site.
       const image = new URL((posting!['image'] as string[])[0]!);
       expect((await page.request.get(`${baseURL}${image.pathname}`)).status()).toBe(200);
