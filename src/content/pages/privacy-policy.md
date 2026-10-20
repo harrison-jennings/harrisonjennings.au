@@ -2,7 +2,7 @@
 title: privacy policy
 description: How this site handles personal information, what runs in your browser and when, and how to ask about it.
 # Updated for the new site: hosting on Cloudflare, the consent records, and the cookie tables (built
-# from src/content/consent.yaml). Set the date to the day it goes live.
+# from src/content/consent.yaml). Dated the day the new site went live.
 updated: 2026-10-20
 summary:
   - You can read the site without telling me who you are.

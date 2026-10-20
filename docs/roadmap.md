@@ -114,7 +114,7 @@ Better than the WordPress site, not just level with it: most of its posts sat in
 - [ ] Sitemap, the feeds (`/rss.xml`, and `/feed/` redirecting to it), social cards and structured data validated
 - [x] Lighthouse 95+ on performance, accessibility and SEO (and best practices): 97–100 on the four checked pages; the home page's SEO counts once its `noindex` goes at launch
 - [x] Lighthouse CI on every pull request, failing below 95 on performance, accessibility, best practices and SEO
-- [ ] Remove `noindex` from the placeholder home page, and drop its SEO exception in `lighthouserc.json` (the second pattern then matches every page)
+- [x] Remove `noindex` from the home page, and its SEO exception in `lighthouserc.json`
 
 ## 9. cutover
 

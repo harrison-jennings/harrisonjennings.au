@@ -112,7 +112,7 @@ const tagManagerHead =
     {tagManagerHead && <script is:inline set:html={tagManagerHead} />}
     <title>{searchTitle ?? pageTitle}</title>
     <meta name="description" content={description} />
-    {/* No canonical on a page kept out of search (drafts, the 404, the placeholder home page). */}
+    {/* No canonical on a page kept out of search (drafts, the 404, /rss/). */}
     {!noindex && <link rel="canonical" href={canonical} />}
     {noindex && <meta name="robots" content="noindex" />}
 

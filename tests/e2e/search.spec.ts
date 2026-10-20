@@ -41,3 +41,12 @@ test('/rss/ is kept out of search and out of the sitemap', async ({ page }) => {
   const sitemap = readFileSync(new URL('../../dist/sitemap-0.xml', import.meta.url), 'utf8');
   expect(sitemap).not.toContain('/rss/<');
 });
+
+test('the home page is in search, with its canonical address', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('meta[name="robots"]')).toHaveCount(0);
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+    'href',
+    'https://www.harrisonjennings.au/',
+  );
+});
