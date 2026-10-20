@@ -2,8 +2,11 @@ name: 🚀 CD Orchestrator
 
 # Did the deploy work? Cloudflare Workers Builds deploys every push (main to production, other branches
 # to previews); this runs around those deploys and never deploys anything itself.
-#   On a pull request: posts the branch's preview link.
-#   On main: waits for Cloudflare's production deploy of that commit, then smoke-tests the live site.
+#   On a pull request: posts the branch's preview link, and records Cloudflare's preview build as a
+#   GitHub deployment to the Preview environment once it's live.
+#   On main: waits for Cloudflare's production deploy of that commit, smoke-tests the live site, and
+#   records it as a deployment to Production.
+# Both environments show in the repository's Deployments panel.
 #   The production checks run once the PRODUCTION_LIVE repository variable is `true` (set at cutover,
 #   when www.harrisonjennings.au starts serving this site).
 on:
@@ -22,7 +25,18 @@ jobs:
     if: github.event_name == 'pull_request'
     uses: ./.github/workflows/preview-link.yml
     permissions:
+      contents: read
       pull-requests: write
+
+  preview:
+    name: preview
+    # Dependabot's pull requests get a read-only token, so they're skipped (as for the link).
+    if: github.event_name == 'pull_request' && github.event.pull_request.user.login != 'dependabot[bot]'
+    uses: ./.github/workflows/preview-deployment.yml
+    permissions:
+      contents: read
+      checks: read
+      deployments: write
 
   production:
     name: production
@@ -31,3 +45,4 @@ jobs:
     permissions:
       contents: read
       checks: read
+      deployments: write
