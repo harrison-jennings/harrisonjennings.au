@@ -92,7 +92,7 @@ Rehearsed on 20 October 2026 against the live Cloudflare settings. The switch is
 
 **Staying on, on purpose:**
 
-- **Bot Fight Mode.** It protects `measure` (bots there cost Cloud Run requests and pollute analytics) and the `/api/*` endpoints. It can't be exempted on the free plan. Its JavaScript Detections add an inline script to each page that no hash can allow; it's left refused by the CSP (nothing acts on its result on the free plan) and its reports are dropped (`src/lib/csp.ts`). It does challenge GitHub's runners, so the CD smoke test checks each deployed version through its preview address instead (see [after each deploy](#after-each-deploy)); Better Uptime gets through.
+- **Bot Fight Mode.** It protects `measure` (bots there cost Cloud Run requests and pollute analytics) and the `/api/*` endpoints. It can't be exempted on the free plan. Its JavaScript Detections add inline scripts to each page that no hash can allow (a loader at the end of the body, and the script it writes into a hidden frame); they're left refused by the CSP (nothing acts on their result on the free plan), their reports are dropped, and the browser console shows them as Report-Only violations (`src/lib/csp.ts`). It does challenge GitHub's runners, so the CD smoke test checks each deployed version through its preview address instead (see [after each deploy](#after-each-deploy)); Better Uptime gets through.
 - **Cloudflare Web Analytics** (cookieless, in the privacy policy, allowed by the CSP).
 - **Email Address Obfuscation** (its decode script loads from the site itself, which the CSP allows).
 

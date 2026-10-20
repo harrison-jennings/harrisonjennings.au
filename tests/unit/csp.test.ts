@@ -140,7 +140,7 @@ describe("Cloudflare's own scripts", () => {
     expect(script).toContain("'report-sample'");
   });
 
-  it("drops reports of Bot Fight Mode's inline script, and keeps other inline ones", () => {
+  it("drops reports of Bot Fight Mode's inline scripts, and keeps other inline ones", () => {
     const report = (sample: string) => [
       {
         type: 'csp-violation',
@@ -152,13 +152,13 @@ describe("Cloudflare's own scripts", () => {
         },
       },
     ];
-    expect(
-      parseCspReports(
-        report("window.__CF$cv$params={r:'a1b2c3',t:'MTc5"),
-        'application/reports+json',
-        HOST,
-      ),
-    ).toEqual([]);
+    // The loader at the end of the body, then the script it writes into a hidden frame.
+    for (const sample of [
+      '(function(){function c(){var b=a.content',
+      "window.__CF$cv$params={r:'a1b2c3',t:'MTc5",
+    ]) {
+      expect(parseCspReports(report(sample), 'application/reports+json', HOST)).toEqual([]);
+    }
     expect(parseCspReports(report('alert(1)'), 'application/reports+json', HOST)).toHaveLength(1);
   });
 });
