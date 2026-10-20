@@ -15,7 +15,8 @@ You'll get an acknowledgement within five working days. Once it's fixed, you're 
 
 ## How the site is hardened
 
-- Static output only: no server-side code runs for page requests, and there are no logins or forms that store data.
-- Security headers are set in `public/_headers`.
+- Pages and assets are static files: no server-side code runs for them, and there are no logins or general-purpose forms.
+- Two narrow Worker endpoints accept POSTs and store records in Cloudflare D1: `/api/consent` (a cookie choice) and `/api/csp-report` (Content-Security-Policy violation reports). Each caps the body size, checks every field, and uses parameterised SQL; a Cloudflare rate-limiting rule covers `/api/*`. The IP address behind a consent record is stored only as a keyed hash.
+- Security headers are set in `public/_headers`; the Content-Security-Policy, with hashes for the inline scripts, is added at build (`src/lib/csp-build.ts`).
 - Dependencies are watched by Dependabot, and CI must pass before anything reaches `main`.
 - No secrets live in the repository. Cloudflare credentials stay in Cloudflare; local values go in `.dev.vars`, which is ignored.

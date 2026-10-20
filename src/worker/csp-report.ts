@@ -1,6 +1,7 @@
 // POST /api/csp-report: Content-Security-Policy violation reports, from both report-uri and report-to
 // (src/lib/csp.ts). Each distinct violation is one row in csp_report with a running count.
 import { parseCspReports } from '../lib/csp';
+import { readBody } from './body';
 import { PRODUCTION_HOST, type ConsentEnv } from './consent';
 
 /** Room for a Reporting API batch: each report repeats the whole policy. */
@@ -15,8 +16,8 @@ export async function handleCspReport(request: Request, env: ConsentEnv): Promis
   const type = request.headers.get('Content-Type') ?? '';
   if (!/^application\/(csp-report|reports\+json|json)\b/.test(type))
     return text('Unsupported media type', 415);
-  const body = await request.text();
-  if (body.length > MAX_BYTES) return text('Too large', 413);
+  const body = await readBody(request, MAX_BYTES);
+  if (body === null) return text('Too large', 413);
 
   let parsed: unknown;
   try {

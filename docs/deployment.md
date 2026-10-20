@@ -50,7 +50,19 @@ FROM csp_report WHERE environment = 'production'
 GROUP BY directive, blocked, source ORDER BY reports DESC;
 ```
 
-Each row is either a source to add to `src/lib/csp.ts` or something to remove at its origin (usually a Tag Manager tag or variable). On previews, Access may stop reports from arriving; the browser's console lists the same violations, marked `[Report Only]`. When the production list has been empty for a week, switch the header to `Content-Security-Policy` in `cspHeaders()`.
+Each row is either a source to add to `src/lib/csp.ts` or something to remove at its origin (usually a Tag Manager tag or variable). To clear rows, always use a statement that names the table, here in the Console, never the table view's row deletes: `DELETE FROM csp_report WHERE environment = 'production';` On previews, Access may stop reports from arriving; the browser's console lists the same violations, marked `[Report Only]`. When the production list has been empty for a week, switch the header to `Content-Security-Policy` in `cspHeaders()`.
+
+## rate limit on /api/\*
+
+Both endpoints write to D1, and their `Origin` and field checks only stop honest browsers and malformed data, so one rate-limiting rule (the free plan allows one) caps each IP address before the Worker runs: **Security → Security rules → Create rule → Rate limiting rules**:
+
+- **Rule name:** `api: rate limit writes`.
+- **If incoming requests match → Edit expression:** `(starts_with(http.request.uri.path, "/api/") and http.request.method eq "POST")`.
+- **With the same characteristics:** IP (fixed on the free plan).
+- **When rate exceeds:** 20 requests per 10 seconds. A visitor sends one consent record per choice and a few CSP reports per page at most.
+- **Then take action:** Block, for 10 seconds (the free plan's only choices) → **Deploy**.
+
+Its hits show in **Security → Analytics → Events**.
 
 ## GitHub repository settings
 

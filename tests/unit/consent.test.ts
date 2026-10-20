@@ -1,5 +1,7 @@
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { consentSignals, parseConsentRecord } from '../../src/lib/consent';
+import { parse } from 'yaml';
+import { CONSENT_REVISION, consentSignals, parseConsentRecord } from '../../src/lib/consent';
 import { tagManagerEnvironment, tagManagerSrc } from '../../src/lib/tag-manager';
 import { handleConsent, hashIp, type ConsentDb } from '../../src/worker/consent';
 
@@ -53,10 +55,33 @@ describe('consent records', () => {
     ['an unknown category', { categories: ['marketing'] }],
     ['an unknown action', { action: 'shrug' }],
     ['a revision of 0', { revision: 0 }],
+    ['an old or future revision', { revision: CONSENT_REVISION + 1 }],
     ['a full URL instead of a path', { path: 'https://elsewhere.example/' }],
+    ['a path with characters a browser would encode', { path: '/<script>/' }],
     ['a date that is not one', { consentDate: 'yesterday' }],
+    ['a choice without the necessary category', { categories: ['analytics'] }],
+    ['accept all without every category', { action: 'accept_all' }],
+    ['reject all with an optional category', { action: 'reject_all' }],
   ])('rejects %s', (_, change) => {
     expect(parseConsentRecord({ ...valid, ...change })).toBeNull();
+  });
+
+  it('accepts accept all and reject all when the categories agree, and encoded paths', () => {
+    const all = ['necessary', 'analytics', 'advertising'];
+    expect(parseConsentRecord({ ...valid, action: 'accept_all', categories: all })).not.toBeNull();
+    expect(
+      parseConsentRecord({ ...valid, action: 'reject_all', categories: ['necessary'] }),
+    ).not.toBeNull();
+    expect(parseConsentRecord({ ...valid, path: '/blog/caf%C3%A9/' })?.path).toBe(
+      '/blog/caf%C3%A9/',
+    );
+  });
+
+  it('expects the revision the banner uses', () => {
+    const yaml = parse(
+      readFileSync(new URL('../../src/content/consent.yaml', import.meta.url), 'utf8'),
+    );
+    expect(yaml.consent.revision).toBe(CONSENT_REVISION);
   });
 });
 
@@ -174,6 +199,12 @@ describe('the consent log', () => {
     );
     expect((await handleConsent(post({ ...valid, action: 'shrug' }), env)).status).toBe(400);
     expect((await handleConsent(post('x'.repeat(3000)), env)).status).toBe(413);
+    // A declared length over the limit is refused before the body is read.
+    expect((await handleConsent(post(valid, { 'Content-Length': '999999' }), env)).status).toBe(
+      413,
+    );
+    // Multi-byte characters count as bytes, not characters.
+    expect((await handleConsent(post({ ...valid, pad: 'é'.repeat(1100) }), env)).status).toBe(413);
     expect(calls).toHaveLength(0);
   });
 });
