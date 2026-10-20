@@ -15,7 +15,7 @@ import { business } from '../lib/structured-data';
 const services = (await getCollection('services')).map((s) => s.data);
 ---
 
-<Base noindex float structuredData={[business(services)]}>
+<Base float structuredData={[business(services)]}>
   <Hero />
   <div class="sections">
     <Services />

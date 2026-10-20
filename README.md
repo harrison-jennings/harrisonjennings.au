@@ -13,6 +13,7 @@
 marketing automation, analytics and measurement, creative and media strategy.
 
 [![CI](https://github.com/harrison-jennings/harrisonjennings.au/actions/workflows/ci-orchestrator.yml/badge.svg?branch=main)](https://github.com/harrison-jennings/harrisonjennings.au/actions/workflows/ci-orchestrator.yml)
+[![CD](https://github.com/harrison-jennings/harrisonjennings.au/actions/workflows/cd-orchestrator.yml/badge.svg?branch=main)](https://github.com/harrison-jennings/harrisonjennings.au/actions/workflows/cd-orchestrator.yml)
 [![Astro 7](https://img.shields.io/badge/astro-7-C85A52?style=flat-square&logo=astro&logoColor=EFEAE6&labelColor=121110)](https://astro.build/)
 [![Cloudflare Workers](https://img.shields.io/badge/cloudflare-workers-C85A52?style=flat-square&logo=cloudflare&logoColor=EFEAE6&labelColor=121110)](https://developers.cloudflare.com/workers/static-assets/)
 [![Node 24](https://img.shields.io/badge/node-24_LTS-E8A27A?style=flat-square&logo=nodedotjs&logoColor=EFEAE6&labelColor=121110)](https://nodejs.org/)
