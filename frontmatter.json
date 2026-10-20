@@ -594,6 +594,5 @@
   },
   "frontMatter.dashboard.openOnStart": true,
   "frontMatter.git.enabled": false,
-  "frontMatter.git.commitMessage": "content: edit posts and pages",
   "frontMatter.git.disableOnBranches": ["main"]
 }

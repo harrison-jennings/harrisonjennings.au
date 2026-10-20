@@ -71,7 +71,7 @@ The site works out the rest at build: the reading time (prose words ÷ 230, roun
 - **Snippets** (the panel's **Insert snippet**), most wrapping the selected text: a quote, a section break, a callout (note, tip or heads up), a footnote marker and its text, details, a table with a number column, code blocks (plain, with a file name, or with highlighted lines), terminal commands, and in `.mdx` posts images side by side and a YouTube video, with or without a poster. From the media dashboard: an image, with a caption, or without zoom (`.md` and `.mdx` versions).
 - **Formatting:** Front Matter rewrites a post's front matter when you change a field, in its own style. Save the file in VS Code (Prettier formats on save) or run `npm run format` before committing, or the format check fails.
 - **Don't edit `topics.yaml` through its data view:** it rewrites the file and drops the comments. Edit it directly.
-- **Git:** its sync is off (`frontMatter.git.enabled`), and never runs on `main`; its own default commit message is replaced, so nothing it could commit names the tool. Commit, branch and open pull requests as usual.
+- **Git:** its sync is off (`frontMatter.git.enabled`) and never runs on `main`, so it never commits. Commit from the terminal with your own message, branch and open pull requests as usual.
 
 ## writing a post
 
