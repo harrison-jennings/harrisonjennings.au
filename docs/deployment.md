@@ -61,9 +61,11 @@ Set in GitHub, not in the repository, so recorded here.
   - every change arrives through a pull request, squash-merged, with review threads resolved;
   - three checks must pass on an up-to-date branch, each pinned to GitHub Actions as its source: `quality / Format, lint, types and build`, `end-to-end / Playwright` and `lighthouse / Lighthouse`. If a CI job is renamed, update these in the same change, or pull requests wait forever on a check that never reports;
   - no bypass list: even an admin can't skip the rules, so changing them means editing the ruleset.
+  - `.github/rulesets/main.json` is a copy of it, for rebuilding (**New ruleset → Import a ruleset**). GitHub doesn't read the file, so update it whenever the ruleset changes.
 - **Merging:** squash only, titled from the pull request; branches are deleted after merge; "update branch" is offered.
 - **Actions** (**Settings → Actions → General**): only actions published by GitHub (`actions/…`, `github/…`) and this repository's own workflows may run. A third-party action fails until it's allowed there; prefer a GitHub-owned action or a plain `run:` step. The workflow token is read-only by default and can't approve pull requests.
 - **Security:** Dependabot alerts and security updates are on. Secret scanning, push protection and code scanning need the repository to be public (or a paid plan for an organisation): CodeQL and dependency review are already wired in and start when it is.
+- **Environments and deployments:** Cloudflare deploys, but only reports back as a check, so the 🚀 CD Orchestrator records each deploy as a GitHub deployment. **Preview** is recorded once a pull request's preview build is live, with the branch's Preview URL. **Production** is recorded with each smoke-tested deploy of `main`, from cutover. Both environments were created by those jobs and have no protection rules. They show in the repository's **Deployments** panel (the About settings ⚙ → **Deployments**, which GitHub only keeps ticked once a deployment exists).
 - **Apps:** Cloudflare Workers and Pages, with access to this repository only.
 
 ## after each deploy

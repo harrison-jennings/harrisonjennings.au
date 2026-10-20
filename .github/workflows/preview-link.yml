@@ -25,6 +25,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
       - name: Post the link unless it's already there
         env:
           GH_TOKEN: ${{ github.token }}
@@ -38,14 +42,12 @@ jobs:
             echo "Preview link already posted."
             exit 0
           fi
-          # Cloudflare names the Preview after the branch: lowercase, anything else becomes a hyphen.
-          slug=$(printf '%s' "$BRANCH" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+//; s/-+$//')
-          host="$slug-harrisonjennings-au"
-          if [ "${#host}" -gt 63 ]; then
+          url=$(bash scripts/preview-url.sh "$BRANCH")
+          if [ -z "$url" ]; then
             # Long names get a shortened name and a hash from Cloudflare, so there's no link to build.
             line="This branch name is too long to predict its Preview URL: find it under the Worker's **Previews** in the Cloudflare dashboard."
           else
-            line="**Preview:** https://$host.harrisonjennings-au.workers.dev/"
+            line="**Preview:** $url"
           fi
           body="$marker
           $line
