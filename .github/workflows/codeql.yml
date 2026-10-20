@@ -3,9 +3,8 @@ name: CodeQL
 # Code scanning is free on public repositories. While the repository is private these jobs skip,
 # so nothing fails; they start working as soon as it is made public.
 on:
-  pull_request:
-  push:
-    branches: [main]
+  # Called by the CI Orchestrator on each pull request and on main, and run weekly on its own.
+  workflow_call:
   schedule:
     - cron: '23 18 * * 0' # Mondays 05:23 Melbourne time
 

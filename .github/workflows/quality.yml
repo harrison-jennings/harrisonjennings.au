@@ -1,17 +1,11 @@
-name: CI
+name: Quality
 
+# Called by the CI Orchestrator: formatting, lint, types, unit tests and the production build.
 on:
-  pull_request:
-  push:
-    branches: [main]
-  workflow_dispatch:
+  workflow_call:
 
 permissions:
   contents: read
-
-concurrency:
-  group: ci-${{ github.ref }}
-  cancel-in-progress: true
 
 jobs:
   verify:
@@ -53,24 +47,4 @@ jobs:
         with:
           name: dist
           path: dist/
-          retention-days: 7
-
-      - name: Install Playwright's Chromium
-        run: npx playwright install --with-deps chromium
-
-      # Rebuilds with drafts included (the formatting reference), then tests dist/ served by wrangler
-      # dev (see playwright.config.ts). The production build above is what's kept for review.
-      - name: End-to-end tests
-        run: npm run test:e2e
-        env:
-          WRANGLER_SEND_METRICS: 'false'
-
-      - name: Keep the Playwright report if tests fail
-        if: failure()
-        uses: actions/upload-artifact@v7
-        with:
-          name: playwright-report
-          path: |
-            playwright-report/
-            test-results/
           retention-days: 7

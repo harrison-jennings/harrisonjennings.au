@@ -103,17 +103,17 @@ Better than the WordPress site, not just level with it: most of its posts sat in
 - [x] Search titles and descriptions (`searchTitle`, `searchDescription`) for every post, built around each post's search terms; the headline and dek on the page stay as written
 - [x] Thin utility pages (`/rss/`) kept out of search and the sitemap
 - [x] Redirects for the old author archive and the remaining WordPress sitemaps Search Console still knew
-- [ ] 🛠️ CI Orchestrator: one workflow calling quality, end-to-end, Lighthouse, CodeQL and dependency review (the merge rule's required check updated with it)
-- [ ] 🚀 CD Orchestrator: posts each PR's preview link, and after `main` deploys, smoke-tests production (pages, redirects, headers, consent banner); production checks switched on at cutover
+- [x] 🛠️ CI Orchestrator: one workflow calling quality, end-to-end, Lighthouse, CodeQL and dependency review (the merge rule's required checks updated with it)
+- [x] 🚀 CD Orchestrator: posts each PR's preview link, and after `main` deploys, smoke-tests production (`scripts/smoke-test.sh`); production checks switched on at cutover
 
 - [ ] Every URL in the crawl either returns 200 or 301s to its new home in one hop; WordPress-only URLs return a real 404
 - [ ] Old Yoast and WordPress sitemap URLs 301 to the new sitemap index (already in `_redirects`)
 - [ ] After launch, watch Search Console for the moved posts being re-indexed at their new URLs
 - [ ] Titles and descriptions for every page, post and topic
 - [ ] Sitemap, the feeds (`/rss.xml`, and `/feed/` redirecting to it), social cards and structured data validated
-- [ ] Lighthouse 95+ on performance, accessibility and SEO
-- [ ] Lighthouse CI on every pull request, failing below 95 on performance, accessibility and SEO
-- [ ] Remove `noindex` from the placeholder home page
+- [x] Lighthouse 95+ on performance, accessibility and SEO (and best practices): 97–100 on the four checked pages; the home page's SEO counts once its `noindex` goes at launch
+- [x] Lighthouse CI on every pull request, failing below 95 on performance, accessibility, best practices and SEO
+- [ ] Remove `noindex` from the placeholder home page, and drop its SEO exception in `lighthouserc.json` (the second pattern then matches every page)
 
 ## 9. cutover
 
@@ -121,7 +121,8 @@ Better than the WordPress site, not just level with it: most of its posts sat in
 - [ ] Workers Route `www.harrisonjennings.au/*`; redirect rule from the bare domain to www
 - [ ] Test the rollback once: delete the route, confirm WordPress serves, re-add it
 - [ ] In Tag Manager, publish the version that's on Testing to Live, then check your own visit reaches the production GA4 property's Realtime report (the server container picks the property from the `environment` label)
-- [ ] Spot-check pages, consent banner, booking, analytics and consent logging on the live domain
+- [ ] Spot-check pages, consent banner, booking, analytics and consent logging on the live domain; `bash scripts/smoke-test.sh https://www.harrisonjennings.au` passes
+- [ ] Change the `PRODUCTION_LIVE` repository variable from `false` to `true`, so every deploy is smoke-tested
 - [ ] Clean up WordPress-era Cloudflare settings (cache and page rules, Automatic Platform Optimization); keep Rocket Loader off
 - [ ] In Search Console, remove the old WordPress sitemaps and submit `sitemap-index.xml`; annotate the date in GA4
 - [ ] Request indexing for each post with URL Inspection; check the structured data in Search Console's enhancements reports

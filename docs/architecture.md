@@ -41,7 +41,10 @@ design/tokens.json ──scripts/build-tokens.mjs──▶ src/styles/tokens.css
 
 ## tests
 
-`npm run verify` runs both suites after format, lint and type checks, and CI runs the same steps on every pull request and on `main`.
+`npm run verify` runs both suites after format, lint and type checks; `npm run lighthouse` runs Lighthouse. In GitHub Actions, two orchestrator workflows call the rest as reusable workflows:
+
+- **🛠️ CI Orchestrator** (`ci-orchestrator.yml`), on every pull request and on `main`: **quality** (`quality.yml`: format, lint, types, unit tests, the production build, no drafts in it), **end-to-end** (`end-to-end.yml`: Playwright, in parallel with quality), **lighthouse** (`lighthouse.yml`: the home page, the blog, a post and projects, three runs each, failing below 95 on performance, accessibility, best practices and SEO; see `lighthouserc.json`), and **codeql** and **dependency review**, which skip while the repository is private. The merge rule requires quality, end-to-end and lighthouse. The home page is excused from the SEO score until launch, because it's `noindex` until then. `@lhci/cli` runs through `npx` at the version in the `lighthouse` script, not as a dependency, because its own dependencies carry security advisories.
+- **🚀 CD Orchestrator** (`cd-orchestrator.yml`): Cloudflare does the deploying; this runs around it. On a pull request it posts the preview link (`preview-link.yml`). After a push to `main` it waits for Cloudflare's deploy of that commit, then runs `scripts/smoke-test.sh` against production (`production-smoke.yml`), once the `PRODUCTION_LIVE` repository variable is `true` (set at cutover).
 
 - **Unit** (`tests/unit/`, Vitest, `npm run test`): the pure logic. Consent (the Consent Mode signals, checking a posted record, which Tag Manager environment a build loads, the IP hashing, and the log handler against a fake D1), the CSP (the policy, finding and hashing inline scripts, adding it to `_headers`, reading both report formats, and the report handler against a fake D1), the share cards (title sizes and line breaks, image paths, and each variant rendering to a 1200 × 630 PNG), the feeds (addresses, items, and a migrated post keeping its WordPress guid), `src/lib/posts.ts` (slugs, URLs, drafts, newest-first order, which topics earn a page) with `astro:content` mocked, and `buildTokensCss` from `scripts/build-tokens.mjs` against both the real `design/tokens.json` and small fixtures for the edge cases (fallback values, font paths, bad and duplicate names). `vitest.config.ts` uses Astro's Vite config, so `import.meta.env` behaves as it does in a build.
 - **End-to-end** (`tests/e2e/`, Playwright, `npm run test:e2e`): builds the site, applies the D1 migrations to a local database, then tests `dist/` served by `wrangler dev` on port 8790 (with a test `CONSENT_IP_KEY`), so `_headers`, trailing-slash handling and the 404 page behave as they do on Workers. Page lists come from the built sitemap, so new pages are covered automatically.
@@ -64,7 +67,7 @@ design/tokens.json ──scripts/build-tokens.mjs──▶ src/styles/tokens.css
   - `theme`: dark on a first visit even when the device prefers light; the toggle switches, relabels and is remembered on the next page.
   - `a11y`: an axe scan (WCAG 2.2 A and AA rules) of every page and the 404 page, in dark and light (chosen through `hj-theme`, as the toggle does).
 
-Run `npx playwright install chromium` once before the first end-to-end run. Tests that reach real Cloudflare (preview URLs, redirects on the live domain, Lighthouse) come in later phases: see the [roadmap](roadmap.md).
+Run `npx playwright install chromium` once before the first end-to-end run. The smoke test (`scripts/smoke-test.sh <base URL>`) works against any copy of the site: production, a local `npm run preview`, or the end-to-end server.
 
 ## what's coming (and where it goes)
 

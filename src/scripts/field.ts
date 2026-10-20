@@ -43,6 +43,21 @@ export function bindField(hero: HTMLElement, canvas: HTMLCanvasElement): void {
   const ptr = { x: 0, y: 0, on: false, last: 0 };
   const stopEl = hero.querySelector<HTMLElement>('[data-hero-stop]');
 
+  // The colours change only with the theme, so they're read then, not on every frame (reading
+  // computed styles makes the browser recalculate them).
+  let dotColour = '';
+  let [cr, cg, cb] = [239, 234, 230];
+  const readColours = () => {
+    const cs = getComputedStyle(hero);
+    dotColour = cs.getPropertyValue('--field-dot').trim() || 'rgba(239,234,230,0.17)';
+    [cr, cg, cb] = rgbOf(cs.getPropertyValue('--link'));
+  };
+  readColours();
+  new MutationObserver(readColours).observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['data-theme'],
+  });
+
   const resize = () => {
     const r = hero.getBoundingClientRect();
     if (Math.abs(r.width - w) < 1 && Math.abs(r.height - h) < 1 && dots.length) return;
@@ -87,16 +102,12 @@ export function bindField(hero: HTMLElement, canvas: HTMLCanvasElement): void {
     rings.push({ x, y, t: performance.now() });
   });
 
-  const frame = (now: number) => {
-    requestAnimationFrame(frame);
+  const render = (now: number) => {
     if (!visible || !w) return;
     const still = reducedMotion();
     if (still && now - lastStill < 500) return;
     lastStill = now;
 
-    const cs = getComputedStyle(hero);
-    const dotColour = cs.getPropertyValue('--field-dot').trim() || 'rgba(239,234,230,0.17)';
-    const [cr, cg, cb] = rgbOf(cs.getPropertyValue('--link'));
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, w, h);
 
@@ -198,6 +209,11 @@ export function bindField(hero: HTMLElement, canvas: HTMLCanvasElement): void {
   new IntersectionObserver((entries) => {
     visible = entries.some((e) => e.isIntersecting);
   }).observe(hero);
+
+  const frame = (now: number) => {
+    requestAnimationFrame(frame);
+    render(now);
+  };
   requestAnimationFrame(frame);
 }
 

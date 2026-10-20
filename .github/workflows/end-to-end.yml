@@ -1,0 +1,45 @@
+name: End-to-end
+
+# Called by the CI Orchestrator: the Playwright suite, run beside the quality checks.
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  playwright:
+    name: Playwright
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - name: Install Playwright's Chromium
+        run: npx playwright install --with-deps chromium
+
+      # Builds with drafts included (the formatting reference), applies the D1 migrations locally, then
+      # tests dist/ served by wrangler dev (see playwright.config.ts).
+      - name: End-to-end tests
+        run: npm run test:e2e
+        env:
+          WRANGLER_SEND_METRICS: 'false'
+
+      - name: Keep the Playwright report if tests fail
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
