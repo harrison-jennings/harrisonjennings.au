@@ -31,6 +31,8 @@ export default defineConfig({
     mdx(),
     // Each dated page gets a lastmod (src/lib/sitemap.ts); topic pages without enough posts don't exist.
     sitemap({
+      // Pages kept out of search (noindex) stay out of the sitemap too.
+      filter: (page) => new URL(page).pathname !== '/rss/',
       serialize(item) {
         const lastmod = dates.get(new URL(item.url).pathname);
         return lastmod ? { ...item, lastmod } : item;

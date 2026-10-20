@@ -40,19 +40,21 @@ coverAlt: A Marketo email preview open beside its rendered result
 If you work in marketing automation, you probably have a version of the same pre-send ritual…
 ```
 
-| field         | required | notes                                                                       |
-| ------------- | -------- | --------------------------------------------------------------------------- |
-| `title`       | yes      | lowercase, like every heading on the site                                   |
-| `description` | yes      | up to 180 characters: the dek under the title, card excerpt and meta tag    |
-| `published`   | yes      | `YYYY-MM-DD`                                                                |
-| `updated`     | no       | set when a post changes meaningfully                                        |
-| `topics`      | no       | ids from `topics.yaml`; the first is the post's main topic                  |
-| `draft`       | no       | `true` shows the post in `npm run dev` only                                 |
-| `cover`       | no       | an image beside the post; add `coverAlt` with it                            |
-| `toc`         | no       | `false` hides "on this page" (it's hidden anyway with fewer than three h2s) |
-| `related`     | no       | up to three post ids, to hand-pick "keep reading"                           |
-| `socialImage` | no       | overrides the generated social card                                         |
-| `wpId`        | no       | migrated posts only: the WordPress ID, so feed readers don't repeat them    |
+| field               | required | notes                                                                                                                                          |
+| ------------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `title`             | yes      | lowercase, like every heading on the site                                                                                                      |
+| `description`       | yes      | up to 180 characters: the dek under the title and the card excerpt; also the meta description unless `searchDescription` is set                |
+| `searchTitle`       | no       | up to 65 characters: the title in search results and share previews, in place of "title · harrison jennings". Lead with what people search for |
+| `searchDescription` | no       | up to 155 characters: the description in search results and share previews, in place of `description`                                          |
+| `published`         | yes      | `YYYY-MM-DD`                                                                                                                                   |
+| `updated`           | no       | set when a post changes meaningfully                                                                                                           |
+| `topics`            | no       | ids from `topics.yaml`; the first is the post's main topic                                                                                     |
+| `draft`             | no       | `true` shows the post in `npm run dev` only                                                                                                    |
+| `cover`             | no       | an image beside the post; add `coverAlt` with it                                                                                               |
+| `toc`               | no       | `false` hides "on this page" (it's hidden anyway with fewer than three h2s)                                                                    |
+| `related`           | no       | up to three post ids, to hand-pick "keep reading"                                                                                              |
+| `socialImage`       | no       | overrides the generated social card                                                                                                            |
+| `wpId`              | no       | migrated posts only: the WordPress ID, so feed readers don't repeat them                                                                       |
 
 The site works out the rest at build: the reading time (prose words ÷ 230, rounded up; code doesn't count), "on this page" from the `##` and `###` headings, and "keep reading" (the three posts sharing the most topics, newest first on a tie, topped up with the latest).
 

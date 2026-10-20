@@ -14,6 +14,8 @@ import { tagManagerEnvironment, tagManagerSrc } from '../lib/tag-manager';
 
 interface Props {
   title?: string;
+  /** Replaces "<title> · harrison jennings" in search results and share previews (a post's `searchTitle`). */
+  searchTitle?: string | undefined;
   description?: string;
   /** Keep a page out of search results (drafts, previews, utility pages). */
   noindex?: boolean;
@@ -31,6 +33,7 @@ interface Props {
 
 const {
   title,
+  searchTitle,
   description = SITE.description,
   noindex = false,
   float = false,
@@ -107,7 +110,7 @@ const tagManagerHead =
     <script is:inline type="application/json" data-page-layer set:html={pageLayer} />
     <script is:inline set:html={consentHead} />
     {tagManagerHead && <script is:inline set:html={tagManagerHead} />}
-    <title>{pageTitle}</title>
+    <title>{searchTitle ?? pageTitle}</title>
     <meta name="description" content={description} />
     {/* No canonical on a page kept out of search (drafts, the 404, the placeholder home page). */}
     {!noindex && <link rel="canonical" href={canonical} />}
@@ -137,7 +140,7 @@ const tagManagerHead =
     />
 
     <meta property="og:site_name" content={SITE.name} />
-    <meta property="og:title" content={title ?? SITE.name} />
+    <meta property="og:title" content={searchTitle ?? title ?? SITE.name} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:type" content="website" />
