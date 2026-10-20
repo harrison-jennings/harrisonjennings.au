@@ -122,7 +122,7 @@ Better than the WordPress site, not just level with it: most of its posts sat in
 - [ ] Test the rollback once: delete the route, confirm WordPress serves, re-add it
 - [ ] In Tag Manager, publish the version that's on Testing to Live, then check your own visit reaches the production GA4 property's Realtime report (the server container picks the property from the `environment` label)
 - [ ] Spot-check pages, consent banner, booking, analytics and consent logging on the live domain; `bash scripts/smoke-test.sh https://www.harrisonjennings.au` passes
-- [ ] Set the `PRODUCTION_LIVE` repository variable to `true`, so every deploy is smoke-tested
+- [ ] Change the `PRODUCTION_LIVE` repository variable from `false` to `true`, so every deploy is smoke-tested
 - [ ] Clean up WordPress-era Cloudflare settings (cache and page rules, Automatic Platform Optimization); keep Rocket Loader off
 - [ ] In Search Console, remove the old WordPress sitemaps and submit `sitemap-index.xml`; annotate the date in GA4
 - [ ] Request indexing for each post with URL Inspection; check the structured data in Search Console's enhancements reports

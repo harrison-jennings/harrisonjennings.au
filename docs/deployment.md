@@ -76,14 +76,14 @@ The **🚀 CD Orchestrator** waits for Cloudflare's production deploy of every p
 - the sitemap, feed and robots.txt load, and the Worker answers;
 - the bare domain redirects to www.
 
-It only runs once the repository variable `PRODUCTION_LIVE` is `true` (**Settings → Secrets and variables → Actions → Variables → New repository variable**), which is set at cutover. A failure emails you. To roll back, open the Worker's **Deployments** tab in Cloudflare and deploy the previous version. If Cloudflare's bot protection ever challenges GitHub's runners, the smoke test will fail on its first check; a WAF skip rule for the smoke test is the fix.
+It only runs once the repository variable `PRODUCTION_LIVE` is `true` (**Settings → Secrets and variables → Actions → Variables**; it's `false` until cutover). A failure emails you. To roll back, open the Worker's **Deployments** tab in Cloudflare and deploy the previous version. If Cloudflare's bot protection ever challenges GitHub's runners, the smoke test will fail on its first check; a WAF skip rule for the smoke test is the fix.
 
 ## cutover (around 4 November)
 
 1. Lower the TTL on the `www` DNS record a day ahead.
 2. Add a **Workers Route** `www.harrisonjennings.au/*` to the Worker. The route takes over from the WordPress origin without touching DNS, so rolling back is just deleting the route.
 3. Add a **redirect rule**: `harrisonjennings.au/*` → `https://www.harrisonjennings.au/${1}` (301), so the bare domain always lands on www.
-4. Check: run `bash scripts/smoke-test.sh https://www.harrisonjennings.au` (every line should tick), then look at the old URLs you care about. Then set the `PRODUCTION_LIVE` repository variable to `true`, so every later deploy is smoke-tested automatically.
+4. Check: run `bash scripts/smoke-test.sh https://www.harrisonjennings.au` (every line should tick), then look at the old URLs you care about. Then change the `PRODUCTION_LIVE` repository variable from `false` to `true`, so every later deploy is smoke-tested automatically.
 5. Keep the route for about a week as the rollback path. Then replace it with a **Custom Domain** on the Worker and retire the WordPress hosting before it renews on 11 November.
 
 Leave these DNS records alone: iCloud mail (MX, SPF, DKIM), `measure.` (server-side GTM) and the project subdomains.
