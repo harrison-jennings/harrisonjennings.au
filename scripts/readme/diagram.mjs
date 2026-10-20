@@ -5,7 +5,7 @@
 //
 // Logos (logos/): Simple Icons and SVG Logos (CC0), Cloudflare's D1 icon from its docs (CC BY 4.0),
 // Playwright's mark from its docs, and Twemoji (CC BY 4.0). Credited in the README's licence section.
-import opentype from '@shuding/opentype.js'; // installed with Satori, which the share cards use
+import opentype from '@shuding/opentype.js'; // the version Satori uses for the share cards
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 
 const root = new URL('../../', import.meta.url);
@@ -312,7 +312,7 @@ const COLUMNS = [
 const CHIPS = [
   'no client framework',
   'Lighthouse 95+ enforced in CI',
-  'every old URL kept or 301’d',
+  'every indexed URL kept or 301’d',
   'consent records kept 12 months',
 ];
 
