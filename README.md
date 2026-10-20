@@ -102,6 +102,7 @@ tests/
   e2e/                    Playwright: pages, redirects, consent, headers, structured data and axe
 docs/                     architecture, brand, content, deployment, decisions and the README images
 wrangler.jsonc            Cloudflare Workers configuration
+frontmatter.json          Front Matter CMS settings, for editing posts in VS Code (optional)
 ```
 
 More in [docs/architecture.md](docs/architecture.md).

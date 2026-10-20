@@ -58,6 +58,20 @@ If you work in marketing automation, you probably have a version of the same pre
 
 The site works out the rest at build: the reading time (prose words ÷ 230, rounded up; code doesn't count), "on this page" from the `##` and `###` headings, and "keep reading" (the three posts sharing the most topics, newest first on a tie, topped up with the latest).
 
+## editing in Front Matter
+
+[Front Matter CMS](https://frontmatter.codes/) (the VS Code extension `eliostruyf.vscode-front-matter`, in the workspace's recommended extensions) gives the same files a dashboard and forms. It's optional: everything here works by editing the Markdown directly, and nothing it does is needed to build or publish. Its settings are `frontmatter.json`; its local state (`.frontmatter/`) isn't committed.
+
+- **Dashboard** (the Front Matter icon in the activity bar, then **Open dashboard**): every post, newest first, with drafts and published posts apart, and filters by folder and topic. The legal pages are listed too.
+- **A new post:** **Create content** in the dashboard, then give it a title. The folder name becomes the URL (`/blog/<folder>/`), so check it before confirming. A new post starts as a draft, dated today. Front Matter adds an `fmContentType: post` line to it; the site ignores it, so delete it or leave it.
+- **The panel** beside an open post edits its front matter: each field says what it's for and its limit. Topics come from `topics.yaml`, "keep reading" from the other posts, and the cover from the post's folder.
+- **SEO** in the panel checks the search title (65) and search description (155) lengths. The build still enforces every limit in `content.config.ts`, so a post over a limit fails `npm run verify` and CI rather than going live.
+- **Preview:** start `npm run dev` first; the preview opens the post at `http://localhost:4321/blog/<slug>/`.
+- **Snippets** (the panel's **Insert snippet**): a callout around the selected text, a code block with a file name, a details section, images side by side and a YouTube video (both `.mdx` only). From the media dashboard: an image with a caption, or without zoom.
+- **Formatting:** Front Matter rewrites a post's front matter when you change a field, in its own style. Save the file in VS Code (Prettier formats on save) or run `npm run format` before committing, or the format check fails.
+- **Don't edit `topics.yaml` through its data view:** it rewrites the file and drops the comments. Edit it directly.
+- **Git:** its sync button is off. Commit, branch and open pull requests as usual.
+
 ## writing a post
 
 The draft post `src/content/posts/formatting-reference/index.mdx` shows every element with the Markdown that makes it. It never builds for the live site; open it with `npm run dev` at `/blog/formatting-reference/`.

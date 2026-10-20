@@ -36,6 +36,9 @@ npm-debug.log*
 !.vscode/extensions.json
 !.vscode/settings.json
 
+# Front Matter CMS's local state (its media, taxonomy and pinned-items databases); its settings are frontmatter.json
+.frontmatter/
+
 
 # the WordPress export and migration working files (personal data: never commit)
 migration/
