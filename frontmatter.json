@@ -4,7 +4,7 @@
   "frontMatter.preview.host": "http://localhost:4321",
   "frontMatter.website.host": "https://www.harrisonjennings.au",
   "frontMatter.content.publicFolder": {
-    "path": "[[workspace]]/src/content/posts",
+    "path": "[[workspace]]/public",
     "relative": true
   },
   "frontMatter.content.pageFolders": [
