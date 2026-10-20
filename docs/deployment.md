@@ -32,7 +32,7 @@ The consent log is a D1 database bound to the Worker as `CONSENT_DB` (`wrangler.
 
 1. **Storage & databases → D1 → Create database**: `harrisonjennings-consent`, location Oceania. Its ID goes in `database_id` in `wrangler.jsonc`.
 2. **Apply the schema**: `npx wrangler d1 migrations apply CONSENT_DB --remote` (and again whenever a new file lands in `migrations/`).
-3. **The IP hashing key**: the Worker's **Settings → Variables and secrets → Add → Secret**, `CONSENT_IP_KEY`, a long random value (`openssl rand -hex 32`). Keep a copy in your password manager: without it, a stored hash can't be checked against an IP. Never change it unless you mean to: rows hashed with the old key stop matching.
+3. **The IP hashing key**: the Worker's **Settings → Variables and secrets → Add → Secret** (the runtime section, production only: one under **Build** is invisible to the running Worker, and rows then store no hash), `CONSENT_IP_KEY`, a long random value (`openssl rand -hex 32`). Keep a copy in your password manager: without it, a stored hash can't be checked against an IP. Never change it unless you mean to: rows hashed with the old key stop matching.
 
 **Previews** don't inherit production bindings, so they write to their own database, `harrisonjennings-consent-preview` (`previews.d1_databases` in `wrangler.jsonc`), and test clicks never reach the production log. Create or update its table with `npx wrangler d1 migrations apply CONSENT_DB --remote -c wrangler.preview-migrations.jsonc`. Previews have no `CONSENT_IP_KEY`, so their rows store no IP hash.
 
@@ -84,9 +84,9 @@ After every push to `main`, the **🚀 CD Orchestrator** waits for Cloudflare's 
 
 A failure emails you. To roll back, open the Worker's **Deployments** tab in Cloudflare and deploy the previous version. The smoke test also runs by hand against `www` from a home network, which Bot Fight Mode lets through.
 
-## cutover (4 November)
+## cutover (20 October)
 
-Rehearsed on 20 October 2026 against the live Cloudflare settings. The switch is a Workers Route on `www`, not a DNS change, so it takes effect at once and rolling back is deleting the route. Allow about 90 minutes at a quiet time.
+Rehearsed on 20 October 2026 against the live Cloudflare settings, and run that night, two weeks ahead of the 4 November target; the launch steps took about an hour. The switch is a Workers Route on `www`, not a DNS change, so it takes effect at once and rolling back is deleting the route. Kept here as the record, and for the rollback.
 
 **Already done:** Browser Cache TTL set to **Respect Existing Headers** (so a deploy isn't hidden behind a 4-hour browser cache); `privacy@` and `contact@` checked; the DNS records exported; `measure` kept out of search.
 
@@ -99,18 +99,18 @@ Rehearsed on 20 October 2026 against the live Cloudflare settings. The switch is
 ### the day before
 
 1. Note the version that's **Live** in Tag Manager (**Admin → Environments**): it's the rollback target.
-2. Open the launch pull request: the privacy policy's date set to 4 November, the home page's `noindex` and its exception in `lighthouserc.json` removed, the CD badge in the README. Review it on its preview.
+2. Open the launch pull request: the privacy policy's date set to the launch day, the home page's `noindex` and its exception in `lighthouserc.json` removed, the CD badge in the README. Review it on its preview.
 3. Freeze WordPress edits, and hold Dependabot merges until the week after.
 4. In Better Uptime, point the `harrisonjennings.au` monitor at `https://www.harrisonjennings.au/`, so it watches the site rather than the redirect.
 
 ### launch
 
 1. **Merge the launch pull request.** Wait for the CI Orchestrator and Cloudflare's production deploy to go green. The site still isn't public.
-2. **Add the route.** **Workers & Pages → harrisonjennings-au → Settings → Domains & Routes → Add → Route** (or the Worker's **Domains** tab): zone `harrisonjennings.au`, route `www.harrisonjennings.au/*` → **Add route**.
-3. **Bare domain to www.** WordPress does this today, so it has to move to Cloudflare: **Rules → Overview → Create rule → Redirect Rule**, from the template "Redirect from root to WWW": when the hostname equals `harrisonjennings.au`, redirect (dynamic) to `concat("https://www.harrisonjennings.au", http.request.uri.path)`, status 301, preserve the query string → **Deploy**.
+2. **Add the route.** **Workers & Pages → harrisonjennings-au → Settings → Domains & Routes → Add → Route** (or the Worker's **Domains** tab): zone `harrisonjennings.au`, route `www.harrisonjennings.au/*`, failure mode **Fail closed** (the default: failing open would send visitors to WordPress mid-visit, and to nothing once it's retired) → **Add Route**.
+3. **Bare domain to www.** WordPress does this today, so it has to move to Cloudflare: **Rules → Overview → Create rule → Redirect Rule**, built by hand (the only template is the opposite one, "Redirect from WWW to root"): name `Redirect from root to WWW`; custom filter expression, **Hostname** equals `harrisonjennings.au`; type **Dynamic**, expression `concat("https://www.harrisonjennings.au", http.request.uri.path)`, status 301, **Preserve query string** ticked → **Deploy**.
 4. **Check.** `bash scripts/smoke-test.sh https://www.harrisonjennings.au` (every line ticks). In a private window: the cookie banner, accepting it, the booking calendar, a post, an old WordPress URL, the bare domain.
 5. **Test the rollback, before Tag Manager.** Delete the route: WordPress serves. Add it again: the new site serves.
-6. **Tag Manager.** **Admin → Environments → Live → ⋮ → Publish To…** → the version on Testing. Check your own visit reaches the production GA4 property's Realtime report (the server container routes by the `environment` label, which should now read `Live`).
+6. **Tag Manager.** **Versions** → the version on Testing → **Actions → Publish** (the Environments page has no publish option for Live). Check your own visit reaches the production GA4 property's Realtime report (the server container routes by the `environment` label, which should now read `Live`).
 7. **GitHub.** Change the `PRODUCTION_LIVE` repository variable from `false` to `true`, then **Actions → 🚀 CD Orchestrator → Run workflow** (on `main`): the deployed version is smoke-tested, the live domain checked, and the first Production deployment recorded.
 8. **Search Console.** **Sitemaps**: remove the five old WordPress sitemaps, submit `sitemap-index.xml`. **URL Inspection → Request indexing** for the home page, the blog, projects and each post. Run a live post through the Rich Results Test.
 9. **Crawler Hints** on (**Caching → Configuration**). It works from cache misses, so it may rarely fire for pages the Worker serves; requesting indexing does the real work.

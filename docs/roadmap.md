@@ -2,20 +2,20 @@
 
 From WordPress on VentraIP to this repo, live before the hosting renews on **11 November 2026**.
 
-**Target go-live: Wednesday 4 November.** WordPress stays underneath the new site for a week after that, so rolling back means deleting one Cloudflare route. If design slips, launch with the approved components and a simpler layout, and refine afterwards.
+**Live since Tuesday 20 October**, two weeks ahead of the 4 November target. WordPress stays underneath the new site for a week, so rolling back means deleting one Cloudflare route.
 
-| #   | phase                     | target         | status      |
-| --- | ------------------------- | -------------- | ----------- |
-| 1   | inventory and backup      | by 20 Oct      | done        |
-| 2   | brand identity and tokens | 18 Oct         | done        |
-| 3   | scaffold and pipeline     | 18–20 Oct      | done        |
-| 4   | page mockups              | 19–24 Oct      | done        |
-| 5   | page build                | 22–30 Oct      | done        |
-| 6   | content migration         | 22–30 Oct      | done        |
-| 7   | analytics and consent     | 27 Oct – 1 Nov | launch left |
-| 8   | SEO and quality           | 30 Oct – 3 Nov | in progress |
-| 9   | cutover                   | 4 Nov          |             |
-| 10  | observe and decommission  | 4–10 Nov       |             |
+| #   | phase                     | target          | status      |
+| --- | ------------------------- | --------------- | ----------- |
+| 1   | inventory and backup      | by 20 Oct       | done        |
+| 2   | brand identity and tokens | 18 Oct          | done        |
+| 3   | scaffold and pipeline     | 18–20 Oct       | done        |
+| 4   | page mockups              | 19–24 Oct       | done        |
+| 5   | page build                | 22–30 Oct       | done        |
+| 6   | content migration         | 22–30 Oct       | done        |
+| 7   | analytics and consent     | 27 Oct – 1 Nov  | done        |
+| 8   | SEO and quality           | 30 Oct – 3 Nov  | watching    |
+| 9   | cutover                   | 20 Oct          | done        |
+| 10  | observe and decommission  | 20 Oct – 10 Nov | in progress |
 
 ## 1. inventory and backup
 
@@ -81,11 +81,11 @@ Built in five stages, one pull request each, from `design/` (see `design/README.
 - [x] CookieConsent v3 with Google Consent Mode (advanced); consent reset at launch (a new cookie, revision 1)
 - [x] Cookie banner and preferences dialog, to the `14-consent` mockups
 - [x] Tag Manager and the data layer, loading through `measure.harrisonjennings.au` (Live on production, Testing on previews)
-- [x] In Tag Manager: remove the Pressidium consent tag and template (published to Testing; Live at cutover)
+- [x] In Tag Manager: remove the Pressidium consent tag and template (Live since cutover: version 36)
 - [ ] Confirm the advertising cookies once an ad tag is switched on
 - [x] Every consent state tested in Tag Manager preview and GA4 DebugView
 - [x] D1 consent logger (a Worker route; pages stay static)
-- [ ] Records confirmed arriving in the production D1
+- [x] Records confirmed arriving in the production D1, with the IP hash (`CONSENT_IP_KEY` is a runtime secret on the Worker, not a build one)
 - [x] Pressidium records exported and archived off-site
 - [x] Content-Security-Policy in `_headers`, Report-Only, with violation reports counted in D1 (`/api/csp-report`)
 - [x] In Tag Manager: replace or remove the Custom JavaScript variables the GA4 tags use, and the "GTM Environment" Custom HTML tag, so the policy needs no `'unsafe-eval'` or `'unsafe-inline'` (published to Testing)
@@ -112,23 +112,23 @@ Better than the WordPress site, not just level with it: most of its posts sat in
 - [ ] After launch, watch Search Console for the moved posts being re-indexed at their new URLs
 - [x] Titles and descriptions for every page, post and topic
 - [ ] Sitemap, the feeds (`/rss.xml`, and `/feed/` redirecting to it), social cards and structured data validated
-- [x] Lighthouse 95+ on performance, accessibility and SEO (and best practices): 97–100 on the four checked pages; the home page's SEO counts once its `noindex` goes at launch
+- [x] Lighthouse 95+ on performance, accessibility and SEO (and best practices): 97–100 on the four checked pages, the home page's SEO included
 - [x] Lighthouse CI on every pull request, failing below 95 on performance, accessibility, best practices and SEO
 - [x] Remove `noindex` from the home page, and its SEO exception in `lighthouserc.json`
 
 ## 9. cutover
 
-The full runbook is in [deployment.md](deployment.md#cutover-4-november); rehearsed on 20 October.
+The full runbook is in [deployment.md](deployment.md#cutover-20-october); rehearsed and run on 20 October, in about an hour.
 
 - [x] Browser Cache TTL set to Respect Existing Headers; `privacy@` and `contact@` checked; DNS exported
 - [x] Send `X-Robots-Tag: noindex` from `measure.harrisonjennings.au`, so its Tag Manager pages (`ns.html`) drop out of search (a Cloudflare response header rule, 20 October)
-- [ ] The day before: note the Live Tag Manager version; the launch pull request (privacy date, home page `noindex` and its Lighthouse exception removed, CD badge); freeze WordPress and Dependabot merges; point Better Uptime at www
-- [ ] Merge the launch pull request; Workers Route `www.harrisonjennings.au/*`; redirect rule from the bare domain to www
-- [ ] Smoke test and spot checks (banner, booking, a post, an old URL, the bare domain); test the rollback once, before Tag Manager
-- [ ] In Tag Manager, publish the version that's on Testing to Live, then check your own visit reaches the production GA4 property's Realtime report (the server container picks the property from the `environment` label)
-- [ ] Change the `PRODUCTION_LIVE` repository variable from `false` to `true`, and run the CD Orchestrator once by hand
-- [ ] In Search Console, remove the old WordPress sitemaps and submit `sitemap-index.xml`; request indexing for each page and post; check the structured data in the Rich Results Test and Search Console's enhancements reports
-- [ ] Turn on Crawler Hints (IndexNow) in Cloudflare; annotate the date in GA4
+- [x] The day before: note the Live Tag Manager version; the launch pull request (privacy date, home page `noindex` and its Lighthouse exception removed, CD badge); freeze WordPress and Dependabot merges; point Better Uptime at www
+- [x] Merge the launch pull request; Workers Route `www.harrisonjennings.au/*`; redirect rule from the bare domain to www
+- [x] Smoke test and spot checks (banner, booking, a post, an old URL, the bare domain); test the rollback once, before Tag Manager
+- [x] In Tag Manager, publish the version that's on Testing to Live, then check your own visit reaches the production GA4 property's Realtime report (the server container picks the property from the `environment` label)
+- [x] Change the `PRODUCTION_LIVE` repository variable from `false` to `true`, and run the CD Orchestrator once by hand
+- [x] In Search Console, remove the old WordPress sitemaps and submit `sitemap-index.xml`; request indexing for each page and post; check the structured data in the Rich Results Test and Search Console's enhancements reports
+- [x] Turn on Crawler Hints (IndexNow) in Cloudflare; annotate the date in GA4
 - [ ] Link each post from where its project lives (leadlens site and README, the API reference), and share the posts on LinkedIn
 
 ## 10. observe and decommission
