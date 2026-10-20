@@ -42,10 +42,10 @@ A fast, static personal site: a blog, a projects index and a way to book a call.
 
 ### notable engineering decisions
 
-- **Static first.** Every page is a file. The one Worker runs only on `/api/*`, so a page view never runs code, and there's no client framework: a handful of small scripts, shipped as files.
+- **Static first.** Every page is a file. The one Worker handles requests only on `/api/*` (plus a daily retention clean-up), so a page view never runs code, and there's no client framework: a handful of small scripts, shipped as files.
 - **A migration that kept its search history.** Every URL Google knew from WordPress still answers, or 301s to its new home in one hop, checked by a crawl test. Posts gained structured data, real sitemap dates, and search titles written for the queries Search Console showed.
-- **Consent before measurement.** The site's own banner on CookieConsent sets Google Advanced Consent Mode v2 in `<head>`, before Tag Manager loads. Tag Manager loads first-party through `measure.harrisonjennings.au`, in front of a server-side container. Each choice is logged in D1, with the IP address only as a keyed hash, and deleted after 12 months.
-- **A Content-Security-Policy written by the build.** After each build, every inline script's hash goes into `_headers`; violations are counted in D1 through a small endpoint until the policy is enforced.
+- **Consent before measurement.** The site's own banner on CookieConsent sets Google Advanced Consent Mode v2 in `<head>`, before Tag Manager loads. Tag Manager loads first-party through `measure.harrisonjennings.au`, in front of a server-side container. Each choice is sent to a consent log in D1, with the IP address only as a keyed hash, and deleted after 12 months.
+- **A Content-Security-Policy written by the build.** After each build, every inline script's hash goes into `_headers`; violations are reported to a small endpoint and counted in D1. The policy starts in report-only mode, to be enforced once the reports are clean.
 - **Share cards drawn at build.** [Satori](https://github.com/vercel/satori) and sharp draw a 1200 × 630 card for every page from the brand's fonts and tokens.
 - **CI and CD as orchestrators.** 🛠️ runs formatting, linting, types, unit and end-to-end tests, Lighthouse, CodeQL and dependency review as required checks. 🚀 smoke-tests every Cloudflare deploy through its version's preview address with an Access service token, and records each one as a GitHub deployment.
 - **The brand as data.** `design/tokens.json` is the only source of colour and size; the site's CSS, the share cards, and the diagram and screenshot above are all drawn from it.
