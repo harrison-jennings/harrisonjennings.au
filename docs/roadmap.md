@@ -86,7 +86,7 @@ Built in five stages, one pull request each, from `design/` (see `design/README.
 - [ ] Records confirmed arriving in the production D1
 - [ ] Pressidium records exported and archived off-site
 - [x] Content-Security-Policy in `_headers`, Report-Only, with violation reports counted in D1 (`/api/csp-report`)
-- [ ] In Tag Manager: replace or remove the Custom JavaScript variables the GA4 tags use, and the "GTM Environment" Custom HTML tag, so the policy needs no `'unsafe-eval'` or `'unsafe-inline'`
+- [x] In Tag Manager: replace or remove the Custom JavaScript variables the GA4 tags use, and the "GTM Environment" Custom HTML tag, so the policy needs no `'unsafe-eval'` or `'unsafe-inline'` (published to Testing)
 - [ ] A week of clean production CSP reports, then switch the header from Report-Only to enforced
 - [x] Cookie list as data (`src/content/consent.yaml`), feeding both the cookie preferences dialog and the privacy policy (`::cookie-table{category="…"}`); a table on desktop, stacked on phones
 - [x] Update the privacy policy for the new site: Cloudflare hosting, no WordPress, the consent records, the new consent cookie; set its date at cutover
@@ -107,6 +107,7 @@ Built in five stages, one pull request each, from `design/` (see `design/README.
 - [ ] Freeze WordPress edits
 - [ ] Workers Route `www.harrisonjennings.au/*`; redirect rule from the bare domain to www
 - [ ] Test the rollback once: delete the route, confirm WordPress serves, re-add it
+- [ ] In Tag Manager, publish the version that's on Testing to Live, then check your own visit reaches the production GA4 property's Realtime report (the server container picks the property from the `environment` label)
 - [ ] Spot-check pages, consent banner, booking, analytics and consent logging on the live domain
 - [ ] Clean up WordPress-era Cloudflare settings (cache and page rules, Automatic Platform Optimization); keep Rocket Loader off
 - [ ] Submit the sitemap in Search Console; annotate the date in GA4
