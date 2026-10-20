@@ -2,8 +2,9 @@
 title: privacy policy
 description: How this site handles personal information, what runs in your browser and when, and how to ask about it.
 # Updated for the new site: hosting on Cloudflare, the consent records, and the cookie tables (built
-# from src/content/consent.yaml). Dated the day the new site went live.
-updated: 2026-10-20
+# from src/content/consent.yaml). The site went live on 20 October 2026; updated the next day with the
+# consent records' retention period, which src/worker/retention.ts enforces.
+updated: 2026-10-21
 summary:
   - You can read the site without telling me who you are.
   - Analytics and advertising cookies are only set if you agree in the cookie settings. Without that consent, Google may still receive limited measurements without cookies.
@@ -89,7 +90,7 @@ Necessary technologies may be used to:
 
 These technologies may operate without optional analytics or marketing consent where they are reasonably necessary for the requested functionality or the security of the Site.
 
-When a visitor makes or changes a cookie choice, a record of that choice is kept so the Site can show what was agreed and when. The record holds the choice made for each category, a random consent identifier (also stored in the visitor's `cc_cookie`), the date and time, the page the choice was made on, the visitor's approximate location (country and region) and browser details (user agent). The IP address itself is not stored: only a one-way keyed hash of it, which can be matched against an address the visitor provides but cannot be turned back into that address. These records are stored with Cloudflare and kept only for as long as reasonably necessary to demonstrate the consent given.
+When a visitor makes or changes a cookie choice, a record of that choice is kept so the Site can show what was agreed and when. The record holds the choice made for each category, a random consent identifier (also stored in the visitor's `cc_cookie`), the date and time, the page the choice was made on, the visitor's approximate location (country and region) and browser details (user agent). The IP address itself is not stored: only a one-way keyed hash of it, which can be matched against an address the visitor provides but cannot be turned back into that address. These records are stored with Cloudflare and kept for 12 months from when the choice was made, then deleted automatically.
 
 ::cookie-table{category="necessary"}
 

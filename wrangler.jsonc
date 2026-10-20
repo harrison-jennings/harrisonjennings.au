@@ -22,6 +22,11 @@
       "migrations_dir": "migrations",
     },
   ],
+  // Daily at 03:17 UTC (early afternoon in Melbourne): delete consent records older than 12 months and CSP
+  // reports older than 90 days (src/worker/retention.ts). Crons run on the production deployment only.
+  "triggers": {
+    "crons": ["17 3 * * *"],
+  },
   "observability": {
     "enabled": true,
   },
