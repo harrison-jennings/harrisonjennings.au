@@ -32,12 +32,22 @@ jobs:
           REPO: ${{ github.repository }}
         run: bash scripts/wait-for-cloudflare.sh "$GITHUB_SHA"
 
+      # main: the deployed version's own address. A manual run on another branch: that branch's preview
+      # (Cloudflare reports a Version ID for production builds only).
       - name: Find the version's preview address
         id: version
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
-        run: echo "url=$(bash scripts/version-url.sh "$GITHUB_SHA")" >> "$GITHUB_OUTPUT"
+          BRANCH: ${{ github.ref_name }}
+        run: |
+          url=$(bash scripts/version-url.sh "$GITHUB_SHA" || bash scripts/preview-url.sh "$BRANCH")
+          if [ -z "$url" ]; then
+            echo "::error::No preview address for $GITHUB_SHA"
+            exit 1
+          fi
+          echo "Testing $url"
+          echo "url=$url" >> "$GITHUB_OUTPUT"
 
       - name: Smoke-test it
         env:
