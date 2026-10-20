@@ -3,7 +3,6 @@ title: "leadlens: email previews and linting for Marketo, inside VS Code"
 description: "A couple of months ago I wrote about whether sending yourself a test email is enough. leadlens is my answer: Marketo-aware previews and linting, right inside VS Code."
 searchTitle: "leadlens: Marketo email previews and linting in VS Code"
 searchDescription: "Preview Adobe Marketo Engage emails across 21 email clients as you type, and lint them with Marketo-aware checks, in a VS Code extension."
-# DRAFT: the description is the dek under the title, the card excerpt and the meta description; confirm it.
 published: 2026-10-16
 topics: [adobe-marketo-engage, web-development]
 wpId: 685

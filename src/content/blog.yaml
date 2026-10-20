@@ -1,6 +1,5 @@
 # The blog's own wording.
 blog:
-  # DRAFT: the blog intro line is still to be confirmed.
   intro: 'Notes from the work: Marketo, measurement, and the systems that hold marketing together.'
   # Shown on the blog index while there are no posts.
   empty: Posts are on their way.

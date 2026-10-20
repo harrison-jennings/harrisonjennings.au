@@ -3,7 +3,6 @@ title: "what's this all about?"
 description: "If you've somehow found your way here - welcome. I'm Harrison. I'm a marketer, mostly working in the space where data, technology, and creativity all have to get along."
 searchTitle: "what's this all about? a blog on marketing technology"
 searchDescription: "Practical writing on marketing technology: Marketo, analytics, Tag Manager and Google Cloud, for people in marketing, ops and analytics."
-# DRAFT: the description is the dek under the title, the card excerpt and the meta description; confirm it.
 published: 2025-11-16
 topics: []
 wpId: 1

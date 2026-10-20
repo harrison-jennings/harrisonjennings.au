@@ -4,7 +4,7 @@ import { UNKNOWN_PATH } from './site';
 test.describe('the 404 page', () => {
   test('offers home, the blog and the latest posts', async ({ page }) => {
     await page.goto(UNKNOWN_PATH);
-    await expect(page.locator('h1')).toHaveText(/this page has\s+moved on/);
+    await expect(page.locator('h1')).toHaveText(/lost the\s+signal/);
     await expect(page.getByRole('link', { name: 'go home' })).toHaveAttribute('href', '/');
     await expect(page.getByRole('link', { name: 'read the blog' }).last()).toHaveAttribute(
       'href',

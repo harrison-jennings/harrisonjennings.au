@@ -4,12 +4,10 @@ description: How this site handles personal information, what runs in your brows
 # Updated for the new site: hosting on Cloudflare, the consent records, and the cookie tables (built
 # from src/content/consent.yaml). Set the date to the day it goes live.
 updated: 2026-10-20
-# DRAFT: the short version is new; check it says only what the policy says.
 summary:
   - You can read the site without telling me who you are.
   - Analytics and advertising cookies are only set if you agree in the cookie settings. Without that consent, Google may still receive limited measurements without cookies.
   - The booking calendar loads from Cal.com only when you choose to open it.
-  - Your personal information isn't sold or rented.
   - You can ask to see or correct what I hold about you at privacy@harrisonjennings.au.
 contact:
   text: 'Questions about this policy, or a request to access or correct your information:'
