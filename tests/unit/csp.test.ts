@@ -214,7 +214,7 @@ describe('the report endpoint', () => {
     expect(calls[0]?.[4]).toBe('preview');
   });
 
-  it('turns away the wrong method, type, or an empty report', async () => {
+  it('turns away the wrong method, type, an empty report, or one too large', async () => {
     const { calls, fake } = db();
     const env = { CONSENT_DB: fake };
     expect(
@@ -222,6 +222,8 @@ describe('the report endpoint', () => {
     ).toBe(405);
     expect((await handleCspReport(post(legacy, 'text/plain'), env)).status).toBe(415);
     expect((await handleCspReport(post({}, 'application/csp-report'), env)).status).toBe(400);
+    const huge = { 'csp-report': { ...legacy['csp-report'], 'script-sample': 'x'.repeat(70_000) } };
+    expect((await handleCspReport(post(huge, 'application/csp-report'), env)).status).toBe(413);
     expect(calls).toHaveLength(0);
   });
 

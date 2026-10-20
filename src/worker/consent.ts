@@ -1,6 +1,7 @@
 // POST /api/consent: records a cookie choice in the consent log (D1). The banner sends one on a first
 // choice and on every change (src/scripts/consent.ts).
 import { parseConsentRecord } from '../lib/consent';
+import { readBody } from './body';
 
 /** The slice of Cloudflare's D1 binding this uses. */
 export interface ConsentDb {
@@ -41,12 +42,13 @@ export async function handleConsent(
   if (request.method !== 'POST') return text('Method not allowed', 405, { Allow: 'POST' });
   if (!env.CONSENT_DB) return text('Consent log unavailable', 503);
   const url = new URL(request.url);
-  // Only the site's own pages may write to the log.
+  // Only the site's own pages may write to the log. A script can fake this header, so it only stops
+  // other sites' pages; the WAF rate limit on /api/* and the checks in parseConsentRecord do the rest.
   if (request.headers.get('Origin') !== url.origin) return text('Forbidden', 403);
   if (!request.headers.get('Content-Type')?.startsWith('application/json'))
     return text('Unsupported media type', 415);
-  const body = await request.text();
-  if (body.length > MAX_BYTES) return text('Too large', 413);
+  const body = await readBody(request, MAX_BYTES);
+  if (body === null) return text('Too large', 413);
 
   let parsed: unknown;
   try {
