@@ -103,6 +103,8 @@ When Analytics consent is granted, analytics information may include online iden
 
 Google Signals is enabled in Google Analytics. Where a visitor grants Advertising and Targeting consent, Google Signals may provide aggregated cross-device, demographic and interest reporting for eligible Google users. The Site operator does not receive information that directly identifies individual Google Account users.
 
+The Site also uses Cloudflare Web Analytics to measure page views and how quickly pages load. It doesn't set cookies or use identifiers to recognise a visitor, and its results are only available in aggregate, so it runs whatever cookie choice is made.
+
 Analytics and advertising consent can be granted, refused or withdrawn at any time using the Site’s cookie settings. Visitors may also use Google’s advertising controls and the Google Analytics opt-out browser add-on.
 
 ::cookie-table{category="analytics"}
@@ -139,7 +141,7 @@ Further information is available in the [Cal.com Privacy Policy](https://cal.com
 
 Personal information may be handled by service providers that assist with operating, securing and communicating through the Site. Current providers include:
 
-- **Cloudflare**, for website hosting, DNS, content delivery, traffic management, website security and storing cookie-consent records;
+- **Cloudflare**, for website hosting, DNS, content delivery, traffic management, website security, cookieless performance analytics (Cloudflare Web Analytics) and storing cookie-consent records;
 - **Google**, including Google Analytics, Google Tag Manager and Google Cloud services used in the Site’s measurement architecture;
 - **Vercel**, for hosting and cookieless Web Analytics associated with selected project or demonstration sites;
 - **GitHub**, for static GitHub Pages hosting associated with selected project, demonstration or reference sites;

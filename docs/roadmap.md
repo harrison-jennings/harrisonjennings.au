@@ -104,7 +104,7 @@ Better than the WordPress site, not just level with it: most of its posts sat in
 - [x] Thin utility pages (`/rss/`) kept out of search and the sitemap
 - [x] Redirects for the old author archive and the remaining WordPress sitemaps Search Console still knew
 - [x] 🛠️ CI Orchestrator: one workflow calling quality, end-to-end, Lighthouse, CodeQL and dependency review (the merge rule's required checks updated with it)
-- [x] 🚀 CD Orchestrator: posts each PR's preview link, and after `main` deploys, smoke-tests production (`scripts/smoke-test.sh`); production checks switched on at cutover
+- [x] 🚀 CD Orchestrator: posts each PR's preview link, and after `main` deploys, smoke-tests the deployed version through its preview address (Bot Fight Mode challenges GitHub on the real domain); live-domain checks and the Production deployment switched on at cutover
 - [x] Preview and Production recorded as GitHub deployments, so the repository's Deployments panel shows them (Production from cutover)
 
 - [x] Every URL in the crawl either returns 200 or 301s to its new home in one hop; WordPress-only URLs return a real 404 (`crawl` end-to-end test, from `tests/e2e/fixtures/wordpress-urls.json`; `?p=` shortlinks show the home page, since a static site ignores the query)
@@ -118,17 +118,17 @@ Better than the WordPress site, not just level with it: most of its posts sat in
 
 ## 9. cutover
 
-- [ ] Freeze WordPress edits
-- [ ] Workers Route `www.harrisonjennings.au/*`; redirect rule from the bare domain to www
-- [ ] Test the rollback once: delete the route, confirm WordPress serves, re-add it
-- [ ] In Tag Manager, publish the version that's on Testing to Live, then check your own visit reaches the production GA4 property's Realtime report (the server container picks the property from the `environment` label)
-- [ ] Spot-check pages, consent banner, booking, analytics and consent logging on the live domain; `bash scripts/smoke-test.sh https://www.harrisonjennings.au` passes
-- [ ] Change the `PRODUCTION_LIVE` repository variable from `false` to `true`, so every deploy is smoke-tested
-- [ ] Clean up WordPress-era Cloudflare settings (cache and page rules, Automatic Platform Optimization); keep Rocket Loader off
-- [ ] In Search Console, remove the old WordPress sitemaps and submit `sitemap-index.xml`; annotate the date in GA4
-- [ ] Request indexing for each post with URL Inspection; check the structured data in Search Console's enhancements reports
-- [ ] Turn on Crawler Hints (IndexNow) in Cloudflare, so Bing hears about changes straight away
+The full runbook is in [deployment.md](deployment.md#cutover-4-november); rehearsed on 20 October.
+
+- [x] Browser Cache TTL set to Respect Existing Headers; `privacy@` and `contact@` checked; DNS exported
 - [x] Send `X-Robots-Tag: noindex` from `measure.harrisonjennings.au`, so its Tag Manager pages (`ns.html`) drop out of search (a Cloudflare response header rule, 20 October)
+- [ ] The day before: note the Live Tag Manager version; the launch pull request (privacy date, home page `noindex` and its Lighthouse exception removed, CD badge); freeze WordPress and Dependabot merges; point Better Uptime at www
+- [ ] Merge the launch pull request; Workers Route `www.harrisonjennings.au/*`; redirect rule from the bare domain to www
+- [ ] Smoke test and spot checks (banner, booking, a post, an old URL, the bare domain); test the rollback once, before Tag Manager
+- [ ] In Tag Manager, publish the version that's on Testing to Live, then check your own visit reaches the production GA4 property's Realtime report (the server container picks the property from the `environment` label)
+- [ ] Change the `PRODUCTION_LIVE` repository variable from `false` to `true`, and run the CD Orchestrator once by hand
+- [ ] In Search Console, remove the old WordPress sitemaps and submit `sitemap-index.xml`; request indexing for each page and post; check the structured data in the Rich Results Test and Search Console's enhancements reports
+- [ ] Turn on Crawler Hints (IndexNow) in Cloudflare; annotate the date in GA4
 - [ ] Link each post from where its project lives (leadlens site and README, the API reference), and share the posts on LinkedIn
 
 ## 10. observe and decommission

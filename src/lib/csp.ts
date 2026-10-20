@@ -19,8 +19,18 @@ const PREVIEW = 'https://tagmanager.google.com';
 /** Every directive's sources, besides the inline script hashes the build adds to script-src. */
 export const CSP_SOURCES: Record<string, string[]> = {
   'default-src': ["'self'"],
-  // Cal.com's embed is loaded only when someone opens the calendar (src/scripts/booking.ts).
-  'script-src': ["'self'", MEASURE, GOOGLE_TAG, PREVIEW, 'https://app.cal.com'],
+  // Cal.com's embed is loaded only when someone opens the calendar (src/scripts/booking.ts). Cloudflare
+  // Web Analytics' beacon is added to every page by Cloudflare (it reports to /cdn-cgi/rum, so 'self').
+  // 'report-sample' makes a report carry the first characters of a refused inline script.
+  'script-src': [
+    "'self'",
+    "'report-sample'",
+    MEASURE,
+    GOOGLE_TAG,
+    PREVIEW,
+    'https://app.cal.com',
+    'https://static.cloudflareinsights.com',
+  ],
   // Inline styles: Astro's small stylesheets and style attributes, Cal.com's embed, Tag Assistant.
   'style-src': ["'self'", "'unsafe-inline'", GOOGLE_TAG, PREVIEW, 'https://fonts.googleapis.com'],
   'img-src': [
@@ -92,6 +102,13 @@ export interface CspViolation {
 }
 
 const MAX_FIELD = 200;
+
+/**
+ * Bot Fight Mode adds an inline script to every page (JavaScript Detections) whose text changes on
+ * each request, so no hash can allow it, and allowing it otherwise would undo the policy. On the free
+ * plan nothing acts on its result, so it's left refused, and its reports are dropped.
+ */
+const CLOUDFLARE_BOT_SCRIPT = 'window.__CF$cv$params';
 /** A Reporting API delivery can batch several reports; more than this in one is not a browser. */
 const MAX_REPORTS = 20;
 
@@ -140,12 +157,15 @@ function violation(raw: Fields, legacy: boolean, host: string): CspViolation | n
   if (!/^[a-z-]+$/.test(directive)) return null;
   const file = body['sourceFile'] ? withoutQuery(text(body['sourceFile'])) : '';
   const line = Number(body['lineNumber']);
+  const blocked = withoutQuery(text(body['blockedURL'])) || 'unknown';
+  const sample = clip(body['sample']).slice(0, 80);
+  if (blocked === 'inline' && sample.startsWith(CLOUDFLARE_BOT_SCRIPT)) return null;
   return {
     directive,
-    blocked: withoutQuery(text(body['blockedURL'])) || 'unknown',
+    blocked,
     page: clip(page.pathname),
     source: file && Number.isInteger(line) && line > 0 ? `${file}:${line}` : file,
-    sample: clip(body['sample']).slice(0, 80),
+    sample,
   };
 }
 

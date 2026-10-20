@@ -64,31 +64,69 @@ Set in GitHub, not in the repository, so recorded here.
   - `.github/rulesets/main.json` is a copy of it, for rebuilding (**New ruleset → Import a ruleset**). GitHub doesn't read the file, so update it whenever the ruleset changes.
 - **Merging:** squash only, titled from the pull request; branches are deleted after merge; "update branch" is offered.
 - **Actions** (**Settings → Actions → General**): only actions published by GitHub (`actions/…`, `github/…`) and this repository's own workflows may run. A third-party action fails until it's allowed there; prefer a GitHub-owned action or a plain `run:` step. The workflow token is read-only by default and can't approve pull requests.
+- **Secrets:** `CF_ACCESS_CLIENT_ID` and `CF_ACCESS_CLIENT_SECRET`, the `preview-checks` Access service token, for the CD Orchestrator's smoke test of each deployed version (only `main` and manual runs use them).
 - **Security:** Dependabot alerts and security updates are on. Secret scanning, push protection and code scanning need the repository to be public (or a paid plan for an organisation): CodeQL and dependency review are already wired in and start when it is.
 - **Environments and deployments:** Cloudflare deploys, but only reports back as a check, so the 🚀 CD Orchestrator records each deploy as a GitHub deployment. **Preview** is recorded once a pull request's preview build is live, with the branch's Preview URL. **Production** is recorded with each smoke-tested deploy of `main`, from cutover. Both environments were created by those jobs and have no protection rules. They show in the repository's **Deployments** panel (the About settings ⚙ → **Deployments**, which GitHub only keeps ticked once a deployment exists).
 - **Apps:** Cloudflare Workers and Pages, with access to this repository only.
 
 ## after each deploy
 
-The **🚀 CD Orchestrator** waits for Cloudflare's production deploy of every push to `main`, then runs `scripts/smoke-test.sh` against `www.harrisonjennings.au`. It checks:
+After every push to `main`, the **🚀 CD Orchestrator** waits for Cloudflare's production deploy, then runs `scripts/smoke-test.sh` against **that exact version's preview address** (`https://<first 8 characters of the Version ID>-harrisonjennings-au.harrisonjennings-au.workers.dev`, from Cloudflare's check). It checks:
 
-- the home page, the blog, a post and projects load;
+- the home page (with the cookie banner and structured data), the blog, a post and projects load;
 - an old WordPress URL 301s to its post, and an unknown page 404s;
 - the security headers and CSP are present;
-- the sitemap, feed and robots.txt load, and the Worker answers;
-- the bare domain redirects to www.
+- the sitemap, feed and robots.txt load, and the Worker answers.
 
-It only runs once the repository variable `PRODUCTION_LIVE` is `true` (**Settings → Secrets and variables → Actions → Variables**; it's `false` until cutover). A failure emails you. To roll back, open the Worker's **Deployments** tab in Cloudflare and deploy the previous version. If Cloudflare's bot protection ever challenges GitHub's runners, the smoke test will fail on its first check; a WAF skip rule for the smoke test is the fix.
+**Why not the real domain:** Bot Fight Mode challenges GitHub's runners (they come from data centres; tested on 20 October), and the free plan can't exempt them. The preview address is on Cloudflare's `workers.dev`, outside the zone's bot protection, and behind Access, so the job sends the `preview-checks` service token from the repository secrets `CF_ACCESS_CLIENT_ID` and `CF_ACCESS_CLIENT_SECRET`. Renew them with the token (October 2027).
 
-## cutover (around 4 November)
+**From cutover** (the repository variable `PRODUCTION_LIVE` is `true`, under **Settings → Secrets and variables → Actions → Variables**), a second job checks the live domain as far as Bot Fight Mode allows (`scripts/live-check.sh`: `www`'s robots.txt names `sitemap-index.xml`, so the route is serving this site; the bare-domain redirect, unless it's challenged) and records the deployment to Production.
 
-1. Lower the TTL on the `www` DNS record a day ahead.
-2. Add a **Workers Route** `www.harrisonjennings.au/*` to the Worker. The route takes over from the WordPress origin without touching DNS, so rolling back is just deleting the route.
-3. Add a **redirect rule**: `harrisonjennings.au/*` → `https://www.harrisonjennings.au/${1}` (301), so the bare domain always lands on www.
-4. Check: run `bash scripts/smoke-test.sh https://www.harrisonjennings.au` (every line should tick), then look at the old URLs you care about. Then change the `PRODUCTION_LIVE` repository variable from `false` to `true`, so every later deploy is smoke-tested automatically.
-5. Keep the route for about a week as the rollback path. Then replace it with a **Custom Domain** on the Worker and retire the WordPress hosting before it renews on 11 November.
+A failure emails you. To roll back, open the Worker's **Deployments** tab in Cloudflare and deploy the previous version. The smoke test also runs by hand against `www` from a home network, which Bot Fight Mode lets through.
 
-Leave the other DNS records alone: see [DNS records](#dns-records).
+## cutover (4 November)
+
+Rehearsed on 20 October 2026 against the live Cloudflare settings. The switch is a Workers Route on `www`, not a DNS change, so it takes effect at once and rolling back is deleting the route. Allow about 90 minutes at a quiet time.
+
+**Already done:** Browser Cache TTL set to **Respect Existing Headers** (so a deploy isn't hidden behind a 4-hour browser cache); `privacy@` and `contact@` checked; the DNS records exported; `measure` kept out of search.
+
+**Staying on, on purpose:**
+
+- **Bot Fight Mode.** It protects `measure` (bots there cost Cloud Run requests and pollute analytics) and the `/api/*` endpoints. It can't be exempted on the free plan. Its JavaScript Detections add an inline script to each page that no hash can allow; it's left refused by the CSP (nothing acts on its result on the free plan) and its reports are dropped (`src/lib/csp.ts`). It does challenge GitHub's runners, so the CD smoke test checks each deployed version through its preview address instead (see [after each deploy](#after-each-deploy)); Better Uptime gets through.
+- **Cloudflare Web Analytics** (cookieless, in the privacy policy, allowed by the CSP).
+- **Email Address Obfuscation** (its decode script loads from the site itself, which the CSP allows).
+
+### the day before
+
+1. Note the version that's **Live** in Tag Manager (**Admin → Environments**): it's the rollback target.
+2. Open the launch pull request: the privacy policy's date set to 4 November, the home page's `noindex` and its exception in `lighthouserc.json` removed, the CD badge in the README. Review it on its preview.
+3. Freeze WordPress edits, and hold Dependabot merges until the week after.
+4. In Better Uptime, point the `harrisonjennings.au` monitor at `https://www.harrisonjennings.au/`, so it watches the site rather than the redirect.
+
+### launch
+
+1. **Merge the launch pull request.** Wait for the CI Orchestrator and Cloudflare's production deploy to go green. The site still isn't public.
+2. **Add the route.** **Workers & Pages → harrisonjennings-au → Settings → Domains & Routes → Add → Route** (or the Worker's **Domains** tab): zone `harrisonjennings.au`, route `www.harrisonjennings.au/*` → **Add route**.
+3. **Bare domain to www.** WordPress does this today, so it has to move to Cloudflare: **Rules → Overview → Create rule → Redirect Rule**, from the template "Redirect from root to WWW": when the hostname equals `harrisonjennings.au`, redirect (dynamic) to `concat("https://www.harrisonjennings.au", http.request.uri.path)`, status 301, preserve the query string → **Deploy**.
+4. **Check.** `bash scripts/smoke-test.sh https://www.harrisonjennings.au` (every line ticks). In a private window: the cookie banner, accepting it, the booking calendar, a post, an old WordPress URL, the bare domain.
+5. **Test the rollback, before Tag Manager.** Delete the route: WordPress serves. Add it again: the new site serves.
+6. **Tag Manager.** **Admin → Environments → Live → ⋮ → Publish To…** → the version on Testing. Check your own visit reaches the production GA4 property's Realtime report (the server container routes by the `environment` label, which should now read `Live`).
+7. **GitHub.** Change the `PRODUCTION_LIVE` repository variable from `false` to `true`, then **Actions → 🚀 CD Orchestrator → Run workflow** (on `main`): the deployed version is smoke-tested, the live domain checked, and the first Production deployment recorded.
+8. **Search Console.** **Sitemaps**: remove the five old WordPress sitemaps, submit `sitemap-index.xml`. **URL Inspection → Request indexing** for the home page, the blog, projects and each post. Run a live post through the Rich Results Test.
+9. **Crawler Hints** on (**Caching → Configuration**). It works from cache misses, so it may rarely fire for pages the Worker serves; requesting indexing does the real work.
+10. A GA4 annotation for the date, then share the posts and link them from their project sites.
+
+### if it goes wrong (any time that week)
+
+1. Delete the route: WordPress serves `www` again.
+2. In Tag Manager, publish the version noted the day before back to **Live**: WordPress needs its Pressidium consent tag.
+3. Change `PRODUCTION_LIVE` back to `false`.
+
+The redirect rule can stay: WordPress redirects the bare domain the same way.
+
+### the week after
+
+Watch the CSP reports and the production consent log (D1), Search Console, Better Uptime and GA4. Then move to a Custom Domain, in Cloudflare's order: delete the `www` CNAME record, add `www` as a **Custom Domain** on the Worker (**Settings → Domains & Routes → Add → Custom Domain**), then delete the route. Then decommission (see the roadmap, and [DNS records](#dns-records)).
 
 ## DNS records
 
