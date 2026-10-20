@@ -22,6 +22,8 @@
     "preview": "npm run build && wrangler dev",
     "check": "npm run tokens && astro check",
     "lint": "eslint .",
+    "readme:diagram": "node scripts/readme/diagram.mjs",
+    "readme:screenshot": "node scripts/readme/screenshot.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "vitest run",
