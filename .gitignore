@@ -21,6 +21,8 @@ node_modules/
 # test output
 test-results/
 playwright-report/
+.lighthouseci/
+lighthouse-report/
 blob-report/
 
 # logs

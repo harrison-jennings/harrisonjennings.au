@@ -7,7 +7,7 @@ The site deploys from GitHub to Cloudflare with [Workers Builds](https://develop
 | `main`        | production: www.harrisonjennings.au                |
 | anything else | a Preview on workers.dev, behind Cloudflare Access |
 
-The Worker is `harrisonjennings-au`, on the `harrisonjennings-au.workers.dev` subdomain. A branch's Preview URL is `<branch>-harrisonjennings-au.harrisonjennings-au.workers.dev` (slashes become hyphens: `chore/tests` → `chore-tests-…`), and the **Preview link** workflow (`.github/workflows/preview-link.yml`) comments it on the pull request as soon as it opens. Cloudflare's own comment only appears when the PR was already open when a build ran, so it's missing on a PR opened after its branch's first push; later pushes still get it. The production workers.dev URL is off (`workers_dev: false`); production is reached only through the www route from cutover.
+The Worker is `harrisonjennings-au`, on the `harrisonjennings-au.workers.dev` subdomain. A branch's Preview URL is `<branch>-harrisonjennings-au.harrisonjennings-au.workers.dev` (slashes become hyphens: `chore/tests` → `chore-tests-…`), and the **🚀 CD Orchestrator** (`.github/workflows/cd-orchestrator.yml`, calling `preview-link.yml`) comments it on the pull request as soon as it opens. Cloudflare's own comment only appears when the PR was already open when a build ran, so it's missing on a PR opened after its branch's first push; later pushes still get it. The production workers.dev URL is off (`workers_dev: false`); production is reached only through the www route from cutover.
 
 ## one-time setup in Cloudflare
 
@@ -52,12 +52,24 @@ GROUP BY directive, blocked, source ORDER BY reports DESC;
 
 Each row is either a source to add to `src/lib/csp.ts` or something to remove at its origin (usually a Tag Manager tag or variable). On previews, Access may stop reports from arriving; the browser's console lists the same violations, marked `[Report Only]`. When the production list has been empty for a week, switch the header to `Content-Security-Policy` in `cspHeaders()`.
 
+## after each deploy
+
+The **🚀 CD Orchestrator** waits for Cloudflare's production deploy of every push to `main`, then runs `scripts/smoke-test.sh` against `www.harrisonjennings.au`. It checks:
+
+- the home page, the blog, a post and projects load;
+- an old WordPress URL 301s to its post, and an unknown page 404s;
+- the security headers and CSP are present;
+- the sitemap, feed and robots.txt load, and the Worker answers;
+- the bare domain redirects to www.
+
+It only runs once the repository variable `PRODUCTION_LIVE` is `true` (**Settings → Secrets and variables → Actions → Variables → New repository variable**), which is set at cutover. A failure emails you. To roll back, open the Worker's **Deployments** tab in Cloudflare and deploy the previous version. If Cloudflare's bot protection ever challenges GitHub's runners, the smoke test will fail on its first check; a WAF skip rule for the smoke test is the fix.
+
 ## cutover (around 4 November)
 
 1. Lower the TTL on the `www` DNS record a day ahead.
 2. Add a **Workers Route** `www.harrisonjennings.au/*` to the Worker. The route takes over from the WordPress origin without touching DNS, so rolling back is just deleting the route.
 3. Add a **redirect rule**: `harrisonjennings.au/*` → `https://www.harrisonjennings.au/${1}` (301), so the bare domain always lands on www.
-4. Check: home, a post, /projects/, a 404, the security headers (`curl -I`, including `Content-Security-Policy-Report-Only`), and the old URLs you care about.
+4. Check: run `bash scripts/smoke-test.sh https://www.harrisonjennings.au` (every line should tick), then look at the old URLs you care about. Then set the `PRODUCTION_LIVE` repository variable to `true`, so every later deploy is smoke-tested automatically.
 5. Keep the route for about a week as the rollback path. Then replace it with a **Custom Domain** on the Worker and retire the WordPress hosting before it renews on 11 November.
 
 Leave these DNS records alone: iCloud mail (MX, SPF, DKIM), `measure.` (server-side GTM) and the project subdomains.

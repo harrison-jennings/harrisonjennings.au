@@ -1,0 +1,43 @@
+name: Production smoke test
+
+# Called by the CD Orchestrator after a push to main: waits for Cloudflare's deploy of this commit, then
+# runs scripts/smoke-test.sh against the live site. A failure here emails Harrison; rolling back is
+# Cloudflare's job (deploy the previous version from the Worker's Deployments tab).
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+  checks: read
+
+jobs:
+  smoke:
+    name: Smoke test
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Wait for Cloudflare's deploy of this commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          SHA: ${{ github.sha }}
+        run: |
+          for attempt in $(seq 1 60); do
+            result=$(gh api "repos/$REPO/commits/$SHA/check-runs" \
+              --jq '[.check_runs[] | select(.name | startswith("Workers Builds"))][0] | "\(.status) \(.conclusion)"')
+            echo "Workers Builds: ${result:-not started}"
+            case "$result" in
+              "completed success") exit 0 ;;
+              completed*) echo "::error::Cloudflare's build or deploy didn't succeed: $result"; exit 1 ;;
+            esac
+            sleep 15
+          done
+          echo "::error::Timed out waiting for Cloudflare's deploy"
+          exit 1
+
+      - name: Smoke-test the live site
+        run: bash scripts/smoke-test.sh https://www.harrisonjennings.au

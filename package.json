@@ -28,6 +28,7 @@
     "test:e2e": "INCLUDE_DRAFTS=true npm run build && npm run db:local && playwright test",
     "db:local": "wrangler d1 migrations apply CONSENT_DB --local",
     "verify": "npm run format:check && npm run lint && npm run check && npm run test && npm run test:e2e",
+    "lighthouse": "npm run build && npx --yes @lhci/cli@0.15.1 autorun",
     "deploy": "npm run build && wrangler deploy"
   },
   "dependencies": {

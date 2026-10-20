@@ -12,7 +12,7 @@
 **the source for [harrisonjennings.au](https://www.harrisonjennings.au/)**<br>
 marketing automation, analytics and measurement, creative and media strategy.
 
-[![CI](https://github.com/harrison-jennings/harrisonjennings.au/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/harrison-jennings/harrisonjennings.au/actions/workflows/ci.yml)
+[![CI](https://github.com/harrison-jennings/harrisonjennings.au/actions/workflows/ci-orchestrator.yml/badge.svg?branch=main)](https://github.com/harrison-jennings/harrisonjennings.au/actions/workflows/ci-orchestrator.yml)
 [![Astro 7](https://img.shields.io/badge/astro-7-C85A52?style=flat-square&logo=astro&logoColor=EFEAE6&labelColor=121110)](https://astro.build/)
 [![Cloudflare Workers](https://img.shields.io/badge/cloudflare-workers-C85A52?style=flat-square&logo=cloudflare&logoColor=EFEAE6&labelColor=121110)](https://developers.cloudflare.com/workers/static-assets/)
 [![Node 24](https://img.shields.io/badge/node-24_LTS-E8A27A?style=flat-square&logo=nodedotjs&logoColor=EFEAE6&labelColor=121110)](https://nodejs.org/)
@@ -35,21 +35,23 @@ Built and developed on Node 24 LTS (`nvm use` reads `.nvmrc`); Node 22.22 or new
 npm ci                           # install exactly what the lockfile says
 npx playwright install chromium  # once, for the end-to-end tests
 npm run dev                      # http://localhost:4321
-npm run verify                   # format, lint, types, unit tests, build and end-to-end tests: what CI runs
+npm run verify                   # format, lint, types, unit tests, build and end-to-end tests
+npm run lighthouse               # build, then Lighthouse on four pages (needs Chrome)
 npm run preview                  # build, then serve dist/ through Wrangler as Cloudflare will
 ```
 
-| script             | what it does                                                  |
-| ------------------ | ------------------------------------------------------------- |
-| `npm run dev`      | builds the tokens, then starts the Astro dev server           |
-| `npm run build`    | builds the tokens, then the static site into `dist/`          |
-| `npm run check`    | type-checks `.astro` and `.ts` files with `astro check`       |
-| `npm run lint`     | ESLint, including the Astro plugin                            |
-| `npm run format`   | formats everything with Prettier                              |
-| `npm run tokens`   | regenerates `src/styles/tokens.css` from `design/tokens.json` |
-| `npm run test`     | Vitest unit tests                                             |
-| `npm run test:e2e` | builds, then runs the Playwright tests against `wrangler dev` |
-| `npm run verify`   | everything CI checks, in one go                               |
+| script               | what it does                                                  |
+| -------------------- | ------------------------------------------------------------- |
+| `npm run dev`        | builds the tokens, then starts the Astro dev server           |
+| `npm run build`      | builds the tokens, then the static site into `dist/`          |
+| `npm run check`      | type-checks `.astro` and `.ts` files with `astro check`       |
+| `npm run lint`       | ESLint, including the Astro plugin                            |
+| `npm run format`     | formats everything with Prettier                              |
+| `npm run tokens`     | regenerates `src/styles/tokens.css` from `design/tokens.json` |
+| `npm run test`       | Vitest unit tests                                             |
+| `npm run test:e2e`   | builds, then runs the Playwright tests against `wrangler dev` |
+| `npm run verify`     | everything CI checks except Lighthouse, in one go             |
+| `npm run lighthouse` | builds, then Lighthouse CI against `dist/` (95+ required)     |
 
 ## how it's put together
 

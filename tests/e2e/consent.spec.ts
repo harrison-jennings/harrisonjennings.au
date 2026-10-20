@@ -34,6 +34,9 @@ test('a first visit shows the banner, with everything optional denied', async ({
   // No close button, and the page behind stays usable.
   await expect(banner(page).getByRole('button', { name: /close/ })).toHaveCount(0);
   await expect(page.locator('dialog[open]')).toHaveCount(0);
+  // No dialog of any kind for assistive technology: CookieConsent builds an empty one of its own,
+  // which must stay hidden (the banner is ours, and it's a region, not a dialog).
+  await expect(page.getByRole('dialog')).toHaveCount(0);
   expect(await consentCommands(page)).toEqual([['default', 'denied', 'denied']]);
 });
 

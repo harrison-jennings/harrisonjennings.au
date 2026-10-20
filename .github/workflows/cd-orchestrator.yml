@@ -1,0 +1,33 @@
+name: 🚀 CD Orchestrator
+
+# Did the deploy work? Cloudflare Workers Builds deploys every push (main to production, other branches
+# to previews); this runs around those deploys and never deploys anything itself.
+#   On a pull request: posts the branch's preview link.
+#   On main: waits for Cloudflare's production deploy of that commit, then smoke-tests the live site.
+#   The production checks run once the PRODUCTION_LIVE repository variable is `true` (set at cutover,
+#   when www.harrisonjennings.au starts serving this site).
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  preview-link:
+    name: preview link
+    if: github.event_name == 'pull_request'
+    uses: ./.github/workflows/preview-link.yml
+    permissions:
+      pull-requests: write
+
+  production:
+    name: production
+    if: github.event_name != 'pull_request' && vars.PRODUCTION_LIVE == 'true'
+    uses: ./.github/workflows/production-smoke.yml
+    permissions:
+      contents: read
+      checks: read

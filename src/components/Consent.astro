@@ -625,6 +625,11 @@ const withLink = (text: string) =>
   body {
     padding-bottom: var(--consent-space, 0px);
   }
+  /* CookieConsent still builds an empty dialog of its own (role="dialog", aria-modal) before a first
+     choice, though it's never shown. Hidden outright, so assistive technology never finds it. */
+  #cc-main {
+    display: none !important;
+  }
 </style>
 
 <script>

@@ -1,0 +1,45 @@
+name: 🛠️ CI Orchestrator
+
+# Is this change safe to merge? Every check, in one run, on each pull request and on main. Each part is
+# its own reusable workflow; the merge rule requires quality, end-to-end and lighthouse.
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: quality
+    uses: ./.github/workflows/quality.yml
+
+  end-to-end:
+    name: end-to-end
+    uses: ./.github/workflows/end-to-end.yml
+
+  lighthouse:
+    name: lighthouse
+    uses: ./.github/workflows/lighthouse.yml
+
+  # The two below skip while the repository is private (they need GitHub Advanced Security).
+  codeql:
+    name: codeql
+    uses: ./.github/workflows/codeql.yml
+    permissions:
+      contents: read
+      security-events: write
+
+  dependency-review:
+    name: dependency review
+    if: github.event_name == 'pull_request'
+    uses: ./.github/workflows/dependency-review.yml
+    permissions:
+      contents: read
+      pull-requests: write

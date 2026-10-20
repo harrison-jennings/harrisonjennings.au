@@ -1,7 +1,7 @@
 // The hero's signal field: a grid of faint dots that drifts gently. The pointer pushes dots aside and
 // lights them in `link`, sending a ring out every 1.5s (every 2.8s from a slow wanderer when nobody
 // is pointing); a click or tap sends one too. The headline's brick stop pulses two small rings that
-// stay clear of the letters. Pauses when off screen. Under reduced motion it draws once, still, with
+// stay clear of the letters. Pauses when off screen; starts moving once the page has loaded. Under reduced motion it draws once, still, with
 // a soft lit patch top right (redrawn now and then, so a theme change shows).
 type Dot = {
   hx: number;
@@ -42,6 +42,21 @@ export function bindField(hero: HTMLElement, canvas: HTMLCanvasElement): void {
   let stopAt = 0;
   const ptr = { x: 0, y: 0, on: false, last: 0 };
   const stopEl = hero.querySelector<HTMLElement>('[data-hero-stop]');
+
+  // The colours change only with the theme, so they're read then, not on every frame (reading
+  // computed styles makes the browser recalculate them).
+  let dotColour = '';
+  let [cr, cg, cb] = [239, 234, 230];
+  const readColours = () => {
+    const cs = getComputedStyle(hero);
+    dotColour = cs.getPropertyValue('--field-dot').trim() || 'rgba(239,234,230,0.17)';
+    [cr, cg, cb] = rgbOf(cs.getPropertyValue('--link'));
+  };
+  readColours();
+  new MutationObserver(readColours).observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['data-theme'],
+  });
 
   const resize = () => {
     const r = hero.getBoundingClientRect();
@@ -87,16 +102,12 @@ export function bindField(hero: HTMLElement, canvas: HTMLCanvasElement): void {
     rings.push({ x, y, t: performance.now() });
   });
 
-  const frame = (now: number) => {
-    requestAnimationFrame(frame);
+  const render = (now: number) => {
     if (!visible || !w) return;
     const still = reducedMotion();
     if (still && now - lastStill < 500) return;
     lastStill = now;
 
-    const cs = getComputedStyle(hero);
-    const dotColour = cs.getPropertyValue('--field-dot').trim() || 'rgba(239,234,230,0.17)';
-    const [cr, cg, cb] = rgbOf(cs.getPropertyValue('--link'));
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, w, h);
 
@@ -198,7 +209,21 @@ export function bindField(hero: HTMLElement, canvas: HTMLCanvasElement): void {
   new IntersectionObserver((entries) => {
     visible = entries.some((e) => e.isIntersecting);
   }).observe(hero);
-  requestAnimationFrame(frame);
+
+  // The field is drawn at once; it starts moving when the page has finished loading and the browser
+  // is idle, so the animation doesn't compete with the page coming in.
+  const frame = (now: number) => {
+    requestAnimationFrame(frame);
+    render(now);
+  };
+  render(performance.now());
+  const start = () => requestAnimationFrame(frame);
+  const whenIdle = () =>
+    'requestIdleCallback' in window
+      ? requestIdleCallback(start, { timeout: 1000 })
+      : setTimeout(start, 200);
+  if (document.readyState === 'complete') whenIdle();
+  else window.addEventListener('load', whenIdle, { once: true });
 }
 
 /** The scroll cue fades out over the first 160px of scroll. */

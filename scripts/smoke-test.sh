@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+# A quick check that a deployed copy of the site works: a few pages, an old WordPress redirect, the
+# 404, the security headers, the feeds and the Worker. Run by the CD Orchestrator against production
+# after each deploy (.github/workflows/production-smoke.yml); also handy by hand:
+#
+#   bash scripts/smoke-test.sh https://www.harrisonjennings.au
+#   bash scripts/smoke-test.sh http://127.0.0.1:8790        # npm run preview, or the e2e server
+set -uo pipefail
+
+base="${1:?usage: smoke-test.sh <base URL>}"
+base="${base%/}"
+failures=0
+
+check() {
+  local name=$1
+  shift
+  if "$@"; then
+    echo "✓ $name"
+  else
+    echo "✗ $name"
+    failures=$((failures + 1))
+  fi
+}
+status() { curl -s -o /dev/null -w '%{http_code}' --max-time 20 "$base$1"; }
+location() { curl -s -o /dev/null -w '%{redirect_url}' --max-time 20 "$base$1"; }
+headers() { curl -s -D - -o /dev/null --max-time 20 "$base$1" | tr -d '\r' | tr '[:upper:]' '[:lower:]'; }
+body() { curl -s --max-time 20 "$base$1"; }
+has() { grep -q -- "$1" <<<"$2"; }
+
+home=$(body /)
+home_headers=$(headers /)
+
+check 'home page answers 200' [ "$(status /)" = 200 ]
+check 'home page has the cookie banner' has 'data-consent-banner' "$home"
+check 'home page has its structured data' has 'application/ld+json' "$home"
+check 'the blog answers 200' [ "$(status /blog/)" = 200 ]
+check 'a post answers 200' [ "$(status /blog/whats-this-all-about/)" = 200 ]
+check 'projects answers 200' [ "$(status /projects/)" = 200 ]
+old=/2025/11/whats-this-all-about/
+check 'an old WordPress post URL 301s to its new home' [ "$(status "$old")" = 301 ]
+check 'and the redirect lands on the post' [ "$(location "$old")" = "$base/blog/whats-this-all-about/" ]
+check 'an unknown page answers 404' [ "$(status /this-page-does-not-exist/)" = 404 ]
+check 'HSTS header' has 'strict-transport-security:' "$home_headers"
+check 'nosniff header' has 'x-content-type-options: nosniff' "$home_headers"
+check 'frame header' has 'x-frame-options: deny' "$home_headers"
+check 'Content-Security-Policy header' has 'content-security-policy' "$home_headers"
+check 'the sitemap answers 200' [ "$(status /sitemap-index.xml)" = 200 ]
+check 'the feed answers 200' [ "$(status /rss.xml)" = 200 ]
+check 'robots.txt answers 200' [ "$(status /robots.txt)" = 200 ]
+check 'the Worker answers (consent log refuses a GET)' [ "$(status /api/consent)" = 405 ]
+
+# The bare domain redirect is a Cloudflare rule, so it's only there in production.
+if [ "$base" = 'https://www.harrisonjennings.au' ]; then
+  bare=$(curl -s -o /dev/null -w '%{http_code} %{redirect_url}' --max-time 20 https://harrisonjennings.au/)
+  check 'the bare domain 301s to www' [ "$bare" = '301 https://www.harrisonjennings.au/' ]
+fi
+
+if [ "$failures" -gt 0 ]; then
+  echo "$failures check(s) failed against $base"
+  exit 1
+fi
+echo "All checks passed against $base"
