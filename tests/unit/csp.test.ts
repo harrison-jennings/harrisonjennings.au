@@ -131,6 +131,38 @@ describe('reading reports', () => {
   });
 });
 
+describe("Cloudflare's own scripts", () => {
+  it('allows the Web Analytics beacon and asks for samples of refused inline scripts', () => {
+    const script = cspPolicy([])
+      .split('; ')
+      .find((d) => d.startsWith('script-src '));
+    expect(script).toContain('https://static.cloudflareinsights.com');
+    expect(script).toContain("'report-sample'");
+  });
+
+  it("drops reports of Bot Fight Mode's inline script, and keeps other inline ones", () => {
+    const report = (sample: string) => [
+      {
+        type: 'csp-violation',
+        body: {
+          documentURL: `https://${HOST}/`,
+          blockedURL: 'inline',
+          effectiveDirective: 'script-src-elem',
+          sample,
+        },
+      },
+    ];
+    expect(
+      parseCspReports(
+        report("window.__CF$cv$params={r:'a1b2c3',t:'MTc5"),
+        'application/reports+json',
+        HOST,
+      ),
+    ).toEqual([]);
+    expect(parseCspReports(report('alert(1)'), 'application/reports+json', HOST)).toHaveLength(1);
+  });
+});
+
 describe('the report endpoint', () => {
   const db = () => {
     const calls: unknown[][] = [];
