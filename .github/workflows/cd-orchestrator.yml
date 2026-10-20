@@ -4,11 +4,11 @@ name: 🚀 CD Orchestrator
 # to previews); this runs around those deploys and never deploys anything itself.
 #   On a pull request: posts the branch's preview link, and records Cloudflare's preview build as a
 #   GitHub deployment to the Preview environment once it's live.
-#   On main: waits for Cloudflare's production deploy of that commit, smoke-tests the live site, and
-#   records it as a deployment to Production.
+#   On main: waits for Cloudflare's production deploy of that commit and smoke-tests that exact version
+#   through its preview address (Bot Fight Mode challenges GitHub's runners on the real domain). From
+#   cutover (the PRODUCTION_LIVE repository variable is `true`) it also checks the live domain and
+#   records a deployment to Production.
 # Both environments show in the repository's Deployments panel.
-#   The production checks run once the PRODUCTION_LIVE repository variable is `true` (set at cutover,
-#   when www.harrisonjennings.au starts serving this site).
 on:
   pull_request:
     types: [opened, reopened, synchronize]
@@ -38,11 +38,22 @@ jobs:
       checks: read
       deployments: write
 
-  production:
-    name: production
-    if: github.event_name != 'pull_request' && vars.PRODUCTION_LIVE == 'true'
-    uses: ./.github/workflows/production-smoke.yml
+  deployed-version:
+    name: deployed version
+    if: github.event_name != 'pull_request'
+    uses: ./.github/workflows/production-version.yml
     permissions:
       contents: read
       checks: read
+    secrets:
+      CF_ACCESS_CLIENT_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
+      CF_ACCESS_CLIENT_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
+
+  production:
+    name: production
+    needs: deployed-version
+    if: github.event_name != 'pull_request' && vars.PRODUCTION_LIVE == 'true'
+    uses: ./.github/workflows/production-live.yml
+    permissions:
+      contents: read
       deployments: write

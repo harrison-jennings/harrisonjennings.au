@@ -1,15 +1,24 @@
 #!/usr/bin/env bash
 # A quick check that a deployed copy of the site works: a few pages, an old WordPress redirect, the
-# 404, the security headers, the feeds and the Worker. Run by the CD Orchestrator against production
-# after each deploy (.github/workflows/production-smoke.yml); also handy by hand:
+# 404, the security headers, the feeds and the Worker. The CD Orchestrator runs it after each deploy of
+# main against that exact version's preview address (.github/workflows/production-version.yml), with
+# the Access service token in CF_ACCESS_CLIENT_ID and CF_ACCESS_CLIENT_SECRET. Also handy by hand:
 #
-#   bash scripts/smoke-test.sh https://www.harrisonjennings.au
-#   bash scripts/smoke-test.sh http://127.0.0.1:8790        # npm run preview, or the e2e server
+#   bash scripts/smoke-test.sh https://www.harrisonjennings.au   # from a home network: Bot Fight Mode
+#                                                                 # challenges data-centre addresses
+#   bash scripts/smoke-test.sh http://127.0.0.1:8790             # npm run preview, or the e2e server
 set -uo pipefail
 
 base="${1:?usage: smoke-test.sh <base URL>}"
 base="${base%/}"
 failures=0
+
+# The Access service token, for preview addresses, when it's set.
+auth=()
+if [ -n "${CF_ACCESS_CLIENT_ID:-}" ] && [ -n "${CF_ACCESS_CLIENT_SECRET:-}" ]; then
+  auth=(-H "CF-Access-Client-Id: $CF_ACCESS_CLIENT_ID" -H "CF-Access-Client-Secret: $CF_ACCESS_CLIENT_SECRET")
+fi
+get() { curl -s --max-time 20 ${auth[@]+"${auth[@]}"} "$@"; }
 
 check() {
   local name=$1
@@ -21,10 +30,10 @@ check() {
     failures=$((failures + 1))
   fi
 }
-status() { curl -s -o /dev/null -w '%{http_code}' --max-time 20 "$base$1"; }
-location() { curl -s -o /dev/null -w '%{redirect_url}' --max-time 20 "$base$1"; }
-headers() { curl -s -D - -o /dev/null --max-time 20 "$base$1" | tr -d '\r' | tr '[:upper:]' '[:lower:]'; }
-body() { curl -s --max-time 20 "$base$1"; }
+status() { get -o /dev/null -w '%{http_code}' "$base$1"; }
+location() { get -o /dev/null -w '%{redirect_url}' "$base$1"; }
+headers() { get -D - -o /dev/null "$base$1" | tr -d '\r' | tr '[:upper:]' '[:lower:]'; }
+body() { get "$base$1"; }
 has() { grep -q -- "$1" <<<"$2"; }
 
 home=$(body /)

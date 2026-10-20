@@ -104,7 +104,7 @@ Better than the WordPress site, not just level with it: most of its posts sat in
 - [x] Thin utility pages (`/rss/`) kept out of search and the sitemap
 - [x] Redirects for the old author archive and the remaining WordPress sitemaps Search Console still knew
 - [x] 🛠️ CI Orchestrator: one workflow calling quality, end-to-end, Lighthouse, CodeQL and dependency review (the merge rule's required checks updated with it)
-- [x] 🚀 CD Orchestrator: posts each PR's preview link, and after `main` deploys, smoke-tests production (`scripts/smoke-test.sh`); production checks switched on at cutover
+- [x] 🚀 CD Orchestrator: posts each PR's preview link, and after `main` deploys, smoke-tests the deployed version through its preview address (Bot Fight Mode challenges GitHub on the real domain); live-domain checks and the Production deployment switched on at cutover
 - [x] Preview and Production recorded as GitHub deployments, so the repository's Deployments panel shows them (Production from cutover)
 
 - [x] Every URL in the crawl either returns 200 or 301s to its new home in one hop; WordPress-only URLs return a real 404 (`crawl` end-to-end test, from `tests/e2e/fixtures/wordpress-urls.json`; `?p=` shortlinks show the home page, since a static site ignores the query)

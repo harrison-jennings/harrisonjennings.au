@@ -1,0 +1,47 @@
+name: Deployed version
+
+# Called by the CD Orchestrator after each push to main: waits for Cloudflare's deploy of the commit,
+# then runs scripts/smoke-test.sh against that exact version's preview address. The address is on
+# Cloudflare's workers.dev domain, so the zone's Bot Fight Mode (which challenges GitHub's runners)
+# doesn't apply; Cloudflare Access does, so the preview-checks service token goes with each request.
+on:
+  workflow_call:
+    secrets:
+      CF_ACCESS_CLIENT_ID:
+        required: true
+      CF_ACCESS_CLIENT_SECRET:
+        required: true
+
+permissions:
+  contents: read
+  checks: read
+
+jobs:
+  smoke:
+    name: Smoke test the deployed version
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Wait for Cloudflare's deploy of this commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: bash scripts/wait-for-cloudflare.sh "$GITHUB_SHA"
+
+      - name: Find the version's preview address
+        id: version
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: echo "url=$(bash scripts/version-url.sh "$GITHUB_SHA")" >> "$GITHUB_OUTPUT"
+
+      - name: Smoke-test it
+        env:
+          CF_ACCESS_CLIENT_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
+          CF_ACCESS_CLIENT_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
+          URL: ${{ steps.version.outputs.url }}
+        run: bash scripts/smoke-test.sh "$URL"

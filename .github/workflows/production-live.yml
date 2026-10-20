@@ -1,0 +1,29 @@
+name: Production
+
+# Called by the CD Orchestrator once the deployed version has passed its smoke test, from cutover
+# (PRODUCTION_LIVE is true): checks the live domain as far as Bot Fight Mode allows from GitHub
+# (scripts/live-check.sh), recorded as a GitHub deployment to the Production environment, so the
+# repository's Deployments panel shows it. A failure emails Harrison; rolling back is Cloudflare's job
+# (deploy the previous version from the Worker's Deployments tab).
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+  deployments: write
+
+jobs:
+  live:
+    name: Check the live domain
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    environment:
+      name: Production
+      url: https://www.harrisonjennings.au/
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Check the live domain
+        run: bash scripts/live-check.sh
