@@ -67,7 +67,7 @@ export function bindConsent(): void {
   let action: ConsentAction = 'custom';
   let opener: HTMLElement | null = null;
 
-  // The banner's height, so the page can scroll clear of it and keyboard focus stops above it.
+  // The banner's height, so keyboard focus moved down the page stops above it.
   const space = new ResizeObserver(() => {
     const height = banner.hidden ? 0 : banner.offsetHeight + 24;
     document.documentElement.style.setProperty('--consent-space', `${height}px`);

@@ -100,33 +100,20 @@ test('"accept all" grants analytics and advertising, logs it, and is remembered'
   ]);
 });
 
-test('the page keeps room for the banner, which eases away after a choice (at once under reduced motion)', async ({
+test('the banner overlays the page without adding room at the bottom, and focus stops above it', async ({
   page,
 }) => {
-  const bottomScroll = () =>
-    page.evaluate(() => {
-      window.scrollTo(0, document.body.scrollHeight);
-      return Math.round(scrollY);
-    });
   await page.goto('/');
   await expect(banner(page)).toBeVisible();
-  const padding = () =>
-    page.evaluate(() => parseFloat(getComputedStyle(document.body).paddingBottom));
-  await expect.poll(padding).toBeGreaterThan(100);
-  const before = await bottomScroll();
+  const styles = () =>
+    page.evaluate(() => ({
+      padding: parseFloat(getComputedStyle(document.body).paddingBottom),
+      scrollPadding: parseFloat(getComputedStyle(document.documentElement).scrollPaddingBottom),
+    }));
+  await expect.poll(async () => (await styles()).scrollPadding).toBeGreaterThan(100);
+  expect((await styles()).padding).toBe(0);
   await banner(page).getByRole('button', { name: 'reject non-essential' }).click();
-  // Partway through, the page is still settling rather than already at its new bottom.
-  await page.waitForTimeout(60);
-  expect(await page.evaluate(() => Math.round(scrollY))).toBeGreaterThan(before - 300);
-  await expect.poll(padding).toBe(0);
-
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.context().clearCookies();
-  await page.goto('/');
-  await expect(banner(page)).toBeVisible();
-  await expect.poll(padding).toBeGreaterThan(100);
-  await banner(page).getByRole('button', { name: 'reject non-essential' }).click();
-  expect(await padding()).toBe(0);
+  await expect.poll(async () => (await styles()).scrollPadding).toBe(0);
 });
 
 test('"reject non-essential" keeps everything optional denied', async ({ page }) => {
