@@ -100,6 +100,22 @@ test('"accept all" grants analytics and advertising, logs it, and is remembered'
   ]);
 });
 
+test('the banner overlays the page without adding room at the bottom, and focus stops above it', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await expect(banner(page)).toBeVisible();
+  const styles = () =>
+    page.evaluate(() => ({
+      padding: parseFloat(getComputedStyle(document.body).paddingBottom),
+      scrollPadding: parseFloat(getComputedStyle(document.documentElement).scrollPaddingBottom),
+    }));
+  await expect.poll(async () => (await styles()).scrollPadding).toBeGreaterThan(100);
+  expect((await styles()).padding).toBe(0);
+  await banner(page).getByRole('button', { name: 'reject non-essential' }).click();
+  await expect.poll(async () => (await styles()).scrollPadding).toBe(0);
+});
+
 test('"reject non-essential" keeps everything optional denied', async ({ page }) => {
   await page.goto('/');
   const logged = page.waitForRequest('**/api/consent');

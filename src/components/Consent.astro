@@ -617,13 +617,11 @@ const withLink = (text: string) =>
 </style>
 
 <style is:global>
-  /* While the banner shows, the page can scroll its last content clear of it, and focus moved by the
-     keyboard stops above it (--consent-space is the banner's height, set by the script). */
+  /* While the banner shows, focus moved down the page by the keyboard stops above it (--consent-space
+     is the banner's height, set by the script). The page gets no extra room at the bottom, so the
+     banner covers the end of the footer until a choice is made (see docs/decisions.md). */
   html {
     scroll-padding-bottom: var(--consent-space, 0px);
-  }
-  body {
-    padding-bottom: var(--consent-space, 0px);
   }
   /* CookieConsent still builds an empty dialog of its own (role="dialog", aria-modal) before a first
      choice, though it's never shown. Hidden outright, so assistive technology never finds it. */
