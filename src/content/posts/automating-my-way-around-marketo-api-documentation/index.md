@@ -1,6 +1,8 @@
 ---
 title: "automating my way around Marketo's API documentation"
 description: "I use the Marketo Engage REST API reasonably often, and its documentation has always left me wanting. So I generated my own reference from Adobe's specifications."
+searchTitle: "a better Marketo API reference, generated from Adobe's specs"
+searchDescription: "Marketo's REST API documentation left me wanting, so I generated a searchable reference from Adobe's Swagger and OpenAPI specs, with request building."
 # DRAFT: the description is the dek under the title, the card excerpt and the meta description; confirm it.
 published: 2026-09-23
 topics: [adobe-marketo-engage, web-development]

@@ -29,6 +29,7 @@ const latest = (await getPosts()).slice(0, 3);
 <Base
   title="rss feed"
   description={intro}
+  noindex
   structuredData={[breadcrumbs([{ name: 'rss feed', path: '/rss/' }])]}
 >
   <div class="column">

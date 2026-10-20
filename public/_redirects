@@ -8,6 +8,9 @@
 /page-sitemap.xml      /sitemap-index.xml  301
 /category-sitemap.xml  /sitemap-index.xml  301
 /wp-sitemap.xml        /sitemap-index.xml  301
+/author-sitemap.xml    /sitemap-index.xml  301
+/page-sitemap1.xml     /sitemap-index.xml  301
+/page-sitemap1.xml/    /sitemap-index.xml  301
 
 # The WordPress feed → the new feed, so existing subscribers carry over (posts keep their WordPress
 # guids through `wpId`, so they don't arrive again as new)
@@ -21,6 +24,9 @@
 /2026/08/is-sending-yourself-a-test-email-enough/                   /blog/is-sending-yourself-a-test-email-enough/                   301
 /2026/09/automating-my-way-around-marketo-api-documentation/        /blog/automating-my-way-around-marketo-api-documentation/        301
 /2026/10/leadlens-email-previews-and-linting-for-marketo-inside-vs-code/ /blog/leadlens-email-previews-and-linting-for-marketo-inside-vs-code/ 301
+
+# The author archive (it listed every post, and Search Console shows it was seen in results) → the blog
+/author/harrison-jennings/  /blog/  301
 
 # Categories: /category/<slug>/ → /blog/topic/<id>/, or /blog/ for those merged away (and analytics,
 # until a second post gives it a topic page). The empty categories were never in the sitemap and lapse.

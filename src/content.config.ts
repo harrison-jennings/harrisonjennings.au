@@ -10,6 +10,10 @@ const posts = defineCollection({
     z.object({
       title: z.string(),
       description: z.string().max(180),
+      /** Search results and share previews only, in place of "<title> · harrison jennings". */
+      searchTitle: z.string().max(65).optional(),
+      /** Search results and share previews only, in place of `description` (which stays the dek). */
+      searchDescription: z.string().max(155).optional(),
       published: z.coerce.date(),
       updated: z.coerce.date().optional(),
       topics: z.array(reference('topics')).default([]),

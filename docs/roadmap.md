@@ -22,7 +22,7 @@ From WordPress on VentraIP to this repo, live before the hosting renews on **11 
 - [x] Full backup from VentraIP (files and database), kept offline
 - [x] WordPress export (Tools → Export → All content)
 - [x] Pressidium settings and consent records, both Tag Manager containers
-- [ ] Plugin list and Yoast settings
+- [x] Plugin list and Yoast settings (in the VentraIP backup: the plugin folders and the database)
 - [x] Crawl the live site and save the full URL list (the Yoast sitemaps: 6 posts, 4 pages, 8 categories)
 - [ ] Audit every DNS record in Cloudflare and note what each points at; leave the iCloud mail records (MX, SPF, DKIM) alone
 - [x] Strong sign-in everywhere: a passkey on GitHub; Cloudflare and Tag Manager through the Google account, which has a passkey; an authenticator app on VentraIP
@@ -99,9 +99,10 @@ Better than the WordPress site, not just level with it: most of its posts sat in
 
 - [x] Structured data: WebSite and Person on every page, ProfessionalService on the home page, BlogPosting on posts, Blog and CollectionPage on the blog and topic pages, breadcrumbs on inner pages
 - [x] Sitemap `lastmod` from post and page dates; no canonical address on pages kept out of search
-- [ ] Search Console exports reviewed (indexing reasons, queries, pages), to target titles and descriptions at real searches
-- [ ] Search titles and descriptions: an optional search title per post (the headline stays on the page), and descriptions written for search, up to 155 characters, approved by Harrison
-- [ ] Keep thin utility pages (`/rss/`) out of the index
+- [x] Search Console exports reviewed (indexing reasons, queries, pages): most posts were "discovered – currently not indexed", never crawled at all
+- [x] Search titles and descriptions (`searchTitle`, `searchDescription`) for every post, built around each post's search terms; the headline and dek on the page stay as written
+- [x] Thin utility pages (`/rss/`) kept out of search and the sitemap
+- [x] Redirects for the old author archive and the remaining WordPress sitemaps Search Console still knew
 - [ ] 🛠️ CI Orchestrator: one workflow calling quality, end-to-end, Lighthouse, CodeQL and dependency review (the merge rule's required check updated with it)
 - [ ] 🚀 CD Orchestrator: posts each PR's preview link, and after `main` deploys, smoke-tests production (pages, redirects, headers, consent banner); production checks switched on at cutover
 
@@ -122,9 +123,11 @@ Better than the WordPress site, not just level with it: most of its posts sat in
 - [ ] In Tag Manager, publish the version that's on Testing to Live, then check your own visit reaches the production GA4 property's Realtime report (the server container picks the property from the `environment` label)
 - [ ] Spot-check pages, consent banner, booking, analytics and consent logging on the live domain
 - [ ] Clean up WordPress-era Cloudflare settings (cache and page rules, Automatic Platform Optimization); keep Rocket Loader off
-- [ ] Submit the sitemap in Search Console; annotate the date in GA4
+- [ ] In Search Console, remove the old WordPress sitemaps and submit `sitemap-index.xml`; annotate the date in GA4
 - [ ] Request indexing for each post with URL Inspection; check the structured data in Search Console's enhancements reports
 - [ ] Turn on Crawler Hints (IndexNow) in Cloudflare, so Bing hears about changes straight away
+- [ ] Send `X-Robots-Tag: noindex` from `measure.harrisonjennings.au`, so its Tag Manager pages (`ns.html`) drop out of search
+- [ ] Link each post from where its project lives (leadlens site and README, the API reference), and share the posts on LinkedIn
 
 ## 10. observe and decommission
 
@@ -137,5 +140,6 @@ Better than the WordPress site, not just level with it: most of its posts sat in
 ## after launch
 
 - [ ] Style guide at `/styleguide/`: the full design system, page mockups and formatting reference, built from the real components
+- [ ] Posts where Search Console shows demand and nothing ranks: Marketo Munchkin (the tracking code) and Velocity scripting
 
 Front Matter CMS (optional), site search with Pagefind once there are 20+ posts, a contact form with Turnstile, uptime monitoring, and a decision on AI crawlers in Cloudflare.
