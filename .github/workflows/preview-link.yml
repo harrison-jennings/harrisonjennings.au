@@ -12,6 +12,8 @@ on:
   workflow_call:
 
 permissions:
+  # To check out the repository (for scripts/preview-url.sh), and to comment.
+  contents: read
   pull-requests: write
 
 concurrency:

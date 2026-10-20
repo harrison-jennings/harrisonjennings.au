@@ -25,6 +25,7 @@ jobs:
     if: github.event_name == 'pull_request'
     uses: ./.github/workflows/preview-link.yml
     permissions:
+      contents: read
       pull-requests: write
 
   preview:
