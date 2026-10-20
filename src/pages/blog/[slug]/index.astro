@@ -12,7 +12,9 @@ import Figures from '../../../components/prose/Figures.astro';
 import YouTube from '../../../components/prose/YouTube.astro';
 import Base from '../../../layouts/Base.astro';
 import { keepReading, tocHeadings } from '../../../lib/blog';
-import { getPosts, postSlug } from '../../../lib/posts';
+import { shareImageFor } from '../../../lib/og/cards';
+import { getPosts, postPath, postSlug } from '../../../lib/posts';
+import { blog, blogPosting, breadcrumbs } from '../../../lib/structured-data';
 import { topicPageIds } from '../../../lib/topics';
 import '../../../styles/lightbox.css';
 import '../../../styles/prose.css';
@@ -45,6 +47,24 @@ const socialImage = post.data.socialImage
     })
   : undefined;
 const image = socialImage && { src: socialImage.src, width: 1200, height: 630 };
+const path = postPath(post);
+const blogIntro = (await getCollection('blog')).find((b) => b.id === 'blog')?.data.intro ?? '';
+const structuredData = [
+  blog(blogIntro),
+  blogPosting({
+    path,
+    title: post.data.title,
+    description: post.data.description,
+    published: post.data.published,
+    updated: post.data.updated,
+    image: image?.src ?? (await shareImageFor(path)),
+    topics: post.data.topics.flatMap((t) => topicNames.get(t.id) ?? []),
+  }),
+  breadcrumbs([
+    { name: 'blog', path: '/blog/' },
+    { name: post.data.title, path },
+  ]),
+];
 ---
 
 <Base
@@ -53,6 +73,7 @@ const image = socialImage && { src: socialImage.src, width: 1200, height: 630 };
   noindex={post.data.draft}
   image={image}
   dataLayer={dataLayer}
+  structuredData={structuredData}
 >
   <div class="column">
     <PostHeader post={post} readingTime={readingTime} topicPages={topicPages} />

@@ -10,6 +10,7 @@ import PostRow from '../../components/blog/PostRow.astro';
 import Base from '../../layouts/Base.astro';
 import { feedUrl } from '../../lib/feed';
 import { getPosts, getTopicPages, topicPath } from '../../lib/posts';
+import { breadcrumbs } from '../../lib/structured-data';
 
 const copy = await getEntry('rss', 'rss');
 if (!copy) throw new Error('src/content/rss.yaml: missing the `rss` entry');
@@ -25,7 +26,11 @@ const topicPages = await getTopicPages();
 const latest = (await getPosts()).slice(0, 3);
 ---
 
-<Base title="rss feed" description={intro}>
+<Base
+  title="rss feed"
+  description={intro}
+  structuredData={[breadcrumbs([{ name: 'rss feed', path: '/rss/' }])]}
+>
   <div class="column">
     <PageHead
       title="rss feed"

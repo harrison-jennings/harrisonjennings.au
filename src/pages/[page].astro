@@ -8,6 +8,7 @@ import PageHead from '../components/blog/PageHead.astro';
 import Toc from '../components/blog/Toc.astro';
 import Base from '../layouts/Base.astro';
 import { formatDate, isoDate } from '../lib/dates';
+import { breadcrumbs } from '../lib/structured-data';
 import '../styles/prose.css';
 
 export async function getStaticPaths() {
@@ -29,7 +30,11 @@ const { Content, headings } = await render(page);
 const toc = headings.filter((h) => h.depth === 2 && h.slug !== 'footnote-label');
 ---
 
-<Base title={title} description={description}>
+<Base
+  title={title}
+  description={description}
+  structuredData={[breadcrumbs([{ name: title, path: `/${page.id}/` }])]}
+>
   <div class="column">
     <div class="legal-head">
       <PageHead title={title} intro={description}>

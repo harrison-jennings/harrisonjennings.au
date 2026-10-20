@@ -4,6 +4,7 @@ import sitemap from '@astrojs/sitemap';
 import { defineConfig } from 'astro/config';
 import remarkDirective from 'remark-directive';
 import { csp } from './src/lib/csp-build.ts';
+import { lastModified } from './src/lib/sitemap.ts';
 import { remarkCallouts } from './src/lib/markdown/callouts.ts';
 import { remarkCookieSettings } from './src/lib/markdown/cookie-settings.ts';
 import { remarkCookieTable } from './src/lib/markdown/cookie-table.ts';
@@ -17,6 +18,8 @@ import { rehypeFigures, remarkNoZoom } from './src/lib/markdown/images.ts';
 import { remarkReadingTime } from './src/lib/markdown/reading-time.ts';
 import { rehypeHeadingCeiling, rehypeTables } from './src/lib/markdown/structure.ts';
 
+const dates = lastModified();
+
 // Static output only: Cloudflare Workers serves the built files from ./dist as static assets.
 // See docs/architecture.md before adding an adapter or server routes.
 export default defineConfig({
@@ -24,7 +27,17 @@ export default defineConfig({
   output: 'static',
   trailingSlash: 'always',
   // csp() last: it reads the finished pages and writes the Content-Security-Policy into dist/_headers.
-  integrations: [mdx(), sitemap(), csp()],
+  integrations: [
+    mdx(),
+    // Each dated page gets a lastmod (src/lib/sitemap.ts); topic pages without enough posts don't exist.
+    sitemap({
+      serialize(item) {
+        const lastmod = dates.get(new URL(item.url).pathname);
+        return lastmod ? { ...item, lastmod } : item;
+      },
+    }),
+    csp(),
+  ],
   build: {
     format: 'directory',
   },

@@ -9,6 +9,7 @@ import { feedPath } from '../lib/feed';
 import { WIDTH, HEIGHT } from '../lib/og/card';
 import { CONSENT_COOKIE } from '../lib/consent';
 import { shareImageFor } from '../lib/og/cards';
+import { graph, type Thing } from '../lib/structured-data';
 import { tagManagerEnvironment, tagManagerSrc } from '../lib/tag-manager';
 
 interface Props {
@@ -24,6 +25,8 @@ interface Props {
   image?: { src: string; width: number; height: number } | undefined;
   /** What the page tells Tag Manager about itself (the data layer keys the WordPress site used). */
   dataLayer?: { page_type?: string; categories?: string; post_id?: string } | undefined;
+  /** Structured data for this page (src/lib/structured-data.ts), beside the WebSite and Person. */
+  structuredData?: Thing[];
 }
 
 const {
@@ -34,6 +37,7 @@ const {
   feeds = [],
   image,
   dataLayer = {},
+  structuredData = [],
 } = Astro.props;
 const pageTitle = title ? `${title} · ${SITE.name}` : SITE.name;
 const canonical = new URL(Astro.url.pathname, Astro.site);
@@ -105,7 +109,8 @@ const tagManagerHead =
     {tagManagerHead && <script is:inline set:html={tagManagerHead} />}
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonical} />
+    {/* No canonical on a page kept out of search (drafts, the 404, the placeholder home page). */}
+    {!noindex && <link rel="canonical" href={canonical} />}
     {noindex && <meta name="robots" content="noindex" />}
 
     <link rel="icon" href="/favicon.ico" sizes="48x48" />
@@ -143,6 +148,7 @@ const tagManagerHead =
     <meta property="og:image:alt" content={title ?? SITE.name} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content={shareUrl} />
+    <script is:inline type="application/ld+json" set:html={graph(structuredData)} />
   </head>
   <body>
     <a class="skip-link" href="#main">

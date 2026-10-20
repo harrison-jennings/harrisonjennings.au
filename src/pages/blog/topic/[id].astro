@@ -1,12 +1,14 @@
 ---
 // A topic page: the same template as the blog, filtered. Only topics with two or more posts get one.
+import { getEntry } from 'astro:content';
 import PageHead from '../../../components/blog/PageHead.astro';
 import PostArchive from '../../../components/blog/PostArchive.astro';
 import TopicChips from '../../../components/blog/TopicChips.astro';
 import { SITE } from '../../../consts';
 import Base from '../../../layouts/Base.astro';
 import { feedPath } from '../../../lib/feed';
-import { getPosts, getTopicPages } from '../../../lib/posts';
+import { getPosts, getTopicPages, topicPath } from '../../../lib/posts';
+import { blog, breadcrumbs, collectionPage } from '../../../lib/structured-data';
 import { topicChips, topicPageIds } from '../../../lib/topics';
 
 export async function getStaticPaths() {
@@ -19,12 +21,22 @@ export async function getStaticPaths() {
 const { topic, posts } = Astro.props;
 const total = (await getPosts()).length;
 const count = `${posts.length} ${posts.length === 1 ? 'post' : 'posts'}.`;
+const blogIntro = (await getEntry('blog', 'blog'))?.data.intro ?? '';
+const path = topicPath(topic);
 ---
 
 <Base
   title={topic.data.name}
   description={topic.data.description}
   feeds={[{ title: `${topic.data.name} · ${SITE.name}`, href: feedPath(topic.id) }]}
+  structuredData={[
+    blog(blogIntro),
+    collectionPage({ path, name: topic.data.name, description: topic.data.description }),
+    breadcrumbs([
+      { name: 'blog', path: '/blog/' },
+      { name: topic.data.name, path },
+    ]),
+  ]}
 >
   <div class="column">
     <PageHead

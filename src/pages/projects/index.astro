@@ -9,6 +9,7 @@ import ProjectLinks from '../../components/ProjectLinks.astro';
 import PageHead from '../../components/blog/PageHead.astro';
 import Base from '../../layouts/Base.astro';
 import { postPath } from '../../lib/posts';
+import { breadcrumbs } from '../../lib/structured-data';
 
 const copy = await getEntry('projectsPage', 'projects');
 if (!copy) throw new Error('src/content/projects-page.yaml: missing the `projects` entry');
@@ -25,7 +26,11 @@ const nameHref = async (project: (typeof projects)[number]) => {
 const number = (i: number) => String(i + 1).padStart(2, '0');
 ---
 
-<Base title="projects" description={copy.data.intro}>
+<Base
+  title="projects"
+  description={copy.data.intro}
+  structuredData={[breadcrumbs([{ name: 'projects', path: '/projects/' }])]}
+>
   <div class="column">
     <PageHead title="projects" intro={copy.data.intro} />
 
