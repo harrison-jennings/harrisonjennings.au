@@ -31,6 +31,8 @@ export const CSP_SOURCES: Record<string, string[]> = {
     'https://*.google-analytics.com',
     'https://ssl.gstatic.com',
     'https://www.gstatic.com',
+    // Tag Assistant's badge icons (not in Google's list; seen in preview mode).
+    'https://fonts.gstatic.com',
   ],
   'font-src': ["'self'", 'data:', 'https://fonts.gstatic.com'],
   'connect-src': [
