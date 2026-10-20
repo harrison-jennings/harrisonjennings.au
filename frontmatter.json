@@ -61,7 +61,13 @@
   "frontMatter.dashboard.content.defaults": {
     "sorting": "published-desc"
   },
-  "frontMatter.content.filters": ["contentFolders", { "title": "topic", "name": "topics" }],
+  "frontMatter.content.filters": [
+    "contentFolders",
+    {
+      "title": "topic",
+      "name": "topics"
+    }
+  ],
   "frontMatter.data.files": [
     {
       "id": "topics",
@@ -74,9 +80,18 @@
         "type": "object",
         "required": ["id", "name", "description"],
         "properties": {
-          "id": { "type": "string", "title": "id" },
-          "name": { "type": "string", "title": "name" },
-          "description": { "type": "string", "title": "description" }
+          "id": {
+            "type": "string",
+            "title": "id"
+          },
+          "name": {
+            "type": "string",
+            "title": "name"
+          },
+          "description": {
+            "type": "string",
+            "title": "description"
+          }
         }
       }
     }
@@ -140,7 +155,11 @@
           "multiple": true,
           "description": "From topics.yaml. The first is the post's main topic."
         },
-        { "title": "search", "name": "searchHeading", "type": "heading" },
+        {
+          "title": "search",
+          "name": "searchHeading",
+          "type": "heading"
+        },
         {
           "title": "search title",
           "name": "searchTitle",
@@ -154,7 +173,11 @@
           "type": "string",
           "description": "Up to 155 characters: the description in search results and share previews."
         },
-        { "title": "images", "name": "imagesHeading", "type": "heading" },
+        {
+          "title": "images",
+          "name": "imagesHeading",
+          "type": "heading"
+        },
         {
           "title": "cover",
           "name": "cover",
@@ -175,7 +198,11 @@
           "type": "image",
           "description": "Replaces the generated share card. Usually leave empty."
         },
-        { "title": "reading", "name": "readingHeading", "type": "heading" },
+        {
+          "title": "reading",
+          "name": "readingHeading",
+          "type": "heading"
+        },
         {
           "title": "keep reading",
           "name": "related",
@@ -208,7 +235,13 @@
       "fileType": "md",
       "clearEmpty": true,
       "fields": [
-        { "title": "title", "name": "title", "type": "string", "single": true, "required": true },
+        {
+          "title": "title",
+          "name": "title",
+          "type": "string",
+          "single": true,
+          "required": true
+        },
         {
           "title": "description",
           "name": "description",
@@ -242,14 +275,42 @@
           "name": "contact",
           "type": "fields",
           "fields": [
-            { "title": "closing line", "name": "text", "type": "string", "required": true },
-            { "title": "email", "name": "email", "type": "string", "single": true }
+            {
+              "title": "closing line",
+              "name": "text",
+              "type": "string",
+              "required": true
+            },
+            {
+              "title": "email",
+              "name": "email",
+              "type": "string",
+              "single": true
+            }
           ]
         }
       ]
     }
   ],
   "frontMatter.content.snippets": {
+    "quote": {
+      "title": "quote",
+      "description": "A pull quote around the selected sentence.",
+      "body": "> [[&selection]]",
+      "fields": [
+        {
+          "name": "selection",
+          "title": "text",
+          "type": "string",
+          "default": "FM_SELECTED_TEXT"
+        }
+      ]
+    },
+    "section break": {
+      "title": "section break",
+      "description": "Three brick dots between parts of a post.",
+      "body": ["", "---", ""]
+    },
     "callout": {
       "title": "callout",
       "description": "A note, tip or heads-up box around the selected text.",
@@ -262,17 +323,43 @@
           "choices": ["note", "tip", "warning"],
           "default": "note"
         },
-        { "name": "selection", "title": "text", "type": "string", "default": "FM_SELECTED_TEXT" }
+        {
+          "name": "selection",
+          "title": "text",
+          "type": "string",
+          "default": "FM_SELECTED_TEXT"
+        }
       ]
     },
-    "code block with a file name": {
-      "title": "code block with a file name",
-      "description": "A fenced code block with its language and file name.",
-      "body": ["```[[language]] title=\"[[file]]\"", "[[&selection]]", "```"],
+    "footnote marker": {
+      "title": "footnote marker",
+      "description": "The number in the text. Add the footnote text with the same number anywhere in the post (usually the end).",
+      "body": "[^[[id]]]",
       "fields": [
-        { "name": "language", "title": "language (js, ts, sh, vtl…)", "type": "string" },
-        { "name": "file", "title": "file name", "type": "string" },
-        { "name": "selection", "title": "code", "type": "string", "default": "FM_SELECTED_TEXT" }
+        {
+          "name": "id",
+          "title": "number",
+          "type": "string",
+          "default": "1"
+        }
+      ]
+    },
+    "footnote text": {
+      "title": "footnote text",
+      "description": "The footnote itself, matched to its marker by number. It shows at the end of the post.",
+      "body": "[^[[id]]]: [[note]]",
+      "fields": [
+        {
+          "name": "id",
+          "title": "number",
+          "type": "string",
+          "default": "1"
+        },
+        {
+          "name": "note",
+          "title": "footnote",
+          "type": "string"
+        }
       ]
     },
     "details": {
@@ -287,8 +374,116 @@
         "</details>"
       ],
       "fields": [
-        { "name": "summary", "title": "summary line", "type": "string" },
-        { "name": "selection", "title": "content", "type": "string", "default": "FM_SELECTED_TEXT" }
+        {
+          "name": "summary",
+          "title": "summary line",
+          "type": "string"
+        },
+        {
+          "name": "selection",
+          "title": "content",
+          "type": "string",
+          "default": "FM_SELECTED_TEXT"
+        }
+      ]
+    },
+    "table": {
+      "title": "table",
+      "description": "A three-column table; the last column is right-aligned, so its numbers are set in Martian Mono.",
+      "body": ["| [[first]] | [[second]] | [[number]] |", "| --- | --- | ---: |", "|  |  |  |"],
+      "fields": [
+        {
+          "name": "first",
+          "title": "first column",
+          "type": "string"
+        },
+        {
+          "name": "second",
+          "title": "second column",
+          "type": "string"
+        },
+        {
+          "name": "number",
+          "title": "number column",
+          "type": "string"
+        }
+      ]
+    },
+    "code block": {
+      "title": "code block",
+      "description": "A fenced code block. The language is never guessed: leave it empty for plain text.",
+      "body": ["```[[language]]", "[[&selection]]", "```"],
+      "fields": [
+        {
+          "name": "language",
+          "title": "language (js, ts, sh, vtl…)",
+          "type": "string"
+        },
+        {
+          "name": "selection",
+          "title": "code",
+          "type": "string",
+          "default": "FM_SELECTED_TEXT"
+        }
+      ]
+    },
+    "code block with a file name": {
+      "title": "code block with a file name",
+      "description": "A fenced code block with its language and file name.",
+      "body": ["```[[language]] title=\"[[file]]\"", "[[&selection]]", "```"],
+      "fields": [
+        {
+          "name": "language",
+          "title": "language (js, ts, sh, vtl…)",
+          "type": "string"
+        },
+        {
+          "name": "file",
+          "title": "file name",
+          "type": "string"
+        },
+        {
+          "name": "selection",
+          "title": "code",
+          "type": "string",
+          "default": "FM_SELECTED_TEXT"
+        }
+      ]
+    },
+    "code block with highlighted lines": {
+      "title": "code block with highlighted lines",
+      "description": "Highlights the given lines, such as 2-3 or 1,4.",
+      "body": ["```[[language]] {[[lines]]}", "[[&selection]]", "```"],
+      "fields": [
+        {
+          "name": "language",
+          "title": "language (js, ts, sh, vtl…)",
+          "type": "string"
+        },
+        {
+          "name": "lines",
+          "title": "lines to highlight",
+          "type": "string"
+        },
+        {
+          "name": "selection",
+          "title": "code",
+          "type": "string",
+          "default": "FM_SELECTED_TEXT"
+        }
+      ]
+    },
+    "terminal commands": {
+      "title": "terminal commands",
+      "description": "Shell commands. Start each line with $ : the prompt is muted and left out of the copy button.",
+      "body": ["```sh", "$ [[&selection]]", "```"],
+      "fields": [
+        {
+          "name": "selection",
+          "title": "command",
+          "type": "string",
+          "default": "FM_SELECTED_TEXT"
+        }
       ]
     },
     "images side by side (.mdx)": {
@@ -307,7 +502,11 @@
           "choices": ["2", "3"],
           "default": "2"
         },
-        { "name": "caption", "title": "caption", "type": "string" }
+        {
+          "name": "caption",
+          "title": "caption",
+          "type": "string"
+        }
       ]
     },
     "YouTube video (.mdx)": {
@@ -315,9 +514,58 @@
       "description": "Loads nothing from YouTube until it's played. .mdx posts only.",
       "body": "<YouTube id=\"[[id]]\" title=\"[[title]]\" />",
       "fields": [
-        { "name": "id", "title": "video id (after watch?v=)", "type": "string" },
-        { "name": "title", "title": "what it shows", "type": "string" }
+        {
+          "name": "id",
+          "title": "video id (after watch?v=)",
+          "type": "string"
+        },
+        {
+          "name": "title",
+          "title": "what it shows",
+          "type": "string"
+        }
       ]
+    },
+    "YouTube video with a poster (.mdx)": {
+      "title": "YouTube video with a poster (.mdx)",
+      "description": "Shows a still frame saved beside the post (16:9) behind the play button. .mdx posts only.",
+      "body": [
+        "import [[name]] from './[[file]]';",
+        "",
+        "<YouTube id=\"[[id]]\" title=\"[[title]]\" poster={[[name]]} />"
+      ],
+      "fields": [
+        {
+          "name": "id",
+          "title": "video id (after watch?v=)",
+          "type": "string"
+        },
+        {
+          "name": "title",
+          "title": "what it shows",
+          "type": "string"
+        },
+        {
+          "name": "file",
+          "title": "still frame file, beside the post",
+          "type": "string",
+          "default": "video-poster.jpg"
+        },
+        {
+          "name": "name",
+          "title": "a name for it, unique in the post",
+          "type": "string",
+          "default": "poster"
+        }
+      ]
+    },
+    "image": {
+      "title": "image",
+      "description": "An image that opens in the image viewer.",
+      "isMediaSnippet": true,
+      "openingTags": "{{",
+      "closingTags": "}}",
+      "body": "![{{alt}}]({{&mediaUrl}})"
     },
     "image with caption": {
       "title": "image with caption",
@@ -334,6 +582,14 @@
       "openingTags": "{{",
       "closingTags": "}}",
       "body": "![{{alt}}]({{&mediaUrl}}){nozoom}"
+    },
+    "image without zoom (.mdx)": {
+      "title": "image without zoom (.mdx)",
+      "description": "An image left out of the image viewer, in an .mdx post.",
+      "isMediaSnippet": true,
+      "openingTags": "{{",
+      "closingTags": "}}",
+      "body": "![{{alt}}]({{&mediaUrl}})\\{nozoom}"
     }
   }
 }
