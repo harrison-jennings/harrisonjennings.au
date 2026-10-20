@@ -83,13 +83,15 @@ test('"accept all" grants analytics and advertising, logs it, and is remembered'
         : [];
     }),
   );
-  expect(order.indexOf('update')).toBeGreaterThan(-1);
-  expect(order.indexOf('update')).toBeLessThan(order.indexOf('event'));
+  // One update, not two.
+  expect(order).toEqual(['update', 'event']);
 
-  // Next page: no banner, and the saved choice applies in the head, before Tag Manager would load.
+  // Next page: no banner, and the saved choice applies in the head, before Tag Manager would load,
+  // with no second update after it.
   await page.goto('/blog/');
   await expect(banner(page)).toBeHidden();
-  expect((await consentCommands(page)).slice(0, 2)).toEqual([
+  await page.waitForLoadState('load');
+  expect(await consentCommands(page)).toEqual([
     ['default', 'denied', 'denied'],
     ['update', 'granted', 'granted'],
   ]);
@@ -185,7 +187,11 @@ test.describe('the preferences dialog', () => {
       categories: ['necessary', 'analytics'],
       action: 'custom',
     });
-    expect(await consentCommands(page)).toContainEqual(['update', 'granted', 'denied']);
+    // The change is one update, after the one from the first choice.
+    expect((await consentCommands(page)).filter(([command]) => command === 'update')).toEqual([
+      ['update', 'granted', 'granted'],
+      ['update', 'granted', 'denied'],
+    ]);
     await expect(
       page.getByRole('contentinfo').getByRole('button', { name: 'cookie settings' }),
     ).toBeFocused();
