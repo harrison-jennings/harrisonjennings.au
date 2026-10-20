@@ -8,10 +8,14 @@ import Hero from '../components/home/Hero.astro';
 import LatestPosts from '../components/home/LatestPosts.astro';
 import Services from '../components/home/Services.astro';
 import Testimonials from '../components/home/Testimonials.astro';
+import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
+import { business } from '../lib/structured-data';
+
+const services = (await getCollection('services')).map((s) => s.data);
 ---
 
-<Base noindex float>
+<Base noindex float structuredData={[business(services)]}>
   <Hero />
   <div class="sections">
     <Services />

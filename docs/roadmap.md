@@ -6,25 +6,26 @@ From WordPress on VentraIP to this repo, live before the hosting renews on **11 
 
 | #   | phase                     | target         | status      |
 | --- | ------------------------- | -------------- | ----------- |
-| 1   | inventory and backup      | by 20 Oct      | to do       |
+| 1   | inventory and backup      | by 20 Oct      | in progress |
 | 2   | brand identity and tokens | 18 Oct         | done        |
-| 3   | scaffold and pipeline     | 18–20 Oct      | in progress |
+| 3   | scaffold and pipeline     | 18–20 Oct      | done        |
 | 4   | page mockups              | 19–24 Oct      | done        |
-| 5   | page build                | 22–30 Oct      | in progress |
-| 6   | content migration         | 22–30 Oct      |             |
-| 7   | analytics and consent     | 27 Oct – 1 Nov |             |
-| 8   | SEO parity and quality    | 30 Oct – 3 Nov |             |
+| 5   | page build                | 22–30 Oct      | done        |
+| 6   | content migration         | 22–30 Oct      | done        |
+| 7   | analytics and consent     | 27 Oct – 1 Nov | launch left |
+| 8   | SEO and quality           | 30 Oct – 3 Nov | in progress |
 | 9   | cutover                   | 4 Nov          |             |
 | 10  | observe and decommission  | 4–10 Nov       |             |
 
 ## 1. inventory and backup
 
-- [ ] Full backup from VentraIP (files and database), kept offline
+- [x] Full backup from VentraIP (files and database), kept offline
 - [x] WordPress export (Tools → Export → All content)
-- [ ] Plugin list, Yoast and Pressidium settings, the Pressidium consent records, both Tag Manager containers
+- [x] Pressidium settings and consent records, both Tag Manager containers
+- [ ] Plugin list and Yoast settings
 - [x] Crawl the live site and save the full URL list (the Yoast sitemaps: 6 posts, 4 pages, 8 categories)
 - [ ] Audit every DNS record in Cloudflare and note what each points at; leave the iCloud mail records (MX, SPF, DKIM) alone
-- [ ] Passkeys or hardware keys on GitHub, Cloudflare, the registrar and Tag Manager
+- [x] Strong sign-in everywhere: a passkey on GitHub; Cloudflare and Tag Manager through the Google account, which has a passkey; an authenticator app on VentraIP
 
 ## 2. brand identity and tokens
 
@@ -80,18 +81,29 @@ Built in five stages, one pull request each, from `design/` (see `design/README.
 - [x] CookieConsent v3 with Google Consent Mode (advanced); consent reset at launch (a new cookie, revision 1)
 - [x] Cookie banner and preferences dialog, to the `14-consent` mockups
 - [x] Tag Manager and the data layer, loading through `measure.harrisonjennings.au` (Live on production, Testing on previews)
-- [ ] In Tag Manager: remove the Pressidium consent tag and publish that to Testing now and Live at cutover; confirm the advertising cookies once an ad tag is switched on
+- [x] In Tag Manager: remove the Pressidium consent tag and template (published to Testing; Live at cutover)
+- [ ] Confirm the advertising cookies once an ad tag is switched on
 - [x] Every consent state tested in Tag Manager preview and GA4 DebugView
 - [x] D1 consent logger (a Worker route; pages stay static)
 - [ ] Records confirmed arriving in the production D1
-- [ ] Pressidium records exported and archived off-site
+- [x] Pressidium records exported and archived off-site
 - [x] Content-Security-Policy in `_headers`, Report-Only, with violation reports counted in D1 (`/api/csp-report`)
 - [x] In Tag Manager: replace or remove the Custom JavaScript variables the GA4 tags use, and the "GTM Environment" Custom HTML tag, so the policy needs no `'unsafe-eval'` or `'unsafe-inline'` (published to Testing)
 - [ ] A week of clean production CSP reports, then switch the header from Report-Only to enforced
 - [x] Cookie list as data (`src/content/consent.yaml`), feeding both the cookie preferences dialog and the privacy policy (`::cookie-table{category="…"}`); a table on desktop, stacked on phones
 - [x] Update the privacy policy for the new site: Cloudflare hosting, no WordPress, the consent records, the new consent cookie; set its date at cutover
 
-## 8. SEO parity and quality
+## 8. SEO and quality
+
+Better than the WordPress site, not just level with it: most of its posts sat in Search Console as "crawled – currently not indexed".
+
+- [x] Structured data: WebSite and Person on every page, ProfessionalService on the home page, BlogPosting on posts, Blog and CollectionPage on the blog and topic pages, breadcrumbs on inner pages
+- [x] Sitemap `lastmod` from post and page dates; no canonical address on pages kept out of search
+- [ ] Search Console exports reviewed (indexing reasons, queries, pages), to target titles and descriptions at real searches
+- [ ] Search titles and descriptions: an optional search title per post (the headline stays on the page), and descriptions written for search, up to 155 characters, approved by Harrison
+- [ ] Keep thin utility pages (`/rss/`) out of the index
+- [ ] 🛠️ CI Orchestrator: one workflow calling quality, end-to-end, Lighthouse, CodeQL and dependency review (the merge rule's required check updated with it)
+- [ ] 🚀 CD Orchestrator: posts each PR's preview link, and after `main` deploys, smoke-tests production (pages, redirects, headers, consent banner); production checks switched on at cutover
 
 - [ ] Every URL in the crawl either returns 200 or 301s to its new home in one hop; WordPress-only URLs return a real 404
 - [ ] Old Yoast and WordPress sitemap URLs 301 to the new sitemap index (already in `_redirects`)
@@ -111,6 +123,8 @@ Built in five stages, one pull request each, from `design/` (see `design/README.
 - [ ] Spot-check pages, consent banner, booking, analytics and consent logging on the live domain
 - [ ] Clean up WordPress-era Cloudflare settings (cache and page rules, Automatic Platform Optimization); keep Rocket Loader off
 - [ ] Submit the sitemap in Search Console; annotate the date in GA4
+- [ ] Request indexing for each post with URL Inspection; check the structured data in Search Console's enhancements reports
+- [ ] Turn on Crawler Hints (IndexNow) in Cloudflare, so Bing hears about changes straight away
 
 ## 10. observe and decommission
 
