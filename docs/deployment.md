@@ -36,6 +36,8 @@ The consent log is a D1 database bound to the Worker as `CONSENT_DB` (`wrangler.
 
 **Previews** don't inherit production bindings, so they write to their own database, `harrisonjennings-consent-preview` (`previews.d1_databases` in `wrangler.jsonc`), and test clicks never reach the production log. Create or update its table with `npx wrangler d1 migrations apply CONSENT_DB --remote -c wrangler.preview-migrations.jsonc`. Previews have no `CONSENT_IP_KEY`, so their rows store no IP hash.
 
+**Retention:** a Cron Trigger on the Worker (`triggers` in `wrangler.jsonc`, daily at 03:17 UTC) deletes consent records older than 12 months and CSP reports older than 90 days. It runs on the production deployment only; its runs show under the Worker's **Settings → Trigger events** and in its logs.
+
 To look someone up, run a query in the database's **Console** tab, e.g. `SELECT * FROM consent_log WHERE consent_id = '…' ORDER BY created_at`. Rows from previews have `environment = 'preview'`.
 
 ## CSP reports
