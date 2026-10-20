@@ -1,0 +1,598 @@
+{
+  "$schema": "https://frontmatter.codes/frontmatter.schema.json",
+  "frontMatter.framework.id": "astro",
+  "frontMatter.preview.host": "http://localhost:4321",
+  "frontMatter.website.host": "https://www.harrisonjennings.au",
+  "frontMatter.content.publicFolder": {
+    "path": "[[workspace]]/public",
+    "relative": true
+  },
+  "frontMatter.content.pageFolders": [
+    {
+      "title": "posts",
+      "path": "[[workspace]]/src/content/posts",
+      "contentTypes": ["post"],
+      "previewPath": "/blog",
+      "trailingSlash": true,
+      "filePrefix": ""
+    },
+    {
+      "title": "legal pages",
+      "path": "[[workspace]]/src/content/pages",
+      "contentTypes": ["page"],
+      "previewPath": "",
+      "trailingSlash": true,
+      "filePrefix": "",
+      "disableCreation": true
+    }
+  ],
+  "frontMatter.templates.prefix": "",
+  "frontMatter.content.defaultFileType": "md",
+  "frontMatter.content.draftField": {
+    "name": "draft",
+    "type": "boolean"
+  },
+  "frontMatter.taxonomy.dateFormat": "yyyy-MM-dd",
+  "frontMatter.content.autoUpdateDate": false,
+  "frontMatter.taxonomy.seoTitleField": "searchTitle",
+  "frontMatter.taxonomy.seoTitleLength": 65,
+  "frontMatter.taxonomy.seoDescriptionField": "searchDescription",
+  "frontMatter.taxonomy.seoDescriptionLength": 155,
+  "frontMatter.panel.freeform": false,
+  "frontMatter.snippets.wrapper.enabled": false,
+  "frontMatter.dashboard.content.cardTags": "topics",
+  "frontMatter.content.sorting": [
+    {
+      "id": "published-desc",
+      "title": "newest first",
+      "name": "published",
+      "order": "desc",
+      "type": "date"
+    },
+    {
+      "id": "published-asc",
+      "title": "oldest first",
+      "name": "published",
+      "order": "asc",
+      "type": "date"
+    }
+  ],
+  "frontMatter.content.defaultSorting": "published-desc",
+  "frontMatter.dashboard.content.defaults": {
+    "sorting": "published-desc"
+  },
+  "frontMatter.content.filters": [
+    "contentFolders",
+    {
+      "title": "topic",
+      "name": "topics"
+    }
+  ],
+  "frontMatter.data.files": [
+    {
+      "id": "topics",
+      "title": "topics",
+      "file": "[[workspace]]/src/content/topics.yaml",
+      "fileType": "yaml",
+      "labelField": "name",
+      "schema": {
+        "title": "topic",
+        "type": "object",
+        "required": ["id", "name", "description"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "id"
+          },
+          "name": {
+            "type": "string",
+            "title": "name"
+          },
+          "description": {
+            "type": "string",
+            "title": "description"
+          }
+        }
+      }
+    }
+  ],
+  "frontMatter.taxonomy.contentTypes": [
+    {
+      "name": "post",
+      "pageBundle": true,
+      "previewPath": "/blog",
+      "trailingSlash": true,
+      "filePrefix": "",
+      "fileType": "md",
+      "template": "[[workspace]]/.frontmatter/templates/post.md",
+      "clearEmpty": true,
+      "fields": [
+        {
+          "title": "title",
+          "name": "title",
+          "type": "string",
+          "single": true,
+          "required": true,
+          "description": "Lowercase, like every heading on the site."
+        },
+        {
+          "title": "description",
+          "name": "description",
+          "type": "string",
+          "required": true,
+          "description": "Up to 180 characters: the dek under the title, the card excerpt, and the meta description unless a search description is set."
+        },
+        {
+          "title": "published",
+          "name": "published",
+          "type": "datetime",
+          "dateFormat": "yyyy-MM-dd",
+          "isPublishDate": true,
+          "required": true,
+          "default": "{{now}}"
+        },
+        {
+          "title": "updated",
+          "name": "updated",
+          "type": "datetime",
+          "dateFormat": "yyyy-MM-dd",
+          "isModifiedDate": true,
+          "description": "Only when the post changes meaningfully."
+        },
+        {
+          "title": "draft",
+          "name": "draft",
+          "type": "draft",
+          "description": "On: shows in npm run dev only. New posts start on; switch off to publish."
+        },
+        {
+          "title": "topics",
+          "name": "topics",
+          "type": "dataFile",
+          "dataFileId": "topics",
+          "dataFileKey": "id",
+          "dataFileValue": "name",
+          "multiple": true,
+          "description": "From topics.yaml. The first is the post's main topic."
+        },
+        {
+          "title": "search",
+          "name": "searchHeading",
+          "type": "heading"
+        },
+        {
+          "title": "search title",
+          "name": "searchTitle",
+          "type": "string",
+          "single": true,
+          "description": "Up to 65 characters: the title in search results and share previews. Lead with what people search for."
+        },
+        {
+          "title": "search description",
+          "name": "searchDescription",
+          "type": "string",
+          "description": "Up to 155 characters: the description in search results and share previews."
+        },
+        {
+          "title": "images",
+          "name": "imagesHeading",
+          "type": "heading"
+        },
+        {
+          "title": "cover",
+          "name": "cover",
+          "type": "image",
+          "isPreviewImage": true,
+          "description": "An image in the post's folder."
+        },
+        {
+          "title": "cover alt text",
+          "name": "coverAlt",
+          "type": "string",
+          "single": true,
+          "description": "What the cover shows, for screen readers. Required with a cover."
+        },
+        {
+          "title": "social image",
+          "name": "socialImage",
+          "type": "image",
+          "description": "Replaces the generated share card. Usually leave empty."
+        },
+        {
+          "title": "reading",
+          "name": "readingHeading",
+          "type": "heading"
+        },
+        {
+          "title": "keep reading",
+          "name": "related",
+          "type": "contentRelationship",
+          "contentTypeName": "post",
+          "contentTypeValue": "slug",
+          "multiple": true,
+          "description": "Up to three posts. Leave empty to pick by shared topics."
+        },
+        {
+          "title": "on this page",
+          "name": "toc",
+          "type": "boolean",
+          "default": true,
+          "description": "The contents list beside the text. Hidden anyway with fewer than three ## headings."
+        },
+        {
+          "title": "WordPress ID",
+          "name": "wpId",
+          "type": "number",
+          "hidden": true
+        }
+      ]
+    },
+    {
+      "name": "page",
+      "pageBundle": false,
+      "previewPath": "",
+      "trailingSlash": true,
+      "fileType": "md",
+      "clearEmpty": true,
+      "fields": [
+        {
+          "title": "title",
+          "name": "title",
+          "type": "string",
+          "single": true,
+          "required": true
+        },
+        {
+          "title": "description",
+          "name": "description",
+          "type": "string",
+          "required": true,
+          "description": "Up to 180 characters."
+        },
+        {
+          "title": "updated",
+          "name": "updated",
+          "type": "datetime",
+          "dateFormat": "yyyy-MM-dd",
+          "isModifiedDate": true,
+          "required": true,
+          "description": "Shown on the page: change it whenever the wording changes."
+        },
+        {
+          "title": "date label",
+          "name": "updatedLabel",
+          "type": "choice",
+          "choices": ["Last updated", "Effective"]
+        },
+        {
+          "title": "the short version",
+          "name": "summary",
+          "type": "list",
+          "description": "Four or five plain-language points above the policy."
+        },
+        {
+          "title": "contact",
+          "name": "contact",
+          "type": "fields",
+          "fields": [
+            {
+              "title": "closing line",
+              "name": "text",
+              "type": "string",
+              "required": true
+            },
+            {
+              "title": "email",
+              "name": "email",
+              "type": "string",
+              "single": true
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "frontMatter.content.snippets": {
+    "quote": {
+      "title": "quote",
+      "description": "A pull quote around the selected sentence.",
+      "body": "> [[&selection]]",
+      "fields": [
+        {
+          "name": "selection",
+          "title": "text",
+          "type": "string",
+          "default": "FM_SELECTED_TEXT"
+        }
+      ]
+    },
+    "section break": {
+      "title": "section break",
+      "description": "Three brick dots between parts of a post.",
+      "body": ["", "---", ""]
+    },
+    "callout": {
+      "title": "callout",
+      "description": "A note, tip or heads-up box around the selected text.",
+      "body": [":::[[type]]", "[[&selection]]", ":::"],
+      "fields": [
+        {
+          "name": "type",
+          "title": "kind",
+          "type": "choice",
+          "choices": ["note", "tip", "warning"],
+          "default": "note"
+        },
+        {
+          "name": "selection",
+          "title": "text",
+          "type": "string",
+          "default": "FM_SELECTED_TEXT"
+        }
+      ]
+    },
+    "footnote marker": {
+      "title": "footnote marker",
+      "description": "The number in the text. Add the footnote text with the same number anywhere in the post (usually the end).",
+      "body": "[^[[id]]]",
+      "fields": [
+        {
+          "name": "id",
+          "title": "number",
+          "type": "string",
+          "default": "1"
+        }
+      ]
+    },
+    "footnote text": {
+      "title": "footnote text",
+      "description": "The footnote itself, matched to its marker by number. It shows at the end of the post.",
+      "body": "[^[[id]]]: [[note]]",
+      "fields": [
+        {
+          "name": "id",
+          "title": "number",
+          "type": "string",
+          "default": "1"
+        },
+        {
+          "name": "note",
+          "title": "footnote",
+          "type": "string"
+        }
+      ]
+    },
+    "details": {
+      "title": "details",
+      "description": "A closed-by-default section for long scripts and asides.",
+      "body": [
+        "<details>",
+        "<summary>[[summary]]</summary>",
+        "",
+        "[[&selection]]",
+        "",
+        "</details>"
+      ],
+      "fields": [
+        {
+          "name": "summary",
+          "title": "summary line",
+          "type": "string"
+        },
+        {
+          "name": "selection",
+          "title": "content",
+          "type": "string",
+          "default": "FM_SELECTED_TEXT"
+        }
+      ]
+    },
+    "table": {
+      "title": "table",
+      "description": "A three-column table; the last column is right-aligned, so its numbers are set in Martian Mono.",
+      "body": ["| [[first]] | [[second]] | [[number]] |", "| --- | --- | ---: |", "|  |  |  |"],
+      "fields": [
+        {
+          "name": "first",
+          "title": "first column",
+          "type": "string"
+        },
+        {
+          "name": "second",
+          "title": "second column",
+          "type": "string"
+        },
+        {
+          "name": "number",
+          "title": "number column",
+          "type": "string"
+        }
+      ]
+    },
+    "code block": {
+      "title": "code block",
+      "description": "A fenced code block. The language is never guessed: leave it empty for plain text.",
+      "body": ["```[[language]]", "[[&selection]]", "```"],
+      "fields": [
+        {
+          "name": "language",
+          "title": "language (js, ts, sh, vtl…)",
+          "type": "string"
+        },
+        {
+          "name": "selection",
+          "title": "code",
+          "type": "string",
+          "default": "FM_SELECTED_TEXT"
+        }
+      ]
+    },
+    "code block with a file name": {
+      "title": "code block with a file name",
+      "description": "A fenced code block with its language and file name.",
+      "body": ["```[[language]] title=\"[[file]]\"", "[[&selection]]", "```"],
+      "fields": [
+        {
+          "name": "language",
+          "title": "language (js, ts, sh, vtl…)",
+          "type": "string"
+        },
+        {
+          "name": "file",
+          "title": "file name",
+          "type": "string"
+        },
+        {
+          "name": "selection",
+          "title": "code",
+          "type": "string",
+          "default": "FM_SELECTED_TEXT"
+        }
+      ]
+    },
+    "code block with highlighted lines": {
+      "title": "code block with highlighted lines",
+      "description": "Highlights the given lines, such as 2-3 or 1,4.",
+      "body": ["```[[language]] {[[lines]]}", "[[&selection]]", "```"],
+      "fields": [
+        {
+          "name": "language",
+          "title": "language (js, ts, sh, vtl…)",
+          "type": "string"
+        },
+        {
+          "name": "lines",
+          "title": "lines to highlight",
+          "type": "string"
+        },
+        {
+          "name": "selection",
+          "title": "code",
+          "type": "string",
+          "default": "FM_SELECTED_TEXT"
+        }
+      ]
+    },
+    "terminal commands": {
+      "title": "terminal commands",
+      "description": "Shell commands. Start each line with $ : the prompt is muted and left out of the copy button.",
+      "body": ["```sh", "$ [[&selection]]", "```"],
+      "fields": [
+        {
+          "name": "selection",
+          "title": "command",
+          "type": "string",
+          "default": "FM_SELECTED_TEXT"
+        }
+      ]
+    },
+    "images side by side (.mdx)": {
+      "title": "images side by side (.mdx)",
+      "description": "Two or three images in a row with one caption. .mdx posts only.",
+      "body": [
+        "<Figures cols={[[cols]]} caption=\"[[caption]]\">",
+        "  ![first](./first.png) ![second](./second.png)",
+        "</Figures>"
+      ],
+      "fields": [
+        {
+          "name": "cols",
+          "title": "columns",
+          "type": "choice",
+          "choices": ["2", "3"],
+          "default": "2"
+        },
+        {
+          "name": "caption",
+          "title": "caption",
+          "type": "string"
+        }
+      ]
+    },
+    "YouTube video (.mdx)": {
+      "title": "YouTube video (.mdx)",
+      "description": "Loads nothing from YouTube until it's played. .mdx posts only.",
+      "body": "<YouTube id=\"[[id]]\" title=\"[[title]]\" />",
+      "fields": [
+        {
+          "name": "id",
+          "title": "video id (after watch?v=)",
+          "type": "string"
+        },
+        {
+          "name": "title",
+          "title": "what it shows",
+          "type": "string"
+        }
+      ]
+    },
+    "YouTube video with a poster (.mdx)": {
+      "title": "YouTube video with a poster (.mdx)",
+      "description": "Shows a still frame saved beside the post (16:9) behind the play button. .mdx posts only.",
+      "body": [
+        "import [[name]] from './[[file]]';",
+        "",
+        "<YouTube id=\"[[id]]\" title=\"[[title]]\" poster={[[name]]} />"
+      ],
+      "fields": [
+        {
+          "name": "id",
+          "title": "video id (after watch?v=)",
+          "type": "string"
+        },
+        {
+          "name": "title",
+          "title": "what it shows",
+          "type": "string"
+        },
+        {
+          "name": "file",
+          "title": "still frame file, beside the post",
+          "type": "string",
+          "default": "video-poster.jpg"
+        },
+        {
+          "name": "name",
+          "title": "a name for it, unique in the post",
+          "type": "string",
+          "default": "poster"
+        }
+      ]
+    },
+    "image": {
+      "title": "image",
+      "description": "An image that opens in the image viewer.",
+      "isMediaSnippet": true,
+      "openingTags": "{{",
+      "closingTags": "}}",
+      "body": "![{{alt}}]({{&mediaUrl}})"
+    },
+    "image with caption": {
+      "title": "image with caption",
+      "description": "An image that opens in the image viewer, with a caption under it.",
+      "isMediaSnippet": true,
+      "openingTags": "{{",
+      "closingTags": "}}",
+      "body": "![{{alt}}]({{&mediaUrl}} '{{caption}}')"
+    },
+    "image without zoom (.md)": {
+      "title": "image without zoom (.md)",
+      "description": "An image left out of the image viewer. In an .mdx post, use \\{nozoom}.",
+      "isMediaSnippet": true,
+      "openingTags": "{{",
+      "closingTags": "}}",
+      "body": "![{{alt}}]({{&mediaUrl}}){nozoom}"
+    },
+    "image without zoom (.mdx)": {
+      "title": "image without zoom (.mdx)",
+      "description": "An image left out of the image viewer, in an .mdx post.",
+      "isMediaSnippet": true,
+      "openingTags": "{{",
+      "closingTags": "}}",
+      "body": "![{{alt}}]({{&mediaUrl}})\\{nozoom}"
+    }
+  },
+  "frontMatter.dashboard.openOnStart": true,
+  "frontMatter.git.enabled": false,
+  "frontMatter.git.disableOnBranches": ["main"]
+}

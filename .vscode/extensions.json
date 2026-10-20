@@ -3,6 +3,7 @@
     "astro-build.astro-vscode",
     "esbenp.prettier-vscode",
     "dbaeumer.vscode-eslint",
-    "editorconfig.editorconfig"
+    "editorconfig.editorconfig",
+    "eliostruyf.vscode-front-matter"
   ]
 }
