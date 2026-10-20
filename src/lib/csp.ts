@@ -104,11 +104,16 @@ export interface CspViolation {
 const MAX_FIELD = 200;
 
 /**
- * Bot Fight Mode adds an inline script to every page (JavaScript Detections) whose text changes on
- * each request, so no hash can allow it, and allowing it otherwise would undo the policy. On the free
- * plan nothing acts on its result, so it's left refused, and its reports are dropped.
+ * Bot Fight Mode adds inline scripts to every page (JavaScript Detections): a loader at the end of
+ * the body, which writes a second inline script into a hidden frame. Both change on each request, so
+ * no hash can allow them, and allowing them otherwise would undo the policy. On the free plan nothing
+ * acts on their result, so they're left refused, and their reports are dropped. Browsers send only
+ * the first 40 characters, so these are matched as prefixes.
  */
-const CLOUDFLARE_BOT_SCRIPT = 'window.__CF$cv$params';
+const CLOUDFLARE_BOT_SCRIPTS = [
+  '(function(){function c(){var b=a.content',
+  'window.__CF$cv$params',
+];
 /** A Reporting API delivery can batch several reports; more than this in one is not a browser. */
 const MAX_REPORTS = 20;
 
@@ -159,7 +164,9 @@ function violation(raw: Fields, legacy: boolean, host: string): CspViolation | n
   const line = Number(body['lineNumber']);
   const blocked = withoutQuery(text(body['blockedURL'])) || 'unknown';
   const sample = clip(body['sample']).slice(0, 80);
-  if (blocked === 'inline' && sample.startsWith(CLOUDFLARE_BOT_SCRIPT)) return null;
+  if (blocked === 'inline' && CLOUDFLARE_BOT_SCRIPTS.some((script) => sample.startsWith(script))) {
+    return null;
+  }
   return {
     directive,
     blocked,
