@@ -104,6 +104,7 @@
       "trailingSlash": true,
       "filePrefix": "",
       "fileType": "md",
+      "template": "[[workspace]]/.frontmatter/templates/post.md",
       "clearEmpty": true,
       "fields": [
         {
@@ -142,8 +143,7 @@
           "title": "draft",
           "name": "draft",
           "type": "draft",
-          "default": true,
-          "description": "Drafts show in npm run dev only. Switch off to publish."
+          "description": "On: shows in npm run dev only. New posts start on; switch off to publish."
         },
         {
           "title": "topics",
