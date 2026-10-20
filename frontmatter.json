@@ -591,5 +591,6 @@
       "closingTags": "}}",
       "body": "![{{alt}}]({{&mediaUrl}})\\{nozoom}"
     }
-  }
+  },
+  "frontMatter.dashboard.openOnStart": true
 }
