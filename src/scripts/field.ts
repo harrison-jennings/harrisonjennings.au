@@ -37,6 +37,7 @@ export function bindField(hero: HTMLElement, canvas: HTMLCanvasElement): void {
   let rings: Ring[] = [];
   let lastRing = 0;
   let lastStill = 0;
+  let lastFrame = 0;
   let visible = true;
   let stop: { x: number; y: number; r: number } | null = null;
   let stopAt = 0;
@@ -103,7 +104,10 @@ export function bindField(hero: HTMLElement, canvas: HTMLCanvasElement): void {
   });
 
   const render = (now: number) => {
-    if (!visible || !w) return;
+    if (!visible || !w) {
+      lastFrame = 0;
+      return;
+    }
     const still = reducedMotion();
     if (still && now - lastStill < 500) return;
     lastStill = now;
@@ -112,6 +116,12 @@ export function bindField(hero: HTMLElement, canvas: HTMLCanvasElement): void {
     ctx.clearRect(0, 0, w, h);
 
     const t = still ? 0 : now;
+    // The motion is tuned per 60th of a second, and scaled by the real time since the last frame, so it
+    // moves at the same pace on a 60 Hz or a 120 Hz screen (capped, so a stalled tab doesn't jolt).
+    const dt = lastFrame ? Math.min(Math.max((now - lastFrame) / (1000 / 60), 0.25), 3) : 1;
+    lastFrame = now;
+    const damp = 0.84 ** dt;
+    const fade = 0.94 ** dt;
     const idle = !ptr.on || now - ptr.last > 2500;
     let px: number;
     let py: number;
@@ -149,8 +159,8 @@ export function bindField(hero: HTMLElement, canvas: HTMLCanvasElement): void {
         let g = 0;
         if (e > 0) {
           const f = e * e * 2.4 * k;
-          q.vx += (dx / d) * f;
-          q.vy += (dy / d) * f;
+          q.vx += (dx / d) * f * dt;
+          q.vy += (dy / d) * f * dt;
         }
         for (const ring of live) {
           const rx = q.x - ring.x;
@@ -160,17 +170,17 @@ export function bindField(hero: HTMLElement, canvas: HTMLCanvasElement): void {
           if (band > 0) {
             const s = band * ring.a;
             g = Math.max(g, s);
-            q.vx += (rx / rd) * s * 1.1;
-            q.vy += (ry / rd) * s * 1.1;
+            q.vx += (rx / rd) * s * 1.1 * dt;
+            q.vy += (ry / rd) * s * 1.1 * dt;
           }
         }
         const ox = Math.sin(t * 0.0007 + q.ph) * 1.6;
         const oy = Math.cos(t * 0.0006 + q.ph * 1.3) * 1.6;
-        q.vx = (q.vx + (q.hx + ox - q.x) * 0.035) * 0.84;
-        q.vy = (q.vy + (q.hy + oy - q.y) * 0.035) * 0.84;
-        q.x += q.vx;
-        q.y += q.vy;
-        q.g = Math.max(q.g * 0.94, e * k, g);
+        q.vx = (q.vx + (q.hx + ox - q.x) * 0.035 * dt) * damp;
+        q.vy = (q.vy + (q.hy + oy - q.y) * 0.035 * dt) * damp;
+        q.x += q.vx * dt;
+        q.y += q.vy * dt;
+        q.g = Math.max(q.g * fade, e * k, g);
       } else {
         q.x = q.hx;
         q.y = q.hy;
