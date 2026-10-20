@@ -18,6 +18,7 @@ marketing automation, analytics and measurement, creative and media strategy.
 [![Node 24](https://img.shields.io/badge/node-24_LTS-E8A27A?style=flat-square&logo=nodedotjs&logoColor=EFEAE6&labelColor=121110)](https://nodejs.org/)
 [![TypeScript strictest](https://img.shields.io/badge/typescript-strictest-E8A27A?style=flat-square&logo=typescript&logoColor=EFEAE6&labelColor=121110)](tsconfig.json)
 [![Code: MIT](https://img.shields.io/badge/code-MIT-A39C97?style=flat-square&labelColor=121110)](LICENSE)
+[![Writing: CC BY 4.0](https://img.shields.io/badge/writing-CC_BY_4.0-A39C97?style=flat-square&labelColor=121110)](https://creativecommons.org/licenses/by/4.0/)
 
 </div>
 
@@ -106,4 +107,12 @@ Please report vulnerabilities privately; see [SECURITY.md](SECURITY.md).
 
 ## licence
 
-The code is [MIT](LICENSE). The writing, images, logo and brand identity are © Harrison Jennings, all rights reserved, and aren't covered by the MIT licence. The fonts are under the [SIL Open Font License](public/fonts/).
+Different parts, different licences; the details are in [LICENSE](LICENSE), and they match the site's [terms of use](https://www.harrisonjennings.au/terms-of-use/).
+
+| part                                                                                           | licence                                                                                                             |
+| ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| the code                                                                                       | [MIT](LICENSE)                                                                                                      |
+| the writing and original graphics in `src/content/` (posts, diagrams, the site's wording)      | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/): reuse it, even commercially, with credit and a link back |
+| testimonials, screenshots or logos of other people's products, and employer or client material | not mine to license: they belong to their owners                                                                    |
+| the name, logo and brand identity, photos of me, the privacy policy and terms                  | © Harrison Jennings, all rights reserved                                                                            |
+| the fonts                                                                                      | [SIL Open Font License](public/fonts/)                                                                              |

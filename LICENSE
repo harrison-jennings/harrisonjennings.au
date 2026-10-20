@@ -22,7 +22,24 @@ SOFTWARE.
 
 ---
 
-This licence covers the source code only. The written content (src/content/),
-images, the logo and the brand identity (design/, public/brand/, favicons and
-icons) are © Harrison Jennings, all rights reserved. The fonts in public/fonts/
-are licensed under the SIL Open Font License 1.1; see the OFL files beside them.
+Not everything in this repository is software. The MIT licence above covers the
+source code only. The rest, matching the site's Terms of Use:
+
+- Writing and original graphics in src/content/ (articles, their diagrams and
+  illustrations, and the site's own wording): © Harrison Jennings, licensed under
+  the Creative Commons Attribution 4.0 International Licence (CC BY 4.0),
+  https://creativecommons.org/licenses/by/4.0/. Credit "Harrison Jennings,
+  harrisonjennings.au", link to the original page where you can, and say if you
+  changed it.
+- Not mine to license, so not covered by either licence: testimonials
+  (src/content/testimonials.yaml) are the words of the people quoted; screenshots,
+  names and logos of other people's products belong to their owners; and employer
+  or client material stays theirs.
+- All rights reserved: the name, logo and brand identity (design/, public/brand/,
+  favicons and icons), photographs of me, and the privacy policy and terms of use
+  (src/content/pages/).
+- The fonts in public/fonts/ are under the SIL Open Font License 1.1; see the OFL
+  files beside them.
+
+Neither licence lets anyone use my name or logo, or suggest that I endorse them or
+their work.
