@@ -2,7 +2,7 @@
 
 From WordPress on VentraIP to this repo, live before the hosting renews on **11 November 2026**.
 
-**Live since Tuesday 20 October**, two weeks ahead of the 4 November target. WordPress stays underneath the new site for a week, so rolling back means deleting one Cloudflare route.
+**Live since Tuesday 20 October**, two weeks ahead of the 4 November target. WordPress was retired the next day: a bad deploy rolls back to the previous version in Cloudflare's **Deployments** tab.
 
 | #   | phase                     | target          | status      |
 | --- | ------------------------- | --------------- | ----------- |
@@ -134,9 +134,11 @@ The full runbook is in [deployment.md](deployment.md#cutover-20-october); rehear
 ## 10. observe and decommission
 
 - [ ] A week of watching errors, 404s, analytics parity, bookings and consent rates
-- [ ] Swap the route for a Workers Custom Domain; replace the apex A record (VentraIP) with a proxied `AAAA 100::` placeholder, so the bare-domain redirect keeps working
-- [ ] Final archive, then cancel the hosting (not the domain) before 11 November
-- [ ] Delete the WordPress install and database on VentraIP; delete the `_cpanel-dcv-test-record` and `default._domainkey` TXT records
+- [x] Replace the apex A record (VentraIP) with a proxied `AAAA 100::` placeholder, so the bare-domain redirect keeps working (21 October)
+- [x] Keep the Workers Route rather than swapping to a Custom Domain (see decisions)
+- [x] Final backup, then cancel the hosting (not the domain); cancelling deletes the WordPress files and database (21 October). The domain is renewed to November 2028
+- [x] Delete the `_cpanel-dcv-test-record` and `default._domainkey` TXT records
+- [ ] Confirm the old server no longer serves the site once VentraIP completes the cancellation, then make the repository public
 - [ ] Registrar lock on; DNSSEC on in Cloudflare, then the DS record at the registrar (a quiet week)
 - [ ] DMARC from `p=none` to `p=quarantine` once WordPress is gone and the reports show only iCloud sending
 

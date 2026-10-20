@@ -138,36 +138,42 @@ Rehearsed on 20 October 2026 against the live Cloudflare settings, and run that 
 9. **Crawler Hints** on (**Caching → Configuration**). It works from cache misses, so it may rarely fire for pages the Worker serves; requesting indexing does the real work.
 10. A GA4 annotation for the date, then share the posts and link them from their project sites.
 
-### if it goes wrong (any time that week)
+### if it goes wrong
 
-1. Delete the route: WordPress serves `www` again.
-2. In Tag Manager, publish the version noted the day before back to **Live**: WordPress needs its Pressidium consent tag.
-3. Change `PRODUCTION_LIVE` back to `false`.
-
-The redirect rule can stay: WordPress redirects the bare domain the same way.
+WordPress was retired on 21 October (below), so there's no falling back to it. Deleting the route now takes the site offline. Roll back a bad deploy instead: the Worker's **Deployments** tab in Cloudflare, then deploy the previous version. A bad Tag Manager version goes back the same way: **Versions** → the previous one → **Publish**.
 
 ### the week after
 
-Watch the CSP reports and the production consent log (D1), Search Console, Better Uptime and GA4. Then move to a Custom Domain, in Cloudflare's order: delete the `www` CNAME record, add `www` as a **Custom Domain** on the Worker (**Settings → Domains & Routes → Add → Custom Domain**), then delete the route. Then decommission (see the roadmap, and [DNS records](#dns-records)).
+Watch the CSP reports and the production consent log (D1), Search Console, Better Uptime and GA4.
+
+### decommission (21 October)
+
+Done the day after launch, since a bad deploy rolls back faster through Cloudflare's **Deployments** tab than to WordPress:
+
+1. A final full backup of the WordPress files and database, kept off the hosting.
+2. **DNS:** a proxied `AAAA` record for the bare domain pointing at `100::`, added before deleting the VentraIP `A` record, so neither name lost its DNS. The redirect rule answers the bare domain and the route answers `www`, so nothing reaches an origin.
+3. VentraIP's "Select Hosting" service cancelled; cancelling deletes the files, databases and its backups. The domain is registered separately (renewed to November 2028) and its nameservers are Cloudflare's, so nothing else depended on the hosting.
+4. The hosting's leftover TXT records deleted.
+
+**The route stays.** Moving to a Custom Domain means deleting the `www` CNAME before the Custom Domain can be added, and the dashboard's **Connect domain** box only accepts zone names, so the attempt left `www` unresolvable for a few minutes. Resolvers cache a missing record for up to 30 minutes (the zone's SOA minimum), so any gap on a live hostname matters. Never delete the `www` record; rehearse on a spare subdomain first if a Custom Domain is ever wanted.
 
 ## DNS records
 
-Audited on 20 October 2026 (Cloudflare zone `harrisonjennings.au`, free plan).
+Audited on 20 October 2026, updated at the decommission on 21 October (Cloudflare zone `harrisonjennings.au`, free plan).
 
-| record                                                  | points at                               | notes                                                                                                                                                                                                                                              |
-| ------------------------------------------------------- | --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `harrisonjennings.au` A, proxied                        | VentraIP (WordPress)                    | Until WordPress is retired. Then replace it with a proxied `AAAA 100::` placeholder, never just delete it: the bare-domain redirect rule needs a proxied record there                                                                              |
-| `www` CNAME → apex, proxied                             | follows the apex                        | The Workers Route takes over at cutover; a week later the Worker's Custom Domain replaces this record                                                                                                                                              |
-| `measure` AAAA `100::`, proxied                         | the `sgtm-proxy` Worker (Custom Domain) | Server-side Tag Manager. A response header transform rule ("measure: keep out of search") adds `X-Robots-Tag: noindex, nofollow` to everything it serves, so `ns.html` drops out of search (zone rules do apply to Worker Custom Domain responses) |
-| MX ×2, SPF TXT, `sig1._domainkey` CNAME                 | iCloud                                  | Email. SPF authorises iCloud only                                                                                                                                                                                                                  |
-| `_dmarc` TXT, `p=none`                                  | Cloudflare DMARC reports                | Monitoring only. After WordPress is retired and the reports show only iCloud, move to `p=quarantine`, later `p=reject` (iCloud passes: SPF and DKIM are both on this domain)                                                                       |
-| `apple-domain` TXT                                      | Apple                                   | iCloud custom-domain verification                                                                                                                                                                                                                  |
-| `google-site-verification` TXT                          | Google                                  | Search Console's proof of ownership: never delete it                                                                                                                                                                                               |
-| `_github-pages-challenge-…` TXT                         | GitHub                                  | Stops anyone else claiming these subdomains on GitHub Pages                                                                                                                                                                                        |
-| `mkto-ref` CNAME                                        | GitHub Pages                            | The Marketo API reference                                                                                                                                                                                                                          |
-| `leadlens`, `git-playground` CNAMEs                     | Vercel                                  | Project sites, both in use                                                                                                                                                                                                                         |
-| `status` CNAME                                          | Better Uptime                           | The status page, in use                                                                                                                                                                                                                            |
-| `_cpanel-dcv-test-record` TXT, `default._domainkey` TXT | VentraIP                                | Hosting leftovers (control panel validation, its mail signing). Delete when the hosting is cancelled                                                                                                                                               |
+| record                                      | points at                               | notes                                                                                                                                                                                                                                              |
+| ------------------------------------------- | --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `harrisonjennings.au` AAAA `100::`, proxied | nothing (an originless placeholder)     | Replaced the VentraIP A record on 21 October. Never delete it: the bare-domain redirect rule, and the `www` CNAME, need a proxied record here                                                                                                      |
+| `www` CNAME → apex, proxied                 | the Workers Route                       | The route `www.harrisonjennings.au/*` serves the site; the record only has to exist and be proxied. Never delete it while the site is live                                                                                                         |
+| `measure` AAAA `100::`, proxied             | the `sgtm-proxy` Worker (Custom Domain) | Server-side Tag Manager. A response header transform rule ("measure: keep out of search") adds `X-Robots-Tag: noindex, nofollow` to everything it serves, so `ns.html` drops out of search (zone rules do apply to Worker Custom Domain responses) |
+| MX ×2, SPF TXT, `sig1._domainkey` CNAME     | iCloud                                  | Email. SPF authorises iCloud only                                                                                                                                                                                                                  |
+| `_dmarc` TXT, `p=none`                      | Cloudflare DMARC reports                | Monitoring only. After WordPress is retired and the reports show only iCloud, move to `p=quarantine`, later `p=reject` (iCloud passes: SPF and DKIM are both on this domain)                                                                       |
+| `apple-domain` TXT                          | Apple                                   | iCloud custom-domain verification                                                                                                                                                                                                                  |
+| `google-site-verification` TXT              | Google                                  | Search Console's proof of ownership: never delete it                                                                                                                                                                                               |
+| `_github-pages-challenge-…` TXT             | GitHub                                  | Stops anyone else claiming these subdomains on GitHub Pages                                                                                                                                                                                        |
+| `mkto-ref` CNAME                            | GitHub Pages                            | The Marketo API reference                                                                                                                                                                                                                          |
+| `leadlens`, `git-playground` CNAMEs         | Vercel                                  | Project sites, both in use                                                                                                                                                                                                                         |
+| `status` CNAME                              | Better Uptime                           | The status page, in use                                                                                                                                                                                                                            |
 
 **DNSSEC** (a quiet week after cutover): turn it on in Cloudflare (**DNS → Settings → DNSSEC**), which signs the zone and shows a DS record, then add that DS record in the domain's DNSSEC settings at the registrar. A wrong DS record takes the whole domain offline, email included, so do it when nothing else is changing. Cancelling the VentraIP hosting must leave the domain registration in place.
 
