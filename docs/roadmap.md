@@ -106,10 +106,10 @@ Better than the WordPress site, not just level with it: most of its posts sat in
 - [x] 🛠️ CI Orchestrator: one workflow calling quality, end-to-end, Lighthouse, CodeQL and dependency review (the merge rule's required checks updated with it)
 - [x] 🚀 CD Orchestrator: posts each PR's preview link, and after `main` deploys, smoke-tests production (`scripts/smoke-test.sh`); production checks switched on at cutover
 
-- [ ] Every URL in the crawl either returns 200 or 301s to its new home in one hop; WordPress-only URLs return a real 404
-- [ ] Old Yoast and WordPress sitemap URLs 301 to the new sitemap index (already in `_redirects`)
+- [x] Every URL in the crawl either returns 200 or 301s to its new home in one hop; WordPress-only URLs return a real 404 (`crawl` end-to-end test, from `tests/e2e/fixtures/wordpress-urls.json`; `?p=` shortlinks show the home page, since a static site ignores the query)
+- [x] Old Yoast and WordPress sitemap URLs 301 to the new sitemap index
 - [ ] After launch, watch Search Console for the moved posts being re-indexed at their new URLs
-- [ ] Titles and descriptions for every page, post and topic
+- [x] Titles and descriptions for every page, post and topic
 - [ ] Sitemap, the feeds (`/rss.xml`, and `/feed/` redirecting to it), social cards and structured data validated
 - [x] Lighthouse 95+ on performance, accessibility and SEO (and best practices): 97–100 on the four checked pages; the home page's SEO counts once its `noindex` goes at launch
 - [x] Lighthouse CI on every pull request, failing below 95 on performance, accessibility, best practices and SEO

@@ -1,0 +1,41 @@
+{
+  "about": "Every URL the WordPress site published or Google knew about, checked against the new site by tests/e2e/crawl.spec.ts. `kept`: the Yoast sitemaps (20 October 2026) plus URLs Search Console showed in results; each must answer 200, or 301 once to a page answering 200. `gone`: WordPress-only addresses, which must answer a real 404. `?p=` shortlinks aren't listed: a static site ignores the query string, so they show the home page.",
+  "kept": [
+    "/",
+    "/blog/",
+    "/projects/",
+    "/privacy-policy/",
+    "/terms-of-use/",
+    "/2025/11/whats-this-all-about/",
+    "/2025/11/when-a-marketo-smart-campaign-isnt-smart-enough/",
+    "/2026/08/is-sending-yourself-a-test-email-enough/",
+    "/2026/08/when-your-website-gets-attacked-before-anyone-even-visits/",
+    "/2026/09/automating-my-way-around-marketo-api-documentation/",
+    "/2026/10/leadlens-email-previews-and-linting-for-marketo-inside-vs-code/",
+    "/category/adobe-marketo-engage/",
+    "/category/analytics/",
+    "/category/api/",
+    "/category/cloud/",
+    "/category/general/",
+    "/category/marketing-automation/",
+    "/category/marketing-technology/",
+    "/category/web-development/",
+    "/author/harrison-jennings/",
+    "/feed/",
+    "/sitemap_index.xml",
+    "/post-sitemap.xml",
+    "/page-sitemap.xml",
+    "/category-sitemap.xml",
+    "/author-sitemap.xml",
+    "/page-sitemap1.xml"
+  ],
+  "gone": [
+    "/wp-json/",
+    "/wp-admin/",
+    "/wp-login.php",
+    "/xmlrpc.php",
+    "/comments/feed/",
+    "/wp-includes/js/wp-emoji-release.min.js",
+    "/wp-content/uploads/2025/11/example.png"
+  ]
+}
