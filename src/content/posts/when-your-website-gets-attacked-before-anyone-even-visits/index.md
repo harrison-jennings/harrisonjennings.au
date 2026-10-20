@@ -2,7 +2,6 @@
 title: "when your website gets attacked before anyone even visits"
 description: "How I rebuilt server-side Google Tag Manager with Cloudflare Workers and Google Cloud Run to cut costs, filter bot traffic and keep first-party analytics."
 searchTitle: "server-side GTM on Cloudflare Workers and Google Cloud Run"
-# DRAFT: the description is the dek under the title, the card excerpt and the meta description; confirm it.
 published: 2026-08-04
 updated: 2026-09-16
 topics: [cloud, analytics, web-development]

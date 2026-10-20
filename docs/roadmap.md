@@ -6,7 +6,7 @@ From WordPress on VentraIP to this repo, live before the hosting renews on **11 
 
 | #   | phase                     | target         | status      |
 | --- | ------------------------- | -------------- | ----------- |
-| 1   | inventory and backup      | by 20 Oct      | in progress |
+| 1   | inventory and backup      | by 20 Oct      | done        |
 | 2   | brand identity and tokens | 18 Oct         | done        |
 | 3   | scaffold and pipeline     | 18–20 Oct      | done        |
 | 4   | page mockups              | 19–24 Oct      | done        |
@@ -24,7 +24,7 @@ From WordPress on VentraIP to this repo, live before the hosting renews on **11 
 - [x] Pressidium settings and consent records, both Tag Manager containers
 - [x] Plugin list and Yoast settings (in the VentraIP backup: the plugin folders and the database)
 - [x] Crawl the live site and save the full URL list (the Yoast sitemaps: 6 posts, 4 pages, 8 categories)
-- [ ] Audit every DNS record in Cloudflare and note what each points at; leave the iCloud mail records (MX, SPF, DKIM) alone
+- [x] Audit every DNS record in Cloudflare and note what each points at ([deployment.md](deployment.md#dns-records))
 - [x] Strong sign-in everywhere: a passkey on GitHub; Cloudflare and Tag Manager through the Google account, which has a passkey; an authenticator app on VentraIP
 
 ## 2. brand identity and tokens
@@ -128,16 +128,17 @@ Better than the WordPress site, not just level with it: most of its posts sat in
 - [ ] In Search Console, remove the old WordPress sitemaps and submit `sitemap-index.xml`; annotate the date in GA4
 - [ ] Request indexing for each post with URL Inspection; check the structured data in Search Console's enhancements reports
 - [ ] Turn on Crawler Hints (IndexNow) in Cloudflare, so Bing hears about changes straight away
-- [ ] Send `X-Robots-Tag: noindex` from `measure.harrisonjennings.au`, so its Tag Manager pages (`ns.html`) drop out of search
+- [x] Send `X-Robots-Tag: noindex` from `measure.harrisonjennings.au`, so its Tag Manager pages (`ns.html`) drop out of search (a Cloudflare response header rule, 20 October)
 - [ ] Link each post from where its project lives (leadlens site and README, the API reference), and share the posts on LinkedIn
 
 ## 10. observe and decommission
 
 - [ ] A week of watching errors, 404s, analytics parity, bookings and consent rates
-- [ ] Swap the route for a Workers Custom Domain; remove the VentraIP DNS record
+- [ ] Swap the route for a Workers Custom Domain; replace the apex A record (VentraIP) with a proxied `AAAA 100::` placeholder, so the bare-domain redirect keeps working
 - [ ] Final archive, then cancel the hosting (not the domain) before 11 November
-- [ ] Delete the WordPress install and database on VentraIP
-- [ ] Registrar lock and DNSSEC on; check SPF, DKIM and DMARC
+- [ ] Delete the WordPress install and database on VentraIP; delete the `_cpanel-dcv-test-record` and `default._domainkey` TXT records
+- [ ] Registrar lock on; DNSSEC on in Cloudflare, then the DS record at the registrar (a quiet week)
+- [ ] DMARC from `p=none` to `p=quarantine` once WordPress is gone and the reports show only iCloud sending
 
 ## after launch
 

@@ -1,14 +1,13 @@
 # The fixed list of topics. Posts reference these ids; a typo fails the build. A topic gets its own page
 # at /blog/topic/<id>/ once two published posts use it. Every old /category/<slug>/ URL has a 301 in
 # public/_redirects: to its topic, or to /blog/ for the categories that were merged away.
-# DRAFT: the descriptions (shown on each topic page and its share card) are still to be confirmed.
 - id: adobe-marketo-engage
   name: adobe marketo engage
   description: Getting more out of Marketo, and building around its edges when it runs out of road.
 
 - id: cloud
   name: cloud
-  description: Cloud infrastructure for marketing systems, kept small, cheap and secure enough for the job.
+  description: Cloud infrastructure for marketing systems, built lean, secure and cheap to run.
 
 - id: web-development
   name: web development

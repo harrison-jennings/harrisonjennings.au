@@ -1,5 +1,4 @@
 # The 404 page's wording. The title's last line ends in the brick stop, so leave off its full stop.
-# DRAFT: the 404 wording is still to be confirmed.
 not-found:
-  title: ['this page has', 'moved on']
-  text: It may have been renamed when the site moved, or it never existed. Try the blog, or start again from the home page.
+  title: ['lost the', 'signal']
+  text: "The page you were after isn't here: the link may be old or mistyped. Try the blog, or start again from the home page."
