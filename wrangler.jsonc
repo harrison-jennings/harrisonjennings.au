@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  // Static assets, plus one small Worker for the consent log (src/worker/). The Worker runs only for
+  // Static assets, plus one small Worker for the consent log and CSP reports (src/worker/). The Worker runs only for
   // /api/*: never set run_worker_first to true, or every page view would count against the free plan.
   "name": "harrisonjennings-au",
   "compatibility_date": "2026-10-01",
@@ -12,7 +12,8 @@
     "not_found_handling": "404-page",
     "run_worker_first": ["/api/*"],
   },
-  // The consent log. Schema in migrations/; the IP hashing key is the CONSENT_IP_KEY secret.
+  // The consent log, and the CSP report table beside it. Schema in migrations/; the IP hashing key is the
+  // CONSENT_IP_KEY secret.
   "d1_databases": [
     {
       "binding": "CONSENT_DB",

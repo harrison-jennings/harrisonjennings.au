@@ -38,12 +38,26 @@ The consent log is a D1 database bound to the Worker as `CONSENT_DB` (`wrangler.
 
 To look someone up, run a query in the database's **Console** tab, e.g. `SELECT * FROM consent_log WHERE consent_id = '…' ORDER BY created_at`. Rows from previews have `environment = 'preview'`.
 
+## CSP reports
+
+The Content-Security-Policy is sent Report-Only: nothing is blocked, and browsers report anything outside it to `/api/csp-report`, which counts each distinct violation in the `csp_report` table of the same databases (migration `0002`). Apply it to both with the two `migrations apply` commands above.
+
+To see what the policy still misses, run in the production database's **Console** tab:
+
+```sql
+SELECT directive, blocked, source, SUM(count) AS reports, MAX(last_seen) AS last
+FROM csp_report WHERE environment = 'production'
+GROUP BY directive, blocked, source ORDER BY reports DESC;
+```
+
+Each row is either a source to add to `src/lib/csp.ts` or something to remove at its origin (usually a Tag Manager tag or variable). On previews, Access may stop reports from arriving; the browser's console lists the same violations, marked `[Report Only]`. When the production list has been empty for a week, switch the header to `Content-Security-Policy` in `cspHeaders()`.
+
 ## cutover (around 4 November)
 
 1. Lower the TTL on the `www` DNS record a day ahead.
 2. Add a **Workers Route** `www.harrisonjennings.au/*` to the Worker. The route takes over from the WordPress origin without touching DNS, so rolling back is just deleting the route.
 3. Add a **redirect rule**: `harrisonjennings.au/*` → `https://www.harrisonjennings.au/${1}` (301), so the bare domain always lands on www.
-4. Check: home, a post, /projects/, a 404, the security headers (`curl -I`), and the old URLs you care about.
+4. Check: home, a post, /projects/, a 404, the security headers (`curl -I`, including `Content-Security-Policy-Report-Only`), and the old URLs you care about.
 5. Keep the route for about a week as the rollback path. Then replace it with a **Custom Domain** on the Worker and retire the WordPress hosting before it renews on 11 November.
 
 Leave these DNS records alone: iCloud mail (MX, SPF, DKIM), `measure.` (server-side GTM) and the project subdomains.

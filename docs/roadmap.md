@@ -81,11 +81,13 @@ Built in five stages, one pull request each, from `design/` (see `design/README.
 - [x] Cookie banner and preferences dialog, to the `14-consent` mockups
 - [x] Tag Manager and the data layer, loading through `measure.harrisonjennings.au` (Live on production, Testing on previews)
 - [ ] In Tag Manager: remove the Pressidium consent tag and publish that to Testing now and Live at cutover; confirm the advertising cookies once an ad tag is switched on
-- [ ] Every consent state tested in Tag Manager preview and GA4 DebugView
+- [x] Every consent state tested in Tag Manager preview and GA4 DebugView
 - [x] D1 consent logger (a Worker route; pages stay static)
 - [ ] Records confirmed arriving in the production D1
 - [ ] Pressidium records exported and archived off-site
-- [ ] Content-Security-Policy in `_headers`
+- [x] Content-Security-Policy in `_headers`, Report-Only, with violation reports counted in D1 (`/api/csp-report`)
+- [ ] In Tag Manager: replace or remove the Custom JavaScript variables the GA4 tags use, and the "GTM Environment" Custom HTML tag, so the policy needs no `'unsafe-eval'` or `'unsafe-inline'`
+- [ ] A week of clean production CSP reports, then switch the header from Report-Only to enforced
 - [x] Cookie list as data (`src/content/consent.yaml`), feeding both the cookie preferences dialog and the privacy policy (`::cookie-table{category="…"}`); a table on desktop, stacked on phones
 - [x] Update the privacy policy for the new site: Cloudflare hosting, no WordPress, the consent records, the new consent cookie; set its date at cutover
 
