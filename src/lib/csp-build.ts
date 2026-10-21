@@ -12,11 +12,14 @@ import { cspHeaders } from './csp';
 /** Cloudflare's limit for one line of _headers, header name included. */
 const MAX_LINE = 2000;
 
-/** The text of every inline script that runs (JSON and other data blocks don't). */
+/**
+ * The text of every inline script that runs (JSON and other data blocks don't). A script ends at
+ * `</script` followed by anything up to `>`, as browsers parse it (even `</script foo>`).
+ */
 export function inlineScripts(html: string): string[] {
   const scripts: string[] = [];
   for (const [, attrs = '', body = ''] of html.matchAll(
-    /<script\b([^>]*)>([\s\S]*?)<\/script\s*>/gi,
+    /<script\b([^>]*)>([\s\S]*?)<\/script\b[^>]*>/gi,
   )) {
     if (/\ssrc=/i.test(attrs)) continue;
     const type = attrs.match(/\stype=["']?([^"'\s>]+)/i)?.[1]?.toLowerCase();
