@@ -1,17 +1,28 @@
 ---
-// Solid brick pill. Apricot wipes in from the side the pointer enters and out the side it leaves.
+// Solid brick pill. Apricot wipes in from the side the pointer enters and out the side it leaves. A
+// link to another site opens in a new tab, with a note for screen readers.
+import { isExternal, NEW_TAB_NOTE } from '../lib/links';
+
 interface Props {
   /** Leave out for an in-page action: renders a <button>. */
   href?: string;
   label: string;
   size?: 'l' | 'm' | 's' | 'xs' | 'block';
+  /** Opens in a new tab: worked out from the href unless given. */
   external?: boolean;
   class?: string;
   /** Extra attributes for the element, such as aria-expanded on an in-page toggle. */
   attrs?: Record<string, string>;
 }
 
-const { href, label, size = 'm', external = false, class: className, attrs = {} } = Astro.props;
+const {
+  href,
+  label,
+  size = 'm',
+  external = isExternal(href),
+  class: className,
+  attrs = {},
+} = Astro.props;
 ---
 
 {href ? (
@@ -23,6 +34,7 @@ const { href, label, size = 'm', external = false, class: className, attrs = {} 
     {...attrs}
   >
     <span>{label}</span>
+    {external && <span class="visually-hidden">{NEW_TAB_NOTE}</span>}
     <span class="btn__wipe" aria-hidden="true">
       {label}
     </span>

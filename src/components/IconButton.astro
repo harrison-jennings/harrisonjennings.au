@@ -1,6 +1,7 @@
 ---
 // Icon-only link for the two platforms: text at rest, link on hover and focus. 44px target;
 // `large` is the 48px plain version for the mobile menu.
+import { NEW_TAB_NOTE } from '../lib/links';
 import Icon from './Icon.astro';
 
 interface Props {
@@ -17,7 +18,7 @@ const size = icon === 'github' ? (large ? 22 : 20) : large ? 21 : 19;
 <a
   class:list={['icon-btn', { 'icon-btn--lg': large }]}
   href={href}
-  aria-label={label}
+  aria-label={`${label}${NEW_TAB_NOTE}`}
   rel="me noopener"
   target="_blank"
 >

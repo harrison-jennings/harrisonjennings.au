@@ -2,6 +2,7 @@
 // Three columns on surface: who, where to go, where else. The logo draws when the footer comes into
 // view and again on hover. "cookie settings" reopens the consent preferences, on every page.
 import { BOOK_HREF, LEGAL, SITE, SOCIAL } from '../consts';
+import { NEW_TAB_NOTE } from '../lib/links';
 import Icon from './Icon.astro';
 import Logo from './Logo.astro';
 
@@ -27,11 +28,11 @@ const year = new Date().getFullYear();
     <div class="footer__col">
       <a class="footer__social" href={SOCIAL.github.href} rel="me noopener" target="_blank">
         <Icon name="github" size={18} />
-        github
+        github<span class="visually-hidden">{NEW_TAB_NOTE}</span>
       </a>
       <a class="footer__social" href={SOCIAL.linkedin.href} rel="me noopener" target="_blank">
         <Icon name="linkedin" size={17} />
-        linkedin
+        linkedin<span class="visually-hidden">{NEW_TAB_NOTE}</span>
       </a>
       <p class="footer__legal">
         {LEGAL.map((item) => (

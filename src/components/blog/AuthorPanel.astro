@@ -3,6 +3,7 @@
 // github and linkedin. No booking button (that was tried and dropped).
 import { getEntry } from 'astro:content';
 import { SITE, SOCIAL } from '../../consts';
+import { NEW_TAB_NOTE } from '../../lib/links';
 import Icon from '../Icon.astro';
 import Logo from '../Logo.astro';
 
@@ -21,11 +22,11 @@ if (!blog) throw new Error('src/content/blog.yaml: missing the `blog` entry');
   <div class="author__links">
     <a href={SOCIAL.github.href} rel="me noopener" target="_blank">
       <Icon name="github" size={18} />
-      github
+      github<span class="visually-hidden">{NEW_TAB_NOTE}</span>
     </a>
     <a href={SOCIAL.linkedin.href} rel="me noopener" target="_blank">
       <Icon name="linkedin" size={17} />
-      linkedin
+      linkedin<span class="visually-hidden">{NEW_TAB_NOTE}</span>
     </a>
   </div>
 </aside>

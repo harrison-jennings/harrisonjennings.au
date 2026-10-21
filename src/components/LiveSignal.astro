@@ -1,5 +1,6 @@
 ---
-// "live at {host}" after the live dot. The words carry the meaning.
+// "live at {host}" after the live dot. The words carry the meaning. The live site opens in a new tab.
+import { isExternal, NEW_TAB_NOTE } from '../lib/links';
 import LiveDot from './LiveDot.astro';
 
 interface Props {
@@ -9,12 +10,14 @@ interface Props {
 }
 
 const { host, href } = Astro.props;
+const external = isExternal(href);
 ---
 
 {href ? (
-  <a class="live" href={href}>
+  <a class="live" href={href} {...(external ? { target: '_blank', rel: 'noopener' } : {})}>
     <LiveDot />
     live at <span class="live__host">{host}</span>
+    {external && <span class="visually-hidden">{NEW_TAB_NOTE}</span>}
   </a>
 ) : (
   <span class="live">

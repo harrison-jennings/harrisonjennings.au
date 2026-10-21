@@ -32,3 +32,33 @@ for (const path of [UNKNOWN_PATH, '/this-page-does-not-exist']) {
     expect(response.status()).toBe(404);
   });
 }
+
+// Every link to another site, in posts or in components (project links, the nav icons, the footer),
+// opens in a new tab with noopener and tells screen readers so; no link within the site does.
+for (const path of pages) {
+  test(`${path} opens other sites in a new tab, and only those`, async ({ page }) => {
+    await page.goto(path);
+    const links = await page.locator('a[href]').evaluateAll((anchors) =>
+      anchors.map((a) => ({
+        href: a.getAttribute('href') ?? '',
+        target: a.getAttribute('target'),
+        rel: a.getAttribute('rel') ?? '',
+        name: (a.getAttribute('aria-label') ?? '') + (a.textContent ?? ''),
+      })),
+    );
+    for (const link of links) {
+      const external =
+        /^https?:\/\//.test(link.href) &&
+        !/^https?:\/\/(www\.)?harrisonjennings\.au(\/|$)/.test(link.href);
+      if (external) {
+        expect(link.target, `${link.href} should open in a new tab`).toBe('_blank');
+        expect(link.rel.split(' '), `${link.href} should have noopener`).toContain('noopener');
+        expect(link.name, `${link.href} should say it opens a new tab`).toContain(
+          '(opens in a new tab)',
+        );
+      } else {
+        expect(link.target, `${link.href} should stay in the same tab`).toBeNull();
+      }
+    }
+  });
+}

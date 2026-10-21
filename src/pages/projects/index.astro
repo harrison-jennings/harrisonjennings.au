@@ -8,6 +8,7 @@ import LiveDot from '../../components/LiveDot.astro';
 import ProjectLinks from '../../components/ProjectLinks.astro';
 import PageHead from '../../components/blog/PageHead.astro';
 import Base from '../../layouts/Base.astro';
+import { isExternal, NEW_TAB_NOTE } from '../../lib/links';
 import { postPath } from '../../lib/posts';
 import { breadcrumbs } from '../../lib/structured-data';
 
@@ -58,7 +59,17 @@ const number = (i: number) => String(i + 1).padStart(2, '0');
                   {number(i)}
                 </span>
                 <h2 class="pj__name" id={`pj-${project.id}`}>
-                  {href ? <a href={href}>{name}</a> : name}
+                  {href ? (
+                    <a
+                      href={href}
+                      {...(isExternal(href) ? { target: '_blank', rel: 'noopener' } : {})}
+                    >
+                      {name}
+                      {isExternal(href) && <span class="visually-hidden">{NEW_TAB_NOTE}</span>}
+                    </a>
+                  ) : (
+                    name
+                  )}
                 </h2>
                 <dl class="pj__facts">
                   <dt>status</dt>

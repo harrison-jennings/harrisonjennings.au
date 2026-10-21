@@ -9,6 +9,7 @@ import { remarkCallouts } from './src/lib/markdown/callouts.ts';
 import { remarkCookieSettings } from './src/lib/markdown/cookie-settings.ts';
 import { remarkCookieTable } from './src/lib/markdown/cookie-table.ts';
 import { remarkTextDirectivesAsText } from './src/lib/markdown/directives.ts';
+import { rehypeExternalLinks } from './src/lib/markdown/links.ts';
 import {
   codeLangs,
   codeTheme,
@@ -72,7 +73,13 @@ export default defineConfig({
       remarkNoZoom,
       remarkReadingTime,
     ],
-    rehypePlugins: [rehypeHeadingCeiling, rehypeTables, rehypeFigures, rehypeCodeBlocks],
+    rehypePlugins: [
+      rehypeHeadingCeiling,
+      rehypeTables,
+      rehypeFigures,
+      rehypeCodeBlocks,
+      rehypeExternalLinks,
+    ],
     remarkRehype: {
       footnoteLabel: 'Footnotes',
       footnoteLabelProperties: { className: ['visually-hidden'] },

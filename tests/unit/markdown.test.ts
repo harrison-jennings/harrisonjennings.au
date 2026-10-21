@@ -12,6 +12,7 @@ import { remarkCallouts } from '../../src/lib/markdown/callouts';
 import { remarkCookieSettings } from '../../src/lib/markdown/cookie-settings';
 import { readConsent, remarkCookieTable } from '../../src/lib/markdown/cookie-table';
 import { directiveAsText, remarkTextDirectivesAsText } from '../../src/lib/markdown/directives';
+import { isExternal, rehypeExternalLinks } from '../../src/lib/markdown/links';
 import {
   codeLangs,
   codeTheme,
@@ -39,6 +40,7 @@ const render = async (md: string) =>
       .use(rehypeHeadingCeiling)
       .use(rehypeTables)
       .use(rehypeFigures)
+      .use(rehypeExternalLinks)
       .use(rehypeStringify)
       .process(md),
   );
@@ -100,6 +102,29 @@ describe('text directives', () => {
     const html = await render(':::tip\nAim for 4.5:1 or more.\n:::\n\n::cookie-settings');
     expect(html).toContain('<span class="callout__label">tip</span><p>Aim for 4.5:1 or more.</p>');
     expect(html).toContain('data-consent-preferences');
+  });
+});
+
+describe('links', () => {
+  it('opens links to other sites in a new tab, with noopener and a hidden note', async () => {
+    expect(await render('See [Astro](https://astro.build/) for more.')).toBe(
+      '<p>See <a href="https://astro.build/" target="_blank" rel="noopener">Astro<span class="visually-hidden"> (opens in a new tab)</span></a> for more.</p>',
+    );
+  });
+
+  it('leaves links within the site, anchors and email as they are', async () => {
+    const html = await render(
+      '[a post](/blog/x/), [full address](https://www.harrisonjennings.au/projects/), [bare domain](https://harrisonjennings.au/), [a note](#notes), [email](mailto:a@b.co)',
+    );
+    expect(html).not.toContain('target=');
+    expect(html).not.toContain('opens in a new tab');
+  });
+
+  it('treats the site’s other subdomains as other sites', () => {
+    expect(isExternal('https://leadlens.harrisonjennings.au/')).toBe(true);
+    expect(isExternal('https://www.harrisonjennings.au/blog/')).toBe(false);
+    expect(isExternal('/blog/')).toBe(false);
+    expect(isExternal('http://example.com')).toBe(true);
   });
 });
 
