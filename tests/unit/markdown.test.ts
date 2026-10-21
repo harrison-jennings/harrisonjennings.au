@@ -11,6 +11,7 @@ import { describe, expect, it } from 'vitest';
 import { remarkCallouts } from '../../src/lib/markdown/callouts';
 import { remarkCookieSettings } from '../../src/lib/markdown/cookie-settings';
 import { readConsent, remarkCookieTable } from '../../src/lib/markdown/cookie-table';
+import { directiveAsText, remarkTextDirectivesAsText } from '../../src/lib/markdown/directives';
 import {
   codeLangs,
   codeTheme,
@@ -32,6 +33,7 @@ const render = async (md: string) =>
       .use(remarkDirective)
       .use(remarkCallouts)
       .use(remarkCookieSettings)
+      .use(remarkTextDirectivesAsText)
       .use(remarkNoZoom)
       .use(remarkRehype)
       .use(rehypeHeadingCeiling)
@@ -69,6 +71,35 @@ describe('callouts', () => {
 
   it('leaves unknown directives alone', async () => {
     expect(await render(':::other\nText.\n:::')).not.toContain('callout');
+  });
+});
+
+describe('text directives', () => {
+  it('leaves a ratio or a time inside a sentence as written', async () => {
+    expect(await render('Light passes at 4.53:1 on ground, and dark at 6.4:1.')).toBe(
+      '<p>Light passes at 4.53:1 on ground, and dark at 6.4:1.</p>',
+    );
+    expect(await render('Doors open at 10:30 sharp; screenshots stay 16:9.')).toBe(
+      '<p>Doors open at 10:30 sharp; screenshots stay 16:9.</p>',
+    );
+  });
+
+  it('keeps any other text directive as text, its label still Markdown', async () => {
+    expect(await render('Read :abbr[**CSP**]{title="policy"} here.')).toBe(
+      '<p>Read :abbr[<strong>CSP</strong>]{title="policy"} here.</p>',
+    );
+  });
+
+  it('rebuilds the text when the source is not available', () => {
+    expect(
+      directiveAsText({ type: 'textDirective', name: '1', attributes: {}, children: [] }, ''),
+    ).toEqual([{ type: 'text', value: ':1' }]);
+  });
+
+  it('still runs the real directives beside a ratio', async () => {
+    const html = await render(':::tip\nAim for 4.5:1 or more.\n:::\n\n::cookie-settings');
+    expect(html).toContain('<span class="callout__label">tip</span><p>Aim for 4.5:1 or more.</p>');
+    expect(html).toContain('data-consent-preferences');
   });
 });
 
@@ -188,7 +219,7 @@ describe('figures', () => {
 describe('code blocks', () => {
   const highlighter = createHighlighter({
     themes: [codeTheme],
-    langs: ['js', 'sh', 'plaintext', ...codeLangs],
+    langs: ['js', 'sh', 'json', 'yaml', 'plaintext', ...codeLangs],
   });
   const highlight = async (code: string, lang: string, meta = '') => {
     const html = (await highlighter).codeToHtml(code, {
@@ -231,6 +262,25 @@ describe('code blocks', () => {
     expect(html).toContain('color:var(--code-number)">8000');
     expect(html).toContain("color:var(--code-string)\">'dark'");
     expect(html).toMatch(/color:var\(--text\)">[^<]*button/);
+  });
+
+  it('sets keys apart from values: JSON and YAML keys in text, string values as strings', async () => {
+    const json = await highlight('{ "name": "harrisonjennings.au", "port": 4321 }', 'json');
+    expect(json).toMatch(/color:var\(--text\)">"name"/);
+    expect(json).toContain('color:var(--code-string)">"harrisonjennings.au"');
+    expect(json).toContain('color:var(--code-number)">4321');
+    const yaml = await highlight(
+      'name: harrisonjennings.au\nquoted: "a string"\nport: 4321',
+      'yaml',
+    );
+    expect(yaml).toMatch(/color:var\(--text\)">name/);
+    expect(yaml).toContain('color:var(--code-string)">harrisonjennings.au');
+    expect(yaml).toContain('color:var(--code-string)">"a string"');
+    expect(yaml).toContain('color:var(--code-number)">4321');
+  });
+
+  it('keeps shell arguments in text colour', async () => {
+    expect(await highlight('npm run build --watch', 'sh')).not.toContain('var(--code-string)');
   });
 
   it('highlights Velocity, with {2-3} marking lines', async () => {

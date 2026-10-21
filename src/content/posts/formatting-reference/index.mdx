@@ -88,6 +88,18 @@ $ npm run build
 $ npx wrangler dev
 ```
 
+Keys stay in text colour, and values take the string colour, in JSON and YAML alike:
+
+```json
+{ "name": "harrisonjennings.au", "port": 4321, "private": true }
+```
+
+```yaml
+name: harrisonjennings.au
+port: 4321
+kept: 6 months
+```
+
 ```js
 const utm = new URLSearchParams({ utm_source: 'newsletter', utm_medium: 'email', utm_campaign: 'october-launch', utm_content: 'hero-button' });
 ```
