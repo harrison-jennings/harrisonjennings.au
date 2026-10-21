@@ -5,11 +5,8 @@
   "patterns": [
     { "include": "#comment-block" },
     { "include": "#comment-line" },
-    { "include": "#directive" },
-    { "include": "#string-double" },
-    { "include": "#string-single" },
-    { "include": "#number" },
-    { "include": "#constant" }
+    { "include": "#directive-with-arguments" },
+    { "include": "#directive" }
   ],
   "repository": {
     "comment-block": {
@@ -21,9 +18,37 @@
       "name": "comment.line.double-number-sign.velocity",
       "match": "##.*$"
     },
+    "directive-with-arguments": {
+      "comment": "A directive and its parentheses: #set( … ), #if( … ). Quotes, numbers and true/false/null only count in here, so output text and HTML attributes stay plain.",
+      "begin": "(#\\{?(?:if|elseif|set|foreach|macro|parse|include|evaluate|define)\\b\\}?)\\s*(\\()",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.velocity" },
+        "2": { "name": "punctuation.section.arguments.begin.velocity" }
+      },
+      "end": "\\)",
+      "endCaptures": {
+        "0": { "name": "punctuation.section.arguments.end.velocity" }
+      },
+      "patterns": [{ "include": "#arguments" }]
+    },
     "directive": {
       "name": "keyword.control.velocity",
       "match": "#\\{?(?:if|elseif|else|end|set|foreach|macro|break|stop|parse|include|evaluate|define)\\b\\}?"
+    },
+    "arguments": {
+      "patterns": [
+        { "include": "#string-double" },
+        { "include": "#string-single" },
+        { "include": "#parentheses" },
+        { "include": "#number" },
+        { "include": "#constant" }
+      ]
+    },
+    "parentheses": {
+      "comment": "Nested parentheses, such as a method call's, so the directive ends at its own closing bracket.",
+      "begin": "\\(",
+      "end": "\\)",
+      "patterns": [{ "include": "#arguments" }]
     },
     "string-double": {
       "name": "string.quoted.double.velocity",

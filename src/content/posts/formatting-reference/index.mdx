@@ -83,6 +83,16 @@ button.addEventListener('click', () => {
 ${greeting},
 ```
 
+Output text and HTML stay plain, apostrophes and attributes included. Quotes are strings only inside a directive's parentheses:
+
+```vtl
+#if( $lead.Registered__c == "true" )
+You're registered for ${event.Name}. We'll send the joining link the day before.
+#else
+<a href="${registerLink}" class="btn">Save your spot</a>
+#end
+```
+
 ```sh
 $ npm run build
 $ npx wrangler dev

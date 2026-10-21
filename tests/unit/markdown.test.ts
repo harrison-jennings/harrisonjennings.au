@@ -292,6 +292,31 @@ describe('code blocks', () => {
     expect(html).toContain('color:var(--muted)">## c');
   });
 
+  it('treats quotes as strings only inside a Velocity directive’s parentheses', async () => {
+    const vtl = [
+      '#if( $lead.Company == "Acme (AU)" && ($lead.Score > 10) )',
+      "  #set( $greeting = 'Hi there' )",
+      '#end',
+      "You're registered. We'll see you on the 3rd, true story.",
+      "<a href=\"https://example.com/?id=$lead.Id\" class='btn'>Don't miss it</a>",
+      '#foreach( $item in $list )$item #end',
+    ].join('\n');
+    const html = await highlight(vtl, 'vtl');
+    // Inside the parentheses: strings (a ")" inside one doesn't end the directive) and numbers.
+    expect(html).toContain('color:var(--code-string)">"Acme (AU)"');
+    expect(html).toContain("color:var(--code-string)\">'Hi there'");
+    expect(html).toContain('color:var(--code-number)">10');
+    // Output text and HTML stay plain, apostrophes and attributes included, and nothing leaks on.
+    expect(html).toContain(
+      "color:var(--text)\">You're registered. We'll see you on the 3rd, true story.",
+    );
+    expect(html).toContain(
+      'color:var(--text)">&#x3C;a href="https://example.com/?id=$lead.Id" class=\'btn\'>Don\'t miss it&#x3C;/a>',
+    );
+    expect(html).toContain('color:var(--code-keyword)">#foreach');
+    expect(html.match(/var\(--code-string\)/g)).toHaveLength(2);
+  });
+
   it('mutes the shell prompt and keeps commands in text colour', async () => {
     const html = await highlight('$ npm run build', 'sh');
     expect(html).toContain('<span class="tk-prompt">$ </span>');
