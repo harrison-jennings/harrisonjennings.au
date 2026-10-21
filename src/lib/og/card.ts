@@ -1,6 +1,5 @@
 // The social share cards (Open Graph images): 1200 × 630, dark only. Each variant is a small tree of
-// elements that Satori lays out (see render.ts). Colours come from design/tokens.json (dark values),
-// sizes from the ShareCard note in design/system/.
+// elements that Satori lays out (see render.ts). Colours come from design/tokens.json (dark values).
 import tokens from '../../../design/tokens.json';
 
 export type Card =
