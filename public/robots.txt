@@ -1,4 +1,22 @@
+# Search engines, AI search (answers that cite and link) and AI assistants fetching a page for a
+# person are welcome. Training AI models on this site's content is not: Cloudflare also blocks the
+# training crawlers at the edge. Standard directives only: Lighthouse's robots.txt audit (and
+# PageSpeed Insights) rejects newer ones such as Content-Signal.
 User-agent: *
 Allow: /
+
+# Training crawlers.
+User-agent: GPTBot
+User-agent: ClaudeBot
+User-agent: CCBot
+User-agent: meta-externalagent
+User-agent: Bytespider
+Disallow: /
+
+# Training opt-outs that only robots.txt can express: Google's and Apple's search crawlers still
+# index the site, but what they fetch isn't used to train AI models.
+User-agent: Google-Extended
+User-agent: Applebot-Extended
+Disallow: /
 
 Sitemap: https://www.harrisonjennings.au/sitemap-index.xml
