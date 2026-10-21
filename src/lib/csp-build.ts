@@ -16,7 +16,7 @@ const MAX_LINE = 2000;
 export function inlineScripts(html: string): string[] {
   const scripts: string[] = [];
   for (const [, attrs = '', body = ''] of html.matchAll(
-    /<script\b([^>]*)>([\s\S]*?)<\/script>/gi,
+    /<script\b([^>]*)>([\s\S]*?)<\/script\s*>/gi,
   )) {
     if (/\ssrc=/i.test(attrs)) continue;
     const type = attrs.match(/\stype=["']?([^"'\s>]+)/i)?.[1]?.toLowerCase();

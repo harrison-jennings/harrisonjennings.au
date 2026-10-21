@@ -40,6 +40,10 @@ describe('the build step', () => {
     expect(inlineScripts(html)).toEqual(['a()', 'b()']);
   });
 
+  it('recognises an end tag with whitespace before its bracket, as browsers do', () => {
+    expect(inlineScripts('<script>a()</script >\n<script>b()</SCRIPT\t>')).toEqual(['a()', 'b()']);
+  });
+
   it('hashes a script as browsers do (SHA-256 of its exact text, base64)', () => {
     // The CSP specification's own example: alert('Hello, world.');
     expect(scriptHash("alert('Hello, world.');")).toBe(
