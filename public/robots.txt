@@ -1,8 +1,8 @@
 # Search engines, AI search (answers that cite and link) and AI assistants fetching a page for a
 # person are welcome. Training AI models on this site's content is not: Cloudflare also blocks the
-# training crawlers at the edge.
+# training crawlers at the edge. Standard directives only: Lighthouse's robots.txt audit (and
+# PageSpeed Insights) rejects newer ones such as Content-Signal.
 User-agent: *
-Content-Signal: search=yes, ai-input=yes, ai-train=no
 Allow: /
 
 # Training crawlers.

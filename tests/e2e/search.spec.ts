@@ -51,15 +51,20 @@ test('the home page is in search, with its canonical address', async ({ page }) 
   );
 });
 
-test('robots.txt welcomes search and AI answers, keeps AI training out, and names the sitemap', async ({
+test('robots.txt welcomes search and AI answers, keeps AI training out, and names the sitemap, in standard syntax', async ({
   request,
 }) => {
   const response = await request.get('/robots.txt');
   expect(response.status()).toBe(200);
   const robots = await response.text();
-  expect(robots).toContain('Content-Signal: search=yes, ai-input=yes, ai-train=no');
   // Everyone else may crawl everything.
-  expect(robots).toMatch(/User-agent: \*\nContent-Signal: [^\n]+\nAllow: \/\n/);
+  expect(robots).toMatch(/User-agent: \*\nAllow: \/\n/);
+  // Only directives Lighthouse's robots.txt audit accepts, or the SEO score drops.
+  const directives = robots
+    .split('\n')
+    .filter((line) => line.trim() && !line.startsWith('#'))
+    .map((line) => line.split(':')[0]?.trim().toLowerCase());
+  expect(new Set(directives)).toEqual(new Set(['user-agent', 'allow', 'disallow', 'sitemap']));
   for (const bot of ['GPTBot', 'ClaudeBot', 'Google-Extended', 'Applebot-Extended']) {
     expect(robots).toMatch(
       new RegExp(`User-agent: ${bot}\\n(?:User-agent: [^\\n]+\\n)*Disallow: /\\n`),
