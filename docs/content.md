@@ -84,6 +84,7 @@ The draft post `src/content/posts/formatting-reference/index.mdx` shows every el
 - **Two or three images side by side** (`.mdx` only): `<Figures cols={2} caption="…">` with the images inside, closed with `</Figures>`. They stack on phones.
 - **Tables:** Markdown tables. Right-align a column (`---:`) to set its numbers in Martian Mono.
 - **Video** (`.mdx` only): `<YouTube id="…" title="what it shows" />`. Nothing loads from YouTube until it's played, not even its thumbnail (that would be a request to Google before consent). For a still frame, save one beside the post (16:9) and import it at the top: `import poster from './video-poster.jpg';`, then `<YouTube id="…" title="…" poster={poster} />`. It's served from this site.
+- **Links:** write them as plain Markdown. Links to other sites open in a new tab, with a hidden "(opens in a new tab)" for screen readers; links within the site stay in the same tab (`src/lib/markdown/links.ts`).
 - **Extras:** `<details><summary>…</summary>…</details>` for long scripts, `[^1]` footnotes, and `---` for the three-dot break.
 
 ## a project
