@@ -30,8 +30,17 @@ export const codeTheme: ThemeRegistration = {
       settings: { foreground: 'var(--code-keyword)' },
     },
     { scope: ['string', 'string.template'], settings: { foreground: 'var(--code-string)' } },
+    // Keys aren't values: JSON scopes its keys as strings too, so property names go back to text.
+    { scope: ['support.type.property-name'], settings: { foreground: 'var(--text)' } },
     // Shell commands and their arguments are "unquoted strings"; only quoted text is a string.
     { scope: ['string.unquoted'], settings: { foreground: 'var(--text)' } },
+    // YAML's unquoted values are strings, as quoted ones are; its keys sit inside that scope, so
+    // they're set back to text, as JSON's are.
+    {
+      scope: ['string.unquoted.plain.out.yaml', 'string.unquoted.plain.in.yaml'],
+      settings: { foreground: 'var(--code-string)' },
+    },
+    { scope: ['entity.name.tag.yaml'], settings: { foreground: 'var(--text)' } },
     {
       scope: ['constant.numeric', 'constant.language'],
       settings: { foreground: 'var(--code-number)' },
