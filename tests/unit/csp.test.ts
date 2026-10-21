@@ -40,6 +40,16 @@ describe('the build step', () => {
     expect(inlineScripts(html)).toEqual(['a()', 'b()']);
   });
 
+  it('ends a script where browsers do: </script followed by anything up to >', () => {
+    expect(
+      inlineScripts(
+        '<script>a()</script >\n<script>b()</SCRIPT\t>\n<script>c()</script\t\n bar>\n<script>d()</script foo="bar">',
+      ),
+    ).toEqual(['a()', 'b()', 'c()', 'd()']);
+    // </scripts> isn't a script end tag.
+    expect(inlineScripts('<script>e("</scripts>")</script>')).toEqual(['e("</scripts>")']);
+  });
+
   it('hashes a script as browsers do (SHA-256 of its exact text, base64)', () => {
     // The CSP specification's own example: alert('Hello, world.');
     expect(scriptHash("alert('Hello, world.');")).toBe(
