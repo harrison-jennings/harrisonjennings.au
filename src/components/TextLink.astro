@@ -1,14 +1,18 @@
 ---
-// Text-coloured link with a brick underline; lifts to the link colour on hover.
+// Text-coloured link with a brick underline; lifts to the link colour on hover. A link to another
+// site opens in a new tab, with a note for screen readers.
+import { isExternal, NEW_TAB_NOTE } from '../lib/links';
+
 interface Props {
   href: string;
   /** Standalone links ("all projects") start in the link colour. */
   quiet?: boolean;
+  /** Opens in a new tab: worked out from the href unless given. */
   external?: boolean;
   class?: string;
 }
 
-const { href, quiet = false, external = false, class: className } = Astro.props;
+const { href, quiet = false, external = isExternal(href), class: className } = Astro.props;
 ---
 
 <a
@@ -17,6 +21,7 @@ const { href, quiet = false, external = false, class: className } = Astro.props;
   {...(external ? { target: '_blank', rel: 'noopener' } : {})}
 >
   <slot />
+  {external && <span class="visually-hidden">{NEW_TAB_NOTE}</span>}
 </a>
 
 <style>

@@ -4,20 +4,9 @@
 // mailto: and the like stay as they are. Other subdomains (leadlens., status.) are separate sites.
 import type { Element, Root } from 'hast';
 import { visit } from 'unist-util-visit';
-import { SITE } from '../../consts';
+import { isExternal, NEW_TAB_NOTE } from '../links';
 
-const OWN_HOST = new URL(SITE.url).hostname;
-const OWN_HOSTS = new Set([OWN_HOST, OWN_HOST.replace(/^www\./, '')]);
-
-/** Whether an href points at another site over http(s). */
-export function isExternal(href: unknown): boolean {
-  if (typeof href !== 'string' || !/^https?:\/\//i.test(href)) return false;
-  try {
-    return !OWN_HOSTS.has(new URL(href).hostname);
-  } catch {
-    return false;
-  }
-}
+export { isExternal };
 
 const relValues = (el: Element): string[] => {
   const rel = el.properties['rel'];
@@ -34,7 +23,7 @@ export function rehypeExternalLinks() {
         type: 'element',
         tagName: 'span',
         properties: { className: ['visually-hidden'] },
-        children: [{ type: 'text', value: ' (opens in a new tab)' }],
+        children: [{ type: 'text', value: NEW_TAB_NOTE }],
       });
     });
   };
