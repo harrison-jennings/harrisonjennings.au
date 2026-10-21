@@ -50,3 +50,24 @@ test('the home page is in search, with its canonical address', async ({ page }) 
     'https://www.harrisonjennings.au/',
   );
 });
+
+test('robots.txt welcomes search and AI answers, keeps AI training out, and names the sitemap', async ({
+  request,
+}) => {
+  const response = await request.get('/robots.txt');
+  expect(response.status()).toBe(200);
+  const robots = await response.text();
+  expect(robots).toContain('Content-Signal: search=yes, ai-input=yes, ai-train=no');
+  // Everyone else may crawl everything.
+  expect(robots).toMatch(/User-agent: \*\nContent-Signal: [^\n]+\nAllow: \/\n/);
+  for (const bot of ['GPTBot', 'ClaudeBot', 'Google-Extended', 'Applebot-Extended']) {
+    expect(robots).toMatch(
+      new RegExp(`User-agent: ${bot}\\n(?:User-agent: [^\\n]+\\n)*Disallow: /\\n`),
+    );
+  }
+  // Search engines and AI search crawlers aren't singled out.
+  expect(robots).not.toMatch(
+    /User-agent: (Googlebot|Bingbot|OAI-SearchBot|PerplexityBot|Claude-SearchBot)\b/,
+  );
+  expect(robots).toContain('Sitemap: https://www.harrisonjennings.au/sitemap-index.xml');
+});
