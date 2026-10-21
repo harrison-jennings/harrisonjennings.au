@@ -8,10 +8,3 @@ public/fonts/
 test-results/
 playwright-report/
 blob-report/
-
-# design reference and its build brief (approved, not site code): kept exactly as delivered
-BUILD-BRIEF.md
-CONSENT-BRIEF.md
-design/README.md
-design/system/
-design/mockups/

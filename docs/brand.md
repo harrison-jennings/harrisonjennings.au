@@ -79,4 +79,4 @@ Everything is still under `prefers-reduced-motion`.
 
 ## the full design
 
-Every page is designed and approved (18–19 October 2026). `design/system/README.md` is the design system, with a note per component in `design/system/components/`; `design/mockups/screenshots/` has every page at 1440 and 390px. Where this summary and the design system differ, the design system wins.
+Every page was designed and approved before it was built (18–19 October 2026), and the site in `src/` now carries that design: the live site is the reference. The tokens in `design/tokens.json` are the source of every colour and size.

@@ -128,7 +128,7 @@ Posts are Markdown files in `src/content/posts/<slug>/index.md`, with their imag
 
 ## deployment
 
-Cloudflare Workers Builds deploys `main` to production and every other branch to a private preview URL behind Cloudflare Access. See [docs/deployment.md](docs/deployment.md).
+Cloudflare Workers Builds deploys `main` to production and every other branch to a private preview URL behind Cloudflare Access. Each production deploy is smoke-tested before it's recorded. See [docs/architecture.md](docs/architecture.md#deploying).
 
 ## security
 
