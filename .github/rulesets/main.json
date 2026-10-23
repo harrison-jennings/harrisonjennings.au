@@ -49,6 +49,30 @@
           {
             "context": "lighthouse / Lighthouse",
             "integration_id": 15368
+          },
+          {
+            "context": "codeql / Analyse (javascript-typescript)",
+            "integration_id": 15368
+          },
+          {
+            "context": "codeql / Analyse (actions)",
+            "integration_id": 15368
+          },
+          {
+            "context": "dependency review / review",
+            "integration_id": 15368
+          }
+        ]
+      }
+    },
+    {
+      "type": "code_scanning",
+      "parameters": {
+        "code_scanning_tools": [
+          {
+            "tool": "CodeQL",
+            "security_alerts_threshold": "high_or_higher",
+            "alerts_threshold": "errors"
           }
         ]
       }

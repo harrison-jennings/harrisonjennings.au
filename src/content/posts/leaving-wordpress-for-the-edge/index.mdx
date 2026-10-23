@@ -364,7 +364,7 @@ A pipeline is only as trustworthy as what it runs. So:
 - **Every workflow declares least-privilege permissions,** read-only by default and widened only for the job that needs it, and checkouts don't keep credentials afterwards.
 - **Untrusted input is passed as data, never pasted into a script.** A branch name can contain anything.
 - **Dependabot groups minor and patch updates** weekly, and gives every major update its own pull request, so one breaking release can't hold the rest hostage.
-- **`main` is protected by a ruleset:** pull requests only, squash merges, linear history, no force pushes, and the three required checks pinned to GitHub Actions as their source, so nothing else can satisfy a check by sharing its name.
+- **`main` is protected by a ruleset:** pull requests only, squash merges, linear history, no force pushes, and the six required checks pinned to GitHub Actions as their source, so nothing else can satisfy a check by sharing its name.
 
 ## moving house without losing the address
 
@@ -424,7 +424,7 @@ When the migration was done, I made the repository public. A few reasons.
 | lines of server-side code                     | 172 |
 | Worker endpoints                              |   2 |
 | inline scripts allowed by the CSP             |   3 |
-| checks required to merge                      |   3 |
+| checks required to merge                      |   6 |
 | minimum Lighthouse score to merge             |  95 |
 | automated tests (unit and end-to-end)         | 384 |
 | WordPress URLs checked on every pull request  |  34 |
