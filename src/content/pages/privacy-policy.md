@@ -3,8 +3,9 @@ title: privacy policy
 description: How this site handles personal information, what runs in your browser and when, and how to ask about it.
 # Updated for the new site: hosting on Cloudflare, the consent records, and the cookie tables (built
 # from src/content/consent.yaml). The site went live on 20 October 2026; updated the next day with the
-# consent records' retention period, which src/worker/retention.ts enforces.
-updated: 2026-10-21
+# consent records' retention period, which src/worker/retention.ts enforces. Updated on 25 October 2026
+# with the analytics retention periods, which partition and table expiry enforce in BigQuery.
+updated: 2026-10-25
 summary:
   - You can read the site without telling me who you are.
   - Analytics and advertising cookies are only set if you agree in the cookie settings. Without that consent, Google may still receive limited measurements without cookies.
@@ -102,6 +103,8 @@ The Site uses Advanced Google Consent Mode. If optional consent is refused, Goog
 
 When Analytics consent is granted, analytics information may include online identifiers, page and event information, referral information, approximate location, and browser and device characteristics.
 
+Google Analytics keeps user-level and event-level data for 14 months. A copy of the analytics information is exported to the Site operator's Google Cloud project, stored in Google's Melbourne region, for analysis. In that copy, event-level information, including online identifiers where Analytics consent was granted, is kept for 26 months so that two full years can be compared, and is then deleted automatically. Aggregated statistics that cannot identify any visitor, such as daily totals, may be kept for longer.
+
 Google Signals is enabled in Google Analytics. Where a visitor grants Advertising and Targeting consent, Google Signals may provide aggregated cross-device, demographic and interest reporting for eligible Google users. The Site operator does not receive information that directly identifies individual Google Account users.
 
 The Site also uses Cloudflare Web Analytics to measure page views and how quickly pages load. It doesn't set cookies or use identifiers to recognise a visitor, and its results are only available in aggregate, so it runs whatever cookie choice is made.
@@ -180,6 +183,8 @@ Personal information is retained only for as long as reasonably necessary for th
 - comply with applicable legal, accounting or record-keeping obligations.
 
 When personal information is no longer reasonably required, reasonable steps will be taken to delete or de-identify it where practicable and where continued retention is not required by law.
+
+Some information has a set retention period: consent records are deleted 12 months after the choice was made, and event-level analytics information held in the Site operator's Google Cloud project is deleted after 26 months. See [analytics](#analytics) for details.
 
 Information retained by a service provider may be subject to that provider’s retention and backup processes.
 
