@@ -1,0 +1,47 @@
+---
+// One do/don't card (design hand-off: DoDontCard): the example, then the verdict in words with one
+// sentence saying why. A "don't" (or "before") example is an inert picture over a hatch: hidden from
+// screen readers and the keyboard, so nobody can tab to the wrong way of doing something. A variant
+// card has a name instead of a verdict.
+import DsIcon from './DsIcon.astro';
+
+interface Props {
+  verdict?: 'do' | "don't" | 'before' | 'after';
+  /** For a variant card: its name, in place of a verdict. */
+  name?: string;
+  /** Why, in one sentence. */
+  say: string;
+  /** A post card or similar: the example fills the card's width. */
+  wide?: boolean;
+  /** Show the example as a picture even when it's right: real buttons and links that go nowhere. */
+  picture?: boolean;
+}
+
+const { verdict, name, say, wide = false, picture = false } = Astro.props;
+const wrong = verdict === "don't" || verdict === 'before';
+const inert = wrong || picture;
+---
+
+<div class:list={['dd-card', { 'dd-card--dont': wrong }]}>
+  <div
+    class:list={['dd-card__ex', { 'dd-card__ex--wide': wide }]}
+    aria-hidden={inert ? 'true' : undefined}
+    inert={inert}
+  >
+    <slot />
+  </div>
+  {name ? (
+    <p class="dd-card__cap">
+      <b>{name}</b>
+      <span>{say}</span>
+    </p>
+  ) : (
+    <p class="dd-card__say">
+      <b>
+        <DsIcon name={wrong ? 'cross' : 'tick'} size={14} />
+        {verdict}
+      </b>
+      <span>{say}</span>
+    </p>
+  )}
+</div>

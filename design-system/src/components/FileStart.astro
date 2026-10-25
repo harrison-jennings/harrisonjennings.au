@@ -1,0 +1,23 @@
+---
+// The first lines of tokens.css or tokens.json, for their download cards, with the real values from
+// design/tokens.json, coloured as the dark code treatment colours them.
+import { colour } from '../lib/tokens';
+
+interface Props {
+  file: 'css' | 'json';
+}
+
+const { file } = Astro.props;
+---
+
+{file === 'css' ? (
+  <pre class="tk-file"><span class="k">:root</span> {'{'}
+  --ground: <span class="s">{colour('ground', 'dark')}</span>;
+  --accent: <span class="s">{colour('accent', 'dark')}</span>;
+  …</pre>
+) : (
+  <pre class="tk-file">{'{'}
+  <span class="k">"name"</span>: <span class="s">"ground"</span>,
+  <span class="k">"value"</span>: {'{ … }'},
+  …</pre>
+)}

@@ -1,8 +1,18 @@
 ---
 // The design system's own small line icons: chevrons for groups and menus, the arrow on links that
-// leave it, the magnifier for when search arrives. Drawn in currentColor, decorative only.
+// leave it, the magnifier for when search arrives, and the furniture's copy, download, tick and cross.
+// Drawn in currentColor, decorative only.
 interface Props {
-  name: 'chevron-right' | 'chevron-down' | 'arrow-out' | 'search';
+  name:
+    | 'chevron-right'
+    | 'chevron-down'
+    | 'arrow-out'
+    | 'arrow-right'
+    | 'search'
+    | 'copy'
+    | 'download'
+    | 'tick'
+    | 'cross';
   size?: number;
 }
 
@@ -12,6 +22,11 @@ const paths: Record<Props['name'], string> = {
   'chevron-down': 'M6 9l6 6 6-6',
   'arrow-out': 'M8 16L16 8M9 8h7v7',
   search: 'M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4',
+  'arrow-right': 'M5 12h14M13 6l6 6-6 6',
+  copy: 'M9 9h11v11H9zM5 15V6a2 2 0 0 1 2-2h9',
+  download: 'M12 4v12M6 11l6 6 6-6M5 20h14',
+  tick: 'M5 12l5 5 9-10',
+  cross: 'M6 6l12 12M18 6L6 18',
 };
 ---
 

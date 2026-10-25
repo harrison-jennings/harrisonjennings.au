@@ -14,6 +14,13 @@ function htmlFiles(dir: string): string[] {
   );
 }
 
+/** Every specimen page (the examples shown inside previews), as a path. */
+export function specimenPages(): string[] {
+  return htmlFiles(join(dist, 'specimens'))
+    .map((file) => `/${relative(dist, file).split(sep).slice(0, -1).join('/')}/`)
+    .sort();
+}
+
 /**
  * Every page of the built design system, as a path: the overview and the docs pages, not the
  * specimens (shown inside previews) or the section addresses that only redirect. Read from the build,

@@ -1,0 +1,34 @@
+---
+// Sizes: every size the site draws the mark at, found in its code (lib/logo-sizes.ts), with the
+// stroke and dot the component picks for it, and where it's used. The big one (the 404's) is named
+// under the row rather than drawn.
+import Logo from '../../../../src/components/Logo.astro';
+import { logoSizes } from '../../lib/logo-sizes';
+
+const all = logoSizes();
+const shown = all.filter((s) => s.size <= 64);
+const large = all.filter((s) => s.size > 64);
+const note = [
+  "Every size the site draws the mark at, with its stroke / dot radius in the mark's 100 units.",
+  ...large.map((s) => `The ${s.where} draws it at ${s.size}px.`),
+  `Nothing draws it below ${Math.min(...all.map((s) => s.size))}px; the favicon and app icons use the tile instead.`,
+].join(' ');
+---
+
+<div class="lg-stage lg-stage--sizes">
+  <div class="lg-sizes">
+    {shown.map((s) => (
+      <figure>
+        <Logo size={s.size} />
+        <figcaption>
+          {s.size}px
+          <br />
+          {s.stroke} / {s.dot}
+          <br />
+          <span class="lg-where">{s.where}</span>
+        </figcaption>
+      </figure>
+    ))}
+  </div>
+</div>
+<p class="ds-small">{note}</p>

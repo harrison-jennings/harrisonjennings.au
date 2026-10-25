@@ -1,6 +1,7 @@
 import { defineCollection } from 'astro:content';
-import { glob } from 'astro/loaders';
+import { file, glob } from 'astro/loaders';
 import { z } from 'astro/zod';
+import { parse } from 'yaml';
 
 // The design system's pages: src/content/docs/<section>/<page>.mdx, published at /<section>/<page>/.
 // MDX, so the wording can be edited without touching code and a page can still show components.
@@ -22,4 +23,34 @@ const docs = defineCollection({
   }),
 });
 
-export const collections = { docs };
+// The overview's wording (the landing page at /): everything but its counts, which are worked out.
+const overview = defineCollection({
+  loader: file('src/content/overview.yaml'),
+  schema: z.object({
+    eyebrow: z.string(),
+    lead: z.string(),
+    /** "start here": one line per section, by its id (src/lib/sections.ts), and the tokens card. */
+    cards: z.record(z.string(), z.string()),
+    /** "how to use it": exactly three steps. */
+    steps: z.array(z.object({ title: z.string(), text: z.string() })).length(3),
+    /** The line under "what changed". */
+    history: z.string(),
+  }),
+});
+
+// "what changed" on the overview: a row per change worth knowing about, newest first. Written by hand,
+// not taken from git, so it says what changed for someone using the design system.
+const changes = defineCollection({
+  loader: file('src/content/changes.yaml', {
+    parser: (text) =>
+      (parse(text) as Record<string, unknown>[]).map((row, i) => ({ id: String(i), ...row })),
+  }),
+  schema: z.object({
+    date: z.coerce.date(),
+    line: z.string(),
+    /** The pull request's number. */
+    pr: z.number().int(),
+  }),
+});
+
+export const collections = { docs, overview, changes };

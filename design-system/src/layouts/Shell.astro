@@ -4,7 +4,9 @@
 // with the build stamp, and on phones the page picker and full-screen menu. Built from the pages that
 // exist (lib/nav.ts). Landing pages (the overview) have no sidebar and no "on this page".
 import '../../../src/styles/global.css';
+import '../../../src/styles/prose.css';
 import '../styles/shell.css';
+import '../styles/furniture.css';
 import Icon from '../../../src/components/Icon.astro';
 import Logo from '../../../src/components/Logo.astro';
 import ThemeHead from '../../../src/components/ThemeHead.astro';
@@ -214,8 +216,11 @@ const REPO = 'https://github.com/harrison-jennings/harrisonjennings.au';
 
     <script>
       import '../scripts/shell';
+      import { bindCopyCode } from '../../../src/scripts/copy-code';
       import { bindToc } from '../../../src/scripts/toc';
       document.querySelectorAll<HTMLElement>('[data-toc]').forEach(bindToc);
+      // A code snippet in a page is the site's own code block, with its copy button.
+      document.querySelectorAll<HTMLButtonElement>('[data-copy-code]').forEach(bindCopyCode);
     </script>
   </body>
 </html>

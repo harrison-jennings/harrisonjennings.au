@@ -1,0 +1,20 @@
+---
+// On dark, light and imagery: the nav lockup on each theme's ground, then on the ember field (the two
+// clouds from docs/brand.md, at the share card's 1200:630), top left, clear of the clouds.
+import Lockup from './Lockup.astro';
+---
+
+<div class="lg-pair">
+  <figure class="lg-on" data-theme="dark">
+    <Lockup />
+    <figcaption>on dark ground</figcaption>
+  </figure>
+  <figure class="lg-on" data-theme="light">
+    <Lockup />
+    <figcaption>on light ground</figcaption>
+  </figure>
+  <figure class="lg-on lg-on--ember" data-theme="dark">
+    <Lockup />
+    <figcaption>on the ember field, top left</figcaption>
+  </figure>
+</div>

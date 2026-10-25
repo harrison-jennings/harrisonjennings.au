@@ -1,0 +1,26 @@
+# "what changed" on the overview, newest first: the date, one line saying what changed, and the pull
+# request's number. Add a row when something changes that someone using the design system should know.
+- date: 2026-10-26
+  line: 'Design system: every example sits in a preview frame, at phone and desktop width, with its code to copy.'
+  pr: 67
+- date: 2026-10-25
+  line: "Motion: every transition's timing is a token, and the image viewer's colours are too."
+  pr: 65
+- date: 2026-10-25
+  line: 'Image viewer: a click zooms the image, and a zoomed image can be dragged on desktop.'
+  pr: 57
+- date: 2026-10-21
+  line: 'Links: links to other sites open in a new tab, with a note for screen readers.'
+  pr: 50
+- date: 2026-10-21
+  line: 'Code blocks: Velocity treats quotes as strings only inside a directive, so output text stays plain.'
+  pr: 48
+- date: 2026-10-21
+  line: 'Code blocks: in JSON and YAML, keys now stand apart from their values.'
+  pr: 47
+- date: 2026-10-21
+  line: 'Consent: the cookie banner sits over the page instead of adding room below the footer.'
+  pr: 42
+- date: 2026-10-20
+  line: The site went live.
+  pr: 33

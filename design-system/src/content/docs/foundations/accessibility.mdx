@@ -1,0 +1,34 @@
+---
+title: accessibility
+lead: The site works for everyone, by keyboard, screen reader or touch, in either theme, and with motion turned off. These are the rules every component keeps.
+group: rules
+order: 1
+---
+
+## contrast
+
+- **4.5:1 for text, in both themes.** Every pairing the site uses is checked on the [colour page](/brand/colour/#text-and-backgrounds), worked out from the tokens.
+- **`accent` as text only on dark `ground`.** On a dark card, use `link`.
+- **Lines don't mark controls.** `line` is decorative (about 1.2:1), so a button or field is also marked by a fill, an underline or size.
+
+## keyboard and focus
+
+- **Everything works from the keyboard,** in a sensible order, with nothing that traps focus except an open dialog.
+- **The focus ring:** a 2px `accent` outline, 3px out from the thing in focus. Never removed, never replaced by colour alone.
+- **Every control is a real `<button>` or link,** so it has a role and keyboard support without extra code.
+- **A skip link** comes first on every page.
+
+## targets
+
+- **44px to tap** (`target`), whatever the size of the icon or label inside; 48px for the phone menu's icons (`target-touch`).
+
+## screen readers
+
+- **Every image has alternative text,** or an empty one when it's decoration.
+- **An icon on its own has a name;** an icon beside words is hidden.
+- **Links say where they go,** and a link to another site says it opens in a new tab.
+- **Pages are in Australian English** (`lang="en-AU"`), so they're read with the right voice.
+
+## motion
+
+- **Still under reduced motion.** With `prefers-reduced-motion`, every transition is instant and every loop stops; the still state is a finished design.

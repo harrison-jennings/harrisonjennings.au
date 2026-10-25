@@ -1,0 +1,27 @@
+---
+// The copy chip (design hand-off: TokenTable): a token or class name you can copy, as a small pill.
+// It copies `copy` and reads "copied" for 1.6s, with the site's own copy script.
+import DsIcon from './DsIcon.astro';
+
+interface Props {
+  /** What it copies: var(--ground), .type-display-hero. */
+  copy: string;
+  /** What it shows, if not that: --ground. */
+  label?: string;
+}
+
+const { copy, label = copy } = Astro.props;
+---
+
+<button class="ds-chipcopy" type="button" data-copy-text={copy}>
+  <DsIcon name="copy" size={14} />
+  <span class="visually-hidden">copy</span>
+  <span data-copy-label aria-live="polite">
+    {label}
+  </span>
+</button>
+
+<script>
+  import { bindCopyText } from '../../../src/scripts/copy-text';
+  document.querySelectorAll<HTMLButtonElement>('.ds-chipcopy').forEach(bindCopyText);
+</script>

@@ -1,0 +1,43 @@
+---
+title: typography
+lead: Two families with separate jobs. Martian Mono is the engineered voice, for anything a line or two long. Schibsted Grotesk does the reading.
+group: identity
+order: 3
+---
+
+import TypeFamily from '../../../components/TypeFamily.astro';
+import TypeInUse from '../../../components/TypeInUse.astro';
+import TypeScale from '../../../components/TypeScale.astro';
+
+## the two families
+
+<div class="ty-fam">
+  <TypeFamily
+    family="display"
+    text="500, tracked to -0.05em (-0.04em at 20px and below). The hero, project names, the open phone menu, hostnames and code."
+  />
+  <TypeFamily
+    family="sans"
+    text="400 for reading, 600 for titles at -0.02em. Body, post text, headings, navigation, labels and buttons."
+  />
+</div>
+
+## the scale
+
+Every style is a class built from tokens.json, so `.type-heading-2` on the site is exactly what's shown here. Samples are at true size.
+
+<TypeScale />
+
+## type in use
+
+The top of a post, with each style named.
+
+<TypeInUse />
+
+## rules
+
+- **Mono stays short.** Martian Mono is wide. Past two lines it gets hard to read, which is why post titles are in Schibsted.
+- **Track display type tight.** -0.05em, or -0.04em at 20px and below. Untracked, the mono looks like a terminal.
+- **Give wrapped display lines room.** 1.12 at 46–50px and 1.1 at 34px. Any tighter and descenders hit the hero's dots.
+- **Few weights.** Schibsted at 400 to read and 600 for titles. Martian Mono at 500 for display, 400 for code and hostnames. No bold body copy.
+- **Muted is for meta.** Dates, captions and the dek are in `muted`; everything you read is in `text`.

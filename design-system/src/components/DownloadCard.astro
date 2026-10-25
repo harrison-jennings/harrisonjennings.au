@@ -1,0 +1,50 @@
+---
+// A file to download (design hand-off: DownloadCard): a picture of it, its name, what it's for, and a
+// pill per format. Each pill is a real link with `download` and a name that says which file it is
+// ("download the mark on dark as SVG"). A "view" format opens the file instead.
+import DsIcon from './DsIcon.astro';
+
+interface Props {
+  name: string;
+  text: string;
+  /** The picture's theme: a mark is shown on the ground it's for. */
+  theme?: 'dark' | 'light';
+  formats: { label: string; href: string; view?: boolean }[];
+}
+
+const { name, text, theme, formats } = Astro.props;
+---
+
+<div class="dl">
+  <div class="dl__art" data-theme={theme}>
+    <slot />
+  </div>
+  <div class="dl__body">
+    <b>{name}</b>
+    <span>{text}</span>
+    <div class="dl__btns">
+      {formats.map((f, i) =>
+        f.view ? (
+          <a href={f.href}>
+            {f.label}
+            <span class="visually-hidden"> {name}</span>
+          </a>
+        ) : (
+          <a href={f.href} download>
+            {i === 0 && <DsIcon name="download" size={16} />}
+            {f.label === 'download' ? (
+              <>
+                download<span class="visually-hidden"> {name}</span>
+              </>
+            ) : (
+              <>
+                <span class="visually-hidden">download {name} as </span>
+                {f.label}
+              </>
+            )}
+          </a>
+        ),
+      )}
+    </div>
+  </div>
+</div>

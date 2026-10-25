@@ -1,0 +1,28 @@
+---
+title: colour
+lead: Two themes from one set of roles. Dark is the primary look; light is an equal theme with its own deeper brick, not an inversion.
+group: identity
+order: 2
+---
+
+import ContrastPairs from '../../../components/ContrastPairs.astro';
+import Swatches from '../../../components/Swatches.astro';
+
+## the palette
+
+<Swatches />
+
+## text and backgrounds
+
+Every pairing the site uses, in both themes, against the WCAG AA line of 4.5:1 for text. The ratios are worked out from the tokens when the design system is built, so a colour change shows here straight away.
+
+<ContrastPairs />
+
+## rules
+
+- **Brick is a signal, not a wash.** One primary button per view, the logo's dot, link underlines, the live dot and code keywords. Large areas of brick only appear as the ember clouds.
+- **Brick as small text, only on ground in dark.** On a dark card it falls below 4.5:1, so use `link` there instead.
+- **Apricot is a fill, never text.** It sits under `on-apricot`, or at the far end of the ember gradient.
+- **Hairlines don't mark controls.** `line` is too faint to be the only sign of a button or field; use a fill, an underline or size.
+- **No drop shadows.** Surfaces separate by colour and hairline. The one shadow is the live dot's halo.
+- **Anything over an image stays dark.** Like code blocks, it takes the dark values in both themes.

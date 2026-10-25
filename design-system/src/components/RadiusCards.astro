@@ -1,0 +1,24 @@
+---
+// The radii: each radius token from design/tokens.json drawn as a corner with that radius, with its
+// copy chip, value and what it's for.
+import { TOKENS } from '../lib/tokens';
+import ChipCopy from './ChipCopy.astro';
+
+const radii = TOKENS.filter((t) => t.kind === 'radius');
+---
+
+<div class="ra-grid">
+  {radii.map((t) => (
+    <div class="ra-card">
+      <div class="ra-card__shape" aria-hidden="true">
+        <span style={`border-radius: var(--${t.name})`} />
+      </div>
+      <div class="ra-card__body">
+        <ChipCopy copy={t.copy} label={`--${t.name}`} />
+        <p>
+          <span class="sp-list__value">{t.values[0]?.value}</span> · {t.usage}
+        </p>
+      </div>
+    </div>
+  ))}
+</div>

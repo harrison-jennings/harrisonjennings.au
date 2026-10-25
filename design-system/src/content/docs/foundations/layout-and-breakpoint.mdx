@@ -1,0 +1,27 @@
+---
+title: layout and breakpoint
+lead: One column, one breakpoint. Every page lines up to the same 1152px column, and below 760px it becomes the phone layout.
+group: layout
+order: 3
+---
+
+import TokenTable from '../../../components/TokenTable.astro';
+
+## the column
+
+Every page's content lines up to `container`, the nav pill's maximum width. Content starts 22px in from the pill's left edge, under the logo, and ends 10px in from its right edge, under the nav's button. The `.column` class in `global.css` does this for you.
+
+- **Gutters:** 72px either side on wide screens, 16px on phones.
+- **Reading width:** post text runs to 680px; lines longer than that get hard to follow.
+
+## the breakpoint
+
+There's one: **760px**. Above it is the desktop layout; at 760px and below, the phone layout.
+
+- **Phone type:** the post title drops to 32px, the hero to 44px, section titles to 26px.
+- **Phone layouts:** rows of cards swipe sideways, with the next card peeking in; grids become one column; the nav becomes the menu button.
+- **Nothing scrolls sideways at 390px.** Long values (addresses, code, colours) wrap or scroll inside their own box, never the page.
+
+## sizes
+
+<TokenTable only="size" />

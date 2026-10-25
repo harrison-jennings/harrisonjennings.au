@@ -1,0 +1,161 @@
+---
+// Every token (design hand-off: TokenTable), from design/tokens.json: filter chips by kind with their
+// counts, then a row per token with its copy chip, what it's for, its value (both themes where it has
+// two, each with a dot painted by that theme's token) and a preview drawn with the token itself. The
+// chosen filter is kept in the address (?kind=type); colour is chosen on load. scripts/tokens.ts.
+import {
+  countOf,
+  KINDS,
+  px,
+  readable,
+  TOKENS,
+  TYPE_STYLES,
+  type Kind,
+  type Token,
+} from '../lib/tokens';
+import ChipCopy from './ChipCopy.astro';
+
+interface Props {
+  /** The filter chosen on load. */
+  kind?: Kind | 'all';
+  /** Just one kind, with no filters: the motion tokens on their own page. */
+  only?: Kind;
+}
+
+const { only, kind = only ?? 'colour' } = Astro.props;
+const tokens = only ? TOKENS.filter((t) => t.kind === only) : TOKENS;
+const filters = [
+  { id: 'all', count: TOKENS.length },
+  ...KINDS.map((k) => ({ id: k, count: countOf(k) })),
+];
+
+/** A cubic-bezier as its curve, in a 56 × 32 box. `ease` is cubic-bezier(0.25, 0.1, 0.25, 1). */
+function curve(value: string): string {
+  const named: Record<string, number[]> = {
+    ease: [0.25, 0.1, 0.25, 1],
+    linear: [0, 0, 1, 1],
+    'ease-in': [0.42, 0, 1, 1],
+    'ease-out': [0, 0, 0.58, 1],
+    'ease-in-out': [0.42, 0, 0.58, 1],
+  };
+  const [x1 = 0, y1 = 0, x2 = 1, y2 = 1] =
+    named[value] ??
+    value
+      .match(/cubic-bezier\(([^)]+)\)/)?.[1]
+      ?.split(',')
+      .map(Number) ??
+    [];
+  const p = (x: number, y: number) => `${(x * 56).toFixed(1)} ${(32 - y * 32).toFixed(1)}`;
+  return `M0 32 C${p(x1, y1)} ${p(x2, y2)} 56 0`;
+}
+
+type Preview =
+  | { type: 'swatch' | 'shadow' | 'radius'; style: string }
+  | { type: 'bar'; style: string; long?: boolean }
+  | { type: 'type'; style: string }
+  | { type: 'curve'; d: string };
+
+function preview(t: Token): Preview {
+  const value = t.values[0]?.value ?? '';
+  switch (t.kind) {
+    case 'colour':
+      return { type: 'swatch', style: `background: var(--${t.name})` };
+    case 'font':
+      return {
+        type: 'type',
+        style: `font-family: var(--${t.name}); font-weight: ${t.name === 'font-display' ? 500 : 600}`,
+      };
+    case 'type': {
+      const s = TYPE_STYLES.find((x) => `type-${x.name}` === t.name);
+      return { type: 'type', style: `font-size: ${Math.min(px(s?.fontSize ?? '16px'), 30)}px` };
+    }
+    case 'radius':
+      return { type: 'radius', style: `border-top-left-radius: var(--${t.name})` };
+    case 'shadow':
+      return { type: 'shadow', style: `box-shadow: var(--${t.name})` };
+    case 'motion':
+      return value.endsWith('ms')
+        ? { type: 'bar', style: `width: ${px(value) / 5}px` }
+        : { type: 'curve', d: curve(value) };
+    default:
+      // Spacing and sizes: a bar as long as the value; one longer than the cell fades out at its edge.
+      return { type: 'bar', style: `width: var(--${t.name})`, long: px(value) > 120 };
+  }
+}
+---
+
+{!only && (
+  <div class="ds-filters" role="group" aria-label="Filter tokens" data-token-filters>
+    {filters.map((f) => (
+      <button type="button" aria-pressed={f.id === kind ? 'true' : 'false'} data-kind={f.id}>
+        {f.id}
+        <small>
+          {f.count}
+          <span class="visually-hidden"> tokens</span>
+        </small>
+      </button>
+    ))}
+  </div>
+)}
+<div class="ds-tablebox">
+  <table class="ds-table ds-table--stack tk-table" data-token-table>
+    <thead>
+      <tr>
+        <th scope="col">token and what it's for</th>
+        <th scope="col">value</th>
+        <th scope="col">preview</th>
+      </tr>
+    </thead>
+    <tbody>
+      {tokens.map((t) => {
+        const p = preview(t);
+        return (
+          <tr data-kind={t.kind} hidden={kind !== 'all' && t.kind !== kind}>
+            <td>
+              <ChipCopy copy={t.copy} />
+              <p class="tk-use">{t.usage}</p>
+            </td>
+            <td class="tk-vals">
+              {t.values.map((v) => (
+                <span class="tk-val">
+                  {v.theme && t.kind === 'colour' && (
+                    <i class="tk-dot" data-theme={v.theme} style={`background: var(--${t.name})`} />
+                  )}
+                  {v.theme && <em>{v.theme}</em>}
+                  <span class="tk-v">{readable(v.value)}</span>
+                </span>
+              ))}
+            </td>
+            <td class="tk-prevcell" aria-hidden="true">
+              {p.type === 'curve' ? (
+                <svg class="tk-curve" width="56" height="32" viewBox="0 0 56 32">
+                  <path class="tk-curve__line" d={p.d} />
+                </svg>
+              ) : p.type === 'type' ? (
+                <span
+                  class:list={['tk-prev', 'tk-prev--ty', t.kind === 'type' && t.name]}
+                  style={p.style}
+                >
+                  Ag
+                </span>
+              ) : (
+                <span
+                  class:list={[
+                    'tk-prev',
+                    `tk-prev--${p.type}`,
+                    { 'tk-prev--long': p.type === 'bar' && p.long },
+                  ]}
+                  style={p.style}
+                />
+              )}
+            </td>
+          </tr>
+        );
+      })}
+    </tbody>
+  </table>
+</div>
+
+<script>
+  import '../scripts/tokens';
+</script>

@@ -1,0 +1,19 @@
+---
+// The voice page's "before": the real post card, written badly, with a numbered circle after each
+// broken rule (the verdict under it says which).
+import PostCardView from '../../../../src/components/PostCardView.astro';
+---
+
+<div class="vo-card">
+  <PostCardView tag={{ name: 'Marketing Automation' }}>
+    <Fragment slot="date">
+      Aug 13th, 2026<span class="vo-mark">5</span>
+    </Fragment>
+    <Fragment slot="title">
+      Is Sending Yourself A Test Email Enough?<span class="vo-mark">1</span>
+    </Fragment>
+    Learn why your marketo<span class="vo-mark">2</span> test sends might not be optimized
+    <span class="vo-mark">3</span> for real leads. Click here<span class="vo-mark">4</span> to read
+    more!
+  </PostCardView>
+</div>

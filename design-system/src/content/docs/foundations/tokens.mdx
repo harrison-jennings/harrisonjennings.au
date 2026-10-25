@@ -1,0 +1,52 @@
+---
+title: tokens
+lead: Every value the brand is made of, from one file. design/tokens.json builds the CSS variables, the type classes and the share cards, so a change there reaches everything.
+group: rules
+order: 2
+facts:
+  - label: source
+    value: design/tokens.json
+    href: https://github.com/harrison-jennings/harrisonjennings.au/blob/main/design/tokens.json
+  - label: built by
+    value: scripts/build-tokens.mjs
+    href: https://github.com/harrison-jennings/harrisonjennings.au/blob/main/scripts/build-tokens.mjs
+  - label: in CSS
+    value: src/styles/tokens.css, generated
+---
+
+import DownloadCard from '../../../components/DownloadCard.astro';
+import FileStart from '../../../components/FileStart.astro';
+import TokenTable from '../../../components/TokenTable.astro';
+
+## every token
+
+<TokenTable />
+
+<p class="ds-small">Previews follow the theme you're viewing. Colour and shadow values are listed for both. Under reduced motion every duration drops to 0.01ms. Looping animations (the logo draw, bounce, pulse, bob and ticker) stay in their components.</p>
+
+## downloads
+
+<div class="dl-grid dl-grid--2">
+  <DownloadCard
+    name="tokens.css"
+    text="The CSS variables for both themes, the fonts and the type classes. Drop it into any page."
+    theme="dark"
+    formats={[
+      { label: 'download', href: '/tokens.css' },
+      { label: 'view', href: '/tokens.css', view: true },
+    ]}
+  >
+    <FileStart file="css" />
+  </DownloadCard>
+  <DownloadCard
+    name="tokens.json"
+    text="The source, with each token's value, both themes and what it's for. For tools and other builds."
+    theme="dark"
+    formats={[
+      { label: 'download', href: '/tokens.json' },
+      { label: 'view', href: '/tokens.json', view: true },
+    ]}
+  >
+    <FileStart file="json" />
+  </DownloadCard>
+</div>

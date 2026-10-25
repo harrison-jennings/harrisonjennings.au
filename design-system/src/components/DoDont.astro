@@ -1,0 +1,15 @@
+---
+// A row of do/don't cards (design hand-off: DoDontCard): two across, or three for variants and misuse.
+// One column on phones; the logo's misuse grid keeps two.
+interface Props {
+  cols?: 2 | 3;
+  /** The logo page's misuse grid: shorter examples, two across on phones. */
+  misuse?: boolean;
+}
+
+const { cols = 2, misuse = false } = Astro.props;
+---
+
+<div class:list={['dd', { 'dd--3': cols === 3, 'dd--misuse': misuse }]}>
+  <slot />
+</div>

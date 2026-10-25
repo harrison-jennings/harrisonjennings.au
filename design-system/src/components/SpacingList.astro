@@ -1,0 +1,19 @@
+---
+// The spacing scale: each spacing token from design/tokens.json with its copy chip, its value, a bar
+// that long (drawn with the token itself) and what it's for.
+import { TOKENS } from '../lib/tokens';
+import ChipCopy from './ChipCopy.astro';
+
+const spacing = TOKENS.filter((t) => t.kind === 'spacing');
+---
+
+<ul class="sp-list">
+  {spacing.map((t) => (
+    <li>
+      <ChipCopy copy={t.copy} label={`--${t.name}`} />
+      <span class="sp-list__value">{t.values[0]?.value}</span>
+      <span class="sp-list__bar" style={`width: var(--${t.name})`} aria-hidden="true" />
+      <span class="sp-list__use">{t.usage}</span>
+    </li>
+  ))}
+</ul>

@@ -14,6 +14,8 @@ The working summary of the identity. The design system has live previews of ever
 - Line in `text`, dot always `accent`.
 - The line thickens as the mark shrinks: 40px and up stroke 11 / dot 7.5; 26–28px 12 / 8.5; 24px 15 / 9.5; 16px and below 17 / 10.5. The component does this for you.
 - Lockup: mark + "harrison jennings" in Schibsted Grotesk 600, -0.02em, 10px gap. Nav 26 / 17px; footer 28 / 20px.
+- Clear space: two-thirds of the mark's height on every side. The tightest the site goes is the compact nav: 16px around the 24px mark.
+- The smallest the mark is drawn is 24px. Below that, use the tile (`public/favicon.svg`).
 - Static files: `public/brand/mark-on-dark.svg`, `public/brand/mark-on-light.svg`, and the favicons in `public/`.
 
 ## colour
@@ -92,7 +94,7 @@ Easings: `ease-standard` (`ease`) for hover changes and fades, `ease-move` (`cub
 
 ## components
 
-`Button`, `TextLink`, `IconButton`, `ThemeToggle`, `Nav` (with the mobile menu), `Footer`, `Arrows`, `PostCard`, `ProjectShot`, `ProjectLinks`, `LiveSignal` (and `LiveDot`), `CopyButton`, `Tag`, `Logo`, `Icon`, the home sections in `src/components/home/`, the blog's in `src/components/blog/`, and `<Figures>` and `<YouTube>` for posts in `src/components/prose/`. Each file starts with a one-line description; the design system has the full guidelines.
+`Button`, `TextLink`, `IconButton`, `ThemeToggle`, `Nav` (with the mobile menu), `Footer`, `Arrows`, `PostCard` (and `PostCardView`, its look), `Steps`, `ProjectShot`, `ProjectLinks`, `LiveSignal` (and `LiveDot`), `CopyButton`, `Tag`, `Logo`, `Icon`, the home sections in `src/components/home/`, the blog's in `src/components/blog/`, and `<Figures>` and `<YouTube>` for posts in `src/components/prose/`. Each file starts with a one-line description; the design system has the full guidelines.
 
 ## the full design
 
