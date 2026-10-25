@@ -114,7 +114,7 @@ const number = (i: number) => String(i + 1).padStart(2, '0');
     text-align: left;
     color: var(--muted);
     cursor: pointer;
-    transition: color 150ms ease;
+    transition: color var(--duration-hover) var(--ease-standard);
   }
   .switch__tab:last-child {
     border-bottom: 1px solid var(--line);
@@ -153,8 +153,8 @@ const number = (i: number) => String(i + 1).padStart(2, '0');
     flex-direction: column;
     gap: var(--space-20);
     transition:
-      opacity 280ms ease,
-      transform 280ms cubic-bezier(0.65, 0, 0.35, 1);
+      opacity var(--duration-panel) var(--ease-standard),
+      transform var(--duration-panel) var(--ease-move);
   }
   .switch__pane[hidden] {
     display: flex;

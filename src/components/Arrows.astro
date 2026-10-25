@@ -55,9 +55,9 @@ const { swipe, noun } = Astro.props;
     color: var(--text);
     cursor: pointer;
     transition:
-      border-color 150ms ease,
-      color 150ms ease,
-      opacity 150ms ease;
+      border-color var(--duration-hover) var(--ease-standard),
+      color var(--duration-hover) var(--ease-standard),
+      opacity var(--duration-hover) var(--ease-standard);
   }
   .arrow svg {
     display: block;

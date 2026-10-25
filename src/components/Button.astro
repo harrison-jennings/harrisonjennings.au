@@ -82,7 +82,7 @@ const {
     background: var(--apricot);
     color: var(--on-apricot);
     clip-path: inset(0 100% 0 0);
-    transition: clip-path 360ms cubic-bezier(0.65, 0, 0.35, 1);
+    transition: clip-path var(--duration-wipe) var(--ease-move);
     pointer-events: none;
   }
   /* without script the wipe still runs from the left */

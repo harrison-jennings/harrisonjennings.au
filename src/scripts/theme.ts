@@ -3,7 +3,6 @@
 export type Theme = 'dark' | 'light';
 
 export const THEME_KEY = 'hj-theme';
-const THEME_COLOUR: Record<Theme, string> = { dark: '#121110', light: '#f4efeb' };
 
 export const currentTheme = (): Theme =>
   document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
@@ -18,7 +17,9 @@ export function setTheme(theme: Theme): void {
   } catch {
     // Storage can be blocked (private windows); the theme still applies for this page.
   }
-  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', THEME_COLOUR[theme]);
+  // The browser bar takes the new theme's ground colour (design/tokens.json, through tokens.css).
+  const ground = getComputedStyle(document.documentElement).getPropertyValue('--ground').trim();
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', ground);
   document
     .querySelectorAll('[data-theme-toggle]')
     .forEach((b) => b.setAttribute('aria-label', labelFor(theme)));

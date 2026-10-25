@@ -43,8 +43,8 @@ const external = isExternal(href);
     text-decoration-thickness: 1px;
     text-underline-offset: 5px;
     transition:
-      color 150ms ease,
-      text-decoration-color 150ms ease;
+      color var(--duration-hover) var(--ease-standard),
+      text-decoration-color var(--duration-hover) var(--ease-standard);
   }
   a.live:hover .live__host {
     color: var(--link);

@@ -33,7 +33,7 @@ export function buildTokensCss(tokens) {
     return `${indent}${selector} {\n${lines.join('\n')}\n${indent}}`;
   };
 
-  const scalar = ['spacing', 'radius', 'size']
+  const scalar = ['spacing', 'radius', 'size', 'motion']
     .flatMap((family) => tokens[family]?.tokens ?? [])
     .map((t) => `  --${t.name}: ${t.value};`);
   const families = Object.entries(tokens.type.families).map(([k, v]) => `  --font-${k}: ${v};`);

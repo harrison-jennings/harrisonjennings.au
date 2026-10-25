@@ -65,8 +65,8 @@ const topic = topicRef ? await getEntry(topicRef) : undefined;
     background-position: 0 100%;
     background-repeat: no-repeat;
     transition:
-      background-size 240ms cubic-bezier(0.65, 0, 0.35, 1),
-      color 150ms ease;
+      background-size var(--duration-move) var(--ease-move),
+      color var(--duration-hover) var(--ease-standard);
   }
   .post__title a:hover {
     background-size: 100% 1.5px;
