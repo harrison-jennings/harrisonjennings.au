@@ -96,7 +96,11 @@
   touch-action: none;
   cursor: grab;
 }
+/* At fit, a click on the image zooms and a click on the backdrop closes. */
 .lightbox__stage.is-fit {
+  cursor: default;
+}
+.lightbox__stage.is-fit .lightbox__img > * {
   cursor: zoom-in;
 }
 .lightbox__stage.is-dragging {

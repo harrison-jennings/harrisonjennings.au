@@ -124,6 +124,37 @@ test.describe('a post', () => {
     await expect(first).toBeFocused();
   });
 
+  test('a click on the viewer image zooms and fits; a double-click zooms once; a drag is no click; the backdrop closes', async ({
+    page,
+  }) => {
+    await page.goto(REF);
+    await page.locator('[data-zoomable]').first().click();
+    const viewer = page.getByRole('dialog');
+    const image = viewer.locator('[data-img] img');
+    const level = viewer.locator('[data-level]');
+    await expect(image).toBeVisible();
+
+    await image.click();
+    await expect(level).toHaveText('200%');
+    await image.click();
+    await expect(level).toHaveText('fit');
+    await image.dblclick();
+    await expect(level).toHaveText('200%');
+
+    const box = (await image.boundingBox())!;
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(box.x + box.width / 2 + 60, box.y + box.height / 2, { steps: 5 });
+    await page.mouse.up();
+    await expect(level).toHaveText('200%');
+    await expect(viewer).toBeVisible();
+
+    await page.keyboard.press('0');
+    const stage = (await viewer.locator('[data-stage]').boundingBox())!;
+    await page.mouse.click(stage.x + 8, stage.y + 8);
+    await expect(viewer).toBeHidden();
+  });
+
   test('{nozoom} images stay out of the viewer', async ({ page }) => {
     await page.goto(REF);
     const plain = page.getByAltText("A sample diagram that doesn't zoom");
