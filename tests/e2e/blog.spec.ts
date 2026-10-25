@@ -124,7 +124,7 @@ test.describe('a post', () => {
     await expect(first).toBeFocused();
   });
 
-  test('a click on the viewer image zooms and fits; a double-click zooms once; a drag is no click; the backdrop closes', async ({
+  test('a click on the viewer image zooms and fits; a double-click zooms once; a drag moves it and is no click; the backdrop closes', async ({
     page,
   }) => {
     await page.goto(REF);
@@ -141,11 +141,17 @@ test.describe('a post', () => {
     await image.dblclick();
     await expect(level).toHaveText('200%');
 
+    // The whole drag moves the image, not just its first step (a browser's own image drag would
+    // cancel it after that on desktop).
     const box = (await image.boundingBox())!;
     await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
     await page.mouse.down();
-    await page.mouse.move(box.x + box.width / 2 + 60, box.y + box.height / 2, { steps: 5 });
+    await page.mouse.move(box.x + box.width / 2 + 60, box.y + box.height / 2, { steps: 10 });
     await page.mouse.up();
+    await expect(viewer.locator('[data-img]')).toHaveCSS(
+      'transform',
+      /^matrix\(2, 0, 0, 2, 60, 0\)$/,
+    );
     await expect(level).toHaveText('200%');
     await expect(viewer).toBeVisible();
 
