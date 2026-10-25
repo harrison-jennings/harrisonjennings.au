@@ -1,0 +1,46 @@
+---
+// A section's pages in collapsible groups, for the sidebar and inside each section of the phone menu.
+// The group holding the current page starts open; shell.ts remembers what's opened for the visit.
+// Without JavaScript every group shows (shell.css hides closed ones only under html.js).
+import type { NavSection } from '../lib/nav';
+import DsIcon from './DsIcon.astro';
+
+interface Props {
+  section: NavSection;
+  /** The current page's id, such as components/button. */
+  current?: string | undefined;
+  /** Where it's shown, so the ids are unique on the page. */
+  place: 'side' | 'menu';
+}
+
+const { section, current, place } = Astro.props;
+---
+
+{section.groups.map((group) => {
+  const id = `${place}-${section.id}-${group.id}`;
+  const open = group.pages.some((p) => p.id === current);
+  return (
+    <div class="ds-group" data-group={`${section.id}/${group.id}`}>
+      <button
+        class="ds-group__toggle"
+        type="button"
+        aria-expanded={open ? 'true' : 'false'}
+        aria-controls={id}
+        data-group-toggle
+      >
+        <DsIcon name="chevron-right" />
+        <span>{group.name}</span>
+        <span class="ds-group__count">{group.pages.length}</span>
+      </button>
+      <ul class="ds-group__pages" id={id} data-open={open ? 'true' : 'false'}>
+        {group.pages.map((page) => (
+          <li>
+            <a href={page.href} aria-current={page.id === current ? 'page' : undefined}>
+              {page.title}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+})}

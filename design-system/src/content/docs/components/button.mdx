@@ -1,0 +1,22 @@
+---
+title: button
+lead: The solid brick pill, for the one action that matters most on a screen. Apricot wipes across it from the side the pointer comes in.
+group: actions
+order: 1
+facts:
+  - label: used in
+    value: nav, hero, booking band, consent, 404
+  - label: source
+    value: src/components/Button.astro
+    href: https://github.com/harrison-jennings/harrisonjennings.au/blob/main/src/components/Button.astro
+  - label: status
+    value: live
+---
+
+import Preview from '../../../components/Preview.astro';
+import { usage } from '../../../lib/example';
+import source from '../../../examples/button.astro?raw';
+
+## preview
+
+<Preview title="button" specimen="/specimens/button/" code={usage(source)} lang="astro" />

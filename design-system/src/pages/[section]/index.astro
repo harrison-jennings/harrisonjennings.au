@@ -1,0 +1,17 @@
+---
+// /<section>/ on its own goes to the section's first page: sections have no page of their own.
+import { getNav } from '../../lib/nav';
+
+export async function getStaticPaths() {
+  const nav = await getNav();
+  return nav
+    .filter((s) => s.id !== 'overview')
+    .map((s) => ({ params: { section: s.id }, props: { href: s.href } }));
+}
+
+interface Props {
+  href: string;
+}
+
+return Astro.redirect(Astro.props.href);
+---

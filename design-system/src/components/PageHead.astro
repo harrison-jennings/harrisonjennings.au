@@ -1,0 +1,39 @@
+---
+// The top of every page but the overview: the breadcrumb, the title with the brick stop, the lead and
+// the facts line. The breadcrumb's section and group lead to their first pages.
+import type { NavGroup, NavSection } from '../lib/nav';
+import Link from './Link.astro';
+
+interface Props {
+  section: NavSection;
+  group: NavGroup;
+  title: string;
+  lead: string;
+  facts?: { label: string; value: string; href?: string | undefined }[];
+}
+
+const { section, group, title, lead, facts = [] } = Astro.props;
+---
+
+<nav class="ds-crumb" aria-label="Breadcrumb">
+  <a href={section.href}>{section.name}</a>
+  <span aria-hidden="true">/</span>
+  <a href={group.pages[0]?.href ?? section.href}>{group.name}</a>
+  <span aria-hidden="true">/</span>
+  <span aria-current="page">{title}</span>
+</nav>
+<h1 class="ds-title">
+  {title}
+  <span class="stop" aria-hidden="true"></span>
+</h1>
+<p class="ds-lead">{lead}</p>
+{facts.length > 0 && (
+  <dl class="ds-facts">
+    {facts.map((f) => (
+      <div>
+        <dt>{f.label}</dt>
+        <dd>{f.href ? <Link href={f.href}>{f.value}</Link> : f.value}</dd>
+      </div>
+    ))}
+  </dl>
+)}

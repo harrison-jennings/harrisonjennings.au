@@ -1,0 +1,43 @@
+---
+// Every page in src/content/docs, at /<section>/<page>/, inside the shell with its page head.
+import { getCollection, render } from 'astro:content';
+import PageHead from '../components/PageHead.astro';
+import Shell from '../layouts/Shell.astro';
+import { getNav, sectionOf, type Doc } from '../lib/nav';
+
+export async function getStaticPaths() {
+  const docs = await getCollection('docs');
+  return docs.map((doc) => ({ params: { slug: doc.id }, props: { doc } }));
+}
+
+interface Props {
+  doc: Doc;
+}
+
+const { doc } = Astro.props;
+const { Content, headings } = await render(doc);
+const nav = await getNav();
+const section = nav.find((s) => s.id === sectionOf(doc));
+const group = section?.groups.find((g) => g.name === doc.data.group);
+if (!section || !group) throw new Error(`docs/${doc.id}: not in the navigation`);
+---
+
+<Shell
+  title={doc.data.title}
+  description={doc.data.lead}
+  section={section.id}
+  page={doc.id}
+  pageTitle={doc.data.title}
+  headings={headings}
+>
+  <PageHead
+    section={section}
+    group={group}
+    title={doc.data.title}
+    lead={doc.data.lead}
+    facts={doc.data.facts}
+  />
+  <div class="ds-doc">
+    <Content />
+  </div>
+</Shell>

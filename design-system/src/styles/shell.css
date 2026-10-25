@@ -1,0 +1,705 @@
+/* The design system's shell: header, sidebar, page head, "on this page", footer, the phone picker and
+   menu, and the text of a page (design hand-off: Shell, Sidebar, PageFurniture). Tokens only; the
+   fixed sizes that aren't brand values (the 68px header, the column widths, the 56px menu rows) are
+   the ones the notes list. Narrower widths: see the media queries at the end. */
+
+.ds {
+  background: var(--ground);
+  color: var(--text);
+}
+.ds :focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+.ds-icon {
+  display: block;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ---------- header ---------- */
+.ds-head {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: var(--space-28);
+  height: 68px;
+  padding: 0 var(--space-28);
+  background: var(--ground);
+  border-top: 2px solid var(--accent);
+  border-bottom: 1px solid var(--line);
+}
+.ds-lockup {
+  display: flex;
+  align-items: center;
+  gap: var(--space-10);
+  min-height: var(--target);
+  color: var(--text);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.ds-lockup__name {
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.ds-lockup__div {
+  width: 1px;
+  height: 18px;
+  margin: 0 var(--space-6);
+  background: var(--line);
+}
+.ds-lockup__ds {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  color: var(--link);
+}
+.ds-sections {
+  display: flex;
+  gap: var(--space-22);
+  font-size: 15px;
+}
+.ds-sections a {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target);
+  color: var(--muted);
+  text-decoration: none;
+  transition: color var(--duration-hover) var(--ease-standard);
+}
+.ds-sections a:hover,
+.ds-sections a[aria-current] {
+  color: var(--text);
+}
+.ds-sections a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 8px;
+  height: 1.5px;
+  border-radius: 2px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--duration-move) var(--ease-move);
+}
+.ds-sections a:hover::after,
+.ds-sections a[aria-current]::after {
+  transform: scaleX(1);
+}
+.ds-head__end {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  margin-left: auto;
+}
+.ds-back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-6);
+  min-height: var(--target);
+  padding: 0 var(--space-6);
+  font-family: var(--font-display);
+  font-size: 12px;
+  letter-spacing: -0.02em;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color var(--duration-hover) var(--ease-standard);
+}
+.ds-back:hover {
+  color: var(--link);
+}
+.ds-iconbtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: var(--target);
+  height: var(--target);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  transition: color var(--duration-hover) var(--ease-standard);
+}
+.ds-iconbtn:hover {
+  color: var(--link);
+}
+.ds-iconbtn--outline {
+  border: 1px solid var(--line);
+}
+.ds-head__menu {
+  display: none;
+}
+
+/* ---------- body: sidebar, page, on this page ---------- */
+.ds-body {
+  display: grid;
+  grid-template-columns: 272px minmax(0, 1fr) 232px;
+  align-items: start;
+}
+.ds-body--no-toc {
+  grid-template-columns: 272px minmax(0, 1fr);
+}
+.ds-body--no-side {
+  grid-template-columns: minmax(0, 1fr) 232px;
+}
+.ds-body--no-side.ds-body--no-toc,
+.ds-body--landing {
+  grid-template-columns: minmax(0, 1fr);
+}
+.ds-side {
+  position: sticky;
+  top: 68px;
+  align-self: start;
+  max-height: calc(100vh - 68px);
+  overflow-y: auto;
+  padding: var(--space-28) var(--space-16) var(--space-40) var(--space-22);
+  border-right: 1px solid var(--line);
+}
+
+/* A section's groups, in the sidebar and the phone menu alike. */
+.ds-group__toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-10);
+  width: 100%;
+  min-height: var(--target);
+  padding: 0 var(--space-10);
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--duration-hover) var(--ease-standard);
+}
+.ds-group__toggle:hover {
+  background: var(--surface);
+}
+.ds-group__toggle .ds-icon {
+  color: var(--muted);
+  transition: transform var(--duration-move) var(--ease-move);
+}
+.ds-group__toggle[aria-expanded='true'] .ds-icon {
+  transform: rotate(90deg);
+}
+.ds-group__count {
+  margin-left: auto;
+  font-weight: 400;
+  color: var(--muted);
+}
+.ds-group__pages {
+  margin: 0 0 var(--space-8) 17px;
+  padding: 0 0 0 var(--space-8);
+  list-style: none;
+  border-left: 1px solid var(--line);
+}
+.ds-group__pages a {
+  display: flex;
+  align-items: center;
+  gap: var(--space-10);
+  min-height: var(--target);
+  padding: 0 var(--space-10);
+  border-radius: var(--radius-sm);
+  font-size: 15px;
+  color: var(--muted);
+  text-decoration: none;
+  transition:
+    color var(--duration-hover) var(--ease-standard),
+    background-color var(--duration-hover) var(--ease-standard);
+}
+.ds-group__pages a:hover,
+.ds-group__pages a[aria-current] {
+  color: var(--text);
+  background: var(--surface);
+}
+.ds-group__pages a[aria-current]::before {
+  content: '';
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+}
+/* Closed groups hide only once JavaScript can open them again. */
+.js .ds-group__pages[data-open='false'],
+.js .ds-menu__groups[data-open='false'] {
+  display: none;
+}
+
+/* ---------- the page ---------- */
+.ds-main {
+  min-width: 0;
+  padding: var(--space-40) var(--space-56) var(--space-72);
+}
+.ds-body--landing .ds-main {
+  width: 100%;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: var(--space-72) var(--space-56) 96px;
+}
+.ds-crumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-8);
+  margin: 0 0 var(--space-16);
+  font-family: var(--font-display);
+  font-size: 12px;
+  letter-spacing: -0.02em;
+  color: var(--muted);
+}
+.ds-crumb a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-underline-offset: 4px;
+  transition: color var(--duration-hover) var(--ease-standard);
+}
+.ds-crumb a:hover {
+  color: var(--link);
+}
+.ds-title {
+  margin: 0 0 0 -0.045em;
+  font-family: var(--font-display);
+  font-size: 46px;
+  font-weight: 500;
+  line-height: 1.12;
+  letter-spacing: -0.05em;
+}
+.ds-title .stop {
+  display: inline-block;
+  width: 0.19em;
+  height: 0.19em;
+  margin-left: 0.25em;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+}
+.ds-lead {
+  max-width: 640px;
+  margin: var(--space-16) 0 0;
+  font-size: 19px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+.ds-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8) var(--space-28);
+  margin: var(--space-22) 0 0;
+  padding: var(--space-16) 0 0;
+  border-top: 1px solid var(--line);
+  font-size: 14px;
+}
+.ds-facts div {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-8);
+  min-width: 0;
+}
+.ds-facts dt {
+  font-family: var(--font-display);
+  font-size: 12px;
+  color: var(--muted);
+}
+.ds-facts dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.ds-facts a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-underline-offset: 4px;
+}
+.ds-facts a:hover {
+  color: var(--link);
+}
+
+/* A page's own text (its MDX). */
+.ds-doc > h2 {
+  margin: var(--space-56) 0 var(--space-16);
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: -0.04em;
+  scroll-margin-top: 84px;
+}
+.ds-doc > h3 {
+  margin: var(--space-32) 0 var(--space-10);
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.015em;
+}
+.ds-doc > p {
+  max-width: 640px;
+  margin: 0 0 var(--space-20);
+  font-size: 17px;
+  line-height: 1.65;
+  color: var(--muted);
+}
+.ds-doc > ul,
+.ds-doc > ol {
+  max-width: 640px;
+  margin: 0 0 var(--space-20);
+  padding-left: 1.2em;
+  font-size: 17px;
+  line-height: 1.65;
+  color: var(--muted);
+}
+.ds-doc li {
+  margin: 0 0 var(--space-6);
+}
+.ds-doc li::marker {
+  color: var(--accent);
+}
+.ds-doc :is(p, li) > strong {
+  font-weight: 600;
+  color: var(--text);
+}
+.ds-doc :is(p, li) > code {
+  padding: 2px 6px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface);
+  font-family: var(--font-display);
+  font-size: 0.78em;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+.ds-doc :is(p, li) > a {
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-underline-offset: 4px;
+  transition: color var(--duration-hover) var(--ease-standard);
+}
+.ds-doc :is(p, li) > a:hover {
+  color: var(--link);
+}
+
+/* ---------- on this page ---------- */
+.ds-toc {
+  position: sticky;
+  top: 68px;
+  padding: var(--space-40) var(--space-28) 0 0;
+}
+.ds-toc p {
+  margin: 0 0 var(--space-10);
+  font-family: var(--font-display);
+  font-size: 12px;
+  color: var(--muted);
+}
+.ds-toc ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-left: 1px solid var(--line);
+}
+.ds-toc a {
+  display: block;
+  margin-left: -1px;
+  padding: var(--space-6) 0 var(--space-6) var(--space-16);
+  border-left: 1.5px solid transparent;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color var(--duration-hover) var(--ease-standard);
+}
+.ds-toc a:hover {
+  color: var(--text);
+}
+.ds-toc a[aria-current='true'] {
+  color: var(--text);
+  border-left-color: var(--accent);
+}
+
+/* ---------- footer ---------- */
+.ds-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-16) var(--space-28);
+  padding: var(--space-28);
+  border-top: 1px solid var(--line);
+  font-size: 14px;
+  color: var(--muted);
+}
+.ds-foot__mark {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-10);
+  min-height: var(--target);
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  text-decoration: none;
+}
+.ds-stamp {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-10);
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 12px;
+  letter-spacing: -0.02em;
+  color: var(--muted);
+}
+.ds-stamp i {
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  box-shadow: var(--shadow-signal);
+}
+.ds-stamp a {
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-underline-offset: 4px;
+}
+.ds-foot nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-22);
+  margin-left: auto;
+}
+.ds-foot nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target);
+  color: inherit;
+  text-decoration: none;
+  transition: color var(--duration-hover) var(--ease-standard);
+}
+.ds-foot nav a:hover {
+  color: var(--link);
+}
+
+/* ---------- phones: the page picker and the menu ---------- */
+.ds-where {
+  display: none;
+}
+.ds-where button {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  width: 100%;
+  min-width: 0;
+  min-height: var(--target);
+  padding: 0 var(--space-16);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: 12px;
+  letter-spacing: -0.02em;
+  cursor: pointer;
+}
+.ds-where button span {
+  flex: none;
+  color: var(--muted);
+}
+.ds-where button b {
+  overflow: hidden;
+  font-weight: inherit;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ds-where button .ds-icon {
+  margin-left: auto;
+}
+
+.ds-menu {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: var(--ground);
+  color: var(--text);
+}
+.ds-menu[open] {
+  display: flex;
+  flex-direction: column;
+}
+.ds-menu:focus {
+  outline: none;
+}
+.ds-menu__top {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+  padding: 0 var(--space-10) 0 var(--space-16);
+  border-top: 2px solid var(--accent);
+  border-bottom: 1px solid var(--line);
+}
+.ds-menu__body {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-16) var(--space-16) var(--space-28);
+}
+.ds-menu__sec {
+  border-bottom: 1px solid var(--line);
+}
+.ds-menu__sec > button {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 56px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: -0.05em;
+  text-align: left;
+  cursor: pointer;
+}
+.ds-menu__sec > button .ds-icon {
+  margin-left: auto;
+  color: var(--muted);
+  transition: transform var(--duration-move) var(--ease-move);
+}
+.ds-menu__sec > button[aria-expanded='true'] .ds-icon {
+  transform: rotate(180deg);
+}
+.ds-menu__sec > button[aria-current] {
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 7px;
+}
+.ds-menu__groups {
+  margin: 0 0 var(--space-16);
+}
+.ds-menu__end {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-10);
+  padding: var(--space-16);
+  border-top: 1px solid var(--line);
+}
+
+/* Between phone and full desktop (approved 25 October 2026): below 1200px "on this page" goes and the
+   header drops the name; below 1024px the shell is the phone's (menu and page picker, no sidebar), with
+   the phone's type and spacing from the site's 760px breakpoint. */
+@media (max-width: 1199px) {
+  .ds-toc,
+  .ds-lockup__name,
+  .ds-lockup__div {
+    display: none;
+  }
+  .ds-body {
+    grid-template-columns: 272px minmax(0, 1fr);
+  }
+  .ds-body--no-side,
+  .ds-body--landing {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 1023px) {
+  .ds-head {
+    gap: var(--space-8);
+    height: 64px;
+    padding: 0 var(--space-10) 0 var(--space-16);
+  }
+  .ds-sections,
+  .ds-head .ds-back {
+    display: none;
+  }
+  .ds-head__menu {
+    display: inline-flex;
+  }
+  .ds-where {
+    position: sticky;
+    top: 64px;
+    z-index: 15;
+    display: flex;
+    padding: var(--space-8) var(--space-16);
+    background: var(--ground);
+    border-bottom: 1px solid var(--line);
+  }
+  .ds-body,
+  .ds-body--no-toc,
+  .ds-body--no-side {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .ds-side,
+  .ds-crumb {
+    display: none;
+  }
+  .ds-doc > h2 {
+    scroll-margin-top: 128px;
+  }
+}
+
+@media (max-width: 760px) {
+  .ds-main {
+    padding: var(--space-20) var(--space-16) var(--space-56);
+  }
+  .ds-body--landing .ds-main {
+    padding: var(--space-40) var(--space-16) var(--space-56);
+  }
+  .ds-title {
+    font-size: 32px;
+  }
+  .ds-lead {
+    font-size: 17px;
+  }
+  .ds-doc > h2 {
+    margin-top: var(--space-40);
+    font-size: 21px;
+  }
+  .ds-foot {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: var(--space-22) var(--space-16) var(--space-28);
+  }
+  .ds-foot nav {
+    margin-left: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-sections a::after,
+  .ds-group__toggle .ds-icon,
+  .ds-menu__sec > button .ds-icon {
+    transition: none;
+  }
+}

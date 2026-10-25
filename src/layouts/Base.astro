@@ -11,7 +11,7 @@ import { CONSENT_COOKIE } from '../lib/consent';
 import { shareImageFor } from '../lib/og/cards';
 import { graph, type Thing } from '../lib/structured-data';
 import { tagManagerEnvironment, tagManagerSrc } from '../lib/tag-manager';
-import tokens from '../../design/tokens.json';
+import ThemeHead from '../components/ThemeHead.astro';
 
 interface Props {
   title?: string;
@@ -44,9 +44,6 @@ const {
   structuredData = [],
 } = Astro.props;
 const pageTitle = title ? `${title} · ${SITE.name}` : SITE.name;
-// The browser bar's colour is the theme's ground (theme.ts updates it when the theme changes).
-const ground = tokens.color.tokens.find((t) => t.name === 'ground')?.value;
-if (!ground) throw new Error('design/tokens.json: no colour token "ground"');
 const canonical = new URL(Astro.url.pathname, Astro.site);
 // The share card: the page's own (generated at build), or the home card.
 const share = image ?? {
@@ -99,21 +96,7 @@ const tagManagerHead =
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content={ground.dark} />
-    <!-- Dark on every first visit; a saved choice (the nav's theme toggle) applies before first paint. -->
-    <script
-      is:inline
-      set:html={`
-      try {
-        const saved = localStorage.getItem('hj-theme');
-        document.documentElement.setAttribute('data-theme', saved === 'light' ? 'light' : 'dark');
-        if (saved === 'light')
-          document.querySelector('meta[name="theme-color"]').setAttribute('content', '${ground.light}');
-      } catch {
-        document.documentElement.setAttribute('data-theme', 'dark');
-      }
-    `}
-    />
+    <ThemeHead />
     <script is:inline type="application/json" data-page-layer set:html={pageLayer} />
     <script is:inline set:html={consentHead} />
     {tagManagerHead && <script is:inline set:html={tagManagerHead} />}

@@ -1,11 +1,16 @@
 ---
-import TextLink from '../../../src/components/TextLink.astro';
-import Docs from '../layouts/Docs.astro';
+import Link from '../components/Link.astro';
+import Shell from '../layouts/Shell.astro';
 ---
 
-<Docs title="not found" description="There's no page at this address.">
-  <h1>not found</h1>
-  <p>
-    There's no page at this address. <TextLink href="/">Back to the overview</TextLink>.
-  </p>
-</Docs>
+<Shell title="not found" description="There's no page at this address." section="" landing>
+  <h1 class="ds-title">
+    not found<span class="stop" aria-hidden="true"></span>
+  </h1>
+  <p class="ds-lead">There's no page at this address.</p>
+  <div class="ds-doc">
+    <p>
+      <Link href="/">Back to the overview</Link>.
+    </p>
+  </div>
+</Shell>
