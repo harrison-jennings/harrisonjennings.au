@@ -1,0 +1,11 @@
+---
+import CopyButton from '../../../src/components/CopyButton.astro';
+---
+
+<CopyButton
+  label="copy address"
+  text="https://www.harrisonjennings.au/rss.xml"
+  context="the feed address"
+/>
+<CopyButton label="cookie settings" attrs={{ 'data-consent-preferences': '' }} />{' '}
+<!-- no text: another small action -->

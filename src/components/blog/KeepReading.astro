@@ -7,7 +7,9 @@ import PostCard from '../PostCard.astro';
 import TextLink from '../TextLink.astro';
 
 interface Props {
+  /** The posts to show: keepReading() in src/lib/blog.ts picks three. */
   posts: Array<CollectionEntry<'posts'>>;
+  /** Ids of the topics that have their own page, so their tags are links. */
   topicPages: ReadonlySet<string>;
 }
 

@@ -4,6 +4,7 @@
 import { MARK_PATH, markWeight } from '../lib/logo';
 
 interface Props {
+  /** Its width and height in px; the stroke and dot weight follow from it (src/lib/logo.ts). */
   size?: number;
   /** Accessible name when the mark stands alone; omit when the name is set beside it. */
   label?: string;
@@ -14,6 +15,7 @@ interface Props {
   draw?: boolean | 'view';
   /** The dot squashes and bounces at the foot of the leg (loading, and the 404). Still under reduced motion. */
   loading?: boolean;
+  /** An extra class, for placing the mark in a layout. */
   class?: string;
 }
 

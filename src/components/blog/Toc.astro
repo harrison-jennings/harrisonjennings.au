@@ -4,6 +4,7 @@
 import type { MarkdownHeading } from 'astro';
 
 interface Props {
+  /** The post's headings: tocHeadings() in src/lib/blog.ts picks the h2s and h3s. */
   headings: MarkdownHeading[];
   /** The phone panel (above the text) instead of the desktop column. */
   phone?: boolean;

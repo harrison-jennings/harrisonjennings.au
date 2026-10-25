@@ -10,9 +10,13 @@ interface Props {
   title: string;
   /** Small examples (buttons, tags) sit in a centred, wrapping row; others take the width as a page would. */
   row?: boolean;
+  /** At least a phone screen tall, for examples whose content sits over the page (an open menu). */
+  screen?: boolean;
+  /** No padding: a page-level example (the nav, a home section) is drawn edge to edge, as on a page. */
+  bare?: boolean;
 }
 
-const { title, row = false } = Astro.props;
+const { title, row = false, screen = false, bare = false } = Astro.props;
 ---
 
 <!doctype html>
@@ -28,7 +32,7 @@ const { title, row = false } = Astro.props;
       if (params.get('still') === '1') document.documentElement.dataset.still = '';
     </script>
   </head>
-  <body class="specimen">
+  <body class:list={['specimen', { 'specimen--screen': screen, 'specimen--bare': bare }]}>
     {row ? (
       <div class="specimen__row">
         <slot />
@@ -45,6 +49,12 @@ const { title, row = false } = Astro.props;
 <style is:global>
   .specimen {
     padding: var(--space-28) var(--space-22);
+  }
+  .specimen--bare {
+    padding: 0;
+  }
+  .specimen--screen {
+    min-height: 844px;
   }
   .specimen__row {
     display: flex;

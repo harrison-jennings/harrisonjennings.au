@@ -1,0 +1,79 @@
+---
+// A specimen page for every example in src/examples/, at /specimens/<name>/: the example on its own
+// with the site's real styles, shown in a preview frame. A component example (.astro) renders as it
+// is; a content example (.md) goes through the site's Markdown pipeline into prose, as a post does,
+// with a post's code-block copy buttons and image viewer. Small examples sit in a centred row; the
+// ones in LARGE take the width as a page would.
+import type { AstroComponentFactory } from 'astro/runtime/server/index.js';
+import '../../../../src/styles/lightbox.css';
+import Specimen from '../../layouts/Specimen.astro';
+
+type Module = { default?: AstroComponentFactory; Content?: AstroComponentFactory };
+const examples = import.meta.glob<Module>('../../examples/*.{astro,md}', { eager: true });
+
+/** Examples laid out as a page lays them out, not in a centred row. */
+const LARGE = new Set([
+  'nav',
+  'mobile-menu',
+  'footer',
+  'hero',
+  'services',
+  'built-and-shipped',
+  'testimonials',
+  'booking',
+  'post-card',
+  'post-header',
+  'toc',
+  'author-panel',
+  'keep-reading',
+  'consent',
+]);
+
+/** Examples shown open: the phone menu opens once the page has loaded (its button's own script). */
+const OPEN: Record<string, string> = { 'mobile-menu': '[data-menu-open]' };
+/** Examples that sit over the page (the cookie banner), so need a screen's height to be seen. */
+const SCREEN = new Set(['mobile-menu', 'consent']);
+
+export function getStaticPaths() {
+  return Object.keys(import.meta.glob('../../examples/*.{astro,md}')).map((file) => ({
+    params: {
+      name: file
+        .split('/')
+        .pop()
+        ?.replace(/\.(astro|md)$/, ''),
+    },
+  }));
+}
+
+const { name = '' } = Astro.params;
+const file = Object.keys(examples).find((f) => f.replace(/\.(astro|md)$/, '').endsWith(`/${name}`));
+const module = file ? examples[file] : undefined;
+const markdown = file?.endsWith('.md') ?? false;
+const Example = module?.Content ?? module?.default;
+if (!Example) throw new Error(`no example src/examples/${name}.astro or .md`);
+---
+
+<Specimen
+  title={name.replace(/-/g, ' ')}
+  row={!markdown && !LARGE.has(name)}
+  screen={SCREEN.has(name)}
+  bare={LARGE.has(name)}
+>
+  {markdown ? (
+    <div class="prose">
+      <Example />
+    </div>
+  ) : (
+    <Example />
+  )}
+  {OPEN[name] && <script is:inline define:vars={{ open: OPEN[name] }}>
+    window.addEventListener('load', () => document.querySelector(open)?.click());
+  </script>}
+</Specimen>
+
+<script>
+  import { bindCopyCode } from '../../../../src/scripts/copy-code';
+  import { bindLightbox } from '../../../../src/scripts/lightbox';
+  document.querySelectorAll<HTMLButtonElement>('[data-copy-code]').forEach(bindCopyCode);
+  bindLightbox([...document.querySelectorAll<HTMLButtonElement>('[data-zoomable]')]);
+</script>

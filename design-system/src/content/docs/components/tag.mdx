@@ -1,0 +1,78 @@
+---
+title: tag
+lead: A small outlined chip for a topic. A link once the topic has its own page; until then, a dashed label.
+group: content
+order: 1
+component: src/components/Tag.astro
+facts:
+  - label: status
+    value: live
+related:
+  - page: components/post-card
+    line: Carries the post's main topic as a tag.
+  - page: components/post-header
+    line: Lists every topic of a post.
+  - page: brand/voice-and-tone
+    line: Lowercase, for the brand's own words.
+---
+
+import Tag from '../../../../../src/components/Tag.astro';
+import DoDont from '../../../components/DoDont.astro';
+import DoDontCard from '../../../components/DoDontCard.astro';
+import Preview from '../../../components/Preview.astro';
+import PropsTable from '../../../components/PropsTable.astro';
+import { usage } from '../../../lib/example';
+import example from '../../../examples/tag.astro?raw';
+import source from '../../../../../src/components/Tag.astro?raw';
+
+## preview
+
+<Preview
+  title="tag"
+  specimen="/specimens/tag/"
+  tabs={[
+    { label: 'astro', code: usage(example), lang: 'astro', file: 'any page or component' },
+    { label: 'source', code: source.trim(), lang: 'astro', file: 'src/components/Tag.astro' },
+  ]}
+/>
+
+## variants and states
+
+<DoDont cols={3}>
+  <DoDontCard name="a topic page" say="12px, text on a hairline pill. A link to the topic's page." picture>
+    <Tag href="/blog/topic/analytics/">analytics</Tag>
+  </DoDontCard>
+  <DoDontCard name="label" say="A dashed outline and muted text: a topic without a page yet, not a link." picture>
+    <Tag label>adobe marketo engage</Tag>
+  </DoDontCard>
+  <DoDontCard name="plain" say="Neither: a fact rather than a topic, such as the type page's “variable 400–900”." picture>
+    <Tag>variable 400–900</Tag>
+  </DoDontCard>
+</DoDont>
+
+A topic gets its own page once enough posts use it (`TOPIC_PAGE_MIN_POSTS` in `src/consts.ts`); until then its tag is a label.
+
+## when to use it
+
+<DoDont>
+  <DoDontCard verdict="do" say="Lowercase topic names, one to three per item." picture>
+    <Tag href="/blog/topic/analytics/">analytics</Tag>
+    <Tag href="/blog/topic/cloud/">cloud</Tag>
+  </DoDontCard>
+  <DoDontCard verdict="don't" say="A row of them, or title case. A tag is a pointer, not a list of keywords.">
+    <Tag>Marketing</Tag>
+    <Tag>Automation</Tag>
+    <Tag>Email</Tag>
+    <Tag>Testing</Tag>
+    <Tag>QA</Tag>
+  </DoDontCard>
+</DoDont>
+
+## props
+
+<PropsTable source={source} />
+
+## accessibility
+
+- **A link only when it goes somewhere.** A label is a plain `<span>`, so it isn't announced or tabbed to as a link.
+- **Contrast:** the label's muted text still passes AA; the dashed line is decoration, not the only sign it's different.

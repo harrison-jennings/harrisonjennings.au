@@ -1,0 +1,58 @@
+---
+title: booking band
+lead: The band at the foot of the home page. “view availability” opens the calendar inside it, and only then loads Cal.com.
+group: home
+order: 5
+component: src/components/home/Booking.astro
+facts:
+  - label: words
+    value: src/content/home.yaml
+  - label: status
+    value: live
+related:
+  - page: components/button
+    line: Its default-size “view availability”.
+  - page: components/logo
+    line: The bouncing dot while the calendar loads.
+  - page: components/consent
+    line: Nothing from Cal.com runs until it's asked for.
+---
+
+import Preview from '../../../components/Preview.astro';
+import { usage } from '../../../lib/example';
+import example from '../../../examples/booking.astro?raw';
+import source from '../../../../../src/components/home/Booking.astro?raw';
+import booking from '../../../../../src/scripts/booking.ts?raw';
+
+## preview
+
+The calendar itself doesn't load here: the design system doesn't allow Cal.com's script.
+
+<Preview
+  title="booking band"
+  specimen="/specimens/booking/"
+  size="large"
+  tabs={[
+    { label: 'astro', code: usage(example), lang: 'astro', file: 'src/pages/index.astro' },
+    { label: 'source', code: source.trim(), lang: 'astro', file: 'src/components/home/Booking.astro' },
+    { label: 'script', code: booking.trim(), lang: 'ts', file: 'src/scripts/booking.ts' },
+  ]}
+/>
+
+## how it behaves
+
+- **The band:** "ready to jump in? book a call" with the brick stop, a note, the button, and "or say hello on linkedin".
+- **The button** opens the calendar inside the band and becomes "hide availability". Cal.com loads the first time it opens, not before, so nothing from Cal.com runs until someone asks for it.
+- **While it loads,** the logo's dot bounces, with words beside it saying what's loading.
+- **Every "book a call"** on the site leads here.
+- **Phones:** the band stacks, the button goes full width, and the LinkedIn line centres under it.
+
+## props
+
+None. Its words come from `src/content/home.yaml`.
+
+## accessibility
+
+- **The button says what it controls** (`aria-expanded`, `aria-controls`), and its label changes with the state.
+- **The loader has words,** not just the bouncing dot.
+- **Reduced motion:** the dot is still while the calendar loads.

@@ -1,0 +1,82 @@
+---
+title: text link
+lead: The text colour with a brick underline, for links in running text and link rows. It lifts to the link colour on hover.
+group: actions
+order: 2
+component: src/components/TextLink.astro
+facts:
+  - label: status
+    value: live
+related:
+  - page: components/button
+    line: For the one action that matters most.
+  - page: components/icon-button
+    line: When the link is a platform's icon.
+  - page: brand/voice-and-tone
+    line: Link text that says where it goes.
+---
+
+import TextLink from '../../../../../src/components/TextLink.astro';
+import DoDont from '../../../components/DoDont.astro';
+import DoDontCard from '../../../components/DoDontCard.astro';
+import Preview from '../../../components/Preview.astro';
+import PropsTable from '../../../components/PropsTable.astro';
+import Ratio from '../../../components/Ratio.astro';
+import { usage } from '../../../lib/example';
+import example from '../../../examples/text-link.astro?raw';
+import source from '../../../../../src/components/TextLink.astro?raw';
+
+## preview
+
+<Preview
+  title="text link"
+  specimen="/specimens/text-link/"
+  tabs={[
+    { label: 'astro', code: usage(example), lang: 'astro', file: 'any page or component' },
+    { label: 'source', code: source.trim(), lang: 'astro', file: 'src/components/TextLink.astro' },
+  ]}
+/>
+
+## variants and states
+
+<DoDont cols={3}>
+  <DoDontCard name="in text, the default" say="Text colour, 1px brick underline. Links in sentences and link rows." picture>
+    <TextLink href="/blog/">read the blog</TextLink>
+  </DoDontCard>
+  <DoDontCard name="quiet" say="Starts in the link colour. A standalone link at the end of a section: “all projects”." picture>
+    <TextLink href="/projects/" quiet>all projects</TextLink>
+  </DoDontCard>
+  <DoDontCard name="to another site" say="Opens in a new tab, with a note for screen readers. Worked out from the address." picture>
+    <TextLink href="https://github.com/harrison-jennings">source on github</TextLink>
+  </DoDontCard>
+</DoDont>
+
+On hover and focus the text and underline turn `link` and the underline thickens to 2px, over 150ms.
+
+## when to use it
+
+<DoDont>
+  <DoDontCard verdict="do" say="Words that say where the link goes: “read the story”, “source on github”." picture>
+    <TextLink href="/blog/">read the story</TextLink>
+  </DoDontCard>
+  <DoDontCard verdict="don't" say="“Click here” or “more”. Out of context, as screen readers list links, they say nothing.">
+    <TextLink href="/blog/">click here</TextLink>
+  </DoDontCard>
+  <DoDontCard verdict="do" say="A text link beside the one button, for everything that isn't the main action." picture>
+    <TextLink href="/blog/">read the blog</TextLink>
+  </DoDontCard>
+  <DoDontCard verdict="don't" say="Brick text with no underline. Colour alone doesn't mark a link.">
+    <span class="ds-bad-link">read the blog</span>
+  </DoDontCard>
+</DoDont>
+
+## props
+
+<PropsTable source={source} />
+
+## accessibility
+
+- **Underlined,** so a link never depends on colour alone.
+- **Contrast.** `text` on `ground` is <Ratio fg="text" bg="ground" />; the hover colour, `link` on `surface`, is <Ratio fg="link" bg="surface" />.
+- **A link to another site** opens in a new tab and says so to screen readers.
+- **Focus** shows the site's focus ring as well as the hover colour.

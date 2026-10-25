@@ -3,17 +3,26 @@ title: button
 lead: The solid brick pill, for the one action that matters most on a screen. Apricot wipes across it from the side the pointer comes in.
 group: actions
 order: 1
+component: src/components/Button.astro
 facts:
-  - label: used in
-    value: nav, hero, booking band, consent, 404
-  - label: source
-    value: src/components/Button.astro
-    href: https://github.com/harrison-jennings/harrisonjennings.au/blob/main/src/components/Button.astro
   - label: status
     value: live
+related:
+  - page: components/text-link
+    line: For every action that isn't the main one.
+  - page: components/icon-button
+    line: A 44px target with an icon and a label for screen readers.
+  - page: components/booking-band
+    line: Where the default size does its main job.
 ---
 
+import Button from '../../../../../src/components/Button.astro';
+import TextLink from '../../../../../src/components/TextLink.astro';
+import DoDont from '../../../components/DoDont.astro';
+import DoDontCard from '../../../components/DoDontCard.astro';
 import Preview from '../../../components/Preview.astro';
+import PropsTable from '../../../components/PropsTable.astro';
+import Ratio from '../../../components/Ratio.astro';
 import { usage } from '../../../lib/example';
 import example from '../../../examples/button.astro?raw';
 import source from '../../../../../src/components/Button.astro?raw';
@@ -28,3 +37,68 @@ import source from '../../../../../src/components/Button.astro?raw';
     { label: 'source', code: source.trim(), lang: 'astro', file: 'src/components/Button.astro' },
   ]}
 />
+
+## variants and states
+
+Five sizes, from the hero's large button to the full-width one in the phone menu. Every size has the same states.
+
+<DoDont cols={3}>
+  <DoDontCard name='size="l"' say="20px. The hero, once per page." picture>
+    <Button href="/#book" label="book a call" size="l" />
+  </DoDontCard>
+  <DoDontCard name='size="m", the default' say="18px. The booking band, the 404, anywhere in a page." picture>
+    <Button href="/#book" label="book a call" />
+  </DoDontCard>
+  <DoDontCard name='size="s"' say="15px. The nav, the cookie dialog's “save choices”." picture>
+    <Button href="/#book" label="book a call" size="s" />
+  </DoDontCard>
+  <DoDontCard name='size="xs"' say="14px. Only in the nav once it compacts." picture>
+    <Button href="/#book" label="book a call" size="xs" />
+  </DoDontCard>
+  <DoDontCard name='size="block"' say="16px, full width. The phone menu." picture>
+    <span class="ds-fill"><Button href="/#book" label="book a call" size="block" /></span>
+  </DoDontCard>
+  <DoDontCard name="states" say="At rest, wiping in (360ms), and hovered or focused." picture>
+    <Button label="at rest" size="s" />
+    <span class="ds-state--wiping"><Button label="wiping" size="s" /></span>
+    <span class="ds-state--hover"><Button label="hovered" size="s" /></span>
+  </DoDontCard>
+</DoDont>
+
+## when to use it
+
+<DoDont>
+  <DoDontCard verdict="do" say="One button per view, for the action that matters most. Anything else is a text link." picture>
+    <Button href="/#book" label="book a call" />
+    <TextLink href="/blog/">read the blog</TextLink>
+  </DoDontCard>
+  <DoDontCard verdict="don't" say="Two buttons side by side. They compete, and the reader has to choose between equals.">
+    <Button href="/#book" label="book a call" />
+    <Button href="/blog/" label="read the blog" />
+  </DoDontCard>
+  <DoDontCard verdict="do" say="A short, lowercase verb phrase that says what happens next." picture>
+    <Button label="view availability" size="s" />
+  </DoDontCard>
+  <DoDontCard verdict="don't" say="Title case, exclamation marks or “click here”. The button already says it's clickable.">
+    <Button label="Click Here To Book Now!" size="s" />
+  </DoDontCard>
+  <DoDontCard verdict="do" say="A solid brick fill, on ground or on the ember clouds alike." picture>
+    <Button href="/#book" label="book a call" />
+  </DoDontCard>
+  <DoDontCard verdict="don't" say="Outline, ghost or gradient versions. They were tried in the brand work and dropped.">
+    <span class="ds-bad-outline">book a call</span>
+  </DoDontCard>
+</DoDont>
+
+## props
+
+<PropsTable source={source} />
+
+## accessibility
+
+- **The right element.** A link when it goes somewhere, a button when it does something on the page.
+- **One label.** The wipe repeats the words for the animation, but it's hidden from screen readers.
+- **Contrast.** `on-accent` on `accent` is <Ratio fg="on-accent" bg="accent" />. Never white text on the dark-theme brick.
+- **Focus.** The site's focus ring, and the wipe plays, so keyboard users see the same change as a pointer.
+- **Reduced motion.** The wipe becomes an instant colour change.
+- **A link to another site** opens in a new tab and says so to screen readers.

@@ -1,0 +1,28 @@
+---
+// Related pages (design hand-off: PageFurniture, related cards): each named in the page's frontmatter
+// with a line on why, its name taken from the page itself.
+import { getEntry } from 'astro:content';
+import { hrefOf } from '../lib/nav';
+
+interface Props {
+  related: { page: string; line: string }[];
+}
+
+const { related } = Astro.props;
+const cards = await Promise.all(
+  related.map(async ({ page, line }) => {
+    const doc = await getEntry('docs', page);
+    if (!doc) throw new Error(`related: no page "${page}"`);
+    return { href: hrefOf(doc), title: doc.data.title, line };
+  }),
+);
+---
+
+<div class="ds-cards">
+  {cards.map((c) => (
+    <a class="ds-card ds-card--s" href={c.href}>
+      <span class="ds-card__name">{c.title}</span>
+      <span class="ds-card__text">{c.line}</span>
+    </a>
+  ))}
+</div>

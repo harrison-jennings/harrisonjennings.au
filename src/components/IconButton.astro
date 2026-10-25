@@ -5,9 +5,13 @@ import { NEW_TAB_NOTE } from '../lib/links';
 import Icon from './Icon.astro';
 
 interface Props {
+  /** The profile's address. It opens in a new tab. */
   href: string;
+  /** The link's name for screen readers, as the icon has none: "GitHub profile". */
   label: string;
+  /** Which platform: only these two. */
   icon: 'github' | 'linkedin';
+  /** The 48px plain version, for the phone menu. */
   large?: boolean;
 }
 

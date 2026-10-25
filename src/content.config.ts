@@ -1,11 +1,16 @@
 import { defineCollection, reference } from 'astro:content';
 import { file, glob } from 'astro/loaders';
 import { z } from 'astro/zod';
+import { fileURLToPath } from 'node:url';
+
+// Paths are from this file, not the project root, so the design system (design-system/, another Astro
+// root) can load the same collections and show the site's components with the site's own content.
+const content = (path: string) => fileURLToPath(new URL(`./content/${path}`, import.meta.url));
 
 // Posts live at src/content/posts/<slug>/index.md with their images beside them.
 // They publish at /blog/<slug>/ (see src/lib/posts.ts).
 const posts = defineCollection({
-  loader: glob({ base: './src/content/posts', pattern: '**/index.{md,mdx}' }),
+  loader: glob({ base: content('posts'), pattern: '**/index.{md,mdx}' }),
   schema: ({ image }) =>
     z.object({
       title: z.string(),
@@ -32,7 +37,7 @@ const posts = defineCollection({
 
 // The privacy policy and terms of use, at /<file name>/. The description is the intro under the title.
 const pages = defineCollection({
-  loader: glob({ base: './src/content/pages', pattern: '*.{md,mdx}' }),
+  loader: glob({ base: content('pages'), pattern: '*.{md,mdx}' }),
   schema: z.object({
     title: z.string(),
     description: z.string().max(180),
@@ -49,7 +54,7 @@ const pages = defineCollection({
 // One fixed list of topics; a post can have several. A topic gets its own page at
 // /blog/topic/<id>/ once it has enough posts (TOPIC_PAGE_MIN_POSTS in src/consts.ts).
 const topics = defineCollection({
-  loader: file('src/content/topics.yaml'),
+  loader: file(content('topics.yaml')),
   schema: z.object({
     name: z.string(),
     description: z.string().max(180),
@@ -57,7 +62,7 @@ const topics = defineCollection({
 });
 
 const projects = defineCollection({
-  loader: file('src/content/projects.yaml'),
+  loader: file(content('projects.yaml')),
   schema: ({ image }) =>
     z.object({
       name: z.string(),
@@ -79,7 +84,7 @@ const projects = defineCollection({
 
 // "what I do" on the home page: each service has a short paragraph and exactly three tools.
 const services = defineCollection({
-  loader: file('src/content/services.yaml'),
+  loader: file(content('services.yaml')),
   schema: z.object({
     name: z.string(),
     description: z.string().max(200),
@@ -91,7 +96,7 @@ const services = defineCollection({
 // "what people are saying". The home page shows them as a moving row once there are five or more;
 // with fewer they sit still, side by side.
 const testimonials = defineCollection({
-  loader: file('src/content/testimonials.yaml'),
+  loader: file(content('testimonials.yaml')),
   schema: z.object({
     quote: z.string().max(280),
     name: z.string(),
@@ -102,7 +107,7 @@ const testimonials = defineCollection({
 
 // The blog's own wording: the index intro and the author panel under each post.
 const blog = defineCollection({
-  loader: file('src/content/blog.yaml'),
+  loader: file(content('blog.yaml')),
   schema: z.object({
     intro: z.string(),
     empty: z.string(),
@@ -112,7 +117,7 @@ const blog = defineCollection({
 
 // The home page's own wording: the hero and the booking band.
 const home = defineCollection({
-  loader: file('src/content/home.yaml'),
+  loader: file(content('home.yaml')),
   schema: z.object({
     headline: z.array(z.string()).min(1),
     lead: z.string(),
@@ -125,13 +130,13 @@ const home = defineCollection({
 
 // The projects page's own wording.
 const projectsPage = defineCollection({
-  loader: file('src/content/projects-page.yaml'),
+  loader: file(content('projects-page.yaml')),
   schema: z.object({ intro: z.string() }),
 });
 
 // The RSS page (/rss/): what a feed is and how to follow one.
 const rss = defineCollection({
-  loader: file('src/content/rss.yaml'),
+  loader: file(content('rss.yaml')),
   schema: z.object({
     intro: z.string(),
     note: z.string(),
@@ -142,14 +147,14 @@ const rss = defineCollection({
 
 // The 404 page's wording. The title ends in the brick stop, so leave off its full stop.
 const notFound = defineCollection({
-  loader: file('src/content/not-found.yaml'),
+  loader: file(content('not-found.yaml')),
   schema: z.object({ title: z.array(z.string()).min(1), text: z.string() }),
 });
 
 // The cookie banner and preferences dialog (see src/components/Consent.astro). The category ids are the
 // ones CookieConsent and the consent log use; their order is the order in the dialog.
 const consent = defineCollection({
-  loader: file('src/content/consent.yaml'),
+  loader: file(content('consent.yaml')),
   schema: z.object({
     revision: z.number().int().positive(),
     banner: z.object({ title: z.string(), text: z.string() }),

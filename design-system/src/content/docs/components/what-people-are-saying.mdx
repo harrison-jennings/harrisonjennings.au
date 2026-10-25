@@ -1,0 +1,57 @@
+---
+title: what people are saying
+lead: Testimonials. With five or more, a row that drifts across the page and pauses on hover; with fewer, the cards sit still, side by side.
+group: home
+order: 4
+component: src/components/home/Testimonials.astro
+facts:
+  - label: words
+    value: src/content/testimonials.yaml
+  - label: status
+    value: live
+related:
+  - page: brand/imagery-and-motion
+    line: The ticker, with the other looping animations.
+  - page: components/booking-band
+    line: The section after it.
+  - page: brand/voice-and-tone
+    line: The title, never “what clients say”.
+---
+
+import Preview from '../../../components/Preview.astro';
+import { usage } from '../../../lib/example';
+import example from '../../../examples/testimonials.astro?raw';
+import source from '../../../../../src/components/home/Testimonials.astro?raw';
+import ticker from '../../../../../src/scripts/ticker.ts?raw';
+
+## preview
+
+With the site's quotes as they are today. The ticker starts once there are five.
+
+<Preview
+  title="what people are saying"
+  specimen="/specimens/testimonials/"
+  size="large"
+  tabs={[
+    { label: 'astro', code: usage(example), lang: 'astro', file: 'src/pages/index.astro' },
+    { label: 'source', code: source.trim(), lang: 'astro', file: 'src/components/home/Testimonials.astro' },
+    { label: 'ticker', code: ticker.trim(), lang: 'ts', file: 'src/scripts/ticker.ts' },
+  ]}
+/>
+
+## how it behaves
+
+- **Five or more quotes:** a row drifting left on an 80-second loop across the full page width. It pauses on hover and focus, and a pause button stops it outright.
+- **Fewer than five:** the cards sit still, side by side (a swipe row on phones).
+- **Cards** share the tallest card's height, so the names line up. Each is a quote of up to 280 characters, a name and a role.
+- **The title** is "what people are saying", never "what clients say".
+
+## props
+
+None. Its quotes come from `src/content/testimonials.yaml`.
+
+## accessibility
+
+- **A pause button** for the moving row (WCAG 2.2.2), as well as pausing on hover and focus.
+- **Each quote is read once:** the loop's second set of cards is hidden from screen readers.
+- **Reduced motion:** no drift; the row scrolls by hand, and the pause button goes.

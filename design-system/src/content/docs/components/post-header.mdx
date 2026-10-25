@@ -1,0 +1,55 @@
+---
+title: post header
+lead: The top of every post. Where it sits, the title, the dek, the date and reading time with its topics, and an optional cover image.
+group: blog
+order: 1
+component: src/components/blog/PostHeader.astro
+facts:
+  - label: status
+    value: live
+related:
+  - page: brand/typography
+    line: Its title-xl and dek, named in type in use.
+  - page: components/tag
+    line: The post's topics.
+  - page: components/on-this-page
+    line: Beside the text it introduces.
+---
+
+import Preview from '../../../components/Preview.astro';
+import PropsTable from '../../../components/PropsTable.astro';
+import { usage } from '../../../lib/example';
+import example from '../../../examples/post-header.astro?raw';
+import source from '../../../../../src/components/blog/PostHeader.astro?raw';
+
+## preview
+
+The newest post's header, from the site's own content.
+
+<Preview
+  title="post header"
+  specimen="/specimens/post-header/"
+  size="large"
+  tabs={[
+    { label: 'astro', code: usage(example), lang: 'astro', file: 'src/pages/blog/[slug]/index.astro' },
+    { label: 'source', code: source.trim(), lang: 'astro', file: 'src/components/blog/PostHeader.astro' },
+  ]}
+/>
+
+## how it behaves
+
+- **Where it sits:** "blog / \{main topic\}", linked back.
+- **The title** in `title-xl`, Schibsted rather than Martian Mono because titles run past two lines, with balanced wrapping; 32px on phones.
+- **The dek** is the post's `description`, in `muted`: the same words as search results show, unless the post sets its own for search.
+- **The date and reading time,** written out ("13 August 2026, 6 min read"), then every topic as a tag.
+- **A cover image,** if the post has one.
+
+## props
+
+<PropsTable source={source} />
+
+## accessibility
+
+- **The post's one `<h1>`.**
+- **The date is a `<time>`** with a machine-readable date.
+- **A cover image has alternative text** (`coverAlt` in the front matter).

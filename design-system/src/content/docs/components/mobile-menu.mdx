@@ -1,0 +1,50 @@
+---
+title: mobile menu
+lead: The full-screen menu on phones, behind the nav's menu button. The page links in large mono type, “book a call”, and the two platforms.
+group: navigation
+order: 2
+component: src/components/Nav.astro
+facts:
+  - label: status
+    value: live
+related:
+  - page: components/nav
+    line: The bar it opens from.
+  - page: components/icon-button
+    line: Its 48px GitHub and LinkedIn.
+  - page: components/button
+    line: Its full-width “book a call”.
+---
+
+import Preview from '../../../components/Preview.astro';
+import { usage } from '../../../lib/example';
+import example from '../../../examples/mobile-menu.astro?raw';
+import nav from '../../../../../src/scripts/nav.ts?raw';
+
+## preview
+
+The menu is part of the nav: it opens from the menu button below 760px. Here it's shown open, at phone width.
+
+<Preview
+  title="mobile menu"
+  specimen="/specimens/mobile-menu/"
+  size="large"
+  start="390"
+  tabs={[
+    { label: 'astro', code: usage(example), lang: 'astro', file: 'src/layouts/Base.astro' },
+    { label: 'script', code: nav.trim(), lang: 'ts', file: 'src/scripts/nav.ts' },
+  ]}
+/>
+
+## how it behaves
+
+- **Fills the screen** in `ground`. Its top row sits exactly where the bar was, so the close button replaces the menu button under the thumb.
+- **Links** in Martian Mono at 30px (`display-s`), 14px apart; the current page underlined in brick.
+- **"book a call"** full width (`size="block"`), and GitHub and LinkedIn as plain 48px icons, lined up with the links.
+- **Opening** moves focus into the menu. Escape and the close button close it and return focus to the menu button; so does any link.
+
+## accessibility
+
+- **A real dialog** (`<dialog>`, opened modally), named "Menu", so the page behind it is out of reach while it's open.
+- **Focus goes in and comes back:** into the menu on open, back to the menu button on close.
+- **48px targets** for the icons, larger than elsewhere, because it's only ever used by touch.

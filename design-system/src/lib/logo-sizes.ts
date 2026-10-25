@@ -2,13 +2,7 @@
 // src/, and the compact nav, which shrinks the nav's mark in CSS. So a new size, or a change to one,
 // shows on the logo page without anyone retyping it.
 import { markWeight } from '../../../src/lib/logo';
-
-// The site's components and pages, as text, gathered by Vite from the source at build time.
-const SOURCES = import.meta.glob<string>('../../../src/**/*.astro', {
-  query: '?raw',
-  import: 'default',
-  eager: true,
-});
+import { place, SOURCES } from './site-source';
 
 export interface LogoSize {
   size: number;
@@ -18,17 +12,10 @@ export interface LogoSize {
   where: string;
 }
 
-/** …/AuthorPanel.astro → "author panel"; …/pages/404.astro → "404". */
-const place = (file: string): string =>
-  (file.split('/').pop() ?? file)
-    .replace(/\.astro$/, '')
-    .replace(/([a-z])([A-Z])/g, '$1 $2')
-    .toLowerCase();
-
 export function logoSizes(): LogoSize[] {
   const found: { size: number; where: string }[] = [];
   for (const [file, source] of Object.entries(SOURCES)) {
-    if (file.endsWith('/components/Logo.astro')) continue;
+    if (file === 'src/components/Logo.astro') continue;
     for (const m of source.matchAll(/<Logo\b[^>]*?\bsize=\{(\d+)\}/g))
       found.push({ size: Number(m[1]), where: place(file) });
     // The compact nav resizes the nav's mark in CSS.

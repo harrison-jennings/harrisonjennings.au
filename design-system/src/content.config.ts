@@ -2,6 +2,7 @@ import { defineCollection } from 'astro:content';
 import { file, glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 import { parse } from 'yaml';
+import { collections as site } from '../../src/content.config';
 
 // The design system's pages: src/content/docs/<section>/<page>.mdx, published at /<section>/<page>/.
 // MDX, so the wording can be edited without touching code and a page can still show components.
@@ -20,6 +21,13 @@ const docs = defineCollection({
     facts: z
       .array(z.object({ label: z.string(), value: z.string(), href: z.string().optional() }))
       .default([]),
+    /**
+     * The file the page documents, from the repository's root (src/components/Button.astro). The page
+     * head links to it and, for a component, says where it's used, worked out from the site's imports.
+     */
+    component: z.string().optional(),
+    /** Related pages, by id (components/text-link), each with a line on why. */
+    related: z.array(z.object({ page: z.string(), line: z.string() })).default([]),
   }),
 });
 
@@ -53,4 +61,6 @@ const changes = defineCollection({
   }),
 });
 
-export const collections = { docs, overview, changes };
+// The site's own collections too (posts, projects, the home page's wording, consent…), so the site's
+// components render here with exactly what they show on harrisonjennings.au.
+export const collections = { ...site, docs, overview, changes };

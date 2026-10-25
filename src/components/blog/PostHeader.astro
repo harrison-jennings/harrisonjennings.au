@@ -9,8 +9,11 @@ import Eyebrow from './Eyebrow.astro';
 import PostTags from './PostTags.astro';
 
 interface Props {
+  /** The post it heads. */
   post: CollectionEntry<'posts'>;
+  /** Minutes, from the Markdown pipeline's reading time. */
   readingTime: number;
+  /** Ids of the topics that have their own page, so their tags are links. */
   topicPages: ReadonlySet<string>;
 }
 

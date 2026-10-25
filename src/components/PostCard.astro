@@ -7,6 +7,7 @@ import { mainTopic, postPath, topicPath } from '../lib/posts';
 import PostCardView from './PostCardView.astro';
 
 interface Props {
+  /** The post to show. */
   post: CollectionEntry<'posts'>;
   /** Ids of the topics that have their own page. */
   topicPages: ReadonlySet<string>;

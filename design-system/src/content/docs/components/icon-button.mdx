@@ -1,0 +1,76 @@
+---
+title: icon button
+lead: A round icon-only link for the two platforms, GitHub and LinkedIn. The text colour at rest and the link colour on hover, with a 44px target.
+group: actions
+order: 3
+component: src/components/IconButton.astro
+facts:
+  - label: status
+    value: live
+related:
+  - page: brand/icons
+    line: The icon set and its rules.
+  - page: components/nav
+    line: Where the two sit, after the page links.
+  - page: components/theme-toggle
+    line: The other icon-only control in the nav.
+---
+
+import IconButton from '../../../../../src/components/IconButton.astro';
+import DoDont from '../../../components/DoDont.astro';
+import DoDontCard from '../../../components/DoDontCard.astro';
+import Preview from '../../../components/Preview.astro';
+import PropsTable from '../../../components/PropsTable.astro';
+import { SOCIAL } from '../../../../../src/consts';
+import { usage } from '../../../lib/example';
+import example from '../../../examples/icon-button.astro?raw';
+import source from '../../../../../src/components/IconButton.astro?raw';
+
+## preview
+
+<Preview
+  title="icon button"
+  specimen="/specimens/icon-button/"
+  tabs={[
+    { label: 'astro', code: usage(example), lang: 'astro', file: 'any page or component' },
+    { label: 'source', code: source.trim(), lang: 'astro', file: 'src/components/IconButton.astro' },
+  ]}
+/>
+
+## variants and states
+
+<DoDont cols={3}>
+  <DoDontCard name="the default" say="44px, in the nav." picture>
+    <IconButton href={SOCIAL.github.href} label={SOCIAL.github.label} icon="github" />
+    <IconButton href={SOCIAL.linkedin.href} label={SOCIAL.linkedin.label} icon="linkedin" />
+  </DoDontCard>
+  <DoDontCard name="large" say="48px and a touch bigger, in the phone menu." picture>
+    <IconButton href={SOCIAL.github.href} label={SOCIAL.github.label} icon="github" large />
+    <IconButton href={SOCIAL.linkedin.href} label={SOCIAL.linkedin.label} icon="linkedin" large />
+  </DoDontCard>
+  <DoDontCard name="hover and focus" say="The icon turns link, over 150ms. Focus adds the site's ring." picture>
+    <span class="ds-state--link"><IconButton href={SOCIAL.github.href} label={SOCIAL.github.label} icon="github" /></span>
+  </DoDontCard>
+</DoDont>
+
+## when to use it
+
+<DoDont>
+  <DoDontCard verdict="do" say="GitHub and LinkedIn, together, after the page links." picture>
+    <IconButton href={SOCIAL.github.href} label={SOCIAL.github.label} icon="github" />
+    <IconButton href={SOCIAL.linkedin.href} label={SOCIAL.linkedin.label} icon="linkedin" />
+  </DoDontCard>
+  <DoDontCard verdict="don't" say="Another platform's icon. Only these two, unless the design decides otherwise.">
+    <span class="ds-bad-icon" aria-hidden="true">X</span>
+  </DoDontCard>
+</DoDont>
+
+## props
+
+<PropsTable source={source} />
+
+## accessibility
+
+- **A name for an icon on its own.** `label` is the link's accessible name ("GitHub profile"), with the new-tab note after it.
+- **44px to tap,** 48px in the phone menu, whatever the size of the glyph.
+- **Opens in a new tab** (`rel="me noopener"`), and says so.

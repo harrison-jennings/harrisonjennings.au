@@ -185,7 +185,7 @@ for (const root of document.querySelectorAll<HTMLElement>('[data-preview]')) {
     root,
     stage,
     views: { dark, light },
-    width: root.dataset['size'] === 'large' ? '1280' : 'fit',
+    width: (root.dataset['start'] as Width | undefined) ?? 'fit',
     theme: pageTheme(),
     chosen: false,
     tall: false,

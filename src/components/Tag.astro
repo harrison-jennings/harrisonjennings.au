@@ -2,7 +2,9 @@
 // Outlined topic chip: a link when it points at a topic page. A topic without a page (fewer than
 // two posts) is a `label`: dashed outline, muted text, not a link.
 interface Props {
+  /** The topic's page. Leave out for a tag that isn't a link. */
   href?: string;
+  /** A topic without its own page yet: a dashed label, never a link, even with href. */
   label?: boolean;
 }
 

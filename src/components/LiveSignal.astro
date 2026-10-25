@@ -4,6 +4,7 @@ import { isExternal, NEW_TAB_NOTE } from '../lib/links';
 import LiveDot from './LiveDot.astro';
 
 interface Props {
+  /** The live site's host, as the words say it: leadlens.harrisonjennings.au. */
   host: string;
   /** The live URL: the host becomes a link, underlined like a text link. */
   href?: string | undefined;

@@ -275,17 +275,12 @@
 .pf-pre-box--clip:not([data-expanded]) .pf-pre {
   max-height: 236px;
   overflow-y: hidden;
+  /* The last 72px fade out: a mask, not a box laid over the text (only its alpha counts). */
+  mask-image: linear-gradient(180deg, var(--text) calc(100% - 72px), transparent);
 }
-.pf-pre__fade {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  height: 72px;
-  background: linear-gradient(transparent, var(--ground));
-  pointer-events: none;
-}
-.pf-pre-box[data-expanded] .pf-pre__fade {
+/* Lines past the 236px window aren't drawn at all, rather than drawn and cut off: clipped text still
+   counts for screen readers' contrast checks, measured against whatever is behind it. */
+.pf-pre-box--clip:not([data-expanded]) .ln:nth-child(n + 11) {
   display: none;
 }
 .pf-code__more {

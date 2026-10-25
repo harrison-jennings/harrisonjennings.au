@@ -1,0 +1,51 @@
+---
+title: author panel
+lead: Under every post. The mark, “written by harrison jennings”, a one-line bio, and GitHub and LinkedIn.
+group: blog
+order: 3
+component: src/components/blog/AuthorPanel.astro
+facts:
+  - label: words
+    value: src/content/blog.yaml
+  - label: status
+    value: live
+related:
+  - page: components/keep-reading
+    line: What comes after it.
+  - page: components/logo
+    line: Its 40px mark.
+  - page: components/text-link
+    line: Its GitHub and LinkedIn links.
+---
+
+import Preview from '../../../components/Preview.astro';
+import { usage } from '../../../lib/example';
+import example from '../../../examples/author-panel.astro?raw';
+import source from '../../../../../src/components/blog/AuthorPanel.astro?raw';
+
+## preview
+
+<Preview
+  title="author panel"
+  specimen="/specimens/author-panel/"
+  size="large"
+  tabs={[
+    { label: 'astro', code: usage(example), lang: 'astro', file: 'src/pages/blog/[slug]/index.astro' },
+    { label: 'source', code: source.trim(), lang: 'astro', file: 'src/components/blog/AuthorPanel.astro' },
+  ]}
+/>
+
+## how it behaves
+
+- **The mark at 40px,** "written by harrison jennings", and the bio from `src/content/blog.yaml`.
+- **GitHub and LinkedIn** as words, opening in a new tab.
+- **No booking button:** that was tried, and dropped. A post isn't a sales page.
+
+## props
+
+None. The bio comes from `src/content/blog.yaml`.
+
+## accessibility
+
+- **A labelled region** (`<aside>`, named by its heading), so it can be found or skipped.
+- **The links say where they go,** and that they open in a new tab.

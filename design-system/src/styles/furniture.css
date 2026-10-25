@@ -1394,3 +1394,150 @@
   font-size: 12px;
   color: var(--muted);
 }
+
+/* ---------- component pages ---------- */
+.ds-card--s {
+  min-height: 0;
+  padding: var(--space-16) var(--space-20);
+}
+.ds-table .mono-cell {
+  font-family: var(--font-display);
+  font-size: 13px;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  white-space: nowrap;
+}
+.ds-table .req {
+  font-family: var(--font-display);
+  font-size: 12px;
+  color: var(--link);
+}
+.ds-table code {
+  padding: 2px 6px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface);
+  font-family: var(--font-display);
+  font-size: 0.8em;
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+/* A long union type wraps rather than widening the table. */
+.ds-props .ds-props__type {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.ds-props th:nth-child(1) {
+  width: 18%;
+}
+.ds-props th:nth-child(2) {
+  width: 26%;
+}
+.ds-props th:nth-child(3) {
+  width: 14%;
+}
+/* Phones, as the mockup draws them: the name and its type on one line, the default and what it does
+   full width under them. */
+@media (max-width: 760px) {
+  .ds-table--stack.ds-props tr {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+  .ds-props .ds-props__type {
+    text-align: right;
+  }
+  .ds-props td:nth-child(3),
+  .ds-props td.wide {
+    grid-column: 1 / -1;
+  }
+}
+/* A component's states as still pictures (inside an inert card): the wipe pinned part-way, or all
+   the way, as the pointer would leave it. The component's own styles are untouched. */
+span.ds-state--wiping .btn .btn__wipe {
+  clip-path: inset(0 45% 0 0);
+}
+span.ds-state--hover .btn .btn__wipe {
+  clip-path: inset(0);
+}
+/* An example that fills its card's width (a block button). */
+.ds-fill {
+  flex: 1;
+  max-width: 280px;
+}
+/* The rejected outline button, drawn only as a "don't". */
+.ds-bad-outline {
+  display: inline-flex;
+  align-items: center;
+  min-height: 52px;
+  padding: 0 30px;
+  border: 1.5px solid var(--accent);
+  border-radius: var(--radius-pill);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--link);
+}
+/* A link in its hover colour, for an inert state picture. */
+span.ds-state--link .icon-btn {
+  color: var(--link);
+}
+/* "Don't" pictures of things the site doesn't have: a link without its underline, a third platform. */
+.ds-bad-link {
+  color: var(--link);
+}
+.ds-bad-icon {
+  display: inline-grid;
+  place-items: center;
+  width: var(--target);
+  height: var(--target);
+  font-family: var(--font-display);
+  font-weight: 500;
+  color: var(--text);
+}
+/* The RSS page's copy button on a phone, filling its box. */
+.copy.ds-wide {
+  width: 100%;
+}
+/* A "don't": a big mark scaled down with CSS, so its line is too thin. */
+.ds-bad-scale .mark {
+  width: 40px;
+  height: 40px;
+}
+/* Share cards, at a size you can read. */
+.sc-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-16);
+}
+.sc {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-10);
+  margin: 0;
+}
+.sc img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+}
+.sc figcaption {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.sc figcaption b {
+  margin-right: var(--space-6);
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text);
+}
+@media (max-width: 760px) {
+  .sc-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+/* A long "used in" list wraps beside its label, not into it. */
+.ds-facts dt {
+  white-space: nowrap;
+}

@@ -1,0 +1,48 @@
+---
+// A component's props (design hand-off: PageFurniture, tables), read from its own source by
+// lib/props.ts: name (and "required"), type, default as written in the code, and what it does from the
+// prop's doc comment. A component with no props shows the slot instead.
+import { readProps } from '../lib/props';
+
+interface Props {
+  /** The component's source (`?raw`). */
+  source: string;
+}
+
+const { source } = Astro.props;
+const props = readProps(source);
+/** `code` in a doc comment becomes <code>; everything else is text. */
+const parts = (doc: string) => doc.split(/`([^`]+)`/);
+---
+
+{props.length > 0 ? (
+  <div class="ds-tablebox">
+    <table class="ds-table ds-table--stack ds-props">
+      <thead>
+        <tr>
+          <th scope="col">prop</th>
+          <th scope="col">type</th>
+          <th scope="col">default</th>
+          <th scope="col">what it does</th>
+        </tr>
+      </thead>
+      <tbody>
+        {props.map((p) => (
+          <tr>
+            <td class="mono-cell">
+              {p.name}
+              {p.required && <span class="req"> required</span>}
+            </td>
+            <td class="mono-cell ds-props__type">{p.type}</td>
+            <td class:list={{ 'mono-cell': p.default !== undefined }}>{p.default ?? 'none'}</td>
+            <td class="wide">
+              {p.doc ? parts(p.doc).map((t, i) => (i % 2 ? <code>{t}</code> : t)) : ''}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+) : (
+  <slot />
+)}
