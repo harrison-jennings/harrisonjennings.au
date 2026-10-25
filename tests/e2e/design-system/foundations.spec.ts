@@ -18,7 +18,8 @@ for (const path of PAGES) {
   test(`${path} is never indexed and only the design system may frame it`, async ({ request }) => {
     const response = await request.get(path);
     expect(response.status()).toBe(200);
-    expect(response.headers()['x-robots-tag']).toBe('noindex, nofollow');
+    // Cloudflare replaces it with a plain noindex on preview URLs; production sends 'noindex, nofollow'.
+    expect(response.headers()['x-robots-tag']).toMatch(/\bnoindex\b/);
     expect(response.headers()['x-frame-options']).toBe('SAMEORIGIN');
     const csp = response.headers()['content-security-policy'] ?? '';
     expect(csp).toContain("frame-ancestors 'self'");
