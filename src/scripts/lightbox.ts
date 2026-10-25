@@ -1,6 +1,7 @@
 // The image viewer. Every [data-zoomable] image in a post opens it, full screen: zoom from fit to
-// 400% (wheel, + and −, double-click, pinch), drag to move within the image's edges, step through
-// the post's images, close with Esc, the close button, a click on the empty backdrop or a swipe down.
+// 400% (wheel, + and −, pinch; a click on the image goes to 200% and back), drag to move within the
+// image's edges, step through the post's images, close with Esc, the close button, a click on the
+// empty backdrop or a swipe down.
 // A modal dialog: focus moves to close on open, Tab stays inside, focus returns to the image.
 // The largest available file (from the image's srcset) loads only when the viewer opens.
 
@@ -74,6 +75,7 @@ export function bindLightbox(buttons: HTMLButtonElement[]): void {
   const pointers = new Map<number, [number, number]>();
   let start: { x: number; y: number; tx: number; ty: number } | null = null;
   let pinch: { d: number; z: number } | null = null;
+  let moved = false; // the last press dragged, swiped or pinched, so its click isn't a click
   const touch = window.matchMedia('(pointer: coarse)').matches;
   const fitted = () => st.z <= 1.001;
 
@@ -178,19 +180,27 @@ export function bindLightbox(buttons: HTMLButtonElement[]): void {
     },
     { passive: false },
   );
-  stage.addEventListener('dblclick', (e) => {
-    if ((e.target as Element).closest('button')) return;
+  // The second click of a double-click is ignored, so a double-click zooms once, like a click.
+  stage.addEventListener('click', (e) => {
+    if (moved) return;
+    const target = e.target as Element;
+    if (target === stage) {
+      if (fitted()) close();
+      return;
+    }
+    if (e.detail > 1 || target.parentElement !== holder) return;
     if (fitted()) zoomAt(2, ...rel(e.clientX, e.clientY));
     else setZoom(1, 0, 0);
-  });
-  stage.addEventListener('click', (e) => {
-    if (e.target === stage && fitted()) close();
   });
   stage.addEventListener('pointerdown', (e) => {
     if ((e.target as Element).closest('button')) return;
     pointers.set(e.pointerId, [e.clientX, e.clientY]);
-    if (pointers.size === 1) start = { x: e.clientX, y: e.clientY, tx: st.tx, ty: st.ty };
+    if (pointers.size === 1) {
+      start = { x: e.clientX, y: e.clientY, tx: st.tx, ty: st.ty };
+      moved = false;
+    }
     if (pointers.size === 2) {
+      moved = true;
       const [a, b] = [...pointers.values()] as [[number, number], [number, number]];
       pinch = { d: Math.hypot(a[0] - b[0], a[1] - b[1]), z: st.z };
     }
@@ -208,6 +218,7 @@ export function bindLightbox(buttons: HTMLButtonElement[]): void {
     if (!start) return;
     const dx = e.clientX - start.x;
     const dy = e.clientY - start.y;
+    if (Math.hypot(dx, dy) > 6) moved = true;
     if (!fitted()) [st.tx, st.ty] = clamp(st.z, start.tx + dx, start.ty + dy);
     else st.ty = dy > 0 ? dy * 0.6 : 0; // a hint of the swipe down that closes
     apply(false);
