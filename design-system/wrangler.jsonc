@@ -13,4 +13,7 @@
   // Branch previews get workers.dev URLs.
   "workers_dev": false,
   "preview_urls": true,
+  // Required by `wrangler preview`, which Workers Builds runs for every non-production branch. Empty: the
+  // design system has no bindings for previews to keep apart from production.
+  "previews": {},
 }
