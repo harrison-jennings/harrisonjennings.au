@@ -1,5 +1,5 @@
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test } from '@playwright/test';
+import { devices, expect, test } from '@playwright/test';
 import { designPages } from './site';
 
 // The design system's shell (design-system/src/layouts/Shell.astro): on every page, at both widths and
@@ -17,13 +17,6 @@ for (const { name, width, height } of WIDTHS) {
     test.use({ viewport: { width, height } });
 
     for (const path of designPages()) {
-      test(`${path} doesn't scroll sideways`, async ({ page }) => {
-        await page.goto(path);
-        expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
-          width,
-        );
-      });
-
       for (const theme of ['dark', 'light'] as const) {
         test(`${path} has no axe violations in ${theme}`, async ({ page }) => {
           await page.addInitScript((t) => localStorage.setItem('hj-theme', t), theme);
@@ -40,6 +33,57 @@ for (const { name, width, height } of WIDTHS) {
     }
   });
 }
+
+// Every width the shell changes at (1200 and 1024, and the site's 760), either side, and the ends.
+for (const width of [390, 761, 800, 1023, 1024, 1180, 1199, 1440]) {
+  test.describe(`at ${width}px`, () => {
+    test.use({ viewport: { width, height: 900 } });
+    for (const path of designPages()) {
+      test(`${path} doesn't scroll sideways`, async ({ page }) => {
+        await page.goto(path);
+        expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
+          width,
+        );
+      });
+    }
+  });
+}
+
+// Chrome's phone emulation widens the page to fit anything too wide, which a plain narrow window
+// doesn't show (it's how the site's home page once overflowed unseen).
+// The phone's size, scale and touch, in Chromium (the profile's own browser is WebKit).
+const { viewport, deviceScaleFactor, isMobile, hasTouch, userAgent } = devices['iPhone 12 Pro'];
+const iphone = { viewport, deviceScaleFactor, isMobile, hasTouch, userAgent };
+
+test.describe('in Chrome on an iPhone', () => {
+  test.use(iphone);
+  for (const path of designPages()) {
+    test(`${path} fits the screen`, async ({ page }) => {
+      await page.goto(path);
+      expect(await page.evaluate(() => window.innerWidth)).toBe(390);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(390);
+    });
+  }
+});
+
+test.describe('between phone and full desktop', () => {
+  for (const [width, side, toc, picker] of [
+    [1440, true, true, false],
+    [1100, true, false, false],
+    [900, false, false, true],
+  ] as const) {
+    test(`at ${width}px: sidebar ${side}, on this page ${toc}, page picker ${picker}`, async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto('/components/button/');
+      await expect(page.locator('.ds-side')).toBeVisible({ visible: side });
+      await expect(page.locator('.ds-toc')).toBeVisible({ visible: toc });
+      await expect(page.locator('.ds-where')).toBeVisible({ visible: picker });
+      await expect(page.locator('.ds-sections')).toBeVisible({ visible: !picker });
+    });
+  }
+});
 
 test('every page says it is the design system: the brick line and "design system" by the logo', async ({
   page,

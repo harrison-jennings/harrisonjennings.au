@@ -1,7 +1,7 @@
 /* The design system's shell: header, sidebar, page head, "on this page", footer, the phone picker and
    menu, and the text of a page (design hand-off: Shell, Sidebar, PageFurniture). Tokens only; the
    fixed sizes that aren't brand values (the 68px header, the column widths, the 56px menu rows) are
-   the ones the notes list. Phones: the site's breakpoint, 760px. */
+   the ones the notes list. Narrower widths: see the media queries at the end. */
 
 .ds {
   background: var(--ground);
@@ -615,14 +615,30 @@
   border-top: 1px solid var(--line);
 }
 
-@media (max-width: 760px) {
+/* Between phone and full desktop (approved 25 October 2026): below 1200px "on this page" goes and the
+   header drops the name; below 1024px the shell is the phone's (menu and page picker, no sidebar), with
+   the phone's type and spacing from the site's 760px breakpoint. */
+@media (max-width: 1199px) {
+  .ds-toc,
+  .ds-lockup__name,
+  .ds-lockup__div {
+    display: none;
+  }
+  .ds-body {
+    grid-template-columns: 272px minmax(0, 1fr);
+  }
+  .ds-body--no-side,
+  .ds-body--landing {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 1023px) {
   .ds-head {
     gap: var(--space-8);
     height: 64px;
     padding: 0 var(--space-10) 0 var(--space-16);
   }
-  .ds-lockup__name,
-  .ds-lockup__div,
   .ds-sections,
   .ds-head .ds-back {
     display: none;
@@ -645,10 +661,15 @@
     grid-template-columns: minmax(0, 1fr);
   }
   .ds-side,
-  .ds-toc,
   .ds-crumb {
     display: none;
   }
+  .ds-doc > h2 {
+    scroll-margin-top: 128px;
+  }
+}
+
+@media (max-width: 760px) {
   .ds-main {
     padding: var(--space-20) var(--space-16) var(--space-56);
   }
@@ -664,7 +685,6 @@
   .ds-doc > h2 {
     margin-top: var(--space-40);
     font-size: 21px;
-    scroll-margin-top: 128px;
   }
   .ds-foot {
     flex-direction: column;

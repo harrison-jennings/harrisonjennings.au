@@ -64,6 +64,7 @@ document.querySelectorAll<HTMLButtonElement>('[data-menu-open]').forEach((button
 });
 menu?.querySelector('[data-menu-close]')?.addEventListener('click', () => menu.close());
 menu?.addEventListener('close', () => openedBy?.focus());
-window.matchMedia('(min-width: 761px)').addEventListener('change', (e) => {
+// The menu is only for the compact shell, below 1024px (styles/shell.css).
+window.matchMedia('(min-width: 1024px)').addEventListener('change', (e) => {
   if (e.matches && menu?.open) menu.close();
 });
