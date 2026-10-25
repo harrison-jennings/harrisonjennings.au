@@ -1,120 +1,187 @@
 ---
-// An example shown the way it renders on the site: its specimen page in iframes at a true phone and
-// desktop width, in both themes, scaled down to fit the column when needed (preview.ts), with the code
-// that makes it underneath. A working placeholder until the preview frame is designed.
+// The frame every example sits in (design hand-off: PreviewFrame and CodePanel): a toolbar for width
+// and theme, a stage showing the specimen page in iframes at a true screen width (scaled to fit, never
+// squashed), and the code that makes it, highlighted as the site's code blocks are. The toolbar's
+// choices, scaling, stacking and the tall-example cap are scripts/preview.ts.
+import { Code } from 'astro:components';
+import type { ShikiTransformer } from 'shiki';
 import CopyButton from '../../../src/components/CopyButton.astro';
+import { codeTheme } from '../../../src/lib/markdown/code';
+import DsIcon from './DsIcon.astro';
+import '../styles/preview.css';
+
+interface Tab {
+  /** The tab's name: astro, source, markdown. */
+  label: string;
+  code: string;
+  lang: string;
+  /** The file the code belongs to, or where it goes. */
+  file?: string;
+}
 
 interface Props {
+  /** What the example shows, for the controls' accessible names. */
   title: string;
   /** The specimen page's path, such as /specimens/button/. */
   specimen: string;
-  code: string;
-  /** What the code is: shown above it. */
-  lang: string;
+  /** Small examples are shown at their own size by default ("fit"); large ones at desktop width. */
+  size?: 'small' | 'large';
+  tabs: Tab[];
 }
 
-const { title, specimen, code, lang } = Astro.props;
+const { title, specimen, size = 'small', tabs } = Astro.props;
+const id = `pf-${specimen.replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '')}`;
+/** Code longer than this many lines is clipped, with "show all N lines". */
+const LONG = 12;
+const lines = (code: string) => code.split('\n').length;
 
-const WIDTHS = [
-  { name: 'phone', width: 390 },
-  { name: 'desktop', width: 1280 },
-];
-const THEMES = ['dark', 'light'];
+// The panel's own markup: no inline colours on <pre> (it sits on the dark code treatment), one span
+// per line, and a box the keyboard can reach, since it scrolls sideways.
+const panel: ShikiTransformer = {
+  pre(node) {
+    node.properties = { class: 'pf-pre', tabindex: '0' };
+  },
+  line(node) {
+    node.properties['class'] = 'ln';
+  },
+};
 ---
 
-<figure class="preview" data-preview>
-  <figcaption class="preview__title">{title}</figcaption>
-  <div class="preview__frames">
-    {WIDTHS.flatMap(({ name, width }) =>
-      THEMES.map((theme) => (
-        <div class:list={['preview__frame', `preview__frame--${name}`]}>
-          <p class="preview__label">
-            {name}, {theme}
-          </p>
-          <div class="preview__viewport">
-            <iframe
-              src={`${specimen}?theme=${theme}`}
-              width={width}
-              height="160"
-              title={`${title}: ${name}, ${theme}`}
-              data-theme-name={theme}
-            />
-          </div>
-        </div>
-      )),
-    )}
-  </div>
-  <div class="preview__code">
-    <div class="preview__bar">
-      <span>{lang}</span>
-      <CopyButton text={code} context={`the ${title} code`} />
+<figure class="pf" id={id} data-preview data-specimen={specimen} data-size={size}>
+  <div class="pf-bar">
+    <div class="seg" role="group" aria-label="Preview width">
+      {size === 'small' && (
+        <button type="button" aria-pressed="true" data-width="fit">
+          fit
+        </button>
+      )}
+      <button type="button" aria-pressed="false" data-width="390">
+        phone <small>390</small>
+      </button>
+      <button type="button" aria-pressed={size === 'large' ? 'true' : 'false'} data-width="1280">
+        desktop <small>1280</small>
+      </button>
     </div>
-    <pre tabindex="0"><code>{code}</code></pre>
+    <div class="seg" role="group" aria-label="Preview theme">
+      <button type="button" aria-pressed="true" data-theme-choice="dark">
+        dark
+      </button>
+      <button type="button" aria-pressed="false" data-theme-choice="light">
+        light
+      </button>
+      <button type="button" aria-pressed="false" data-theme-choice="both" class="pf-both">
+        both
+      </button>
+    </div>
+    <div class="pf-bar__end">
+      <a class="pf-act" href={`${specimen}?theme=dark`} target="_blank" rel="noopener" data-open>
+        open
+        <DsIcon name="arrow-out" size={14} />
+        <span class="visually-hidden">the {title} example in a new tab</span>
+      </a>
+      <CopyButton
+        label="copy code"
+        text={tabs[0]?.code ?? ''}
+        context={`for the ${title} example`}
+        icon={false}
+        class="pf-act pf-act--copy"
+        attrs={{ hidden: '', 'data-bar-copy': '' }}
+      />
+      <button
+        class="pf-act"
+        type="button"
+        aria-expanded="true"
+        aria-controls={`${id}-code`}
+        data-code-toggle
+      >
+        <span data-code-label>hide code</span>
+        <DsIcon name="chevron-down" size={14} />
+      </button>
+    </div>
+  </div>
+
+  <div class="pf-stage">
+    {['dark', 'light'].map((theme) => (
+      <div class="pf-view" data-view={theme} hidden={theme === 'light'}>
+        <p class="pf-size">
+          <span data-size-label>
+            <b>own size</b> as it renders
+          </span>
+          <span class="rule" />
+          <span data-size-pct>100%</span>
+        </p>
+        <div class="pf-vp">
+          <iframe
+            title={`${title} example, ${theme}`}
+            data-src={`${specimen}?theme=${theme}`}
+            src={theme === 'dark' ? `${specimen}?theme=dark` : undefined}
+            width="100%"
+            height="120"
+          />
+          <div class="pf-fade" hidden />
+        </div>
+        <p class="pf-error" hidden>
+          couldn't load this example.{' '}
+          <a href={`${specimen}?theme=${theme}`} target="_blank" rel="noopener">
+            open it on its own<span class="visually-hidden"> (opens in a new tab)</span>
+          </a>
+        </p>
+      </div>
+    ))}
+    <button class="pf-act pf-more" type="button" aria-expanded="false" hidden data-tall>
+      show full height
+    </button>
+  </div>
+
+  <div class="pf-code" data-theme="dark" id={`${id}-code`}>
+    <div class="pf-code__bar">
+      <div class="pf-tabs" role="tablist" aria-label={`${title} code`}>
+        {tabs.map((tab, i) => (
+          <button
+            type="button"
+            role="tab"
+            id={`${id}-tab-${i}`}
+            aria-selected={i === 0 ? 'true' : 'false'}
+            aria-controls={`${id}-panel-${i}`}
+            tabindex={i === 0 ? 0 : -1}
+            data-tab={i}
+            data-file={tab.file ?? ''}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+      <span class="pf-file" data-file-label>
+        {tabs[0]?.file}
+      </span>
+      <CopyButton text={tabs[0]?.code ?? ''} context={`the ${title} code`} class="pf-copy" />
+    </div>
+    {tabs.map((tab, i) => (
+      <div
+        class="pf-panel"
+        role="tabpanel"
+        id={`${id}-panel-${i}`}
+        aria-labelledby={`${id}-tab-${i}`}
+        hidden={i !== 0}
+        data-panel={i}
+        data-code={tab.code}
+      >
+        <div class:list={['pf-pre-box', { 'pf-pre-box--clip': lines(tab.code) > LONG }]}>
+          <Code code={tab.code} lang={tab.lang as never} theme={codeTheme} transformers={[panel]} />
+          {lines(tab.code) > LONG && <div class="pf-pre__fade" />}
+        </div>
+        {lines(tab.code) > LONG && (
+          <div class="pf-code__more">
+            <button type="button" aria-expanded="false" data-more={lines(tab.code)}>
+              show all {lines(tab.code)} lines
+            </button>
+          </div>
+        )}
+      </div>
+    ))}
   </div>
 </figure>
 
 <script>
   import '../scripts/preview';
 </script>
-
-<style>
-  .preview {
-    margin: var(--space-40) 0;
-  }
-  .preview__title {
-    margin-bottom: var(--space-16);
-    font-family: var(--font-display);
-  }
-  .preview__frames {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-16);
-  }
-  .preview__frame--desktop {
-    grid-column: span 2;
-  }
-  .preview__label {
-    margin: 0 0 var(--space-8);
-    color: var(--muted);
-    font-size: 13px;
-  }
-  .preview__viewport {
-    overflow: hidden;
-    border: 1px solid var(--line);
-    border-radius: var(--radius-md);
-  }
-  .preview__viewport iframe {
-    display: block;
-    border: 0;
-    transform-origin: 0 0;
-  }
-  .preview__code {
-    margin-top: var(--space-16);
-    border: 1px solid var(--line);
-    border-radius: var(--radius-md);
-  }
-  .preview__bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: var(--space-8) var(--space-8) var(--space-8) var(--space-16);
-    border-bottom: 1px solid var(--line);
-    color: var(--muted);
-    font-size: 13px;
-  }
-  .preview__code pre {
-    margin: 0;
-    padding: var(--space-16);
-    overflow-x: auto;
-    font-family: var(--font-display);
-    font-size: 13px;
-  }
-  @media (max-width: 760px) {
-    .preview__frames {
-      grid-template-columns: minmax(0, 1fr);
-    }
-    .preview__frame--desktop {
-      grid-column: auto;
-    }
-  }
-</style>

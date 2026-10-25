@@ -1,0 +1,355 @@
+/* The preview frame and its code panel (design hand-off: PreviewFrame and CodePanel). Tokens only; the
+   fixed sizes are the ones the notes list: 38px segment buttons inside the 44px control, the 360px cap
+   on tall examples with its 64px fade, and 236px of long code with its 72px fade. */
+
+.pf {
+  margin: var(--space-28) 0 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+}
+.pf-view[hidden],
+.pf-act[hidden],
+.pf-fade[hidden],
+.pf-error[hidden],
+.pf-panel[hidden],
+.pf-code[hidden] {
+  display: none;
+}
+
+/* ---------- toolbar ---------- */
+.pf-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-8);
+  padding: var(--space-8) var(--space-10);
+  border-bottom: 1px solid var(--line);
+}
+.pf-bar__end {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+  margin-left: auto;
+}
+.seg {
+  display: inline-flex;
+  padding: 2px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--ground);
+}
+.seg button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-6);
+  min-height: 38px;
+  padding: 0 var(--space-14);
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--font-display);
+  font-size: 12px;
+  letter-spacing: -0.02em;
+  cursor: pointer;
+  transition:
+    color var(--duration-hover) var(--ease-standard),
+    background-color var(--duration-hover) var(--ease-standard);
+}
+.seg button:hover {
+  color: var(--text);
+}
+.seg button[aria-pressed='true'] {
+  border-color: var(--line);
+  background: var(--surface);
+  color: var(--text);
+}
+.seg button small {
+  font-size: 11px;
+  color: var(--muted);
+}
+.pf-act {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-6);
+  min-height: var(--target);
+  padding: 0 var(--space-14);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--font-display);
+  font-size: 12px;
+  letter-spacing: -0.02em;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color var(--duration-hover) var(--ease-standard);
+}
+.pf-act:hover,
+.pf-act[data-copied] {
+  color: var(--link);
+}
+.pf-act[aria-expanded='true'] {
+  color: var(--text);
+}
+.pf-act[data-code-toggle] .ds-icon {
+  transition: transform var(--duration-move) var(--ease-move);
+}
+.pf-act[data-code-toggle][aria-expanded='true'] .ds-icon {
+  transform: rotate(180deg);
+}
+/* The toolbar's copy is the site's CopyButton, without its outline, as wide as "copy code" so that
+   reading "copied" never shifts the toolbar. */
+.pf-act.copy {
+  justify-content: flex-start;
+  min-width: calc(9ch + 2 * var(--space-14));
+  border: 0;
+}
+
+/* ---------- stage ---------- */
+.pf-stage {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: center;
+  gap: var(--space-22);
+  padding: var(--space-40) var(--space-28);
+  background-color: var(--ground);
+  background-image: radial-gradient(var(--field-dot) 1px, transparent 1.4px);
+  background-size: 16px 16px;
+}
+.pf-stage--stack {
+  flex-direction: column;
+  align-items: center;
+}
+.pf-view {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  min-width: 0;
+  max-width: 100%;
+}
+.pf-size {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: -0.02em;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.pf-size b {
+  font-weight: 400;
+  color: var(--text);
+}
+.pf-size .rule {
+  flex: 1;
+  min-width: var(--space-16);
+  height: 1px;
+  background: var(--line);
+}
+.pf-vp {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--ground);
+}
+.pf-vp iframe {
+  display: block;
+  border: 0;
+  transform-origin: 0 0;
+}
+.pf-fade {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 64px;
+  background: linear-gradient(transparent, var(--ground));
+  pointer-events: none;
+}
+.pf-more {
+  flex-basis: 100%;
+  justify-content: center;
+}
+.pf-error {
+  margin: 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+.pf-error a {
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-underline-offset: 4px;
+}
+
+/* ---------- code panel: always the dark code treatment ---------- */
+.pf-code {
+  border-top: 1px solid var(--line);
+  background: var(--ground);
+  color: var(--text);
+}
+.pf-code__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+  padding: var(--space-6) var(--space-10) var(--space-6) var(--space-16);
+  border-bottom: 1px solid var(--line);
+}
+.pf-tabs {
+  display: flex;
+  gap: var(--space-6);
+}
+.pf-tabs button {
+  position: relative;
+  min-height: var(--target);
+  padding: 0 var(--space-10);
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--font-display);
+  font-size: 12px;
+  letter-spacing: -0.02em;
+  cursor: pointer;
+  transition: color var(--duration-hover) var(--ease-standard);
+}
+.pf-tabs button:hover,
+.pf-tabs button[aria-selected='true'] {
+  color: var(--text);
+}
+.pf-tabs button[aria-selected='true']::after {
+  content: '';
+  position: absolute;
+  right: var(--space-10);
+  bottom: 6px;
+  left: var(--space-10);
+  height: 1.5px;
+  border-radius: 2px;
+  background: var(--accent);
+}
+.pf-file {
+  min-width: 0;
+  margin-left: var(--space-8);
+  overflow: hidden;
+  font-family: var(--font-display);
+  font-size: 11px;
+  color: var(--muted);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pf-copy {
+  margin-left: auto;
+  padding: 0 var(--space-14);
+  font-size: 14px;
+}
+.pf-pre-box {
+  position: relative;
+}
+.pf-pre {
+  margin: 0;
+  padding: var(--space-16) var(--space-22) var(--space-20);
+  overflow-x: auto;
+  font-family: var(--font-display);
+  font-size: 13px;
+  line-height: 1.75;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+/* Each line is its own block; the newlines Shiki puts between them would otherwise be blank lines. */
+.pf-pre code {
+  display: block;
+  white-space: normal;
+}
+.pf-pre .ln {
+  display: block;
+  min-height: 1lh; /* a blank line keeps its height */
+  white-space: pre;
+}
+.pf-pre-box--clip:not([data-expanded]) .pf-pre {
+  max-height: 236px;
+  overflow-y: hidden;
+}
+.pf-pre__fade {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 72px;
+  background: linear-gradient(transparent, var(--ground));
+  pointer-events: none;
+}
+.pf-pre-box[data-expanded] .pf-pre__fade {
+  display: none;
+}
+.pf-code__more {
+  display: flex;
+  justify-content: center;
+  padding: 0 0 var(--space-14);
+}
+.pf-code__more button {
+  min-height: var(--target);
+  padding: 0 var(--space-16);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--ground);
+  color: var(--text);
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  transition:
+    border-color var(--duration-hover) var(--ease-standard),
+    color var(--duration-hover) var(--ease-standard);
+}
+.pf-code__more button:hover {
+  border-color: var(--link);
+  color: var(--link);
+}
+
+/* ---------- on a phone: the toolbar wraps into two rows; no "both" ---------- */
+@media (max-width: 760px) {
+  .pf {
+    margin-right: calc(-1 * var(--space-6));
+    margin-left: calc(-1 * var(--space-6));
+    border-radius: var(--radius-md);
+  }
+  .pf-bar {
+    padding: var(--space-8);
+  }
+  .pf-bar__end {
+    justify-content: space-between;
+    width: 100%;
+    margin-left: 0;
+  }
+  .pf-stage {
+    padding: var(--space-20) var(--space-10);
+  }
+  .seg button {
+    padding: 0 var(--space-10);
+  }
+  .seg button small,
+  .pf-file,
+  .seg .pf-both {
+    display: none;
+  }
+  .pf-pre {
+    padding: var(--space-14) var(--space-16) var(--space-16);
+    font-size: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .seg button,
+  .pf-act,
+  .pf-act[data-code-toggle] .ds-icon,
+  .pf-tabs button,
+  .pf-code__more button {
+    transition: none;
+  }
+}

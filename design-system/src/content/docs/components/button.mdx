@@ -15,8 +15,16 @@ facts:
 
 import Preview from '../../../components/Preview.astro';
 import { usage } from '../../../lib/example';
-import source from '../../../examples/button.astro?raw';
+import example from '../../../examples/button.astro?raw';
+import source from '../../../../../src/components/Button.astro?raw';
 
 ## preview
 
-<Preview title="button" specimen="/specimens/button/" code={usage(source)} lang="astro" />
+<Preview
+  title="button"
+  specimen="/specimens/button/"
+  tabs={[
+    { label: 'astro', code: usage(example), lang: 'astro', file: 'any page or component' },
+    { label: 'source', code: source.trim(), lang: 'astro', file: 'src/components/Button.astro' },
+  ]}
+/>
