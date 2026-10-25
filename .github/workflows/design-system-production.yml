@@ -1,13 +1,22 @@
 name: Design system
 
-# Called by the CD Orchestrator after each push to main: when Cloudflare built the design system for the
-# commit (only pushes that touch its watch paths do), waits for its deploy, smoke-tests that exact
-# version through its preview address (scripts/design-smoke-test.sh, with the Access service token),
-# checks the live domain as far as Bot Fight Mode allows, and records a deployment to the Design system
-# environment, so the repository's Deployments panel shows it. Rolling back is Cloudflare's job (deploy
-# the previous version from the Worker's Deployments tab).
+# Called by the CD Orchestrator when Cloudflare finishes deploying the design system from main (only
+# pushes that touch its watch paths are built): smoke-tests that exact version through its preview
+# address (scripts/design-smoke-test.sh, with the Access service token), checks the live domain as far
+# as Bot Fight Mode allows, and records a deployment to the Design system environment, so the
+# repository's Deployments panel shows it. Rolling back is Cloudflare's job (deploy the previous
+# version from the Worker's Deployments tab).
 on:
   workflow_call:
+    inputs:
+      sha:
+        description: The commit Cloudflare deployed
+        required: true
+        type: string
+      conclusion:
+        description: How Cloudflare's build ended (success, failure…)
+        required: true
+        type: string
     secrets:
       CF_ACCESS_CLIENT_ID:
         required: true
@@ -20,56 +29,38 @@ permissions:
   deployments: write
 
 jobs:
-  # Decided before the recording job starts: a job with an environment records a deployment as soon
-  # as it runs, built or not.
-  built:
-    name: Did Cloudflare build the design system?
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    outputs:
-      built: ${{ steps.built.outputs.built }}
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-
-      - name: Look for its build of this commit
-        id: built
-        env:
-          GH_TOKEN: ${{ github.token }}
-          REPO: ${{ github.repository }}
-          WORKER: harrisonjennings-au-design
-        run: echo "built=$(bash scripts/cloudflare-built.sh "$GITHUB_SHA")" >> "$GITHUB_OUTPUT"
-
   live:
     name: Check the design system
-    needs: built
-    if: needs.built.outputs.built == 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 20
-    environment:
-      name: Design system
-      url: https://design.harrisonjennings.au/
+    timeout-minutes: 10
+    env:
+      GH_TOKEN: ${{ github.token }}
+      REPO: ${{ github.repository }}
+      RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      WORKER: harrisonjennings-au-design
+      SHA: ${{ inputs.sha }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
-      - name: Wait for Cloudflare's deploy of this commit
+      - name: Start the deployment record
+        id: record
+        run: echo "id=$(bash scripts/record-deployment.sh start "Design system" main "$SHA")" >> "$GITHUB_OUTPUT"
+
+      - name: Check Cloudflare's deploy succeeded
         env:
-          GH_TOKEN: ${{ github.token }}
-          REPO: ${{ github.repository }}
-          WORKER: harrisonjennings-au-design
-        run: bash scripts/wait-for-cloudflare.sh "$GITHUB_SHA"
+          CONCLUSION: ${{ inputs.conclusion }}
+        run: |
+          if [ "$CONCLUSION" != success ]; then
+            echo "::error::Cloudflare's build or deploy didn't succeed: $CONCLUSION"
+            exit 1
+          fi
 
       - name: Find the version's preview address
         id: version
-        env:
-          GH_TOKEN: ${{ github.token }}
-          REPO: ${{ github.repository }}
-          WORKER: harrisonjennings-au-design
         run: |
-          url=$(bash scripts/version-url.sh "$GITHUB_SHA")
+          url=$(bash scripts/version-url.sh "$SHA")
           echo "Testing $url"
           echo "url=$url" >> "$GITHUB_OUTPUT"
 
@@ -82,3 +73,10 @@ jobs:
 
       - name: Check the live domain
         run: bash scripts/design-live-check.sh
+
+      - name: Finish the deployment record
+        if: always() && steps.record.outputs.id != ''
+        env:
+          ID: ${{ steps.record.outputs.id }}
+          STATE: ${{ job.status == 'success' && 'success' || 'failure' }}
+        run: bash scripts/record-deployment.sh finish "$ID" "$STATE" https://design.harrisonjennings.au/

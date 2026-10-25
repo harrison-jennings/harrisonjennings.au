@@ -1,45 +1,59 @@
 name: Preview deployment
 
-# Called by the CD Orchestrator on a pull request: waits for Cloudflare's preview build of the branch's
-# latest commit, and is recorded as a GitHub deployment to the Preview environment with the branch's
-# Preview URL, so it shows in the pull request and the repository's Deployments panel. Cloudflare does
-# the deploying; this only records it (marked failed if Cloudflare's build fails).
+# Called by the CD Orchestrator when Cloudflare finishes building the site for a branch: records the
+# build as a GitHub deployment to the Preview environment with the branch's Preview URL, so it shows in
+# the pull request and the repository's Deployments panel (marked failed if Cloudflare's build failed).
+# Cloudflare does the deploying; this only records it.
 on:
   workflow_call:
+    inputs:
+      sha:
+        description: The commit Cloudflare built
+        required: true
+        type: string
+      branch:
+        required: true
+        type: string
+      conclusion:
+        description: How Cloudflare's build ended (success, failure…)
+        required: true
+        type: string
 
 permissions:
   contents: read
-  checks: read
   deployments: write
 
 concurrency:
-  group: preview-deployment-${{ github.event.pull_request.number }}
+  group: preview-deployment-${{ inputs.branch }}
   cancel-in-progress: true
 
 jobs:
   record:
     name: Record the preview
     runs-on: ubuntu-latest
-    timeout-minutes: 20
-    environment:
-      name: Preview
-      url: ${{ steps.url.outputs.url }}
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
-      - name: Work out the Preview URL
-        id: url
-        env:
-          # Passed as data, never pasted into the script: branch names can contain anything.
-          BRANCH: ${{ github.head_ref }}
-        run: echo "url=$(bash scripts/preview-url.sh "$BRANCH")" >> "$GITHUB_OUTPUT"
-
-      - name: Wait for Cloudflare's preview build
+      - name: Record the deployment
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
-          # The branch's own commit (github.sha is GitHub's merge commit for the pull request).
-          SHA: ${{ github.event.pull_request.head.sha }}
-        run: bash scripts/wait-for-cloudflare.sh "$SHA"
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          # Passed as data, never pasted into the script: branch names can contain anything.
+          BRANCH: ${{ inputs.branch }}
+          SHA: ${{ inputs.sha }}
+          CONCLUSION: ${{ inputs.conclusion }}
+        run: |
+          url=$(bash scripts/preview-url.sh "$BRANCH")
+          id=$(bash scripts/record-deployment.sh start Preview "$BRANCH" "$SHA")
+          [ -n "$id" ] || exit 0
+          if [ "$CONCLUSION" = success ]; then
+            bash scripts/record-deployment.sh finish "$id" success "$url"
+          else
+            bash scripts/record-deployment.sh finish "$id" failure "$url"
+            echo "::error::Cloudflare's preview build didn't succeed: $CONCLUSION"
+            exit 1
+          fi
