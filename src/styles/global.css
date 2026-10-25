@@ -138,7 +138,10 @@ a {
   .desktop-only {
     display: none;
   }
+  /* Positioned so absolute descendants (the visually-hidden "opens in a new tab" notes) are clipped
+     with the row instead of widening the page. */
   .swipe {
+    position: relative;
     display: grid;
     grid-template-columns: none;
     grid-auto-flow: column;

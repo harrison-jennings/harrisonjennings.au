@@ -62,3 +62,17 @@ for (const path of pages) {
     }
   });
 }
+
+// No page is wider than a phone screen. Anything that pokes out past a scrolling row (the hidden
+// "opens in a new tab" notes, for one) makes Chrome lay the whole page out wider and crop it.
+test.describe('at phone width', () => {
+  test.use({ viewport: { width: 390, height: 844 } });
+
+  for (const path of pages) {
+    test(`${path} doesn't scroll sideways`, async ({ page }) => {
+      await page.goto(path);
+      const width = await page.evaluate(() => document.documentElement.scrollWidth);
+      expect(width).toBeLessThanOrEqual(390);
+    });
+  }
+});
