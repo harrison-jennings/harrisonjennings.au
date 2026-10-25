@@ -9,6 +9,8 @@ export default defineConfig(
     ignores: [
       'dist/',
       '.astro/',
+      'design-system/dist/',
+      'design-system/.astro/',
       '.wrangler/',
       'node_modules/',
       'src/styles/tokens.css',

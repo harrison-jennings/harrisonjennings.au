@@ -2,23 +2,9 @@
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import { defineConfig } from 'astro/config';
-import remarkDirective from 'remark-directive';
 import { csp } from './src/lib/csp-build.ts';
+import { markdown } from './src/lib/markdown/config.ts';
 import { lastModified } from './src/lib/sitemap.ts';
-import { remarkCallouts } from './src/lib/markdown/callouts.ts';
-import { remarkCookieSettings } from './src/lib/markdown/cookie-settings.ts';
-import { remarkCookieTable } from './src/lib/markdown/cookie-table.ts';
-import { remarkTextDirectivesAsText } from './src/lib/markdown/directives.ts';
-import { rehypeExternalLinks } from './src/lib/markdown/links.ts';
-import {
-  codeLangs,
-  codeTheme,
-  codeTransformer,
-  rehypeCodeBlocks,
-} from './src/lib/markdown/code.ts';
-import { rehypeFigures, remarkNoZoom } from './src/lib/markdown/images.ts';
-import { remarkReadingTime } from './src/lib/markdown/reading-time.ts';
-import { rehypeHeadingCeiling, rehypeTables } from './src/lib/markdown/structure.ts';
 
 const dates = lastModified();
 
@@ -63,33 +49,5 @@ export default defineConfig({
     defaultStrategy: 'hover',
   },
   // Posts and pages: see src/lib/markdown/ and docs/content.md for what each plugin adds.
-  markdown: {
-    remarkPlugins: [
-      remarkDirective,
-      remarkCallouts,
-      remarkCookieSettings,
-      remarkCookieTable,
-      remarkTextDirectivesAsText,
-      remarkNoZoom,
-      remarkReadingTime,
-    ],
-    rehypePlugins: [
-      rehypeHeadingCeiling,
-      rehypeTables,
-      rehypeFigures,
-      rehypeCodeBlocks,
-      rehypeExternalLinks,
-    ],
-    remarkRehype: {
-      footnoteLabel: 'Footnotes',
-      footnoteLabelProperties: { className: ['visually-hidden'] },
-      footnoteBackLabel: 'Back to the text',
-    },
-    shikiConfig: {
-      theme: codeTheme,
-      langs: codeLangs,
-      transformers: [codeTransformer()],
-      wrap: false,
-    },
-  },
+  markdown,
 });

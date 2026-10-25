@@ -1,0 +1,12 @@
+{
+  "name": "design-system",
+  "private": true,
+  "description": "design.harrisonjennings.au: the design system, built from the site's own components. See docs/design-system.md.",
+  "type": "module",
+  "packageManager": "npm@11.17.0",
+  "scripts": {
+    "build:cloudflare": "cd .. && npm ci && npm run design:build",
+    "deploy": "wrangler deploy",
+    "preview": "wrangler preview"
+  }
+}

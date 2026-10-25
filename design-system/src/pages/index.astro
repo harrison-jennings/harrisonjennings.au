@@ -1,0 +1,28 @@
+---
+// A placeholder overview for the spike: proves a component and a content element render from the
+// site's real code, at true widths, in both themes, with the code to copy. The real overview comes from
+// the approved mockups.
+import buttonSource from '../examples/button.astro?raw';
+import calloutSource from '../examples/callout.md?raw';
+import Preview from '../components/Preview.astro';
+import Docs from '../layouts/Docs.astro';
+import { usage } from '../lib/example';
+---
+
+<Docs
+  title="overview"
+  description="The design system for harrisonjennings.au: brand, components, tokens and content, from the site's own code."
+>
+  <h1>design system</h1>
+  <p>
+    Every example here is the site's own component or Markdown, rendered at a real phone or desktop
+    width, in both themes.
+  </p>
+  <Preview title="button" specimen="/specimens/button/" code={usage(buttonSource)} lang="astro" />
+  <Preview
+    title="callout"
+    specimen="/specimens/callout/"
+    code={calloutSource.trim()}
+    lang="markdown"
+  />
+</Docs>

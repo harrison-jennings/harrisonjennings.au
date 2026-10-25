@@ -37,6 +37,7 @@ design/tokens.json ──scripts/build-tokens.mjs──▶ src/styles/tokens.css
 - **Sitemap** (`@astrojs/sitemap`, `src/lib/sitemap.ts`): every built page, with `lastmod` where there's a real date: a post's `updated` or `published`, the blog and topic pages from their newest post, the legal pages from `updated`. Pages kept out of search (`noindex`) carry no canonical address.
 - **Redirects** (`public/_redirects`): one explicit 301 per old WordPress post and category URL, plus the old sitemap and feed URLs. No wildcards; the `redirects` end-to-end test checks every rule.
 - **404**: `src/pages/404.astro` builds `404.html`, which Workers serves for any unknown path (`not_found_handling: 404-page`). It's the one inner page with the ember clouds and the bouncing dot (`<Logo loading>`), with the latest three posts; wording in `src/content/not-found.yaml`. WordPress-only URLs (`?p=` shortlinks, `wp-content` uploads) are left to lapse.
+- **Design system** (`design-system/`): `design.harrisonjennings.au`, a second Astro site in an npm workspace, built from the site's own components, styles, tokens and Markdown pipeline (imported, never copied) and deployed as its own Worker. See `docs/design-system.md`.
 
 ## tests
 
@@ -73,6 +74,7 @@ Run `npx playwright install chromium webkit` once before the first end-to-end ru
 
 - **Builds:** Cloudflare Workers Builds builds every push, with the npm version in `package.json`'s `packageManager` (its build image would otherwise use an older npm than the one that writes the lockfile, and reject lockfiles that one accepts). `main` deploys to production; any other branch gets its own preview URL on `workers.dev`, behind Cloudflare Access. The production Worker has no public `workers.dev` address: `www` is served through a Workers Route, and a redirect rule sends the bare domain to `www`.
 - **After each deploy:** the 🚀 CD Orchestrator waits for Cloudflare's production deploy, smoke-tests that exact version through its preview address (`scripts/smoke-test.sh`, using an Access service token from the repository secrets), checks the live domain, and records the deployment. On pull requests it comments the preview link and records a Preview deployment.
+- **The design system** deploys from its own Worker, `harrisonjennings-au-design`, with `design-system/` as its root directory and build watch paths, so it builds only when something it shows changes: see `docs/design-system.md`.
 - **Rolling back:** redeploy the previous version from the Worker's deployments in Cloudflare. Every deployed version is kept.
 - **Data:** D1 holds the consent log and CSP reports, with the schema in `migrations/` (`npx wrangler d1 migrations apply CONSENT_DB --remote`). Previews write to their own database and store no IP hash. The Worker's one secret is `CONSENT_IP_KEY`, the HMAC key for consent records, set in production only.
 - **Protection:** a Cloudflare rate-limiting rule covers `POST /api/*`, and Bot Fight Mode is on.

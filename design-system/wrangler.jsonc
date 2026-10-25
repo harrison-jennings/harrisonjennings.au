@@ -1,0 +1,16 @@
+{
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  // design.harrisonjennings.au: static assets only, no Worker code. Built and deployed by its own Workers Builds
+  // project, with this folder as its root directory: see docs/design-system.md.
+  "name": "harrisonjennings-au-design",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page",
+  },
+  // Production is reached through its custom domain (added in the dashboard), never a public workers.dev copy.
+  // Branch previews get workers.dev URLs.
+  "workers_dev": false,
+  "preview_urls": true,
+}
