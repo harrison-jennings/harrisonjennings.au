@@ -39,8 +39,8 @@ home=$(body /)
 home_headers=$(headers /)
 
 check 'overview answers 200' [ "$(status /)" = 200 ]
-check 'overview has its previews' has 'data-preview' "$home"
-check 'overview names the commit it was built from' has 'built from' "$home"
+check 'overview has the shell' has 'class="ds-head"' "$home"
+check 'overview names the commit it was built from' has 'class="ds-stamp"' "$home"
 check 'a specimen answers 200' [ "$(status /specimens/button/)" = 200 ]
 check 'the shared fonts answer 200' [ "$(status /fonts/SchibstedGrotesk-Variable.woff2)" = 200 ]
 check 'an unknown page answers 404' [ "$(status /this-page-does-not-exist/)" = 404 ]

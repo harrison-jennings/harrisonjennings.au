@@ -1,0 +1,20 @@
+---
+// The design system's own small line icons: chevrons for groups and menus, the arrow on links that
+// leave it, the magnifier for when search arrives. Drawn in currentColor, decorative only.
+interface Props {
+  name: 'chevron-right' | 'chevron-down' | 'arrow-out' | 'search';
+  size?: number;
+}
+
+const { name, size = 16 } = Astro.props;
+const paths: Record<Props['name'], string> = {
+  'chevron-right': 'M9 6l6 6-6 6',
+  'chevron-down': 'M6 9l6 6 6-6',
+  'arrow-out': 'M8 16L16 8M9 8h7v7',
+  search: 'M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4',
+};
+---
+
+<svg class="ds-icon" width={size} height={size} viewBox="0 0 24 24" aria-hidden="true">
+  <path d={paths[name]}></path>
+</svg>

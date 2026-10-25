@@ -1,0 +1,16 @@
+---
+// The build stamp: when the design system was built and from which commit, linked on GitHub.
+import { BUILD } from '../lib/build';
+import Link from './Link.astro';
+---
+
+<p class="ds-stamp">
+  <i aria-hidden="true"></i>
+  {BUILD.commit ? (
+    <span>
+      built {BUILD.date} from <Link href={BUILD.commitUrl}>{BUILD.commit}</Link>
+    </span>
+  ) : (
+    <span>built {BUILD.date} from an uncommitted copy</span>
+  )}
+</p>

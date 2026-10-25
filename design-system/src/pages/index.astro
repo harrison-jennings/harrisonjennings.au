@@ -1,28 +1,40 @@
 ---
-// A placeholder overview for the spike: proves a component and a content element render from the
-// site's real code, at true widths, in both themes, with the code to copy. The real overview comes from
-// the approved mockups.
-import buttonSource from '../examples/button.astro?raw';
-import calloutSource from '../examples/callout.md?raw';
-import Preview from '../components/Preview.astro';
-import Docs from '../layouts/Docs.astro';
-import { usage } from '../lib/example';
+// The overview: a landing page with no sidebar. A placeholder until its own page is built (step 4 of
+// the build brief): what the design system is, and the pages so far.
+import Shell from '../layouts/Shell.astro';
+import { getNav } from '../lib/nav';
+
+const nav = await getNav();
+const sections = nav.filter((s) => s.id !== 'overview');
 ---
 
-<Docs
+<Shell
   title="overview"
   description="The design system for harrisonjennings.au: brand, components, tokens and content, from the site's own code."
+  section="overview"
+  landing
 >
-  <h1>design system</h1>
-  <p>
-    Every example here is the site's own component or Markdown, rendered at a real phone or desktop
-    width, in both themes.
+  <h1 class="ds-title">
+    design system<span class="stop" aria-hidden="true"></span>
+  </h1>
+  <p class="ds-lead">
+    The brand, every component, every token and every kind of content a post can hold, built from
+    the site's own code.
   </p>
-  <Preview title="button" specimen="/specimens/button/" code={usage(buttonSource)} lang="astro" />
-  <Preview
-    title="callout"
-    specimen="/specimens/callout/"
-    code={calloutSource.trim()}
-    lang="markdown"
-  />
-</Docs>
+  <div class="ds-doc">
+    {sections.map((s) => (
+      <>
+        <h2>{s.name}</h2>
+        <ul>
+          {s.groups.flatMap((g) =>
+            g.pages.map((p) => (
+              <li>
+                <a href={p.href}>{p.title}</a>
+              </li>
+            )),
+          )}
+        </ul>
+      </>
+    ))}
+  </div>
+</Shell>

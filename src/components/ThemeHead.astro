@@ -1,0 +1,26 @@
+---
+// The theme, before first paint: the browser bar's colour (the theme's ground, from design/tokens.json)
+// and the saved choice from the theme toggle (theme.ts), dark on every first visit. Used in the <head>
+// of the site's pages (Base.astro) and the design system's (design-system/), each of which remembers
+// its own choice, since they're separate sites.
+import tokens from '../../design/tokens.json';
+
+const ground = tokens.color.tokens.find((t) => t.name === 'ground')?.value;
+if (!ground) throw new Error('design/tokens.json: no colour token "ground"');
+
+// The Content-Security-Policy allows this script by its hash (src/lib/csp-build.ts).
+const script = `
+      try {
+        const saved = localStorage.getItem('hj-theme');
+        document.documentElement.setAttribute('data-theme', saved === 'light' ? 'light' : 'dark');
+        if (saved === 'light')
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '${ground.light}');
+      } catch {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    `;
+---
+
+<meta name="theme-color" content={ground.dark} />
+<!-- Dark on every first visit; a saved choice (the nav's theme toggle) applies before first paint. -->
+<script is:inline set:html={script} />

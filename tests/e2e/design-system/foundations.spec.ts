@@ -1,10 +1,10 @@
-import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
+import { designPages } from './site';
 
 // The design system (design-system/): kept out of search, framed only by itself, and its previews show
-// the site's real code at true widths, in both themes, with the site's fonts.
+// the site's real code at true widths, in both themes, with the site's fonts. The shell: shell.spec.ts.
 
-const PAGES = ['/', '/specimens/button/', '/specimens/callout/'];
+const PAGES = [...designPages(), '/specimens/button/', '/specimens/callout/'];
 
 /** Console errors and refused content (a CSP violation logs one) while a page loads. */
 function problems(page: Page): string[] {
@@ -37,9 +37,9 @@ for (const path of PAGES) {
 test('previews render each specimen at a true width, in the theme asked for, with the fonts', async ({
   page,
 }) => {
-  await page.goto('/');
+  await page.goto('/components/button/');
   const frames = page.locator('[data-preview] iframe');
-  await expect(frames).toHaveCount(8);
+  await expect(frames).toHaveCount(4);
   for (const frame of await frames.all()) {
     const width = Number(await frame.getAttribute('width'));
     const theme = await frame.getAttribute('data-theme-name');
@@ -72,7 +72,7 @@ test('the code under a preview is the example, and copies', async ({
 }) => {
   test.skip(browserName !== 'chromium', 'clipboard permissions are Chromium-only');
   await context.grantPermissions(['clipboard-read', 'clipboard-write']);
-  await page.goto('/');
+  await page.goto('/components/button/');
   const button = page.locator('[data-preview]').first();
   await expect(button.locator('pre')).toHaveText('<Button href="/#book" label="book a call" />');
   await button.getByRole('button', { name: /copy/ }).click();
@@ -81,28 +81,14 @@ test('the code under a preview is the example, and copies', async ({
   );
 });
 
-test('the footer says which commit it was built from, linking to it', async ({ page }) => {
+test('the footer says when and from which commit it was built, linking to it', async ({ page }) => {
   await page.goto('/');
-  const footer = page.locator('footer');
-  const commit = footer.locator('a code');
-  await expect(commit).toHaveText(/^[0-9a-f]{7}$/);
-  const sha = await commit.textContent();
-  await expect(footer.locator('a')).toHaveAttribute(
+  const stamp = page.locator('footer .ds-stamp');
+  await expect(stamp).toContainText(/^built \d{1,2} \w+ \d{4} from [0-9a-f]{7}/);
+  const commit = stamp.locator('a');
+  const sha = (await stamp.textContent())?.match(/from ([0-9a-f]{7})/)?.[1];
+  await expect(commit).toHaveAttribute(
     'href',
     new RegExp(`^https://github.com/harrison-jennings/harrisonjennings.au/commit/${sha}`),
   );
-  await expect(footer).toContainText(/, \d{1,2} \w+ \d{4}$/);
 });
-
-for (const path of PAGES) {
-  test(`${path} has no axe violations`, async ({ page }) => {
-    await page.goto(path);
-    await page.evaluate(() => document.fonts.ready);
-    const { violations } = await new AxeBuilder({ page })
-      .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
-      .analyze();
-    expect(
-      violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(' ')).join(', ')}`),
-    ).toEqual([]);
-  });
-}
