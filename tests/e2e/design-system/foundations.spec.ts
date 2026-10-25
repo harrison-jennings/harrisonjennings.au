@@ -2,7 +2,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { designPages } from './site';
 
 // The design system (design-system/): kept out of search, framed only by itself, and its previews show
-// the site's real code at true widths, in both themes, with the site's fonts. The shell: shell.spec.ts.
+// the site's real code. The shell: shell.spec.ts; the preview frame: preview.spec.ts.
 
 const PAGES = [...designPages(), '/specimens/button/', '/specimens/callout/'];
 
@@ -34,51 +34,13 @@ for (const path of PAGES) {
   });
 }
 
-test('previews render each specimen at a true width, in the theme asked for, with the fonts', async ({
-  page,
-}) => {
-  await page.goto('/components/button/');
-  const frames = page.locator('[data-preview] iframe');
-  await expect(frames).toHaveCount(4);
-  for (const frame of await frames.all()) {
-    const width = Number(await frame.getAttribute('width'));
-    const theme = await frame.getAttribute('data-theme-name');
-    const inside = frame.contentFrame();
-    await expect(inside.locator('html')).toHaveAttribute('data-theme', theme ?? '');
-    expect(await inside.locator('body').evaluate(() => window.innerWidth)).toBe(width);
-    await expect
-      .poll(() =>
-        inside.locator('body').evaluate(() => document.fonts.check('16px "Schibsted Grotesk"')),
-      )
-      .toBe(true);
-    // The frame grows to fit what the specimen reports.
-    await expect.poll(async () => (await frame.boundingBox())?.height ?? 0).toBeGreaterThan(40);
-  }
-});
-
 test('a component specimen is the real component, a content specimen the real Markdown pipeline', async ({
   page,
 }) => {
   await page.goto('/specimens/button/');
-  await expect(page.getByRole('link', { name: 'book a call' })).toHaveClass(/btn/);
+  await expect(page.getByRole('link', { name: 'book a call' }).first()).toHaveClass(/btn/);
   await page.goto('/specimens/callout/');
   await expect(page.locator('.prose .callout')).toBeVisible();
-});
-
-test('the code under a preview is the example, and copies', async ({
-  page,
-  context,
-  browserName,
-}) => {
-  test.skip(browserName !== 'chromium', 'clipboard permissions are Chromium-only');
-  await context.grantPermissions(['clipboard-read', 'clipboard-write']);
-  await page.goto('/components/button/');
-  const button = page.locator('[data-preview]').first();
-  await expect(button.locator('pre')).toHaveText('<Button href="/#book" label="book a call" />');
-  await button.getByRole('button', { name: /copy/ }).click();
-  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
-    '<Button href="/#book" label="book a call" />',
-  );
 });
 
 test('the footer says when and from which commit it was built, linking to it', async ({ page }) => {
