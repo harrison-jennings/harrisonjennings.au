@@ -18,7 +18,34 @@ export default defineConfig({
     trace: 'retain-on-failure',
     storageState: CONSENTED,
   },
-  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+  projects: [
+    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+    // Safari's engine on an iPhone, for the specs that drive the page. Request-level specs (headers,
+    // redirects, feeds, the crawl, structured data) don't depend on the browser, so only Chromium runs them.
+    // @keyboard tests press Tab, which WebKit gives only to form fields unless Safari's "Press Tab to
+    // highlight each item" is on (and a phone has no Tab key); @desktop tests use the desktop nav.
+    {
+      name: 'webkit-iphone',
+      use: { ...devices['iPhone 15'] },
+      grepInvert: /@keyboard|@desktop/,
+      testMatch: [
+        'a11y',
+        'blog',
+        'consent',
+        'csp',
+        'home',
+        'legal',
+        'menu',
+        'motion',
+        'nav',
+        'not-found',
+        'pages',
+        'projects',
+        'share',
+        'theme',
+      ].map((name) => `${name}.spec.ts`),
+    },
+  ],
   webServer: {
     // A local D1 for the consent log (migrations applied by `npm run test:e2e`) and a test HMAC key.
     command: `npx wrangler dev --port ${PORT} --ip 127.0.0.1 --show-interactive-dev-session=false --var CONSENT_IP_KEY:local-test-key`,

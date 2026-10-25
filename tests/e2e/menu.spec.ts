@@ -26,10 +26,16 @@ test('opened by a tap or click, focus is in the menu but no link shows a ring', 
   expect(await focusInMenu(page)).toBe(true);
   await expect(page.locator('[data-menu]')).toBeFocused();
   expect(await page.locator('[data-menu] :focus-visible').count()).toBe(0);
-  // The next Tab reaches the menu's controls.
-  await page.keyboard.press('Tab');
-  expect(await focusInMenu(page)).toBe(true);
 });
+
+test(
+  "opened by a tap or click, the next Tab reaches the menu's controls",
+  { tag: '@keyboard' },
+  async ({ page }) => {
+    await page.keyboard.press('Tab');
+    expect(await focusInMenu(page)).toBe(true);
+  },
+);
 
 test('opened from the keyboard, focus goes to the first link', async ({ page }) => {
   await page.keyboard.press('Escape');
@@ -51,7 +57,7 @@ test('opened from the keyboard, focus goes to the first link', async ({ page }) 
   await expect.poll(() => first.evaluate((a) => getComputedStyle(a).color)).toBe(link);
 });
 
-test('focus is trapped in the open menu', async ({ page }) => {
+test('focus is trapped in the open menu', { tag: '@keyboard' }, async ({ page }) => {
   const stops = await page.locator('[data-menu] a, [data-menu] button').count();
   for (const key of ['Tab', 'Shift+Tab']) {
     const visited = new Set<string>();

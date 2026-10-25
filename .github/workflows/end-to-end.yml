@@ -1,6 +1,8 @@
 name: End-to-end
 
-# Called by the CI Orchestrator: the Playwright suite, run beside the quality checks.
+# Called by the CI Orchestrator: the Playwright suite, run beside the quality checks. Each browser runs
+# on its own runner, at the same time; "Playwright", the check the merge rule requires, passes only when
+# both do.
 on:
   workflow_call:
 
@@ -8,10 +10,18 @@ permissions:
   contents: read
 
 jobs:
-  playwright:
-    name: Playwright
+  browser:
+    name: Playwright (${{ matrix.project }})
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - project: chromium
+            browser: chromium
+          - project: webkit-iphone
+            browser: webkit
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -24,13 +34,13 @@ jobs:
 
       - run: npm ci
 
-      - name: Install Playwright's Chromium
-        run: npx playwright install --with-deps chromium
+      - name: Install Playwright's ${{ matrix.browser }}
+        run: npx playwright install --with-deps ${{ matrix.browser }}
 
       # Builds with drafts included (the formatting reference), applies the D1 migrations locally, then
       # tests dist/ served by wrangler dev (see playwright.config.ts).
       - name: End-to-end tests
-        run: npm run test:e2e
+        run: npm run test:e2e -- --project ${{ matrix.project }}
         env:
           WRANGLER_SEND_METRICS: 'false'
 
@@ -38,8 +48,20 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: playwright-report
+          name: playwright-report-${{ matrix.project }}
           path: |
             playwright-report/
             test-results/
           retention-days: 7
+
+  playwright:
+    name: Playwright
+    needs: browser
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Both browsers passed
+        run: test "$RESULT" = success
+        env:
+          RESULT: ${{ needs.browser.result }}

@@ -55,19 +55,23 @@ test('the nav compacts after 80px of scroll and stays compact under the pointer'
   expect((await blog.boundingBox())!.x).toBe(before.x);
 });
 
-test('keyboard focus opens the compact nav, so its icons stay reachable', async ({ page }) => {
-  await page.goto('/');
-  await page.mouse.move(720, 700);
-  await page.evaluate(() => window.scrollTo(0, 120));
-  await expect.poll(() => isCompact(page)).toBe(true);
-  await page.locator('.nav__brand').focus();
-  await page.keyboard.press('Tab');
-  await expect.poll(() => isCompact(page)).toBe(false);
-  await expect(page.locator('.nav__icons')).toBeVisible();
-  await page.locator('main').focus();
-  await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
-  await expect.poll(() => isCompact(page)).toBe(true);
-});
+test(
+  'keyboard focus opens the compact nav, so its icons stay reachable',
+  { tag: '@keyboard' },
+  async ({ page }) => {
+    await page.goto('/');
+    await page.mouse.move(720, 700);
+    await page.evaluate(() => window.scrollTo(0, 120));
+    await expect.poll(() => isCompact(page)).toBe(true);
+    await page.locator('.nav__brand').focus();
+    await page.keyboard.press('Tab');
+    await expect.poll(() => isCompact(page)).toBe(false);
+    await expect(page.locator('.nav__icons')).toBeVisible();
+    await page.locator('main').focus();
+    await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
+    await expect.poll(() => isCompact(page)).toBe(true);
+  },
+);
 
 test('the current page carries the underline', async ({ page }) => {
   await page.goto('/');

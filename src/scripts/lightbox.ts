@@ -143,7 +143,8 @@ export function bindLightbox(buttons: HTMLButtonElement[]): void {
     apply(false);
   };
   const open = (i: number) => {
-    opener = document.activeElement as HTMLElement | null;
+    // The image's own button, not document.activeElement: Safari doesn't focus a button it clicks.
+    opener = buttons[i] ?? null;
     show(i);
     box.hidden = false;
     document.documentElement.style.overflow = 'hidden';
