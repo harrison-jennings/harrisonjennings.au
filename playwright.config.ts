@@ -9,8 +9,6 @@ const CI = Boolean(process.env['CI']);
 export default defineConfig({
   testDir: 'tests/e2e',
   fullyParallel: true,
-  // GitHub's runners for public repositories have 4 vCPUs; Playwright's default is half the cores.
-  workers: CI ? 4 : '50%',
   forbidOnly: CI,
   reporter: CI ? [['github'], ['list']] : 'list',
   // Tests start as a visitor who has already made a cookie choice; consent.spec starts without one.
