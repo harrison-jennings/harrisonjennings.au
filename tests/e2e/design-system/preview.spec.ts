@@ -8,6 +8,8 @@ const BUTTON = '/components/button/';
 /** A view's iframe, the width its page lays out at, and its theme. */
 async function inside(view: Locator) {
   const frame = view.locator('iframe').contentFrame();
+  // Wait for the specimen itself, not the blank page an iframe holds while it loads.
+  await expect(frame.locator('html')).toHaveAttribute('data-theme', /^(dark|light)$/);
   await expect(frame.locator('body')).toBeVisible();
   return {
     width: await frame.locator('body').evaluate(() => window.innerWidth),
