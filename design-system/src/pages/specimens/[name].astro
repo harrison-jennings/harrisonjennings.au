@@ -1,9 +1,9 @@
 ---
 // A specimen page for every example in src/examples/, at /specimens/<name>/: the example on its own
 // with the site's real styles, shown in a preview frame. A component example (.astro) renders as it
-// is; a content example (.md) goes through the site's Markdown pipeline into prose, as a post does,
-// with a post's code-block copy buttons and image viewer. Small examples sit in a centred row; the
-// ones in LARGE take the width as a page would.
+// is; a content example (.md) goes through the site's Markdown pipeline into prose, in a post's
+// column, with a post's code-block copy buttons and image viewer. Small examples sit in a centred row;
+// page-level ones are laid out as a page lays them out (FULL, PAGE).
 import type { AstroComponentFactory } from 'astro/runtime/server/index.js';
 import '../../../../src/styles/lightbox.css';
 import Specimen from '../../layouts/Specimen.astro';
@@ -11,12 +11,11 @@ import Specimen from '../../layouts/Specimen.astro';
 type Module = { default?: AstroComponentFactory; Content?: AstroComponentFactory };
 const examples = import.meta.glob<Module>('../../examples/*.{astro,md}', { eager: true });
 
-/** Examples laid out as a page lays them out, not in a centred row. */
-const LARGE = new Set([
+/** Page-level examples: edge to edge (FULL), or with a page's gutters and room around them (PAGE). */
+const FULL = new Set(['hero', 'mobile-menu', 'consent']);
+const PAGE = new Set([
   'nav',
-  'mobile-menu',
   'footer',
-  'hero',
   'services',
   'built-and-shipped',
   'testimonials',
@@ -26,7 +25,6 @@ const LARGE = new Set([
   'toc',
   'author-panel',
   'keep-reading',
-  'consent',
 ]);
 
 /** Examples shown open: the phone menu opens once the page has loaded (its button's own script). */
@@ -55,13 +53,15 @@ if (!Example) throw new Error(`no example src/examples/${name}.astro or .md`);
 
 <Specimen
   title={name.replace(/-/g, ' ')}
-  row={!markdown && !LARGE.has(name)}
+  row={!markdown && !FULL.has(name) && !PAGE.has(name)}
   screen={SCREEN.has(name)}
-  bare={LARGE.has(name)}
+  layout={FULL.has(name) ? 'full' : PAGE.has(name) || markdown ? 'page' : undefined}
 >
   {markdown ? (
-    <div class="prose">
-      <Example />
+    <div class="column">
+      <div class="prose">
+        <Example />
+      </div>
     </div>
   ) : (
     <Example />

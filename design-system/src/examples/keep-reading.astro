@@ -10,4 +10,7 @@ const [post] = posts;
 if (!post) throw new Error('no posts');
 ---
 
-<KeepReading posts={keepReading(post, posts)} topicPages={await topicPageIds()} />
+<!-- under every post, in the page's column -->
+<div class="column">
+  <KeepReading posts={keepReading(post, posts)} topicPages={await topicPageIds()} />
+</div>

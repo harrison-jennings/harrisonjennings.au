@@ -12,11 +12,15 @@ interface Props {
   row?: boolean;
   /** At least a phone screen tall, for examples whose content sits over the page (an open menu). */
   screen?: boolean;
-  /** No padding: a page-level example (the nav, a home section) is drawn edge to edge, as on a page. */
-  bare?: boolean;
+  /**
+   * How a page-level example sits: `full` edge to edge (the hero, an open menu); `page` with room above
+   * and below, its own gutters (it brings .column or .shell) and none of the space it keeps on a page
+   * for what's above it (a section's margin, the room left for the floating nav).
+   */
+  layout?: 'full' | 'page' | undefined;
 }
 
-const { title, row = false, screen = false, bare = false } = Astro.props;
+const { title, row = false, screen = false, layout } = Astro.props;
 ---
 
 <!doctype html>
@@ -32,7 +36,7 @@ const { title, row = false, screen = false, bare = false } = Astro.props;
       if (params.get('still') === '1') document.documentElement.dataset.still = '';
     </script>
   </head>
-  <body class:list={['specimen', { 'specimen--screen': screen, 'specimen--bare': bare }]}>
+  <body class:list={['specimen', layout && `specimen--${layout}`, { 'specimen--screen': screen }]}>
     {row ? (
       <div class="specimen__row">
         <slot />
@@ -47,11 +51,21 @@ const { title, row = false, screen = false, bare = false } = Astro.props;
 </html>
 
 <style is:global>
+  /* flow-root keeps a child's margins inside the body, so the height it reports includes them. */
   .specimen {
+    display: flow-root;
     padding: var(--space-28) var(--space-22);
   }
-  .specimen--bare {
+  .specimen--full {
     padding: 0;
+  }
+  .specimen--page {
+    padding: var(--space-28) 0;
+  }
+  body.specimen--page > :first-child,
+  body.specimen--page > div.column:first-child > :first-child {
+    margin-top: 0;
+    padding-top: 0;
   }
   .specimen--screen {
     min-height: 844px;

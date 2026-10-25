@@ -124,3 +124,29 @@ test('the phone menu specimen opens the menu', async ({ page }) => {
   await page.goto('/specimens/mobile-menu/');
   await expect(page.getByRole('dialog', { name: 'Menu' })).toBeVisible();
 });
+
+test("a preview's links don't load another page into the frame", async ({ page }) => {
+  await page.goto('/components/mobile-menu/');
+  const pf = page.locator('.pf').first();
+  await pf.locator('[data-tall]').click();
+  const menu = pf
+    .frameLocator('.pf-view:not([hidden]) iframe')
+    .getByRole('dialog', { name: 'Menu' });
+  await menu.getByRole('link', { name: 'blog' }).click();
+  await page.waitForTimeout(500);
+  const frame = page.frames().find((f) => f.url().includes('/specimens/'));
+  expect(frame?.url()).toContain('/specimens/mobile-menu/');
+});
+
+test('page-level examples fit their frame, with nothing cut off', async ({ page }) => {
+  for (const name of ['footer', 'author-panel', 'keep-reading', 'post-header']) {
+    await page.goto(`/specimens/${name}/`);
+    const { body, content } = await page.evaluate(() => ({
+      body: document.body.scrollHeight,
+      content: Math.max(
+        ...[...document.body.children].map((c) => c.getBoundingClientRect().bottom),
+      ),
+    }));
+    expect(body, name).toBeGreaterThanOrEqual(Math.floor(content));
+  }
+});

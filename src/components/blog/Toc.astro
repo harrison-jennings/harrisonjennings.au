@@ -119,7 +119,9 @@ for (const h of headings) {
     font-size: 13px;
   }
 
+  /* Each form shows at its own width: the column on desktop, the panel on phones. */
   .toc-phone {
+    display: none;
     margin-bottom: var(--space-28);
     border: 1px solid var(--line);
     border-radius: var(--radius-md);
@@ -169,6 +171,14 @@ for (const h of headings) {
     .toc a,
     .toc-phone a {
       transition: none;
+    }
+  }
+  @media (max-width: 760px) {
+    .toc {
+      display: none;
+    }
+    .toc-phone {
+      display: block;
     }
   }
 </style>

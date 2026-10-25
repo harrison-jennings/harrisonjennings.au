@@ -6,9 +6,11 @@ const posts = (await getPosts()).slice(0, 3);
 const topicPages = new Set((await getTopicPages()).map(({ topic }) => topic.id));
 ---
 
-<!-- three across, as the home page's latest posts and "keep reading" set them -->
-<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: var(--space-32)">
-  {posts.map((post) => (
-    <PostCard post={post} topicPages={topicPages} />
-  ))}
+<!-- three across in the page's column, as the home page's latest posts and "keep reading" set them -->
+<div class="column">
+  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: var(--space-32)">
+    {posts.map((post) => (
+      <PostCard post={post} topicPages={topicPages} />
+    ))}
+  </div>
 </div>

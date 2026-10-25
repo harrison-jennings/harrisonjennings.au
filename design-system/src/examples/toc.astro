@@ -11,5 +11,8 @@ const tocs = await Promise.all(
 const headings = tocs.find((t) => t.length > 0) ?? [];
 ---
 
-<Toc headings={headings} /> <!-- beside the text on desktop -->
-<Toc headings={headings} phone /> <!-- the closed panel above the text on phones -->
+<!-- a post sets both: the column beside the text on desktop, the panel above it on phones -->
+<div class="column">
+  <Toc headings={headings} phone />
+  <Toc headings={headings} />
+</div>

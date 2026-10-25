@@ -11,4 +11,7 @@ const { remarkPluginFrontmatter } = await render(post);
 const readingTime = Number(remarkPluginFrontmatter['readingTime'] ?? 1);
 ---
 
-<PostHeader post={post} readingTime={readingTime} topicPages={await topicPageIds()} />
+<!-- in the page's column, as every post sets it -->
+<div class="column">
+  <PostHeader post={post} readingTime={readingTime} topicPages={await topicPageIds()} />
+</div>
