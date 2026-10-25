@@ -1,6 +1,8 @@
 ---
 // The path mark: a lowercase h drawn as one line, ending in a brick dot.
 // Stroke and dot thicken as the mark gets smaller (see docs/brand.md).
+import { MARK_PATH, markWeight } from '../lib/logo';
+
 interface Props {
   size?: number;
   /** Accessible name when the mark stands alone; omit when the name is set beside it. */
@@ -17,14 +19,7 @@ interface Props {
 
 const { size = 26, label, draw = false, loading = false, class: className } = Astro.props;
 
-const weights: Array<[number, number, number]> = [
-  [40, 11, 7.5],
-  [26, 12, 8.5],
-  [24, 15, 9.5],
-  [0, 17, 10.5],
-];
-const [, stroke, dot] = weights.find(([min]) => size >= min) ?? [0, 17, 10.5];
-const H = 'M30 10 V90 M30 58 C30 44 39 38 50 38 C61 38 70 44 70 58 V72';
+const { stroke, dot } = markWeight(size);
 ---
 
 <svg
@@ -37,7 +32,7 @@ const H = 'M30 10 V90 M30 58 C30 44 39 38 50 38 C61 38 70 44 70 58 V72';
   aria-hidden={label ? undefined : 'true'}
   data-mark-draw={draw === 'view' ? 'view' : draw ? 'load' : undefined}
 >
-  <path class="mark__h" d={H} stroke-width={stroke}></path>
+  <path class="mark__h" d={MARK_PATH} stroke-width={stroke}></path>
   <circle class="mark__dot" cx="70" cy="88" r={dot}></circle>
 </svg>
 

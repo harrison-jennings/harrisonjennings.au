@@ -13,7 +13,11 @@ export default defineConfig({
   output: 'static',
   trailingSlash: 'always',
   // csp() last: it reads the finished pages and writes the Content-Security-Policy into dist/_headers.
-  integrations: [mdx(), sharedPublic(['fonts', 'brand', 'favicon.svg']), csp(designSystemCsp)],
+  integrations: [
+    mdx(),
+    sharedPublic(['fonts', 'brand', 'favicon.svg', 'favicon.ico', 'icon-192.png', 'icon-512.png']),
+    csp(designSystemCsp),
+  ],
   build: {
     format: 'directory',
   },

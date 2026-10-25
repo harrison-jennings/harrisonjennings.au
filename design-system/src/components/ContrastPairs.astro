@@ -1,0 +1,60 @@
+---
+// Text and backgrounds (design hand-off: ContrastPair): each pairing the site uses, painted with the
+// real tokens in both themes, with its WCAG ratio worked out at build time from design/tokens.json and
+// whether it passes AA. A failure shows as "below AA"; that's the point of showing accent on surface.
+// The painted samples are pictures: hidden from assistive tech, their small label drawn by CSS from
+// data-what, so the deliberate failure isn't counted as one of the page's own. The ratios, verdicts
+// and the pair's names say it all in text.
+import { AA, contrast, format } from '../lib/contrast';
+import { THEMES } from '../lib/tokens';
+
+const PAIRS: { fg: string; bg: string; what: string }[] = [
+  { fg: 'text', bg: 'ground', what: 'body text' },
+  { fg: 'text', bg: 'surface', what: 'text on a card' },
+  { fg: 'muted', bg: 'ground', what: 'dates and labels' },
+  { fg: 'muted', bg: 'surface', what: 'labels on a card' },
+  { fg: 'accent', bg: 'ground', what: 'brick as text' },
+  { fg: 'accent', bg: 'surface', what: 'brick text on a card' },
+  { fg: 'link', bg: 'surface', what: 'a link on a card' },
+  { fg: 'on-accent', bg: 'accent', what: 'a button at rest' },
+  { fg: 'on-apricot', bg: 'apricot', what: 'a button on hover' },
+];
+---
+
+<div class="cp-grid">
+  {PAIRS.map(({ fg, bg, what }) => (
+    <div class="cp" data-pair={`${fg} on ${bg}`}>
+      {THEMES.map((theme) => {
+        const r = contrast(fg, bg, theme);
+        const pass = r >= AA;
+        return (
+          <>
+            <div
+              class="cp__sample"
+              aria-hidden="true"
+              data-theme={theme}
+              style={`background: var(--${bg}); color: var(--${fg})`}
+            >
+              <b>Aa</b>
+              <span data-what={what} />
+            </div>
+            <div class="cp__meta">
+              <span>
+                {theme} <span class="cp__ratio">{format(r)}</span>
+              </span>
+              <span class:list={['cp__badge', { 'cp__badge--fail': !pass }]}>
+                {pass ? 'passes AA' : 'below AA'}
+              </span>
+            </div>
+          </>
+        );
+      })}
+      <div class="cp__meta cp__pair">
+        <code>{fg}</code>
+        <span>on</span>
+        <code>{bg}</code>
+        <span class="visually-hidden">: {what}</span>
+      </div>
+    </div>
+  ))}
+</div>

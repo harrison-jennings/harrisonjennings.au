@@ -1,0 +1,40 @@
+---
+// The type scale (design hand-off: PageFurniture): every type style in design/tokens.json, in its
+// group, with its copy chip and metrics, a sample set in the real class at true size, and its usage.
+import { familyName, TYPE_STYLES, typeMetrics } from '../lib/tokens';
+import ChipCopy from './ChipCopy.astro';
+
+const groups = [...new Set(TYPE_STYLES.map((s) => s.group))].map((group) => ({
+  group,
+  styles: TYPE_STYLES.filter((s) => s.group === group),
+}));
+// Styles meant to be read in muted are shown in it.
+const MUTED = new Set(['dek', 'label', 'small']);
+---
+
+<ul class="ty-scale">
+  {groups.map(({ group, styles }) => (
+    <>
+      <li class="ty-scale__group">
+        {group.toLowerCase()}, in {familyName(styles[0]?.family ?? 'sans')}
+      </li>
+      {styles.map((s) => (
+        <li>
+          <div class="ty-scale__meta">
+            <ChipCopy copy={`.type-${s.name}`} label={s.name} />
+            <span>{typeMetrics(s)}</span>
+            {s.letterSpacing && <span>{s.letterSpacing}</span>}
+          </div>
+          <div class="ty-scale__body">
+            <div
+              class:list={['ty-scale__sample', `type-${s.name}`, { 'ty-muted': MUTED.has(s.name) }]}
+            >
+              {s.sample}
+            </div>
+            <p class="ty-scale__use">{s.usage}</p>
+          </div>
+        </li>
+      ))}
+    </>
+  ))}
+</ul>

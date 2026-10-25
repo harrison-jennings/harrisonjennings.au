@@ -1,0 +1,113 @@
+---
+title: logo
+lead: A lowercase h drawn as one line, ending in a brick dot. It's the same dot that ends every headline, so the brand signs off the same way everywhere.
+group: identity
+order: 1
+facts:
+  - label: component
+    value: src/components/Logo.astro
+    href: https://github.com/harrison-jennings/harrisonjennings.au/blob/main/src/components/Logo.astro
+  - label: files
+    value: public/brand, public/favicon.svg
+  - label: motion
+    value: draws in over about 2s
+---
+
+import Logo from '../../../../../src/components/Logo.astro';
+import DoDont from '../../../components/DoDont.astro';
+import DoDontCard from '../../../components/DoDontCard.astro';
+import DownloadCard from '../../../components/DownloadCard.astro';
+import Lockup from '../../../components/logo/Lockup.astro';
+import LogoConstruction from '../../../components/logo/LogoConstruction.astro';
+import LogoMarks from '../../../components/logo/LogoMarks.astro';
+import LogoOn from '../../../components/logo/LogoOn.astro';
+import LogoSizes from '../../../components/logo/LogoSizes.astro';
+
+## the marks
+
+<LogoMarks />
+
+## construction
+
+<LogoConstruction>
+
+- **One line.** Stem, shoulder and leg are a single stroke with round caps and joins, on a 100-unit square.
+- **The dot sits at the foot.** It's centred under the leg, and its lowest point lines up with the bottom of the stem.
+- **Line in text, dot in accent.** Both follow the theme. Nothing else is ever recoloured.
+- **Clear space: two-thirds of the mark's height.** The tightest the site goes is the compact nav: 16px around the 24px mark. Everywhere else it has more.
+
+</LogoConstruction>
+
+## sizes
+
+The line gets heavier as the mark gets smaller, so it reads the same at every size. The component picks the weight from the size you give it. The smallest the mark is drawn is 24px; below that, use the tile.
+
+<LogoSizes />
+
+## on dark, light and imagery
+
+<LogoOn />
+
+<p class="ds-small">On imagery, the lockup sits in the clear corner, away from the clouds, as it does on share cards. It never sits on the gradient itself.</p>
+
+## misuse
+
+<DoDont cols={3} misuse>
+  <DoDontCard verdict="don't" say="Stretch or squash it.">
+    <span class="lg-bad lg-bad--stretch"><Logo size={56} /></span>
+  </DoDontCard>
+  <DoDontCard verdict="don't" say="Put it in a shape or a badge.">
+    <span class="lg-bad lg-bad--badge"><Logo size={44} /></span>
+  </DoDontCard>
+  <DoDontCard verdict="don't" say="Recolour the line. Only the dot is brick.">
+    <span class="lg-bad lg-bad--line"><Logo size={56} /></span>
+  </DoDontCard>
+  <DoDontCard verdict="don't" say="Change the dot's colour, even to another brand colour.">
+    <span class="lg-bad lg-bad--dot"><Logo size={56} /></span>
+  </DoDontCard>
+  <DoDontCard verdict="don't" say="Rotate or tilt it.">
+    <span class="lg-bad lg-bad--tilt"><Logo size={56} /></span>
+  </DoDontCard>
+  <DoDontCard verdict="don't" say="Set the name in Martian Mono. The lockup is always Schibsted.">
+    <span class="lg-bad lg-bad--mono"><Lockup size="compact" /></span>
+  </DoDontCard>
+</DoDont>
+
+## downloads
+
+<div class="dl-grid">
+  <DownloadCard
+    name="mark on dark"
+    text="For dark backgrounds. SVG at any size, or a 1024px PNG."
+    theme="dark"
+    formats={[
+      { label: 'svg', href: '/brand/mark-on-dark.svg' },
+      { label: 'png', href: '/brand/mark-on-dark.png' },
+    ]}
+  >
+    <Logo size={64} />
+  </DownloadCard>
+  <DownloadCard
+    name="mark on light"
+    text="For light backgrounds. SVG at any size, or a 1024px PNG."
+    theme="light"
+    formats={[
+      { label: 'svg', href: '/brand/mark-on-light.svg' },
+      { label: 'png', href: '/brand/mark-on-light.png' },
+    ]}
+  >
+    <Logo size={64} />
+  </DownloadCard>
+  <DownloadCard
+    name="favicons"
+    text="The tile, as SVG, ICO, and 192 and 512 PNG."
+    formats={[
+      { label: 'svg', href: '/favicon.svg' },
+      { label: 'ico', href: '/favicon.ico' },
+      { label: '192', href: '/icon-192.png' },
+      { label: '512', href: '/icon-512.png' },
+    ]}
+  >
+    <img src="/favicon.svg" width="64" height="64" alt="" />
+  </DownloadCard>
+</div>

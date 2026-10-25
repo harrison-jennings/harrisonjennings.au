@@ -1,0 +1,38 @@
+---
+// A family card on the typography page: "Aa" in the family, its name, a line on its job, the character
+// set and its facts as the site's tags. The name and weights come from design/tokens.json.
+import Tag from '../../../src/components/Tag.astro';
+import data from '../../../design/tokens.json';
+import { familyName, type TypeStyle } from '../lib/tokens';
+
+interface Props {
+  family: TypeStyle['family'];
+  /** The family's job, in a sentence or two. */
+  text: string;
+}
+
+const { family, text } = Astro.props;
+const name = familyName(family);
+const faces = data.type.fonts.filter((f) => f.family === name);
+const weights = faces[0]?.weight.replace(' ', '–');
+const italic = faces.some((f) => f.style === 'italic');
+---
+
+<div class:list={['ty-card', `ty-card--${family}`]}>
+  <span class="ty-card__aa" aria-hidden="true">
+    Aa
+  </span>
+  <div>
+    <p class="ty-card__name">{name}</p>
+    <p class="ty-card__text">{text}</p>
+  </div>
+  <p class="ty-card__set">
+    abcdefghijklmnopqrstuvwxyz 0123456789{' '}
+    {family === 'display' ? '{}[]()<>=;:.' : <i>and an italic for emphasis</i>}
+  </p>
+  <div class="ty-card__meta">
+    <Tag>variable {weights}</Tag>
+    <Tag>--font-{family}</Tag>
+    <Tag>{italic ? 'with italic' : 'self-hosted'}</Tag>
+  </div>
+</div>

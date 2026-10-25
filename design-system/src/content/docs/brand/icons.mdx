@@ -1,0 +1,31 @@
+---
+title: icons
+lead: Few, plain and single-ink. Icons take the colour of the text around them, and an icon on its own always has a name for screen readers.
+group: guidance
+order: 3
+facts:
+  - label: component
+    value: src/components/Icon.astro
+    href: https://github.com/harrison-jennings/harrisonjennings.au/blob/main/src/components/Icon.astro
+  - label: buttons
+    value: src/components/IconButton.astro
+    href: https://github.com/harrison-jennings/harrisonjennings.au/blob/main/src/components/IconButton.astro
+---
+
+import IconGrid from '../../../components/IconGrid.astro';
+
+## the set
+
+The icons the `Icon` component draws, at its default 20px.
+
+<IconGrid />
+
+A few components draw their own small icons beside their words: the theme toggle's sun and moon, the copy button, the arrows on swipe rows and the image viewer's controls. They follow the same rules.
+
+## rules
+
+- **One ink.** Icons are drawn in `currentColor`, so they take `text` at rest and `link` on hover with everything else.
+- **Line icons are 2px, with round caps and joins.** Brand marks (GitHub, LinkedIn) keep their own filled shapes.
+- **A name for every icon on its own.** An icon-only button has an accessible name ("Menu", "Close menu"); an icon beside words is hidden from screen readers.
+- **44px to tap.** An icon button's target is `target` (44px) even when the icon is 20px, and 48px in the phone menu.
+- **No icon for decoration.** If the words say it, the icon doesn't need to.

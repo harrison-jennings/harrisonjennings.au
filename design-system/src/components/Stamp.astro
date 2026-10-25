@@ -2,9 +2,15 @@
 // The build stamp: when the design system was built and from which commit, linked on GitHub.
 import { BUILD } from '../lib/build';
 import Link from './Link.astro';
+
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
 ---
 
-<p class="ds-stamp">
+<p class:list={['ds-stamp', className]}>
   <i aria-hidden="true"></i>
   {BUILD.commit ? (
     <span>

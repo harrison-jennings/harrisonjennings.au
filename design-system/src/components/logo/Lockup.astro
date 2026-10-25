@@ -1,0 +1,17 @@
+---
+// The lockup as the site sets it (docs/brand.md): the real mark, then "harrison jennings" in the
+// wordmark style, 10px apart. Large is the 40px mark with wordmark-l.
+import Logo from '../../../../src/components/Logo.astro';
+
+interface Props {
+  size?: 'nav' | 'large' | 'compact';
+}
+
+const { size = 'nav' } = Astro.props;
+const mark = { nav: 26, large: 40, compact: 24 }[size];
+---
+
+<span class="lg-lockup">
+  <Logo size={mark} />
+  <span class={size === 'large' ? 'type-wordmark-l' : 'type-wordmark'}>harrison jennings</span>
+</span>

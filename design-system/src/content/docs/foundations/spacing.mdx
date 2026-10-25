@@ -1,0 +1,19 @@
+---
+title: spacing
+lead: A short scale of fixed steps, from 6px between icons to 72px of desktop gutter. Every gap, inset and padding on the site is one of them.
+group: layout
+order: 1
+---
+
+import SpacingList from '../../../components/SpacingList.astro';
+
+## the scale
+
+<SpacingList />
+
+## rules
+
+- **Use a step, not a number.** Gaps and padding come from the scale; a value between two steps is a sign the layout wants rethinking.
+- **Sections are 56px apart in a page,** and the home page's sections 96px (72px on phones).
+- **Gutters:** 72px on wide screens, 16px on phones.
+- **Tight inside, loose between.** Things that belong together sit closer than the things around them.

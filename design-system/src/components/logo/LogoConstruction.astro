@@ -1,0 +1,37 @@
+---
+// Construction: the mark at 300px on a 24px grid, with dashed guides at the stem, the leg, the top of
+// the shoulder, the dot's foot and the top of the stem, drawn from the same path as the component.
+// Beside it, the rules (the slot), then clear space: the 24px mark with its 16px band.
+import Logo from '../../../../src/components/Logo.astro';
+import { markWeight } from '../../../../src/lib/logo';
+
+const { stroke, dot } = markWeight(300);
+const top = 10 - stroke / 2; // the stem's round cap
+const foot = 88 + dot; // the dot's lowest point, level with the stem's
+---
+
+<div class="lg-spec">
+  <div class="lg-grid">
+    <div class="lg-grid__mark">
+      <Logo size={300} label="The mark on its 100-unit square" />
+      <svg class="lg-grid__guides" viewBox="0 0 100 100" aria-hidden="true">
+        <line x1="30" y1="-8" x2="30" y2="108" />
+        <line x1="70" y1="-8" x2="70" y2="108" />
+        <line x1="-14" y1={top} x2="114" y2={top} />
+        <line x1="-14" y1="38" x2="114" y2="38" />
+        <line x1="-14" y1={foot} x2="114" y2={foot} />
+      </svg>
+    </div>
+  </div>
+  <div>
+    <div class="lg-rules">
+      <slot />
+    </div>
+    <div class="lg-clear">
+      <span class="lg-clear__box">
+        <Logo size={24} />
+      </span>
+      <span class="lg-clear__cap">16px around the 24px mark, as in the compact nav</span>
+    </div>
+  </div>
+</div>

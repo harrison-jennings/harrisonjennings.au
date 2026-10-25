@@ -1,0 +1,35 @@
+---
+// Type in use: the top of a post set in the real type classes, each line named by its style. The words
+// are the styles' own samples from design/tokens.json; the code is highlighted as the site's code
+// blocks are, on the dark code treatment.
+import { Code } from 'astro:components';
+import type { ShikiTransformer } from 'shiki';
+import { codeTheme } from '../../../src/lib/markdown/code';
+import { TYPE_STYLES } from '../lib/tokens';
+
+const ROWS = ['label', 'title-xl', 'dek', 'heading-2', 'prose'] as const;
+const MUTED = new Set(['label', 'dek']);
+const sample = (name: string) => TYPE_STYLES.find((s) => s.name === name)?.sample ?? '';
+
+// No inline colours on <pre>: it sits on the dark code treatment.
+const plain: ShikiTransformer = {
+  pre(node) {
+    node.properties = { class: 'ty-use__pre type-code', tabindex: '0' };
+  },
+};
+---
+
+<div class="ty-use">
+  {ROWS.map((name) => (
+    <div class="ty-use__row">
+      <span class="ty-use__tag">{name}</span>
+      <div class:list={[`type-${name}`, { 'ty-muted': MUTED.has(name) }]}>{sample(name)}</div>
+    </div>
+  ))}
+  <div class="ty-use__row">
+    <span class="ty-use__tag">code</span>
+    <div class="ty-use__code" data-theme="dark">
+      <Code code={sample('code')} lang="js" theme={codeTheme} transformers={[plain]} />
+    </div>
+  </div>
+</div>

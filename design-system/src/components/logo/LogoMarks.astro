@@ -1,0 +1,32 @@
+---
+// The marks: the two lockups, the mark alone and the app tile (public/favicon.svg, always dark).
+import Logo from '../../../../src/components/Logo.astro';
+import Lockup from './Lockup.astro';
+---
+
+<div class="lg-marks">
+  <figure class="lg-stage">
+    <Lockup size="large" />
+    <figcaption>
+      large lockup<span>40px mark, wordmark-l, 10px gap</span>
+    </figcaption>
+  </figure>
+  <figure class="lg-stage">
+    <Lockup />
+    <figcaption>
+      nav lockup<span>26px mark, wordmark, 10px gap</span>
+    </figcaption>
+  </figure>
+  <figure class="lg-stage">
+    <Logo size={64} label="harrison jennings" />
+    <figcaption>
+      the mark<span>alone, with a label for screen readers</span>
+    </figcaption>
+  </figure>
+  <figure class="lg-stage">
+    <img src="/favicon.svg" width="64" height="64" alt="" />
+    <figcaption>
+      app tile<span>always dark, radius-md</span>
+    </figcaption>
+  </figure>
+</div>

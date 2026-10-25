@@ -1,0 +1,102 @@
+---
+title: voice and tone
+lead: "Plain, specific and quietly confident. Write like an engineer explaining something to a marketer they respect: no hype, no jargon for its own sake, and always the exact thing."
+group: guidance
+order: 1
+---
+
+import Button from '../../../../../src/components/Button.astro';
+import TextLink from '../../../../../src/components/TextLink.astro';
+import DoDont from '../../../components/DoDont.astro';
+import DoDontCard from '../../../components/DoDontCard.astro';
+import VoiceRule from '../../../components/VoiceRule.astro';
+import PostAfter from '../../../components/voice/PostAfter.astro';
+import PostBefore from '../../../components/voice/PostBefore.astro';
+
+## the rules
+
+<VoiceRule title="lowercase for the interface">
+  <p slot="text">Navigation, buttons, headings, labels, the name and project names. It reads as calm and deliberate, and it matches the mono display type.</p>
+  <DoDontCard verdict="do" say="Lowercase, and plain words." picture>
+    <Button label="book a call" size="s" />
+    <span class="vo-h">built and shipped</span>
+  </DoDontCard>
+  <DoDontCard verdict="don't" say="Title case, or symbols in place of words.">
+    <Button label="Book A Call" size="s" />
+    <span class="vo-h">Built &amp; Shipped</span>
+  </DoDontCard>
+</VoiceRule>
+
+<VoiceRule title="sentence case for reading">
+  <p slot="text">Body copy, descriptions and captions start with a capital and end with a full stop. Lowercase stops where the reading starts.</p>
+  <DoDontCard verdict="do" say="A normal sentence.">
+    <p class="vo-p">Most of the work is checking what a test send can't see.</p>
+  </DoDontCard>
+  <DoDontCard verdict="don't" say="Carrying the interface's lowercase into body copy.">
+    <p class="vo-p">most of the work is checking what a test send can't see</p>
+  </DoDontCard>
+</VoiceRule>
+
+<VoiceRule title="Australian English">
+  <p slot="text">Spelling follows the Macquarie Dictionary. Code keeps its own spelling, so <code>color</code> stays <code>color</code> in CSS.</p>
+  <DoDontCard verdict="do" say="Australian spelling in copy.">
+    <p class="vo-p">colour, optimise, behaviour, centre, licence</p>
+  </DoDontCard>
+  <DoDontCard verdict="don't" say="US spelling, outside code.">
+    <p class="vo-p">color, optimize, behavior, center, license</p>
+  </DoDontCard>
+</VoiceRule>
+
+<VoiceRule title="dates written out">
+  <p slot="text">Day, month in full, year. No ordinals, and no numbers-only dates that read differently in another country.</p>
+  <DoDontCard verdict="do" say="In copy, meta lines and the footer stamp.">
+    <p class="vo-p">13 August 2026</p>
+  </DoDontCard>
+  <DoDontCard verdict="don't" say="Numbers only, ordinals or short months.">
+    <p class="vo-p">08/13/2026 · Aug 13th, 2026</p>
+  </DoDontCard>
+</VoiceRule>
+
+<VoiceRule title="say what happens">
+  <p slot="text">Buttons and links say where they go or what they do. Link text makes sense on its own, because screen readers list links out of context.</p>
+  <DoDontCard verdict="do" say="Name the destination or the result." picture>
+    <TextLink href="#">the Marketo REST API docs</TextLink>
+    <Button label="view availability" size="s" />
+  </DoDontCard>
+  <DoDontCard verdict="don't" say="“Click here”, “learn more” or “submit”.">
+    <TextLink href="#">click here</TextLink>
+    <Button label="learn more" size="s" />
+  </DoDontCard>
+</VoiceRule>
+
+<VoiceRule title="product names keep their capitals">
+  <p slot="text">Lowercase is for the brand's own words. Someone else's product is spelled the way they spell it, even in a lowercase heading.</p>
+  <DoDontCard verdict="do" say="As the maker writes it.">
+    <p class="vo-p">Marketo, VS Code, Cloudflare Workers, GitHub</p>
+  </DoDontCard>
+  <DoDontCard verdict="don't" say="Lowercased, or respelled.">
+    <p class="vo-p">marketo, vscode, cloudflare workers, Github</p>
+  </DoDontCard>
+</VoiceRule>
+
+## in practice
+
+The same post card, before and after. Each number is a rule broken.
+
+<DoDont>
+  <DoDontCard
+    verdict="before"
+    say="1 title case, 2 a product name lowercased, 3 US spelling, 4 “click here”, 5 a short date."
+    wide
+  >
+    <PostBefore />
+  </DoDontCard>
+  <DoDontCard
+    verdict="after"
+    say="The title is the link, the date is written out, and the description says what you'll learn."
+    wide
+    picture
+  >
+    <PostAfter />
+  </DoDontCard>
+</DoDont>

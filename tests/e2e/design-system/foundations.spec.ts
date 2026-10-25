@@ -1,10 +1,10 @@
 import { expect, test, type Page } from '@playwright/test';
-import { designPages } from './site';
+import { designPages, specimenPages } from './site';
 
 // The design system (design-system/): kept out of search, framed only by itself, and its previews show
 // the site's real code. The shell: shell.spec.ts; the preview frame: preview.spec.ts.
 
-const PAGES = [...designPages(), '/specimens/button/', '/specimens/callout/'];
+const PAGES = [...designPages(), ...specimenPages()];
 
 /** Console errors and refused content (a CSP violation logs one) while a page loads. */
 function problems(page: Page): string[] {

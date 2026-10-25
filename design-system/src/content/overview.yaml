@@ -1,0 +1,23 @@
+# The overview's wording (the landing page at /). The counts, the cards' page counts and the build stamp
+# fill themselves in; "what changed" is changes.yaml.
+overview:
+  eyebrow: harrisonjennings.au
+  lead: "The brand, every component, and every kind of content a post can hold. Everything here is drawn from the site's own code, so what you see is what's live."
+  # "start here": one line per section, by its id. A section shows once it has a page.
+  cards:
+    brand: "The logo, colour, type, voice and motion, with what's allowed and what isn't."
+    foundations: Spacing, radius, the 760px breakpoint, the accessibility rules and every token.
+    components: Each one live, at real widths and in both themes, with its Astro usage and props.
+    content: Everything a post can hold, and the Markdown that makes it, ready to copy.
+    templates: Every kind of page on the site, at both widths and in both themes.
+    tokens: "The whole brand as data: download the CSS variables or the JSON they're built from."
+  # "how to use it": exactly three steps.
+  steps:
+    - title: writing a post
+      text: Open content, find the element, and copy its Markdown. The snippets match the ones in VS Code.
+    - title: changing the site
+      text: Each component page shows the real thing at phone and desktop width, with its usage, props and rules.
+    - title: checking the brand
+      text: Brand has the logo, colour, type and voice, each with do and don't examples.
+  # The line under "what changed"; "repository's history" becomes the link.
+  history: Every change since launch is in the repository's history.

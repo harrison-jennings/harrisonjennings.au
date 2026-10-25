@@ -1,0 +1,20 @@
+---
+// Every icon the site's Icon component draws, read from its own list of names, at its default size
+// in the text colour, with each name.
+import Icon from '../../../src/components/Icon.astro';
+import source from '../../../src/components/Icon.astro?raw';
+
+type Name = Parameters<typeof Icon>[0]['name'];
+const names = (source.match(/name:\s*([^;]+);/)?.[1]?.match(/'[^']+'/g) ?? []).map(
+  (n) => n.slice(1, -1) as Name,
+);
+---
+
+<ul class="ic-grid">
+  {names.map((name) => (
+    <li>
+      <Icon name={name} />
+      <code>{name}</code>
+    </li>
+  ))}
+</ul>

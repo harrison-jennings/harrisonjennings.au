@@ -1,0 +1,80 @@
+---
+// The palette (design hand-off: Swatch): every colour in design/tokens.json, in its group, shown in
+// both themes side by side. Each chip sets its own theme, so it's painted with that theme's token,
+// never a typed-in value; translucent colours sit over that theme's ground, as they're seen. The
+// chip's label takes whichever of text and ground reads better on it, worked out at build time.
+import { over, ratio } from '../lib/contrast';
+import { colour, COLOURS, readable, THEMES, type Theme } from '../lib/tokens';
+import ChipCopy from './ChipCopy.astro';
+
+const GROUPS: { name: string; tokens: string[] }[] = [
+  { name: 'surfaces', tokens: ['ground', 'surface', 'line'] },
+  { name: 'text', tokens: ['text', 'muted'] },
+  { name: 'brick and apricot', tokens: ['accent', 'link', 'on-accent', 'apricot', 'on-apricot'] },
+  {
+    name: 'ember and signal',
+    tokens: ['ember-from', 'ember-to', 'cloud-brick', 'cloud-apricot', 'signal-ring', 'field-dot'],
+  },
+  { name: 'code', tokens: ['code-keyword', 'code-string', 'code-number', 'code-highlight'] },
+  { name: 'image viewer', tokens: ['overlay', 'overlay-bar', 'overlay-line', 'overlay-panel'] },
+];
+
+// Any colour added to tokens.json without a group here still shows, at the end.
+const grouped = new Set(GROUPS.flatMap((g) => g.tokens));
+const rest = COLOURS.filter((c) => !grouped.has(c.name)).map((c) => c.name);
+const groups = rest.length ? [...GROUPS, { name: 'more', tokens: rest }] : GROUPS;
+
+/** The usage's opening, a sentence or two: the palette is a summary; the token table has it all. */
+function short(usage: string): string {
+  // A sentence ends at a stop followed by a capital, not inside a number such as 14.5:1.
+  const sentences = usage.split(/(?<=[.!?])\s+(?=[A-Z])/);
+  let line = '';
+  for (const s of sentences) {
+    line = `${line} ${s}`.trim();
+    if (line.length >= 40) break;
+  }
+  return line;
+}
+
+function label(name: string, theme: Theme): 'text' | 'ground' {
+  const ground = colour('ground', theme);
+  const [r, g, b] = over(colour(name, theme), ground);
+  const fill = `rgba(${r},${g},${b},1)`;
+  const on = (t: string) => ratio(over(colour(t, theme), fill), [r, g, b]);
+  return on('text') >= on('ground') ? 'text' : 'ground';
+}
+---
+
+{groups.map((group) => (
+  <div class="sw-group">
+    <h3 class="ds-h3">{group.name}</h3>
+    <div class="sw-head" aria-hidden="true">
+      <span>token</span>
+      <span>dark</span>
+      <span>light</span>
+    </div>
+    {group.tokens.map((name) => {
+      const token = COLOURS.find((c) => c.name === name);
+      return (
+        token && (
+          <div class="sw-row">
+            <div class="sw-name">
+              <ChipCopy copy={`var(--${name})`} label={`--${name}`} />
+              <span>{short(token.usage)}</span>
+            </div>
+            {THEMES.map((theme) => (
+              <div
+                class="sw-chip"
+                data-theme={theme}
+                style={`--sw: var(--${name}); color: var(--${label(name, theme)})`}
+              >
+                <span>{theme}</span>
+                <span>{readable(colour(name, theme))}</span>
+              </div>
+            ))}
+          </div>
+        )
+      );
+    })}
+  </div>
+))}

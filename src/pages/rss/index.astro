@@ -4,6 +4,7 @@
 // themselves stay raw XML for readers. Wording lives in src/content/rss.yaml.
 import { getEntry } from 'astro:content';
 import CopyButton from '../../components/CopyButton.astro';
+import Steps from '../../components/Steps.astro';
 import TextLink from '../../components/TextLink.astro';
 import PageHead from '../../components/blog/PageHead.astro';
 import PostRow from '../../components/blog/PostRow.astro';
@@ -54,17 +55,7 @@ const latest = (await getPosts()).slice(0, 3);
           how it works
         </h2>
       </div>
-      <ol class="steps">
-        {steps.map((step, i) => (
-          <li>
-            <span class="steps__n" aria-hidden="true">
-              {String(i + 1).padStart(2, '0')}
-            </span>
-            <h3>{step.title}</h3>
-            <p>{step.text}</p>
-          </li>
-        ))}
-      </ol>
+      <Steps steps={steps} />
     </section>
 
     {topicPages.length > 0 && (
@@ -156,39 +147,6 @@ const latest = (await getPosts()).slice(0, 3);
     color: var(--muted);
   }
 
-  .steps {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: var(--space-40);
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-  .steps li {
-    border-top: 1px solid var(--line);
-    padding-top: var(--space-22);
-  }
-  .steps__n {
-    display: block;
-    margin-bottom: var(--space-10);
-    font-family: var(--font-display);
-    font-size: 12px;
-    color: var(--link);
-  }
-  .steps h3 {
-    margin: 0 0 var(--space-8);
-    font-size: 21px;
-    font-weight: 600;
-    line-height: 1.25;
-    letter-spacing: -0.02em;
-  }
-  .steps p {
-    margin: 0;
-    font-size: 16px;
-    line-height: 1.6;
-    color: var(--muted);
-  }
-
   .tfeed {
     display: grid;
     grid-template-columns: 240px minmax(0, 1fr) auto;
@@ -238,10 +196,6 @@ const latest = (await getPosts()).slice(0, 3);
     }
     .rss-sec {
       margin-top: var(--space-72);
-    }
-    .steps {
-      grid-template-columns: minmax(0, 1fr);
-      gap: 24px;
     }
     .tfeed {
       grid-template-columns: minmax(0, 1fr) auto;

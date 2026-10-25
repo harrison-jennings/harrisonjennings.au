@@ -1,11 +1,39 @@
 ---
-// The overview: a landing page with no sidebar. A placeholder until its own page is built (step 4 of
-// the build brief): what the design system is, and the pages so far.
+// The overview: a landing page with no sidebar (design hand-off: PageFurniture). Its wording is
+// src/content/overview.yaml and "what changed" is src/content/changes.yaml; the counts are worked out
+// at build time from tokens.json and the pages that exist.
+import { getCollection, getEntry } from 'astro:content';
+import Steps from '../../../src/components/Steps.astro';
+import { formatDate, isoDate } from '../../../src/lib/dates';
+import DsIcon from '../components/DsIcon.astro';
+import Link from '../components/Link.astro';
+import Stamp from '../components/Stamp.astro';
 import Shell from '../layouts/Shell.astro';
 import { getNav } from '../lib/nav';
+import { TOKENS } from '../lib/tokens';
+
+const copy = (await getEntry('overview', 'overview'))?.data;
+if (!copy) throw new Error('src/content/overview.yaml: missing the `overview` entry');
+const changes = (await getCollection('changes')).sort((a, b) => Number(a.id) - Number(b.id));
 
 const nav = await getNav();
 const sections = nav.filter((s) => s.id !== 'overview');
+const pagesIn = (id: string, skip?: string) =>
+  nav
+    .find((s) => s.id === id)
+    ?.groups.filter((g) => g.name !== skip)
+    .reduce((n, g) => n + g.pages.length, 0) ?? 0;
+
+// A count shows once there's something to count.
+const stats = [
+  { n: TOKENS.length, one: 'design token', many: 'design tokens' },
+  { n: pagesIn('components'), one: 'component', many: 'components' },
+  { n: pagesIn('content', 'reference'), one: 'content element', many: 'content elements' },
+  { n: pagesIn('templates'), one: 'page template', many: 'page templates' },
+].filter((s) => s.n > 0);
+
+const REPO = 'https://github.com/harrison-jennings/harrisonjennings.au';
+const [before, after] = copy.history.split("repository's history");
 ---
 
 <Shell
@@ -14,27 +42,64 @@ const sections = nav.filter((s) => s.id !== 'overview');
   section="overview"
   landing
 >
-  <h1 class="ds-title">
+  <p class="ds-eyebrow">{copy.eyebrow}</p>
+  <h1 class="ds-title ds-title--hero">
     design system<span class="stop" aria-hidden="true"></span>
   </h1>
-  <p class="ds-lead">
-    The brand, every component, every token and every kind of content a post can hold, built from
-    the site's own code.
-  </p>
-  <div class="ds-doc">
-    {sections.map((s) => (
-      <>
-        <h2>{s.name}</h2>
-        <ul>
-          {s.groups.flatMap((g) =>
-            g.pages.map((p) => (
-              <li>
-                <a href={p.href}>{p.title}</a>
-              </li>
-            )),
-          )}
-        </ul>
-      </>
+  <p class="ds-lead">{copy.lead}</p>
+  <dl class="ds-stats">
+    {stats.map((s) => (
+      <div>
+        <dt>{s.n === 1 ? s.one : s.many}</dt>
+        <dd>{s.n}</dd>
+      </div>
     ))}
+  </dl>
+  <Stamp class="ds-stamp--lead" />
+
+  <div class="ds-doc">
+    <h2 id="start-here">start here</h2>
+    <div class="ds-cards">
+      {sections.map((s) => {
+        const pages = s.groups.reduce((n, g) => n + g.pages.length, 0);
+        return (
+          <a class="ds-card" href={s.href}>
+            <span class="ds-card__name">{s.name}</span>
+            <span class="ds-card__text">{copy.cards[s.id]}</span>
+            <span class="ds-card__meta">
+              {pages} {pages === 1 ? 'page' : 'pages'}
+              <DsIcon name="arrow-right" size={18} />
+            </span>
+          </a>
+        );
+      })}
+      <a class="ds-card" href="/foundations/tokens/#downloads">
+        <span class="ds-card__name">tokens</span>
+        <span class="ds-card__text">{copy.cards['tokens']}</span>
+        <span class="ds-card__meta">
+          tokens.css, tokens.json
+          <DsIcon name="download" size={18} />
+        </span>
+      </a>
+    </div>
+
+    <h2 id="how-to-use-it">how to use it</h2>
+    <Steps steps={copy.steps} />
+
+    <h2 id="what-changed">what changed</h2>
+    <ul class="ds-rows">
+      {changes.map(({ data }) => (
+        <li>
+          <time datetime={isoDate(data.date)}>{formatDate(data.date)}</time>
+          <span>{data.line}</span>
+          <Link class="ds-rows__pr ds-link" href={`${REPO}/pull/${data.pr}`}>
+            #{data.pr}
+            <span class="visually-hidden"> on GitHub</span>
+          </Link>
+        </li>
+      ))}
+    </ul>
+    <!-- prettier-ignore -->
+    <p class="ds-small ds-rows__more">{before}<Link class="ds-link" href={`${REPO}/commits/main/`}>repository's history</Link>{after}</p>
   </div>
 </Shell>

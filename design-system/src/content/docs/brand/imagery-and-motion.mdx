@@ -1,0 +1,82 @@
+---
+title: imagery and motion
+lead: The ember field is the brand's one piece of atmosphere, and motion is quick and quiet. Under reduced motion, everything is still.
+group: guidance
+order: 2
+---
+
+import Preview from '../../../components/Preview.astro';
+import TokenTable from '../../../components/TokenTable.astro';
+import { usage } from '../../../lib/example';
+import draw from '../../../examples/logo-draw.astro?raw';
+import bounce from '../../../examples/logo-bounce.astro?raw';
+import live from '../../../examples/live-signal.astro?raw';
+
+## the ember field
+
+The brick-to-apricot gradient is atmosphere only: the hero field, social share images and the 404 page. Never on text, the logo, buttons or small UI. It's two radial clouds over `ground`; light mode uses richer cloud values on its own.
+
+<div class="mo-ember" role="img" aria-label="The ember field: two soft clouds, brick high on the right and apricot low in the corner"></div>
+
+<div class="prose ds-snippet">
+
+```css
+background:
+  radial-gradient(60% 80% at 82% 18%, var(--cloud-brick), transparent 70%),
+  radial-gradient(50% 70% at 98% 92%, var(--cloud-apricot), transparent 70%);
+```
+
+</div>
+
+- **Copy on the left, clouds on the right.** Text and the lockup sit in the clear corner, never on the gradient.
+- **Screenshots are the other imagery.** Projects show the real product, framed by a hairline at `radius-md`.
+
+## motion tokens
+
+Every transition's duration and easing is a token, named for its job. Keep each element's pairing: a duration doesn't imply an easing.
+
+<TokenTable only="motion" />
+
+<p class="ds-small">Under reduced motion every duration drops to 0.01ms.</p>
+
+## looping animations
+
+These belong to their components, with timings of their own rather than tokens. Each preview is still if you prefer reduced motion.
+
+### logo draw
+
+About 2s: the dot runs ahead of the line, down the stem, round the arch and down the leg. Once on load, and again on hover.
+
+<Preview
+  title="logo draw"
+  specimen="/specimens/logo-draw/"
+  tabs={[{ label: 'astro', code: usage(draw), lang: 'astro', file: 'any page or component' }]}
+/>
+
+### bounce
+
+The dot squashes and bounces at the foot of the leg, every second. Loading states only: the booking calendar and the 404 page.
+
+<Preview
+  title="bounce"
+  specimen="/specimens/logo-bounce/"
+  tabs={[{ label: 'astro', code: usage(bounce), lang: 'astro', file: 'any page or component' }]}
+/>
+
+### signal
+
+The live dot's halo pulses outward every 1.8s, beside a project that's deployed.
+
+<Preview
+  title="signal"
+  specimen="/specimens/live-signal/"
+  tabs={[{ label: 'astro', code: usage(live), lang: 'astro', file: 'any page or component' }]}
+/>
+
+The hero's scroll cue bobs, and the testimonials run as a slow ticker; both are shown with their components.
+
+## rules
+
+- **Still under reduced motion.** Transitions become instant and loops stop, with nothing lost: the still state is a finished design, not a broken one.
+- **Quick and quiet.** Hover changes take 150ms. Nothing moves for longer than it needs to, and nothing moves on its own except the loops above.
+- **Movement means something.** The button's wipe follows the pointer, the nav compacts as you scroll, the banner rises into place. No decoration for its own sake.
