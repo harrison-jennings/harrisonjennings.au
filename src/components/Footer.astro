@@ -71,7 +71,7 @@ const year = new Date().getFullYear();
   .footer__col a {
     color: var(--text);
     text-decoration: none;
-    transition: color 150ms ease;
+    transition: color var(--duration-hover) var(--ease-standard);
   }
   .footer__col a:hover {
     color: var(--link);
@@ -116,8 +116,8 @@ const year = new Date().getFullYear();
     text-underline-offset: 4px;
     cursor: pointer;
     transition:
-      color 150ms ease,
-      text-decoration-color 150ms ease;
+      color var(--duration-hover) var(--ease-standard),
+      text-decoration-color var(--duration-hover) var(--ease-standard);
   }
   .footer__legal a:hover,
   .footer__legal button:hover {

@@ -47,10 +47,10 @@ export function bindField(hero: HTMLElement, canvas: HTMLCanvasElement): void {
   // The colours change only with the theme, so they're read then, not on every frame (reading
   // computed styles makes the browser recalculate them).
   let dotColour = '';
-  let [cr, cg, cb] = [239, 234, 230];
+  let [cr, cg, cb] = [0, 0, 0];
   const readColours = () => {
     const cs = getComputedStyle(hero);
-    dotColour = cs.getPropertyValue('--field-dot').trim() || 'rgba(239,234,230,0.17)';
+    dotColour = cs.getPropertyValue('--field-dot').trim();
     [cr, cg, cb] = rgbOf(cs.getPropertyValue('--link'));
   };
   readColours();

@@ -103,8 +103,8 @@ for (const h of headings) {
     color: var(--muted);
     text-decoration: none;
     transition:
-      color 150ms ease,
-      border-color 150ms ease;
+      color var(--duration-hover) var(--ease-standard),
+      border-color var(--duration-hover) var(--ease-standard);
   }
   .toc a:hover {
     color: var(--text);
@@ -156,7 +156,7 @@ for (const h of headings) {
     padding: 4px 0;
     color: var(--text);
     text-decoration: none;
-    transition: color 150ms ease;
+    transition: color var(--duration-hover) var(--ease-standard);
   }
   .toc-phone a:hover {
     color: var(--link);

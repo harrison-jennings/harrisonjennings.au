@@ -51,8 +51,8 @@ const { total, topics, current } = Astro.props;
     text-decoration: none;
     white-space: nowrap;
     transition:
-      border-color 150ms ease,
-      color 150ms ease;
+      border-color var(--duration-hover) var(--ease-standard),
+      color var(--duration-hover) var(--ease-standard);
   }
   .chip__count {
     font-family: var(--font-display);

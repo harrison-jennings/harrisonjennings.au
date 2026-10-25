@@ -157,7 +157,7 @@ const latest = (await getPosts()).slice(0, 3);
   .lost__more a {
     color: var(--text);
     text-decoration: none;
-    transition: color 150ms ease;
+    transition: color var(--duration-hover) var(--ease-standard);
   }
   .lost__more a:hover {
     color: var(--link);

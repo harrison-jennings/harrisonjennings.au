@@ -152,7 +152,7 @@ const withLink = (text: string) =>
     border: 1px solid var(--line);
     border-radius: var(--radius-lg);
     color: var(--text);
-    animation: consent-in 320ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    animation: consent-in var(--duration-arrive) var(--ease-settle) both;
   }
   .consent[hidden] {
     display: none;
@@ -204,7 +204,7 @@ const withLink = (text: string) =>
     text-decoration: underline;
     text-decoration-color: var(--accent);
     text-underline-offset: 4px;
-    transition: color 150ms ease;
+    transition: color var(--duration-hover) var(--ease-standard);
   }
   .consent :global(.consent-link:hover),
   .prefs :global(.consent-link:hover) {
@@ -229,8 +229,8 @@ const withLink = (text: string) =>
     white-space: nowrap;
     cursor: pointer;
     transition:
-      border-color 150ms ease,
-      color 150ms ease;
+      border-color var(--duration-hover) var(--ease-standard),
+      color var(--duration-hover) var(--ease-standard);
   }
   .choice:hover {
     border-color: var(--link);
@@ -251,7 +251,7 @@ const withLink = (text: string) =>
     color: var(--text);
     border: 1px solid var(--line);
     border-radius: var(--radius-lg);
-    animation: prefs-in 280ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    animation: prefs-in var(--duration-panel) var(--ease-settle) both;
   }
   .prefs[open] {
     display: flex;
@@ -259,7 +259,7 @@ const withLink = (text: string) =>
   /* The scrim: the ground colour, mostly opaque, in dark; the text colour, lightly, in light. */
   .prefs::backdrop {
     background: color-mix(in srgb, var(--ground) 72%, transparent);
-    animation: scrim-in 200ms ease both;
+    animation: scrim-in var(--duration-fade) var(--ease-standard) both;
   }
   :global([data-theme='light']) .prefs::backdrop {
     background: color-mix(in srgb, var(--text) 36%, transparent);
@@ -310,7 +310,7 @@ const withLink = (text: string) =>
     background: transparent;
     color: var(--text);
     cursor: pointer;
-    transition: color 150ms ease;
+    transition: color var(--duration-hover) var(--ease-standard);
   }
   .prefs__close:hover {
     color: var(--link);
@@ -390,7 +390,7 @@ const withLink = (text: string) =>
     stroke-linecap: round;
     stroke-linejoin: round;
     color: var(--muted);
-    transition: transform 240ms cubic-bezier(0.65, 0, 0.35, 1);
+    transition: transform var(--duration-move) var(--ease-move);
   }
   .cat__toggle[aria-expanded='true'] svg {
     transform: rotate(180deg);
@@ -439,8 +439,8 @@ const withLink = (text: string) =>
     border-radius: var(--radius-pill);
     background: var(--ground);
     transition:
-      background-color 200ms ease,
-      border-color 200ms ease;
+      background-color var(--duration-fade) var(--ease-standard),
+      border-color var(--duration-fade) var(--ease-standard);
   }
   .onoff__knob {
     position: absolute;
@@ -451,8 +451,8 @@ const withLink = (text: string) =>
     border-radius: var(--radius-pill);
     background: var(--muted);
     transition:
-      transform 220ms cubic-bezier(0.65, 0, 0.35, 1),
-      background-color 200ms ease;
+      transform var(--duration-switch) var(--ease-move),
+      background-color var(--duration-fade) var(--ease-standard);
   }
   .onoff:hover .onoff__track {
     border-color: var(--link);

@@ -68,8 +68,8 @@ describe('buildTokensCss with design/tokens.json', () => {
     }
   });
 
-  it('writes the spacing, radius and size tokens and the font families', () => {
-    const families = ['spacing', 'radius', 'size'].flatMap((f) => real[f]?.tokens ?? []);
+  it('writes the spacing, radius, size and motion tokens and the font families', () => {
+    const families = ['spacing', 'radius', 'size', 'motion'].flatMap((f) => real[f]?.tokens ?? []);
     expect(scalar).toBe(families.length);
     for (const t of families) expect(css).toContain(`--${t.name}: ${t.value};`);
     for (const k of Object.keys(real.type.families)) expect(css).toContain(`--font-${k}: `);

@@ -28,7 +28,8 @@ export function remarkNoZoom() {
 const EXPAND_ICON: Element = {
   type: 'element',
   tagName: 'span',
-  properties: { className: ['zoomable__icon'], ariaHidden: 'true' },
+  // Dark over any image, in both themes: data-theme re-points the tokens (prose.css .zoomable__icon).
+  properties: { className: ['zoomable__icon'], dataTheme: 'dark', ariaHidden: 'true' },
   children: [
     {
       type: 'element',

@@ -181,8 +181,8 @@ a {
   font-size: 15px;
   cursor: pointer;
   transition:
-    border-color 150ms ease,
-    color 150ms ease;
+    border-color var(--duration-hover) var(--ease-standard),
+    color var(--duration-hover) var(--ease-standard);
 }
 .copy:hover,
 .copy[data-copied] {

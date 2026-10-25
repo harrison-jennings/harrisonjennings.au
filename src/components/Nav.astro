@@ -128,9 +128,9 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
     pointer-events: auto;
     interpolate-size: allow-keywords;
     transition:
-      max-width 240ms ease,
-      gap 240ms ease,
-      padding 240ms ease;
+      max-width var(--duration-move) var(--ease-standard),
+      gap var(--duration-move) var(--ease-standard),
+      padding var(--duration-move) var(--ease-standard);
   }
   .nav__brand,
   .menu__brand {
@@ -169,7 +169,7 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
     background: var(--accent);
     transform: scaleX(0);
     transform-origin: left center;
-    transition: transform 240ms cubic-bezier(0.65, 0, 0.35, 1);
+    transition: transform var(--duration-move) var(--ease-move);
   }
   .nav__links a:hover::after,
   .nav__links a:focus-visible::after,
@@ -197,7 +197,7 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
     background: transparent;
     color: var(--text);
     cursor: pointer;
-    transition: color 150ms ease;
+    transition: color var(--duration-hover) var(--ease-standard);
   }
   .control:hover {
     color: var(--link);
@@ -308,7 +308,7 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
   .menu__links a {
     color: var(--text);
     text-decoration: none;
-    transition: color 150ms ease;
+    transition: color var(--duration-hover) var(--ease-standard);
   }
   .menu__links a:hover {
     color: var(--link);

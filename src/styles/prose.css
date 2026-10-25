@@ -49,7 +49,7 @@
   text-decoration-color: var(--accent);
   text-decoration-thickness: 1px;
   text-underline-offset: 4px;
-  transition: color 150ms ease;
+  transition: color var(--duration-hover) var(--ease-standard);
 }
 .prose a:hover {
   color: var(--link);
@@ -212,13 +212,13 @@
   width: 36px;
   height: 36px;
   border-radius: var(--radius-pill);
-  background: rgb(18 17 16 / 0.78);
-  color: #efeae6;
+  background: color-mix(in srgb, var(--ground) 78%, transparent);
+  color: var(--text);
   opacity: 0;
   transform: scale(0.9);
   transition:
-    opacity 150ms ease,
-    transform 150ms ease;
+    opacity var(--duration-hover) var(--ease-standard),
+    transform var(--duration-hover) var(--ease-standard);
 }
 .prose .zoomable:hover .zoomable__icon,
 .prose .zoomable:focus-visible .zoomable__icon {
@@ -340,8 +340,8 @@
   color: var(--text);
   cursor: pointer;
   transition:
-    border-color 150ms ease,
-    color 150ms ease;
+    border-color var(--duration-hover) var(--ease-standard),
+    color var(--duration-hover) var(--ease-standard);
 }
 .prose .codeblock__copy:hover {
   border-color: var(--link);
