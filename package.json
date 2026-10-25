@@ -13,6 +13,7 @@
   "engines": {
     "node": ">=22.22.0"
   },
+  "packageManager": "npm@11.17.0",
   "scripts": {
     "tokens": "node scripts/build-tokens.mjs",
     "predev": "npm run tokens",

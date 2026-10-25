@@ -71,7 +71,7 @@ Run `npx playwright install chromium webkit` once before the first end-to-end ru
 
 ## deploying
 
-- **Builds:** Cloudflare Workers Builds builds every push. `main` deploys to production; any other branch gets its own preview URL on `workers.dev`, behind Cloudflare Access. The production Worker has no public `workers.dev` address: `www` is served through a Workers Route, and a redirect rule sends the bare domain to `www`.
+- **Builds:** Cloudflare Workers Builds builds every push, with the npm version in `package.json`'s `packageManager` (its build image would otherwise use an older npm than the one that writes the lockfile, and reject lockfiles that one accepts). `main` deploys to production; any other branch gets its own preview URL on `workers.dev`, behind Cloudflare Access. The production Worker has no public `workers.dev` address: `www` is served through a Workers Route, and a redirect rule sends the bare domain to `www`.
 - **After each deploy:** the 🚀 CD Orchestrator waits for Cloudflare's production deploy, smoke-tests that exact version through its preview address (`scripts/smoke-test.sh`, using an Access service token from the repository secrets), checks the live domain, and records the deployment. On pull requests it comments the preview link and records a Preview deployment.
 - **Rolling back:** redeploy the previous version from the Worker's deployments in Cloudflare. Every deployed version is kept.
 - **Data:** D1 holds the consent log and CSP reports, with the schema in `migrations/` (`npx wrangler d1 migrations apply CONSENT_DB --remote`). Previews write to their own database and store no IP hash. The Worker's one secret is `CONSENT_IP_KEY`, the HMAC key for consent records, set in production only.
