@@ -14,16 +14,18 @@ import live from '../../../examples/live-signal.astro?raw';
 
 ## the ember field
 
-The brick-to-apricot gradient is atmosphere only: the hero field, social share images and the 404 page. Never on text, the logo, buttons or small UI. It's two radial clouds over `ground`; light mode uses richer cloud values on its own.
+The brick-to-apricot gradient is atmosphere only: the hero field, social share images and the 404 page. Never on text, the logo, buttons or small UI. It's two radial clouds over `ground`, as the hero and the 404 draw them; light mode uses richer cloud values on its own.
 
 <div class="mo-ember" role="img" aria-label="The ember field: two soft clouds, brick high on the right and apricot low in the corner"></div>
 
 <div class="prose ds-snippet">
 
 ```css
-background:
-  radial-gradient(60% 80% at 82% 18%, var(--cloud-brick), transparent 70%),
-  radial-gradient(50% 70% at 98% 92%, var(--cloud-apricot), transparent 70%);
+.hero__clouds {
+  background:
+    radial-gradient(60% 80% at 82% 18%, var(--cloud-brick), transparent 70%),
+    radial-gradient(50% 70% at 98% 92%, var(--cloud-apricot), transparent 70%);
+}
 ```
 
 </div>
