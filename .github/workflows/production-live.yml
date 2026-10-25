@@ -7,6 +7,11 @@ name: Production
 # (deploy the previous version from the Worker's Deployments tab).
 on:
   workflow_call:
+    inputs:
+      sha:
+        description: The commit Cloudflare deployed
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -17,13 +22,27 @@ jobs:
     name: Check the live domain
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    environment:
-      name: Production
-      url: https://www.harrisonjennings.au/
+    env:
+      GH_TOKEN: ${{ github.token }}
+      REPO: ${{ github.repository }}
+      RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
+      - name: Start the deployment record
+        id: record
+        env:
+          SHA: ${{ inputs.sha }}
+        run: echo "id=$(bash scripts/record-deployment.sh start Production main "$SHA")" >> "$GITHUB_OUTPUT"
+
       - name: Check the live domain
         run: bash scripts/live-check.sh
+
+      - name: Finish the deployment record
+        if: always() && steps.record.outputs.id != ''
+        env:
+          ID: ${{ steps.record.outputs.id }}
+          STATE: ${{ job.status == 'success' && 'success' || 'failure' }}
+        run: bash scripts/record-deployment.sh finish "$ID" "$STATE" https://www.harrisonjennings.au/

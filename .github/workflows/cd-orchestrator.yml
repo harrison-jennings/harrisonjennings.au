@@ -2,32 +2,57 @@ name: 🚀 CD Orchestrator
 
 # Did the deploy work? Cloudflare Workers Builds deploys every push (main to production, other branches
 # to previews); this runs around those deploys and never deploys anything itself.
-#   On a pull request: posts the branch's preview link, and records Cloudflare's preview build as a
-#   GitHub deployment to the Preview environment once it's live.
-#   On main: waits for Cloudflare's production deploy of that commit and smoke-tests that exact version
-#   through its preview address (Bot Fight Mode challenges GitHub's runners on the real domain). From
-#   cutover (the PRODUCTION_LIVE repository variable is `true`) it also checks the live domain and
-#   records a deployment to Production.
-#   The design system (design.harrisonjennings.au, its own Worker) the same way, for the commits
-#   Cloudflare builds it for: a Design system preview deployment on a pull request, and on main a smoke
-#   test of the deployed version, a live check and a Design system deployment.
+#
+# It starts when Cloudflare finishes a build: each Worker posts a "Workers Builds: <Worker>" check on the
+# commit it built, and GitHub runs this on that check (check_run). So nothing waits or polls, and a
+# commit Cloudflare doesn't build the design system for simply gets no design system run.
+#   The site (harrisonjennings-au), built on every push:
+#     on a branch, records the build as a GitHub deployment to the Preview environment;
+#     on main, smoke-tests that exact version through its preview address (Bot Fight Mode challenges
+#     GitHub's runners on the real domain), and from cutover (the PRODUCTION_LIVE repository variable is
+#     `true`) checks the live domain and records a deployment to Production.
+#   The design system (harrisonjennings-au-design), built when a push touches its watch paths:
+#     on a branch, records a Design system preview deployment;
+#     on main, smoke-tests the deployed version, checks the live domain and records a Design system
+#     deployment.
+# On a pull request it posts the branch's preview link, which doesn't wait for a build.
+# Run it by hand (Actions → 🚀 CD Orchestrator → Run workflow) to repeat main's checks for the branch's
+# latest commit, if Cloudflare's check ever arrives without starting it.
 # All four environments show in the repository's Deployments panel.
+#
+# check_run runs this file as it is on main, with main's latest commit as its own; the built commit and
+# its branch come from the check, and are passed to each workflow.
+run-name: >-
+  ${{ github.event_name == 'check_run'
+  && format('{0} built: {1}', contains(github.event.check_run.name, '-design') && 'design system' || 'site', github.event.check_run.check_suite.head_branch)
+  || github.event_name == 'pull_request' && github.event.pull_request.title
+  || format('{0} checks by hand: {1}', inputs.target, github.ref_name) }}
+
 on:
+  check_run:
+    types: [completed]
   pull_request:
     types: [opened, reopened, synchronize]
-  push:
-    branches: [main]
   workflow_dispatch:
+    inputs:
+      target:
+        description: Which checks to repeat for this branch's latest commit
+        type: choice
+        options: [both, site, design system]
+        default: both
 
 permissions:
   contents: read
 
 jobs:
-  # Pull requests from forks are skipped: Cloudflare doesn't build them, so there's no preview to link or
-  # record, and these jobs hold write permissions that a fork's code shouldn't run alongside.
+  # Pull requests from forks are skipped: Cloudflare doesn't build them, so there's no preview to link,
+  # and the job holds write permissions that a fork's code shouldn't run alongside. Dependabot's pull
+  # requests get a read-only token, so they're skipped too.
   preview-link:
     name: preview link
-    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+    if: >-
+      github.event_name == 'pull_request' && github.event.pull_request.user.login != 'dependabot[bot]'
+      && github.event.pull_request.head.repo.full_name == github.repository
     uses: ./.github/workflows/preview-link.yml
     permissions:
       contents: read
@@ -35,34 +60,49 @@ jobs:
 
   preview:
     name: preview
-    # Dependabot's pull requests get a read-only token, so they're skipped (as for the link).
     if: >-
-      github.event_name == 'pull_request' && github.event.pull_request.user.login != 'dependabot[bot]'
-      && github.event.pull_request.head.repo.full_name == github.repository
+      github.event_name == 'check_run'
+      && github.event.check_run.name == 'Workers Builds: harrisonjennings-au'
+      && github.event.check_run.check_suite.head_branch != 'main'
     uses: ./.github/workflows/preview-deployment.yml
     permissions:
       contents: read
-      checks: read
       deployments: write
+    with:
+      sha: ${{ github.event.check_run.head_sha }}
+      branch: ${{ github.event.check_run.check_suite.head_branch }}
+      conclusion: ${{ github.event.check_run.conclusion }}
 
   design-system-preview:
     name: design system preview
     if: >-
-      github.event_name == 'pull_request' && github.event.pull_request.user.login != 'dependabot[bot]'
-      && github.event.pull_request.head.repo.full_name == github.repository
+      github.event_name == 'check_run'
+      && github.event.check_run.name == 'Workers Builds: harrisonjennings-au-design'
+      && github.event.check_run.check_suite.head_branch != 'main'
     uses: ./.github/workflows/design-system-preview.yml
     permissions:
       contents: read
-      checks: read
       deployments: write
+    with:
+      sha: ${{ github.event.check_run.head_sha }}
+      branch: ${{ github.event.check_run.check_suite.head_branch }}
+      conclusion: ${{ github.event.check_run.conclusion }}
 
   deployed-version:
     name: deployed version
-    if: github.event_name != 'pull_request'
+    if: >-
+      (github.event_name == 'check_run'
+      && github.event.check_run.name == 'Workers Builds: harrisonjennings-au'
+      && github.event.check_run.check_suite.head_branch == 'main')
+      || (github.event_name == 'workflow_dispatch' && inputs.target != 'design system')
     uses: ./.github/workflows/production-version.yml
     permissions:
       contents: read
       checks: read
+    with:
+      sha: ${{ github.event.check_run.head_sha || github.sha }}
+      branch: ${{ github.event.check_run.check_suite.head_branch || github.ref_name }}
+      conclusion: ${{ github.event.check_run.conclusion || 'success' }}
     secrets:
       CF_ACCESS_CLIENT_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
       CF_ACCESS_CLIENT_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
@@ -70,20 +110,29 @@ jobs:
   production:
     name: production
     needs: deployed-version
-    if: github.event_name != 'pull_request' && vars.PRODUCTION_LIVE == 'true'
+    if: vars.PRODUCTION_LIVE == 'true' && (github.event_name == 'check_run' || github.ref_name == 'main')
     uses: ./.github/workflows/production-live.yml
     permissions:
       contents: read
       deployments: write
+    with:
+      sha: ${{ github.event.check_run.head_sha || github.sha }}
 
   design-system:
     name: design system
-    if: github.event_name != 'pull_request'
+    if: >-
+      (github.event_name == 'check_run'
+      && github.event.check_run.name == 'Workers Builds: harrisonjennings-au-design'
+      && github.event.check_run.check_suite.head_branch == 'main')
+      || (github.event_name == 'workflow_dispatch' && github.ref_name == 'main' && inputs.target != 'site')
     uses: ./.github/workflows/design-system-production.yml
     permissions:
       contents: read
       checks: read
       deployments: write
+    with:
+      sha: ${{ github.event.check_run.head_sha || github.sha }}
+      conclusion: ${{ github.event.check_run.conclusion || 'success' }}
     secrets:
       CF_ACCESS_CLIENT_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
       CF_ACCESS_CLIENT_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}

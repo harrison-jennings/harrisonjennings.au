@@ -1,71 +1,61 @@
 name: Design system preview
 
-# Called by the CD Orchestrator on a pull request: when Cloudflare built the design system for the
-# branch's latest commit (only pushes that touch its watch paths do), waits for that preview build and
-# records it as a GitHub deployment to the Design system preview environment, with the branch's
-# Preview URL, so it shows in the pull request and the repository's Deployments panel. Cloudflare does
-# the deploying; this only records it (marked failed if Cloudflare's build fails).
+# Called by the CD Orchestrator when Cloudflare finishes building the design system for a branch (only
+# pushes that touch its watch paths are built): records the build as a GitHub deployment to the Design
+# system preview environment with the branch's Preview URL, so it shows in the pull request and the
+# repository's Deployments panel (marked failed if Cloudflare's build failed). Cloudflare does the
+# deploying; this only records it.
 on:
   workflow_call:
+    inputs:
+      sha:
+        description: The commit Cloudflare built
+        required: true
+        type: string
+      branch:
+        required: true
+        type: string
+      conclusion:
+        description: How Cloudflare's build ended (success, failure…)
+        required: true
+        type: string
 
 permissions:
   contents: read
-  checks: read
   deployments: write
 
 concurrency:
-  group: design-system-preview-${{ github.event.pull_request.number }}
+  group: design-system-preview-${{ inputs.branch }}
   cancel-in-progress: true
 
 jobs:
-  # Decided before the recording job starts: a job with an environment records a deployment as soon
-  # as it runs, built or not.
-  built:
-    name: Did Cloudflare build the design system?
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    outputs:
-      built: ${{ steps.built.outputs.built }}
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-
-      - name: Look for its build of this commit
-        id: built
-        env:
-          GH_TOKEN: ${{ github.token }}
-          REPO: ${{ github.repository }}
-          WORKER: harrisonjennings-au-design
-          SHA: ${{ github.event.pull_request.head.sha }}
-        run: echo "built=$(bash scripts/cloudflare-built.sh "$SHA")" >> "$GITHUB_OUTPUT"
-
   record:
     name: Record the design system preview
-    needs: built
-    if: needs.built.outputs.built == 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 20
-    environment:
-      name: Design system preview
-      url: ${{ steps.url.outputs.url }}
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
-      - name: Work out the Preview URL
-        id: url
-        env:
-          # Passed as data, never pasted into the script: branch names can contain anything.
-          BRANCH: ${{ github.head_ref }}
-          WORKER: harrisonjennings-au-design
-        run: echo "url=$(bash scripts/preview-url.sh "$BRANCH")" >> "$GITHUB_OUTPUT"
-
-      - name: Wait for Cloudflare's preview build
+      - name: Record the deployment
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          # Passed as data, never pasted into the script: branch names can contain anything.
+          BRANCH: ${{ inputs.branch }}
           WORKER: harrisonjennings-au-design
-          SHA: ${{ github.event.pull_request.head.sha }}
-        run: bash scripts/wait-for-cloudflare.sh "$SHA"
+          SHA: ${{ inputs.sha }}
+          CONCLUSION: ${{ inputs.conclusion }}
+        run: |
+          url=$(bash scripts/preview-url.sh "$BRANCH")
+          id=$(bash scripts/record-deployment.sh start "Design system preview" "$BRANCH" "$SHA")
+          [ -n "$id" ] || exit 0
+          if [ "$CONCLUSION" = success ]; then
+            bash scripts/record-deployment.sh finish "$id" success "$url"
+          else
+            bash scripts/record-deployment.sh finish "$id" failure "$url"
+            echo "::error::Cloudflare's design system preview build didn't succeed: $CONCLUSION"
+            exit 1
+          fi

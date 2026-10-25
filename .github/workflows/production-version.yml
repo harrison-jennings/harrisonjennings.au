@@ -1,11 +1,23 @@
 name: Deployed version
 
-# Called by the CD Orchestrator after each push to main: waits for Cloudflare's deploy of the commit,
-# then runs scripts/smoke-test.sh against that exact version's preview address. The address is on
-# Cloudflare's workers.dev domain, so the zone's Bot Fight Mode (which challenges GitHub's runners)
-# doesn't apply; Cloudflare Access does, so the preview-checks service token goes with each request.
+# Called by the CD Orchestrator when Cloudflare finishes deploying the site from main: runs
+# scripts/smoke-test.sh against that exact version's preview address. The address is on Cloudflare's
+# workers.dev domain, so the zone's Bot Fight Mode (which challenges GitHub's runners) doesn't apply;
+# Cloudflare Access does, so the preview-checks service token goes with each request.
 on:
   workflow_call:
+    inputs:
+      sha:
+        description: The commit Cloudflare deployed
+        required: true
+        type: string
+      branch:
+        required: true
+        type: string
+      conclusion:
+        description: How Cloudflare's build ended (success, failure…)
+        required: true
+        type: string
     secrets:
       CF_ACCESS_CLIENT_ID:
         required: true
@@ -20,17 +32,20 @@ jobs:
   smoke:
     name: Smoke test the deployed version
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
-      - name: Wait for Cloudflare's deploy of this commit
+      - name: Check Cloudflare's deploy succeeded
         env:
-          GH_TOKEN: ${{ github.token }}
-          REPO: ${{ github.repository }}
-        run: bash scripts/wait-for-cloudflare.sh "$GITHUB_SHA"
+          CONCLUSION: ${{ inputs.conclusion }}
+        run: |
+          if [ "$CONCLUSION" != success ]; then
+            echo "::error::Cloudflare's build or deploy didn't succeed: $CONCLUSION"
+            exit 1
+          fi
 
       # main: the deployed version's own address. A manual run on another branch: that branch's preview
       # (Cloudflare reports a Version ID for production builds only).
@@ -39,11 +54,13 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
-          BRANCH: ${{ github.ref_name }}
+          SHA: ${{ inputs.sha }}
+          # Passed as data, never pasted into the script: branch names can contain anything.
+          BRANCH: ${{ inputs.branch }}
         run: |
-          url=$(bash scripts/version-url.sh "$GITHUB_SHA" || bash scripts/preview-url.sh "$BRANCH")
+          url=$(bash scripts/version-url.sh "$SHA" || bash scripts/preview-url.sh "$BRANCH")
           if [ -z "$url" ]; then
-            echo "::error::No preview address for $GITHUB_SHA"
+            echo "::error::No preview address for $SHA"
             exit 1
           fi
           echo "Testing $url"
