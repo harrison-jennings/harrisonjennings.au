@@ -74,8 +74,18 @@ test.describe('a post', () => {
   test('code blocks: language and file name in the bar, highlighted lines, copy without prompts', async ({
     page,
     context,
+    browserName,
   }) => {
-    await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+    // Clipboard permissions are Chromium-only; elsewhere a stand-in keeps what the page writes.
+    if (browserName === 'chromium')
+      await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+    else
+      await page.addInitScript(() => {
+        let text = '';
+        Object.defineProperty(navigator, 'clipboard', {
+          value: { writeText: async (t: string) => void (text = t), readText: async () => text },
+        });
+      });
     await page.goto(REF);
     const blocks = page.locator('.codeblock');
     await expect(blocks.nth(1).locator('.codeblock__file')).toHaveText('src/scripts/booking.js');
@@ -113,15 +123,20 @@ test.describe('a post', () => {
     await page.keyboard.press('ArrowRight');
     await expect(viewer.locator('[data-count]')).toHaveText(`2 / ${count}`);
 
-    // Tab stays inside the viewer.
+    await page.keyboard.press('Escape');
+    await expect(viewer).toBeHidden();
+    await expect(first).toBeFocused();
+  });
+
+  test('Tab stays inside the image viewer', { tag: '@keyboard' }, async ({ page }) => {
+    await page.goto(REF);
+    await page.locator('[data-zoomable]').first().click();
+    const viewer = page.getByRole('dialog');
+    await expect(viewer).toBeVisible();
     for (let i = 0; i < 10; i++) {
       await page.keyboard.press('Tab');
       expect(await viewer.evaluate((v) => v.contains(document.activeElement))).toBe(true);
     }
-
-    await page.keyboard.press('Escape');
-    await expect(viewer).toBeHidden();
-    await expect(first).toBeFocused();
   });
 
   test('a click on the viewer image zooms and fits; a double-click zooms once; a drag moves it and is no click; the backdrop closes', async ({

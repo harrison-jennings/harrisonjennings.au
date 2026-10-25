@@ -24,8 +24,8 @@ jobs:
 
       - run: npm ci
 
-      - name: Install Playwright's Chromium
-        run: npx playwright install --with-deps chromium
+      - name: Install Playwright's Chromium and WebKit
+        run: npx playwright install --with-deps chromium webkit
 
       # Builds with drafts included (the formatting reference), applies the D1 migrations locally, then
       # tests dist/ served by wrangler dev (see playwright.config.ts).

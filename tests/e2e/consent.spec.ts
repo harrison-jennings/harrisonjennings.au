@@ -42,7 +42,7 @@ test('a first visit shows the banner, with everything optional denied', async ({
 
 test('the banner stays on every page until a choice is made', async ({ page }) => {
   await page.goto('/');
-  await page.mouse.wheel(0, 1500);
+  await page.evaluate(() => window.scrollBy(0, 1500));
   await page.goto('/blog/');
   await expect(banner(page)).toBeVisible();
   expect(await savedChoice(page)).toBeUndefined();

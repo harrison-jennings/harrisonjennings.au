@@ -55,12 +55,12 @@ A fast, static personal site: a blog, a projects index and a way to book a call.
 Built and developed on Node 24 LTS (`nvm use` reads `.nvmrc`); Node 22.22 or newer still works.
 
 ```sh
-npm ci                           # install exactly what the lockfile says
-npx playwright install chromium  # once, for the end-to-end tests
-npm run dev                      # http://localhost:4321
-npm run verify                   # format, lint, types, unit tests, build and end-to-end tests
-npm run lighthouse               # build, then Lighthouse on four pages (needs Chrome)
-npm run preview                  # build, then serve dist/ through Wrangler as Cloudflare will
+npm ci                                   # install exactly what the lockfile says
+npx playwright install chromium webkit   # once, for the end-to-end tests
+npm run dev                              # http://localhost:4321
+npm run verify                           # format, lint, types, unit tests, build and end-to-end tests
+npm run lighthouse                       # build, then Lighthouse on four pages (needs Chrome)
+npm run preview                          # build, then serve dist/ through Wrangler as Cloudflare will
 ```
 
 | script                      | what it does                                                  |
