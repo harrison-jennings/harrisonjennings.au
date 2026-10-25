@@ -8,7 +8,10 @@ name: 🚀 CD Orchestrator
 #   through its preview address (Bot Fight Mode challenges GitHub's runners on the real domain). From
 #   cutover (the PRODUCTION_LIVE repository variable is `true`) it also checks the live domain and
 #   records a deployment to Production.
-# Both environments show in the repository's Deployments panel.
+#   The design system (design.harrisonjennings.au, its own Worker) the same way, for the commits
+#   Cloudflare builds it for: a Design system preview deployment on a pull request, and on main a smoke
+#   test of the deployed version, a live check and a Design system deployment.
+# All four environments show in the repository's Deployments panel.
 on:
   pull_request:
     types: [opened, reopened, synchronize]
@@ -42,6 +45,17 @@ jobs:
       checks: read
       deployments: write
 
+  design-system-preview:
+    name: design system preview
+    if: >-
+      github.event_name == 'pull_request' && github.event.pull_request.user.login != 'dependabot[bot]'
+      && github.event.pull_request.head.repo.full_name == github.repository
+    uses: ./.github/workflows/design-system-preview.yml
+    permissions:
+      contents: read
+      checks: read
+      deployments: write
+
   deployed-version:
     name: deployed version
     if: github.event_name != 'pull_request'
@@ -61,3 +75,15 @@ jobs:
     permissions:
       contents: read
       deployments: write
+
+  design-system:
+    name: design system
+    if: github.event_name != 'pull_request'
+    uses: ./.github/workflows/design-system-production.yml
+    permissions:
+      contents: read
+      checks: read
+      deployments: write
+    secrets:
+      CF_ACCESS_CLIENT_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
+      CF_ACCESS_CLIENT_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}

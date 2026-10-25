@@ -42,4 +42,11 @@ Workers Builds, from the Worker `harrisonjennings-au-design` connected to this r
 
 `design-system/package.json` pins npm (`packageManager`) and `design-system/.nvmrc` links to the site's Node version, because Cloudflare reads both from the root directory. The custom domain `design.harrisonjennings.au` is set on the Worker in the dashboard, like the site's route, so `wrangler deploy` leaves it alone. Previews are behind Cloudflare Access, as the site's are.
 
-The site's own Worker still builds on every push: the CD Orchestrator waits for its build on every pull request (`scripts/wait-for-cloudflare.sh`, which picks the check by Worker name), so a skipped build would look like a stuck one.
+The site's own Worker still builds on every push. The CD Orchestrator relies on that: once the site's build of a commit has finished, the design system either has a "Workers Builds: harrisonjennings-au-design" check on it or wasn't built (`scripts/cloudflare-built.sh`).
+
+**After each deploy** the 🚀 CD Orchestrator records it, as it does for the site, but only for commits Cloudflare built the design system for:
+
+- **On a pull request** (`.github/workflows/design-system-preview.yml`): waits for the preview build and records a **Design system preview** deployment with the branch's Preview URL.
+- **On main** (`.github/workflows/design-system-production.yml`): waits for the deploy, smoke-tests that exact version through its preview address (`scripts/design-smoke-test.sh`, with the Access service token), checks the live domain (`scripts/design-live-check.sh`; Bot Fight Mode challenges GitHub's runners, so a challenge is noted rather than failed), and records a **Design system** deployment.
+
+The scripts take the Worker's name in `WORKER` (`wait-for-cloudflare.sh`, `version-url.sh`, `preview-url.sh`), because each Worker posts its own check on a commit.
