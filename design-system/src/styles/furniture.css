@@ -1136,8 +1136,10 @@
 .ds-snippet {
   margin: var(--space-16) 0 var(--space-20);
 }
+/* At the share card's 1200:630, as on the logo page: the clouds are sized as a share of the box, so a
+   long, short panel would stretch them flat. */
 .mo-ember {
-  min-height: 220px;
+  aspect-ratio: 1200 / 630;
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
   background-color: var(--ground);
