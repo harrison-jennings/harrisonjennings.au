@@ -39,13 +39,13 @@ import source from '../../../../../src/components/Logo.astro?raw';
 ## variants and states
 
 <DoDont cols={3}>
-  <DoDontCard name="still" say="The mark, at the size you give it. With a label when it stands alone." picture>
+  <DoDontCard name="still" say="The mark, at the size you give it. With a label when it stands alone.">
     <Logo size={56} />
   </DoDontCard>
-  <DoDontCard name="draw" say="About 2s, once on load (or when it comes into view), and again on hover of its link." picture>
-    <Logo size={56} draw />
+  <DoDontCard name="draw" say="About 2s, once on load (here, when it comes into view), and again on hover. Point at it to replay it.">
+    <Logo size={56} draw="view" />
   </DoDontCard>
-  <DoDontCard name="loading" say="The dot squashes and bounces every second. Loading states only." picture>
+  <DoDontCard name="loading" say="The dot squashes and bounces every second. Loading states only.">
     <Logo size={56} loading />
   </DoDontCard>
 </DoDont>

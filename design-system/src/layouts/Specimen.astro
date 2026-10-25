@@ -65,6 +65,10 @@ const { title, row = false, screen = false, layout } = Astro.props;
   body.specimen--page > :first-child,
   body.specimen--page > div.column:first-child > :first-child {
     margin-top: 0;
+  }
+  /* Room kept for the nav that isn't there: its own offset from the top, and the post header's space for it. */
+  body.specimen--page > :first-child,
+  body.specimen--page > div.column:first-child > .posthead {
     padding-top: 0;
   }
   .specimen--screen {
