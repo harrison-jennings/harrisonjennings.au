@@ -1,0 +1,14 @@
+---
+// A contrast ratio in running text, worked out from design/tokens.json: "4.53:1 in dark and 5.90:1 in
+// light", so guidance never quotes a number that has drifted from the colours.
+import { contrast, format } from '../lib/contrast';
+
+interface Props {
+  fg: string;
+  bg: string;
+}
+
+const { fg, bg } = Astro.props;
+---
+
+{format(contrast(fg, bg, 'dark'))} in dark and {format(contrast(fg, bg, 'light'))} in light

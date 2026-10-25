@@ -1,0 +1,17 @@
+---
+import { render } from 'astro:content';
+import PostHeader from '../../../src/components/blog/PostHeader.astro';
+import { getPosts } from '../../../src/lib/posts';
+import { topicPageIds } from '../../../src/lib/topics';
+
+// The newest post, set up as src/pages/blog/[slug]/index.astro sets up each post.
+const [post] = await getPosts();
+if (!post) throw new Error('no posts');
+const { remarkPluginFrontmatter } = await render(post);
+const readingTime = Number(remarkPluginFrontmatter['readingTime'] ?? 1);
+---
+
+<!-- in the page's column, as every post sets it -->
+<div class="column">
+  <PostHeader post={post} readingTime={readingTime} topicPages={await topicPageIds()} />
+</div>

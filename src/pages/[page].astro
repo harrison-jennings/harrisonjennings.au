@@ -138,9 +138,6 @@ const toc = headings.filter((h) => h.depth === 2 && h.slug !== 'footnote-label')
     gap: 64px;
     max-width: none;
   }
-  .article :global(.toc-phone) {
-    display: none;
-  }
   @media (max-width: 760px) {
     .short {
       margin-top: var(--space-28);
@@ -150,12 +147,6 @@ const toc = headings.filter((h) => h.depth === 2 && h.slug !== 'footnote-label')
     .article--toc {
       display: block;
       margin-top: var(--space-32);
-    }
-    .article :global(.toc) {
-      display: none;
-    }
-    .article :global(.toc-phone) {
-      display: block;
     }
   }
 </style>

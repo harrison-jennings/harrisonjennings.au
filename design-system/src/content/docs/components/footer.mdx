@@ -1,0 +1,51 @@
+---
+title: footer
+lead: Three columns on a raised panel, at the foot of every page. Who, where to go, and where else, with “cookie settings” always there.
+group: navigation
+order: 3
+component: src/components/Footer.astro
+facts:
+  - label: status
+    value: live
+related:
+  - page: components/consent
+    line: What “cookie settings” opens.
+  - page: brand/logo
+    line: The lockup that draws when the footer comes into view.
+  - page: components/nav
+    line: The other end of every page.
+---
+
+import Preview from '../../../components/Preview.astro';
+import { usage } from '../../../lib/example';
+import example from '../../../examples/footer.astro?raw';
+import source from '../../../../../src/components/Footer.astro?raw';
+
+## preview
+
+<Preview
+  title="footer"
+  specimen="/specimens/footer/"
+  size="large"
+  tabs={[
+    { label: 'astro', code: usage(example), lang: 'astro', file: 'src/layouts/Base.astro' },
+    { label: 'source', code: source.trim(), lang: 'astro', file: 'src/components/Footer.astro' },
+  ]}
+/>
+
+## how it behaves
+
+- **Who:** the lockup at 28px with the name at 20px, which draws when the footer comes into view and again on hover, and the tagline.
+- **Where to go:** blog, projects and "book a call".
+- **Where else:** GitHub and LinkedIn as an icon and a word, then privacy, terms and "cookie settings", 16px apart, each turning `link` on hover.
+- **The panel:** `surface`, `radius-lg`, three columns (1.4 / 1 / 1); one column on phones.
+
+## props
+
+None. Its links come from `src/consts.ts`, as the nav's do.
+
+## accessibility
+
+- **"cookie settings" on every page,** so a choice can always be changed (it reopens the consent preferences).
+- **GitHub and LinkedIn are words as well as icons,** and say they open in a new tab.
+- **A `contentinfo` landmark,** as the page's one `<footer>`.

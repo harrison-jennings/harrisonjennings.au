@@ -1,0 +1,18 @@
+---
+import { render } from 'astro:content';
+import Toc from '../../../src/components/blog/Toc.astro';
+import { tocHeadings } from '../../../src/lib/blog';
+import { getPosts } from '../../../src/lib/posts';
+
+// The newest post long enough to have it: three or more sections, and toc not turned off.
+const tocs = await Promise.all(
+  (await getPosts()).map(async (post) => tocHeadings((await render(post)).headings, post.data.toc)),
+);
+const headings = tocs.find((t) => t.length > 0) ?? [];
+---
+
+<!-- a post sets both: the column beside the text on desktop, the panel above it on phones -->
+<div class="column">
+  <Toc headings={headings} phone />
+  <Toc headings={headings} />
+</div>

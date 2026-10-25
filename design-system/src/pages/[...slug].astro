@@ -2,8 +2,10 @@
 // Every page in src/content/docs, at /<section>/<page>/, inside the shell with its page head.
 import { getCollection, render } from 'astro:content';
 import PageHead from '../components/PageHead.astro';
+import Related from '../components/Related.astro';
 import Shell from '../layouts/Shell.astro';
 import { getNav, sectionOf, type Doc } from '../lib/nav';
+import { usedIn } from '../lib/site-source';
 
 export async function getStaticPaths() {
   const docs = await getCollection('docs');
@@ -20,6 +22,28 @@ const nav = await getNav();
 const section = nav.find((s) => s.id === sectionOf(doc));
 const group = section?.groups.find((g) => g.name === doc.data.group);
 if (!section || !group) throw new Error(`docs/${doc.id}: not in the navigation`);
+// A page about a file says where it's used (from the site's imports, naming places by their own pages
+// where they have one) and links to its source, before the page's own facts.
+const REPO = 'https://github.com/harrison-jennings/harrisonjennings.au';
+const { component } = doc.data;
+const names = Object.fromEntries(
+  (await getCollection('docs'))
+    .filter((d) => d.data.component)
+    .map((d) => [d.data.component ?? '', d.data.title]),
+);
+const used = component?.endsWith('.astro') ? usedIn(component, names) : [];
+const facts = [
+  ...(used.length ? [{ label: 'used in', value: used.join(', ') }] : []),
+  ...(component
+    ? [{ label: 'source', value: component, href: `${REPO}/blob/main/${component}` }]
+    : []),
+  ...doc.data.facts,
+];
+// "related" closes the page when its frontmatter names any, and is listed in "on this page".
+const { related } = doc.data;
+const toc = related.length
+  ? [...headings, { depth: 2, slug: 'related', text: 'related' }]
+  : headings;
 ---
 
 <Shell
@@ -28,16 +52,22 @@ if (!section || !group) throw new Error(`docs/${doc.id}: not in the navigation`)
   section={section.id}
   page={doc.id}
   pageTitle={doc.data.title}
-  headings={headings}
+  headings={toc}
 >
   <PageHead
     section={section}
     group={group}
     title={doc.data.title}
     lead={doc.data.lead}
-    facts={doc.data.facts}
+    facts={facts}
   />
   <div class="ds-doc">
     <Content />
+    {related.length > 0 && (
+      <>
+        <h2 id="related">related</h2>
+        <Related related={related} />
+      </>
+    )}
   </div>
 </Shell>

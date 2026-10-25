@@ -1,0 +1,51 @@
+---
+title: keep reading
+lead: Three posts under every post, closest by topic first, as cards like the home page's latest posts. A swipe row on phones.
+group: blog
+order: 4
+component: src/components/blog/KeepReading.astro
+facts:
+  - label: status
+    value: live
+related:
+  - page: components/post-card
+    line: The card each post is shown on.
+  - page: components/author-panel
+    line: The panel before it.
+  - page: content/callouts
+    line: What a post can hold.
+---
+
+import Preview from '../../../components/Preview.astro';
+import PropsTable from '../../../components/PropsTable.astro';
+import { usage } from '../../../lib/example';
+import example from '../../../examples/keep-reading.astro?raw';
+import source from '../../../../../src/components/blog/KeepReading.astro?raw';
+
+## preview
+
+What the newest post shows today.
+
+<Preview
+  title="keep reading"
+  specimen="/specimens/keep-reading/"
+  size="large"
+  tabs={[
+    { label: 'astro', code: usage(example), lang: 'astro', file: 'src/pages/blog/[slug]/index.astro' },
+    { label: 'source', code: source.trim(), lang: 'astro', file: 'src/components/blog/KeepReading.astro' },
+  ]}
+/>
+
+## how it behaves
+
+- **Which three** (`keepReading` in `src/lib/blog.ts`): a post's hand-picked `related` posts if it names any; otherwise the posts sharing the most topics with it, then the latest.
+- **Cards** are the post card, three across; on phones a swipe row with arrows.
+
+## props
+
+<PropsTable source={source} />
+
+## accessibility
+
+- **A section with its own heading,** so it can be skimmed to or skipped.
+- **The arrows** are labelled buttons; the row also scrolls by touch and keyboard.

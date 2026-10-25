@@ -1,0 +1,54 @@
+---
+title: theme toggle
+lead: The sun and moon button that switches between dark and light. It shows the current theme, and its label says what pressing it will do.
+group: actions
+order: 4
+component: src/components/ThemeToggle.astro
+facts:
+  - label: status
+    value: live
+related:
+  - page: brand/colour
+    line: The two themes it switches between.
+  - page: components/nav
+    line: Where it sits, after the page links.
+  - page: components/icon-button
+    line: The other icon-only controls.
+---
+
+import Preview from '../../../components/Preview.astro';
+import { usage } from '../../../lib/example';
+import example from '../../../examples/theme-toggle.astro?raw';
+import source from '../../../../../src/components/ThemeToggle.astro?raw';
+import head from '../../../../../src/components/ThemeHead.astro?raw';
+
+## preview
+
+Pressing it here switches the design system's theme too: it's the same component, saving the same choice.
+
+<Preview
+  title="theme toggle"
+  specimen="/specimens/theme-toggle/"
+  tabs={[
+    { label: 'astro', code: usage(example), lang: 'astro', file: 'any page or component' },
+    { label: 'source', code: source.trim(), lang: 'astro', file: 'src/components/ThemeToggle.astro' },
+    { label: 'head', code: head.trim(), lang: 'astro', file: 'src/components/ThemeHead.astro' },
+  ]}
+/>
+
+## how it behaves
+
+- **Shows the current theme:** a moon in dark, a sun in light. Its label says the action ("Switch to light mode" while dark), and changes with every switch.
+- **Dark on every first visit,** whatever the device is set to. The choice is saved in `localStorage` (`hj-theme`) and applied by `ThemeHead`'s script before the page paints, so there's no flash.
+- **The switch:** the outgoing icon turns a quarter and fades as the other arrives, over 320ms. Instant under reduced motion.
+- **In the nav,** after the page links. On phones it stays in the bar beside the menu button.
+
+## props
+
+None. Put `ThemeHead` in the page's `<head>` (the site's layout does) and the toggle anywhere.
+
+## accessibility
+
+- **A real button,** with a label that says what it will do, updated as the theme changes.
+- **44px to tap,** like the icon buttons beside it.
+- **Both themes are held to the same 4.5:1 for text,** so neither is the "accessible" one.

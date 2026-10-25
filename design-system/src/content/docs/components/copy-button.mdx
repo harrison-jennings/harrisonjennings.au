@@ -1,0 +1,72 @@
+---
+title: copy button
+lead: An outlined pill that copies something to the clipboard and reads “copied” for 1.6 seconds. Without anything to copy, it's the style for any small action.
+group: actions
+order: 5
+component: src/components/CopyButton.astro
+facts:
+  - label: status
+    value: live
+related:
+  - page: components/code-block
+    line: Has its own copy button, in its top bar.
+  - page: components/button
+    line: For the main action, not a small one.
+  - page: components/consent
+    line: Opened by the “cookie settings” buttons.
+---
+
+import CopyButton from '../../../../../src/components/CopyButton.astro';
+import DoDont from '../../../components/DoDont.astro';
+import DoDontCard from '../../../components/DoDontCard.astro';
+import Preview from '../../../components/Preview.astro';
+import PropsTable from '../../../components/PropsTable.astro';
+import { usage } from '../../../lib/example';
+import example from '../../../examples/copy-button.astro?raw';
+import source from '../../../../../src/components/CopyButton.astro?raw';
+
+## preview
+
+<Preview
+  title="copy button"
+  specimen="/specimens/copy-button/"
+  tabs={[
+    { label: 'astro', code: usage(example), lang: 'astro', file: 'any page or component' },
+    { label: 'source', code: source.trim(), lang: 'astro', file: 'src/components/CopyButton.astro' },
+  ]}
+/>
+
+## variants and states
+
+<DoDont cols={3}>
+  <DoDontCard name="copy" say="With text: the copy icon, and “copied” for 1.6s once it has." picture>
+    <CopyButton label="copy address" text="https://www.harrisonjennings.au/rss.xml" />
+  </DoDontCard>
+  <DoDontCard name="a small action" say="Without text: no icon, and its own attributes. “cookie settings” on the legal pages." picture>
+    <CopyButton label="cookie settings" attrs={{ 'data-consent-preferences': '' }} />
+  </DoDontCard>
+  <DoDontCard name="full width" say="On phones the RSS page's copy button fills the feed box." picture>
+    <span class="ds-fill"><CopyButton label="copy address" text="https://www.harrisonjennings.au/rss.xml" class="ds-wide" /></span>
+  </DoDontCard>
+</DoDont>
+
+## when to use it
+
+<DoDont>
+  <DoDontCard verdict="do" say="Beside the thing it copies, with a label that says what: “copy address”." picture>
+    <CopyButton label="copy address" text="https://www.harrisonjennings.au/rss.xml" />
+  </DoDontCard>
+  <DoDontCard verdict="don't" say="As the main action of a page. That's a button's job.">
+    <CopyButton label="book a call" />
+  </DoDontCard>
+</DoDont>
+
+## props
+
+<PropsTable source={source} />
+
+## accessibility
+
+- **Says it worked.** "copied" is announced (the label is a polite live region), then the label comes back.
+- **`context` finishes the name** for screen readers when the label alone is vague: "copy" + "the cloud feed address".
+- **If the clipboard is blocked,** nothing changes, and what it would copy is still on the page to select.

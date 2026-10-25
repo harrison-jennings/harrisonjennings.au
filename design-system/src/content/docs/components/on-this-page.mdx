@@ -1,0 +1,55 @@
+---
+title: on this page
+lead: A post's sections, its h2s and indented h3s. Beside the text on desktop, marking the one being read; a closed panel above the text on phones.
+group: blog
+order: 2
+component: src/components/blog/Toc.astro
+facts:
+  - label: status
+    value: live
+related:
+  - page: components/post-header
+    line: Above the text it lists.
+  - page: content/callouts
+    line: Content that sits in the text beside it.
+  - page: brand/typography
+    line: heading-2 and heading-3, the levels it lists.
+---
+
+import Preview from '../../../components/Preview.astro';
+import PropsTable from '../../../components/PropsTable.astro';
+import { usage } from '../../../lib/example';
+import example from '../../../examples/toc.astro?raw';
+import source from '../../../../../src/components/blog/Toc.astro?raw';
+import script from '../../../../../src/scripts/toc.ts?raw';
+
+## preview
+
+Both forms, from the newest post long enough to have them. A post shows the column on desktop and the panel on phones.
+
+<Preview
+  title="on this page"
+  specimen="/specimens/toc/"
+  tabs={[
+    { label: 'astro', code: usage(example), lang: 'astro', file: 'src/pages/blog/[slug]/index.astro' },
+    { label: 'source', code: source.trim(), lang: 'astro', file: 'src/components/blog/Toc.astro' },
+    { label: 'script', code: script.trim(), lang: 'ts', file: 'src/scripts/toc.ts' },
+  ]}
+/>
+
+## how it behaves
+
+- **When it shows:** a post with three or more sections (`##`), unless its front matter sets `toc: false`.
+- **Desktop:** a column beside the text that stays in view and marks the section being read.
+- **Phones:** a closed panel above the text; open it to jump to a section.
+- **What it lists:** the h2s, and the h3s indented under them. Footnotes' own heading is left out.
+- **The design system** uses the same script for its own "on this page".
+
+## props
+
+<PropsTable source={source} />
+
+## accessibility
+
+- **A labelled navigation landmark,** with the section being read marked `aria-current`.
+- **The phone panel is a `<details>`,** so it opens and closes from the keyboard with nothing extra.

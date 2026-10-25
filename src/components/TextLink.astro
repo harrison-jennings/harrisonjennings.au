@@ -4,11 +4,13 @@
 import { isExternal, NEW_TAB_NOTE } from '../lib/links';
 
 interface Props {
+  /** Where it goes. Another site opens in a new tab. */
   href: string;
   /** Standalone links ("all projects") start in the link colour. */
   quiet?: boolean;
   /** Opens in a new tab: worked out from the href unless given. */
   external?: boolean;
+  /** An extra class, for placing the link in a layout. */
   class?: string;
 }
 

@@ -1,0 +1,58 @@
+---
+title: image viewer
+lead: Every image in a post opens full screen, where it can be zoomed to 400% and moved around. Made for detailed diagrams.
+group: content
+order: 4
+component: src/scripts/lightbox.ts
+facts:
+  - label: styles
+    value: src/styles/lightbox.css
+    href: https://github.com/harrison-jennings/harrisonjennings.au/blob/main/src/styles/lightbox.css
+  - label: written in
+    value: Markdown
+  - label: status
+    value: live
+related:
+  - page: brand/colour
+    line: Its four overlay colours.
+  - page: components/code-block
+    line: The other thing in a post that stays dark.
+  - page: brand/imagery-and-motion
+    line: Screenshots, the other imagery.
+---
+
+import Preview from '../../../components/Preview.astro';
+import { usage } from '../../../lib/example';
+import example from '../../../examples/image-viewer.md?raw';
+import script from '../../../../../src/scripts/lightbox.ts?raw';
+
+## preview
+
+Open either image in the preview to try it; the viewer opens inside the frame.
+
+<Preview
+  title="image viewer"
+  specimen="/specimens/image-viewer/"
+  tabs={[
+    { label: 'markdown', code: usage(example), lang: 'md', file: 'any post' },
+    { label: 'script', code: script.trim(), lang: 'ts', file: 'src/scripts/lightbox.ts' },
+  ]}
+/>
+
+## how it behaves
+
+- **Automatic in posts:** every Markdown image can be opened, with the expand icon in its corner on hover (always shown on phones). An image opts out with `{nozoom}` after it.
+- **Zoom** from fit to 400%: the scroll wheel, + and −, a click or tap on the image (fit and 200% at that spot), or a pinch. 0 or the fit button resets.
+- **Move** a zoomed image by dragging; it stops at the image's edges.
+- **Several images** in a post are one set: ‹ › at the sides on desktop, at the ends of the control bar on phones, arrow keys, and swipes.
+- **Close** with Esc, the close button, a click on the empty backdrop, or a swipe down on phones. Focus goes back to the image that opened it.
+
+## images for it
+
+Export diagrams as SVG where you can, so they stay sharp at any zoom; otherwise a PNG at two or three times its shown size. The page loads the smaller image, and the large one only when the viewer opens.
+
+## accessibility
+
+- **A modal dialog** named after the image. Focus moves to close on open and stays inside while it's open; every control is a labelled button.
+- **The zoom level is announced** politely as it changes.
+- **Reduced motion:** zoom and moving jump instead of easing.

@@ -1,0 +1,16 @@
+---
+import KeepReading from '../../../src/components/blog/KeepReading.astro';
+import { keepReading } from '../../../src/lib/blog';
+import { getPosts } from '../../../src/lib/posts';
+import { topicPageIds } from '../../../src/lib/topics';
+
+// What the newest post shows: the three posts closest to it by topic, then the latest.
+const posts = await getPosts();
+const [post] = posts;
+if (!post) throw new Error('no posts');
+---
+
+<!-- under every post, in the page's column -->
+<div class="column">
+  <KeepReading posts={keepReading(post, posts)} topicPages={await topicPageIds()} />
+</div>

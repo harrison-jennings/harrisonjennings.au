@@ -1,0 +1,55 @@
+---
+title: code block
+lead: Code in a post, highlighted at build time in the brand's colours, with its language, an optional file name and a copy button. Always the dark treatment, in both themes.
+group: content
+order: 3
+component: src/lib/markdown/code.ts
+facts:
+  - label: written in
+    value: Markdown
+  - label: status
+    value: live
+related:
+  - page: content/callouts
+    line: The other block a post can hold.
+  - page: components/copy-button
+    line: The site's other copy control.
+  - page: brand/colour
+    line: The four code colours.
+---
+
+import Preview from '../../../components/Preview.astro';
+import { usage } from '../../../lib/example';
+import example from '../../../examples/code-block.md?raw';
+import theme from '../../../../../src/lib/markdown/code.ts?raw';
+
+## preview
+
+<Preview
+  title="code block"
+  specimen="/specimens/code-block/"
+  tabs={[
+    { label: 'markdown', code: usage(example), lang: 'md', file: 'any post' },
+    { label: 'theme', code: theme.trim(), lang: 'ts', file: 'src/lib/markdown/code.ts' },
+  ]}
+/>
+
+## writing it
+
+- **The language after the fence** sets the highlighting and the label: ` ```js `. Nothing is guessed; no language is plain text.
+- **A file name:** ` ```js title="src/scripts/booking.js" `.
+- **Highlighted lines:** ` ```vtl {2-3} ` puts a `code-highlight` band with a brick edge on lines 2 and 3. For pointing at what the text discusses; most blocks don't need it.
+- **Terminal commands:** ` ```sh `. The `$` prompt is muted and left out of what's copied.
+
+## how it looks
+
+- **Martian Mono** 12.5 / 1.7 on `surface` in a hairline frame, with a bar for the language and the copy button.
+- **Four colours:** keywords in `code-keyword`, strings in `code-string`, numbers in `code-number`, comments in `muted`. Everything else is text.
+- **Always dark,** in both themes: on a light page it sits as a dark panel.
+- **Long lines never wrap:** the block scrolls sideways. On phones it runs edge to edge and fades at the right to show there's more.
+
+## accessibility
+
+- **Every code colour passes AA on `surface`,** in both themes.
+- **The block scrolls by keyboard** (it can take focus), and the copy button says "copied" when it has.
+- **Each line is its own element,** so line breaks never depend on whitespace in the markup.

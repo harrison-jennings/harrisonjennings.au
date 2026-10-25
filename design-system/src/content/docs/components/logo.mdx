@@ -1,0 +1,80 @@
+---
+title: logo
+lead: The path mark as a component. Give it a size and it picks the stroke and dot weight; it can draw itself in, or bounce while something loads.
+group: brand
+order: 1
+component: src/components/Logo.astro
+facts:
+  - label: status
+    value: live
+related:
+  - page: brand/logo
+    line: The marks, clear space, sizes and misuse.
+  - page: brand/imagery-and-motion
+    line: The draw and the bounce, with their previews.
+  - page: components/live-signal
+    line: The dot's other motion, as the live dot.
+---
+
+import Logo from '../../../../../src/components/Logo.astro';
+import DoDont from '../../../components/DoDont.astro';
+import DoDontCard from '../../../components/DoDontCard.astro';
+import Preview from '../../../components/Preview.astro';
+import PropsTable from '../../../components/PropsTable.astro';
+import { usage } from '../../../lib/example';
+import example from '../../../examples/logo.astro?raw';
+import source from '../../../../../src/components/Logo.astro?raw';
+
+## preview
+
+<Preview
+  title="logo"
+  specimen="/specimens/logo/"
+  tabs={[
+    { label: 'astro', code: usage(example), lang: 'astro', file: 'any page or component' },
+    { label: 'source', code: source.trim(), lang: 'astro', file: 'src/components/Logo.astro' },
+  ]}
+/>
+
+## variants and states
+
+<DoDont cols={3}>
+  <DoDontCard name="still" say="The mark, at the size you give it. With a label when it stands alone.">
+    <Logo size={56} />
+  </DoDontCard>
+  <DoDontCard name="draw" say="About 2s, once on load (here, when it comes into view), and again on hover. Point at it to replay it.">
+    <Logo size={56} draw="view" />
+  </DoDontCard>
+  <DoDontCard name="loading" say="The dot squashes and bounces every second. Loading states only.">
+    <Logo size={56} loading />
+  </DoDontCard>
+</DoDont>
+
+## when to use it
+
+<DoDont>
+  <DoDontCard verdict="do" say="Pass a size and let the component choose the weight, so it reads the same at every size." picture>
+    <Logo size={24} />
+    <Logo size={40} />
+  </DoDontCard>
+  <DoDontCard verdict="don't" say="Scale a big mark down with CSS. The line comes out too thin to read.">
+    <span class="ds-bad-scale"><Logo size={120} /></span>
+  </DoDontCard>
+  <DoDontCard verdict="do" say="One motion on a screen at a time, and the draw only once." picture>
+    <Logo size={44} loading />
+  </DoDontCard>
+  <DoDontCard verdict="don't" say="The draw on a loop, or two motions at once.">
+    <Logo size={44} loading />
+    <Logo size={44} loading />
+  </DoDontCard>
+</DoDont>
+
+## props
+
+<PropsTable source={source} />
+
+## accessibility
+
+- **A name when it's alone.** With `label` it's an image with that name; without, it's hidden, for when the name is set beside it.
+- **A loader says what's loading** in words beside it, as the booking band does.
+- **Reduced motion:** it appears drawn, and the dot sits at rest.

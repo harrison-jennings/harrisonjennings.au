@@ -1,0 +1,54 @@
+---
+title: nav
+lead: The floating pill at the top of every page. Full at the top, compact once you scroll, and on phones a bar with the menu button.
+group: navigation
+order: 1
+component: src/components/Nav.astro
+facts:
+  - label: status
+    value: live
+related:
+  - page: components/mobile-menu
+    line: What the menu button opens on phones.
+  - page: components/theme-toggle
+    line: Sits after the page links.
+  - page: components/button
+    line: The nav's “book a call”, small and then extra small.
+---
+
+import Preview from '../../../components/Preview.astro';
+import PropsTable from '../../../components/PropsTable.astro';
+import { usage } from '../../../lib/example';
+import example from '../../../examples/nav.astro?raw';
+import source from '../../../../../src/components/Nav.astro?raw';
+
+## preview
+
+<Preview
+  title="nav"
+  specimen="/specimens/nav/"
+  size="large"
+  tabs={[
+    { label: 'astro', code: usage(example), lang: 'astro', file: 'src/layouts/Base.astro' },
+    { label: 'source', code: source.trim(), lang: 'astro', file: 'src/components/Nav.astro' },
+  ]}
+/>
+
+## how it behaves
+
+- **The bar:** the lockup (it draws on load and again on hover), home, blog and projects, the theme toggle, GitHub and LinkedIn, and a small "book a call". `ground` with a hairline, pill-shaped, in the page's one column.
+- **Links:** 15px in the text colour. On hover or focus a 1.5px brick underline grows in from the left (240ms); the current page keeps it. The colour doesn't change.
+- **Compact:** after 80px of scroll the name and icons drop away, the links go to 14px and the button to `xs`. Keyboard focus opens it back up, so everything stays reachable by Tab; hover doesn't, so links never move under the pointer.
+- **Floating:** on the home page and the 404 it floats over the first screen; elsewhere it sits 16px from the top. Either way it stays in view as you scroll.
+- **Phones (760px and below):** the lockup, the theme toggle and the menu button. Try the phone width above.
+
+## props
+
+<PropsTable source={source} />
+
+## accessibility
+
+- **A labelled landmark** ("Main"), with `aria-current="page"` on the current page's link.
+- **Nothing hidden from the keyboard:** focus inside the compact bar opens it back up.
+- **The menu button** says what it opens (`aria-haspopup="dialog"`) and has a name ("Open menu").
+- **Reduced motion:** the underline, the compacting and the logo's draw are instant.

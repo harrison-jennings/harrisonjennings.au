@@ -1,0 +1,53 @@
+---
+title: ember field
+lead: The hero's living background. A grid of faint dots that drifts, lights up around the pointer and sends out rings, over the two ember clouds.
+group: brand
+order: 3
+component: src/scripts/field.ts
+facts:
+  - label: status
+    value: live
+related:
+  - page: brand/imagery-and-motion
+    line: The ember clouds, and where they may go.
+  - page: components/hero
+    line: The first screen it fills.
+  - page: components/share-card
+    line: The clouds on every share image.
+---
+
+import Preview from '../../../components/Preview.astro';
+import { usage } from '../../../lib/example';
+import example from '../../../examples/hero.astro?raw';
+import field from '../../../../../src/scripts/field.ts?raw';
+
+## preview
+
+The field lives in the hero, so this is the hero's preview. Point at it, or tap it, to send a ring.
+
+<Preview
+  title="ember field"
+  specimen="/specimens/hero/"
+  size="large"
+  tabs={[
+    { label: 'script', code: field.trim(), lang: 'ts', file: 'src/scripts/field.ts' },
+    { label: 'astro', code: usage(example), lang: 'astro', file: 'src/pages/index.astro' },
+  ]}
+/>
+
+## how it behaves
+
+- **The dots** rest in `field-dot` and drift gently. The pointer pushes them aside and lights them in `link`, sending a ring out every 1.5s; when nobody's pointing, a slow wanderer sends one every 2.8s. A click or tap sends one too.
+- **The headline's brick stop** pulses two small rings that stay clear of the letters.
+- **The clouds** behind it are the ember clouds, at 70% opacity: brick high on the right, apricot low in the corner.
+- **It pauses** when it's off screen, and keeps the same pace on 60 Hz and 120 Hz screens.
+
+## where it goes
+
+The home page's first screen only. The 404 page has the clouds without the dots, and share images have the clouds as a still picture.
+
+## accessibility
+
+- **Decoration only:** the canvas is hidden from screen readers, and nothing depends on it.
+- **Reduced motion:** it draws once, still, with a soft lit patch top right, redrawn now and then so a theme change shows.
+- **Contrast:** the headline and buttons sit on the left, clear of the clouds, at their usual contrast.

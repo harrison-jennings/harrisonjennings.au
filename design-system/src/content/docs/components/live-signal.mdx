@@ -1,0 +1,78 @@
+---
+title: live signal
+lead: “live at” and a host, after a brick dot whose halo pulses. It marks a project that's deployed and up; the words carry the meaning.
+group: brand
+order: 2
+component: src/components/LiveSignal.astro
+facts:
+  - label: dot
+    value: src/components/LiveDot.astro
+    href: https://github.com/harrison-jennings/harrisonjennings.au/blob/main/src/components/LiveDot.astro
+  - label: status
+    value: live
+related:
+  - page: components/built-and-shipped
+    line: Where each live project shows it.
+  - page: brand/imagery-and-motion
+    line: The signal, with the other looping animations.
+  - page: brand/colour
+    line: The halo's signal-ring colour.
+---
+
+import LiveDot from '../../../../../src/components/LiveDot.astro';
+import LiveSignal from '../../../../../src/components/LiveSignal.astro';
+import DoDont from '../../../components/DoDont.astro';
+import DoDontCard from '../../../components/DoDontCard.astro';
+import Preview from '../../../components/Preview.astro';
+import PropsTable from '../../../components/PropsTable.astro';
+import { usage } from '../../../lib/example';
+import example from '../../../examples/live-signal.astro?raw';
+import source from '../../../../../src/components/LiveSignal.astro?raw';
+import dot from '../../../../../src/components/LiveDot.astro?raw';
+
+## preview
+
+<Preview
+  title="live signal"
+  specimen="/specimens/live-signal/"
+  tabs={[
+    { label: 'astro', code: usage(example), lang: 'astro', file: 'any page or component' },
+    { label: 'source', code: source.trim(), lang: 'astro', file: 'src/components/LiveSignal.astro' },
+    { label: 'dot', code: dot.trim(), lang: 'astro', file: 'src/components/LiveDot.astro' },
+  ]}
+/>
+
+## variants and states
+
+<DoDont cols={3}>
+  <DoDontCard name="live" say="An 8px brick dot with a 4px halo, and a ring that pulses outward every 1.8s." picture>
+    <LiveSignal host="leadlens.harrisonjennings.au" />
+  </DoDontCard>
+  <DoDontCard name="live, linked" say="With href, the host is a link, underlined like a text link, opening in a new tab." picture>
+    <LiveSignal host="leadlens.harrisonjennings.au" href="https://leadlens.harrisonjennings.au" />
+  </DoDontCard>
+  <DoDontCard name="archived" say="A hollow ring in muted that stays still: a project that's no longer running." picture>
+    <LiveDot archived />
+  </DoDontCard>
+</DoDont>
+
+## when to use it
+
+<DoDont>
+  <DoDontCard verdict="do" say="Only for something that's genuinely live, with its host." picture>
+    <LiveSignal host="leadlens.harrisonjennings.au" />
+  </DoDontCard>
+  <DoDontCard verdict="don't" say="The dot on its own, or as decoration. Without the words, it says nothing.">
+    <LiveDot />
+  </DoDontCard>
+</DoDont>
+
+## props
+
+<PropsTable source={source} />
+
+## accessibility
+
+- **The words carry the meaning;** the dot is hidden from screen readers.
+- **A linked host** opens in a new tab and says so.
+- **Reduced motion:** the halo stays, still; the ring doesn't pulse.

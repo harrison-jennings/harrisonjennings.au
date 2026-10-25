@@ -1,0 +1,52 @@
+---
+title: what I do
+lead: The three services, side by side, each with a short paragraph and exactly three tools. A swipe row on phones.
+group: home
+order: 2
+component: src/components/home/Services.astro
+facts:
+  - label: words
+    value: src/content/services.yaml
+  - label: status
+    value: live
+related:
+  - page: components/built-and-shipped
+    line: The next section on the home page.
+  - page: brand/typography
+    line: The tools line's Martian Mono.
+  - page: foundations/layout-and-breakpoint
+    line: The swipe rows phones get.
+---
+
+import Preview from '../../../components/Preview.astro';
+import { usage } from '../../../lib/example';
+import example from '../../../examples/services.astro?raw';
+import source from '../../../../../src/components/home/Services.astro?raw';
+
+## preview
+
+<Preview
+  title="what I do"
+  specimen="/specimens/services/"
+  size="large"
+  tabs={[
+    { label: 'astro', code: usage(example), lang: 'astro', file: 'src/pages/index.astro' },
+    { label: 'source', code: source.trim(), lang: 'astro', file: 'src/components/home/Services.astro' },
+  ]}
+/>
+
+## how it behaves
+
+- **Three in a row,** sharing their rows (CSS subgrid), so every tools line starts level however long the paragraphs above run.
+- **The tools:** Martian Mono 12px in `muted`, each after a small brick dot and never split across lines; a wrapped line still starts with a dot.
+- **Phones:** cards 84% wide with the next one peeking in, and ‹ › arrows in the section's head that fade at the ends.
+- **Its words** are in `src/content/services.yaml`: a name, a description of up to 200 characters, and exactly three tools each.
+
+## props
+
+None. Its words come from `src/content/services.yaml`.
+
+## accessibility
+
+- **A heading per service,** under the section's heading, so it can be skimmed.
+- **The arrows** are labelled buttons, and the row can also be scrolled by touch or keyboard.

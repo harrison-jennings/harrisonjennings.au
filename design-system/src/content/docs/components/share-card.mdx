@@ -1,0 +1,55 @@
+---
+title: share card
+lead: "The image a page shows when it's shared: 1200 × 630, generated when the site builds, one per page. Dark only, with the ember clouds and the lockup."
+group: site
+order: 2
+component: src/lib/og/card.ts
+facts:
+  - label: renders
+    value: src/lib/og/render.ts
+    href: https://github.com/harrison-jennings/harrisonjennings.au/blob/main/src/lib/og/render.ts
+  - label: status
+    value: live
+related:
+  - page: brand/imagery-and-motion
+    line: The ember clouds, and where the lockup sits on them.
+  - page: brand/logo
+    line: The lockup bottom left.
+  - page: components/ember-field
+    line: The same clouds, alive, on the home page.
+---
+
+## the four kinds
+
+Each is a real card, rendered by the site's own code from the site's own content when the design system builds.
+
+<div class="sc-grid">
+  <figure class="sc">
+    <img src="/share-cards/home.png" width="1200" height="630" alt="The home share card: “marketing, engineered.” with the introduction, over the ember clouds." loading="lazy" />
+    <figcaption><b>home</b> The home page, and any page without its own card.</figcaption>
+  </figure>
+  <figure class="sc">
+    <img src="/share-cards/post.png" width="1200" height="630" alt="A post's share card: its topic, its title and its date." loading="lazy" />
+    <figcaption><b>post</b> Its main topic, the title (at most three lines), and the date.</figcaption>
+  </figure>
+  <figure class="sc">
+    <img src="/share-cards/project.png" width="1200" height="630" alt="A project's share card: its name, summary and live host." loading="lazy" />
+    <figcaption><b>project</b> The name, its summary, and the live host with its dot.</figcaption>
+  </figure>
+  <figure class="sc">
+    <img src="/share-cards/page.png" width="1200" height="630" alt="A page's share card: its title with the brick stop and its intro." loading="lazy" />
+    <figcaption><b>page</b> The blog, topics, projects and RSS: the title, its intro and its address.</figcaption>
+  </figure>
+</div>
+
+## how they're made
+
+- **At build time,** from each page's title, topic, date and summary: Satori lays the card out in the brand fonts, and sharp turns it into a PNG at `/og/<path>.png`.
+- **Every card:** `ground`, the ember clouds top right (stronger on home and project cards, softer behind the wordier post and page cards), the lockup bottom left and a detail bottom right in Martian Mono.
+- **Dark only,** because share previews have no light mode.
+- **A post's own image:** `socialImage` in its front matter replaces its card, cropped to 1200 × 630.
+
+## accessibility
+
+- **The page's own title and description** go with the card, so the image never has to carry the meaning.
+- **Text on the card** is the same colours as the site, at the same contrast.

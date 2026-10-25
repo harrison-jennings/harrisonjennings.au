@@ -26,10 +26,13 @@ interface Props {
   specimen: string;
   /** Small examples are shown at their own size by default ("fit"); large ones at desktop width. */
   size?: 'small' | 'large';
+  /** The width it opens at, if not the size's own (fit for small, desktop for large): the phone menu. */
+  start?: 'fit' | '390' | '1280';
   tabs: Tab[];
 }
 
 const { title, specimen, size = 'small', tabs } = Astro.props;
+const start = Astro.props.start ?? (size === 'large' ? '1280' : 'fit');
 const id = `pf-${specimen.replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '')}`;
 /** Code longer than this many lines is clipped, with "show all N lines". */
 const LONG = 12;
@@ -47,18 +50,18 @@ const panel: ShikiTransformer = {
 };
 ---
 
-<figure class="pf" id={id} data-preview data-specimen={specimen} data-size={size}>
+<figure class="pf" id={id} data-preview data-specimen={specimen} data-start={start}>
   <div class="pf-bar">
     <div class="seg" role="group" aria-label="Preview width">
       {size === 'small' && (
-        <button type="button" aria-pressed="true" data-width="fit">
+        <button type="button" aria-pressed={start === 'fit' ? 'true' : 'false'} data-width="fit">
           fit
         </button>
       )}
-      <button type="button" aria-pressed="false" data-width="390">
+      <button type="button" aria-pressed={start === '390' ? 'true' : 'false'} data-width="390">
         phone <small>390</small>
       </button>
-      <button type="button" aria-pressed={size === 'large' ? 'true' : 'false'} data-width="1280">
+      <button type="button" aria-pressed={start === '1280' ? 'true' : 'false'} data-width="1280">
         desktop <small>1280</small>
       </button>
     </div>
@@ -168,7 +171,6 @@ const panel: ShikiTransformer = {
       >
         <div class:list={['pf-pre-box', { 'pf-pre-box--clip': lines(tab.code) > LONG }]}>
           <Code code={tab.code} lang={tab.lang as never} theme={codeTheme} transformers={[panel]} />
-          {lines(tab.code) > LONG && <div class="pf-pre__fade" />}
         </div>
         {lines(tab.code) > LONG && (
           <div class="pf-code__more">

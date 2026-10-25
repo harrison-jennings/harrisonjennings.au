@@ -1,0 +1,54 @@
+---
+title: built and shipped
+lead: The featured projects, one at a time. Numbered tabs beside the chosen project on desktop; a swipe row of cards on phones.
+group: home
+order: 3
+component: src/components/home/BuiltAndShipped.astro
+facts:
+  - label: words
+    value: src/content/projects.yaml
+  - label: status
+    value: live
+related:
+  - page: components/live-signal
+    line: “live at” on each running project.
+  - page: components/text-link
+    line: “source on github” and “read the story”.
+  - page: components/what-i-do
+    line: The section before it.
+---
+
+import Preview from '../../../components/Preview.astro';
+import { usage } from '../../../lib/example';
+import example from '../../../examples/built-and-shipped.astro?raw';
+import source from '../../../../../src/components/home/BuiltAndShipped.astro?raw';
+
+## preview
+
+<Preview
+  title="built and shipped"
+  specimen="/specimens/built-and-shipped/"
+  size="large"
+  tabs={[
+    { label: 'astro', code: usage(example), lang: 'astro', file: 'src/pages/index.astro' },
+    { label: 'source', code: source.trim(), lang: 'astro', file: 'src/components/home/BuiltAndShipped.astro' },
+  ]}
+/>
+
+## how it behaves
+
+- **Desktop:** numbered tabs (01, 02…) with the project names beside the chosen project: a 16:9 screenshot, its description and its links. Panes crossfade over 280ms. The tabs take any number of projects without the section growing.
+- **Phones:** one full-width card per project in a swipe row, so long names wrap instead of being cut off.
+- **Links,** each only if the project has it: "live at" and its host, "source on github", "read the story". An archived project has no "live at".
+- **"all projects"** goes to /projects/.
+- **Which projects:** those marked `featured` in `src/content/projects.yaml`, in their `order`.
+
+## props
+
+None. Its projects come from `src/content/projects.yaml`.
+
+## accessibility
+
+- **Real tabs** (`role="tablist"`), with arrow, Home and End keys; only the chosen pane is shown to everyone.
+- **Screenshots** have alternative text that says what they show.
+- **Reduced motion:** the panes swap without the crossfade.

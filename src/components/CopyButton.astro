@@ -3,6 +3,7 @@
 // small action in the same style, with its own attributes. The styles are global (`.copy` in
 // global.css), so Markdown-made buttons such as the legal pages' "cookie settings" share them.
 interface Props {
+  /** The words on the button: "copy address", "cookie settings". */
   label?: string;
   /** What gets copied. */
   text?: string;
@@ -10,7 +11,9 @@ interface Props {
   context?: string;
   /** The copy icon before the label. */
   icon?: boolean;
+  /** An extra class, for placing the button in a layout. */
   class?: string;
+  /** Extra attributes, such as data-consent-preferences on "cookie settings". */
   attrs?: Record<string, string>;
 }
 

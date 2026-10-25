@@ -1,0 +1,60 @@
+---
+title: consent
+lead: The cookie banner on a first visit, and the preferences dialog behind “manage preferences” and every “cookie settings”. Nothing optional runs until it's chosen.
+group: site
+order: 1
+component: src/components/Consent.astro
+facts:
+  - label: words
+    value: src/content/consent.yaml
+  - label: status
+    value: live
+related:
+  - page: components/footer
+    line: Its “cookie settings” reopens the preferences.
+  - page: components/button
+    line: “save choices”, the dialog's one primary button.
+  - page: components/booking-band
+    line: Another thing that waits to be asked.
+---
+
+import Preview from '../../../components/Preview.astro';
+import { usage } from '../../../lib/example';
+import example from '../../../examples/consent.astro?raw';
+import source from '../../../../../src/components/Consent.astro?raw';
+import script from '../../../../../src/scripts/consent.ts?raw';
+
+## preview
+
+The banner shows on a first visit, here as on the site. Once you've chosen, "cookie settings" opens the preferences; choices made here aren't recorded anywhere.
+
+<Preview
+  title="consent"
+  specimen="/specimens/consent/"
+  size="large"
+  tabs={[
+    { label: 'astro', code: usage(example), lang: 'astro', file: 'src/layouts/Base.astro' },
+    { label: 'source', code: source.trim(), lang: 'astro', file: 'src/components/Consent.astro' },
+    { label: 'script', code: script.trim(), lang: 'ts', file: 'src/scripts/consent.ts' },
+  ]}
+/>
+
+## how it behaves
+
+- **The banner:** a raised card 24px from the bottom-right corner on desktop, clear of the hero's headline and the nav; on phones it spans the bottom of the screen. "cookies." with the brick stop, one paragraph, then three choices of equal weight: "accept all", "reject non-essential", "manage preferences".
+- **The preferences:** a 720px dialog with a panel per category (essential, analytics, advertising). Each opens to say what it's for and list its cookies. "save choices" is the one primary button; on phones the dialog fills the screen.
+- **Switches** for analytics and advertising; essential is "always on".
+- **Nothing optional runs** until it's turned on. The choice is kept by CookieConsent and recorded in the site's consent log, as the privacy policy describes.
+- **The banner never blocks the page:** it's a labelled region, not a modal.
+- **Its words** are in `src/content/consent.yaml`.
+
+## props
+
+None. Its words come from `src/content/consent.yaml`.
+
+## accessibility
+
+- **Equal choices:** rejecting is as easy as accepting, one button each, the same size.
+- **The banner is a region, not a modal,** so the page stays usable behind it; the preferences are a real dialog, with focus moving in and back.
+- **Switches are real switches** (`role="switch"`, `aria-checked`), named by their category, with 44px hit areas.
+- **Reduced motion:** the banner and dialog appear without sliding.

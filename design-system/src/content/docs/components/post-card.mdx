@@ -1,0 +1,59 @@
+---
+title: post card
+lead: "A post as a card: its date, title, description and main topic. Three across on the home page and under every post; a swipe row on phones."
+group: content
+order: 2
+component: src/components/PostCard.astro
+facts:
+  - label: look
+    value: src/components/PostCardView.astro
+    href: https://github.com/harrison-jennings/harrisonjennings.au/blob/main/src/components/PostCardView.astro
+  - label: status
+    value: live
+related:
+  - page: components/keep-reading
+    line: Three of them under every post.
+  - page: components/tag
+    line: The main topic, as a tag.
+  - page: brand/voice-and-tone
+    line: A card written well, and written badly.
+---
+
+import Preview from '../../../components/Preview.astro';
+import PropsTable from '../../../components/PropsTable.astro';
+import { usage } from '../../../lib/example';
+import example from '../../../examples/post-card.astro?raw';
+import source from '../../../../../src/components/PostCard.astro?raw';
+import view from '../../../../../src/components/PostCardView.astro?raw';
+
+## preview
+
+The newest three posts, from the site's own content.
+
+<Preview
+  title="post card"
+  specimen="/specimens/post-card/"
+  tabs={[
+    { label: 'astro', code: usage(example), lang: 'astro', file: 'any page or component' },
+    { label: 'source', code: source.trim(), lang: 'astro', file: 'src/components/PostCard.astro' },
+    { label: 'look', code: view.trim(), lang: 'astro', file: 'src/components/PostCardView.astro' },
+  ]}
+/>
+
+## how it behaves
+
+- **The date,** written out, in `muted`.
+- **The title** is the link. On hover its underline grows in from the left (240ms) and it turns `link`.
+- **The description** is the post's own `description` front matter, the same text search engines see, kept short by the schema rather than cut off.
+- **One tag:** the post's first topic, linked once that topic has a page.
+- **`PostCardView`** is the card's look on its own, filled by hand: the voice page uses it for its before and after.
+
+## props
+
+<PropsTable source={source} />
+
+## accessibility
+
+- **One link per card,** the title, so a screen reader's list of links isn't doubled.
+- **An `<article>`** with a heading, so cards can be skimmed by heading.
+- **Reduced motion:** the underline appears at once.

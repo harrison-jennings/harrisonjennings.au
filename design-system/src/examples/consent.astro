@@ -1,0 +1,9 @@
+---
+import Consent from '../../../src/components/Consent.astro';
+import CopyButton from '../../../src/components/CopyButton.astro';
+---
+
+<!-- the site's layout puts it on every page; its words are in src/content/consent.yaml -->
+<Consent />
+<!-- any button with data-consent-preferences reopens the preferences, as the footer's does -->
+<CopyButton label="cookie settings" attrs={{ 'data-consent-preferences': '' }} />

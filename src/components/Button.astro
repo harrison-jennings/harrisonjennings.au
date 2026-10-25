@@ -6,10 +6,13 @@ import { isExternal, NEW_TAB_NOTE } from '../lib/links';
 interface Props {
   /** Leave out for an in-page action: renders a <button>. */
   href?: string;
+  /** The words on the button: set twice, once to read and once on the wipe, which screen readers skip. */
   label: string;
+  /** One of five: l in the hero, m anywhere in a page, s in the nav, xs compact, block in the phone menu. */
   size?: 'l' | 'm' | 's' | 'xs' | 'block';
   /** Opens in a new tab: worked out from the href unless given. */
   external?: boolean;
+  /** An extra class, for placing the button in a layout. */
   class?: string;
   /** Extra attributes for the element, such as aria-expanded on an in-page toggle. */
   attrs?: Record<string, string>;

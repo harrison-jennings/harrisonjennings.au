@@ -1,0 +1,55 @@
+---
+title: hero
+lead: The home page's first screen. “marketing, engineered.” over the ember field, a two-line introduction, “read the blog” and “book a call”.
+group: home
+order: 1
+component: src/components/home/Hero.astro
+facts:
+  - label: words
+    value: src/content/home.yaml
+  - label: status
+    value: live
+related:
+  - page: components/ember-field
+    line: The living background behind it.
+  - page: components/nav
+    line: Floats over it, at the top.
+  - page: components/button
+    line: Its large “book a call”.
+---
+
+import Preview from '../../../components/Preview.astro';
+import { usage } from '../../../lib/example';
+import example from '../../../examples/hero.astro?raw';
+import source from '../../../../../src/components/home/Hero.astro?raw';
+
+## preview
+
+<Preview
+  title="hero"
+  specimen="/specimens/hero/"
+  size="large"
+  tabs={[
+    { label: 'astro', code: usage(example), lang: 'astro', file: 'src/pages/index.astro' },
+    { label: 'source', code: source.trim(), lang: 'astro', file: 'src/components/home/Hero.astro' },
+  ]}
+/>
+
+## how it behaves
+
+- **Fills the first screen,** between 640px and 1080px tall (560px at least on phones). The nav floats over it.
+- **The headline** is `display-hero`, fluid from 40px to 96px (44px on phones), nudged so it lines up under the logo, and ends in the brick stop, which pulses two small rings.
+- **The introduction:** two sentences on separate lines, the first in `text`, the second in `muted`.
+- **Actions** at the column's right edge: "read the blog", then a large "book a call". On phones they stack: the button full width, the link centred under it.
+- **The scroll cue** sits bottom left and fades over the first 160px of scroll.
+- **Its words** are in `src/content/home.yaml`, so they change without touching the component.
+
+## props
+
+None. Its words come from `src/content/home.yaml`.
+
+## accessibility
+
+- **One `<h1>`,** the headline, labelling the section. The stop and the cue are hidden from screen readers.
+- **The field is decoration;** nothing depends on it.
+- **Reduced motion:** the field draws once, still; no rings; the cue doesn't move.
