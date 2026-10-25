@@ -126,6 +126,7 @@ export function bindLightbox(buttons: HTMLButtonElement[]): void {
       const img = new Image();
       img.src = largestSource(source);
       img.alt = source.alt;
+      img.draggable = false; // a browser's own image drag would cancel ours on desktop
       holder.append(img);
     }
     q('[data-cap]').textContent = caption;
