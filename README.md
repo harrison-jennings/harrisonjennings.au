@@ -75,6 +75,9 @@ npm run preview                          # build, then serve dist/ through Wrang
 | `npm run test:e2e`          | builds, then runs the Playwright tests against `wrangler dev` |
 | `npm run verify`            | everything CI checks except Lighthouse, in one go             |
 | `npm run lighthouse`        | builds, then Lighthouse CI against `dist/` (95+ required)     |
+| `npm run design:dev`        | the design system's dev server, on port 4322                  |
+| `npm run design:build`      | builds the design system into `design-system/dist/`           |
+| `npm run design:preview`    | builds it, then serves it through Wrangler on port 8791       |
 | `npm run readme:diagram`    | redraws the diagram above into `docs/images/`                 |
 | `npm run readme:screenshot` | retakes the screenshot from a running `npm run preview`       |
 
@@ -82,6 +85,7 @@ npm run preview                          # build, then serve dist/ through Wrang
 
 ```text
 design/tokens.json        the brand: colours (dark and light), type, spacing, radii
+design-system/            design.harrisonjennings.au, built from the site's own components
 scripts/
   build-tokens.mjs        turns the tokens into src/styles/tokens.css
   readme/                 draws this README's diagram and screenshot

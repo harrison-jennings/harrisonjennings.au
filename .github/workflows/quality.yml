@@ -39,6 +39,9 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Build the design system
+        run: npm run design:build
+
       - name: Drafts stay out of the production build
         run: test ! -e dist/blog/formatting-reference
 

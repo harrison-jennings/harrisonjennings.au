@@ -1,0 +1,120 @@
+---
+// An example shown the way it renders on the site: its specimen page in iframes at a true phone and
+// desktop width, in both themes, scaled down to fit the column when needed (preview.ts), with the code
+// that makes it underneath. A working placeholder until the preview frame is designed.
+import CopyButton from '../../../src/components/CopyButton.astro';
+
+interface Props {
+  title: string;
+  /** The specimen page's path, such as /specimens/button/. */
+  specimen: string;
+  code: string;
+  /** What the code is: shown above it. */
+  lang: string;
+}
+
+const { title, specimen, code, lang } = Astro.props;
+
+const WIDTHS = [
+  { name: 'phone', width: 390 },
+  { name: 'desktop', width: 1280 },
+];
+const THEMES = ['dark', 'light'];
+---
+
+<figure class="preview" data-preview>
+  <figcaption class="preview__title">{title}</figcaption>
+  <div class="preview__frames">
+    {WIDTHS.flatMap(({ name, width }) =>
+      THEMES.map((theme) => (
+        <div class:list={['preview__frame', `preview__frame--${name}`]}>
+          <p class="preview__label">
+            {name}, {theme}
+          </p>
+          <div class="preview__viewport">
+            <iframe
+              src={`${specimen}?theme=${theme}`}
+              width={width}
+              height="160"
+              title={`${title}: ${name}, ${theme}`}
+              data-theme-name={theme}
+            />
+          </div>
+        </div>
+      )),
+    )}
+  </div>
+  <div class="preview__code">
+    <div class="preview__bar">
+      <span>{lang}</span>
+      <CopyButton text={code} context={`the ${title} code`} />
+    </div>
+    <pre><code>{code}</code></pre>
+  </div>
+</figure>
+
+<script>
+  import '../scripts/preview';
+</script>
+
+<style>
+  .preview {
+    margin: var(--space-40) 0;
+  }
+  .preview__title {
+    margin-bottom: var(--space-16);
+    font-family: var(--font-display);
+  }
+  .preview__frames {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-16);
+  }
+  .preview__frame--desktop {
+    grid-column: span 2;
+  }
+  .preview__label {
+    margin: 0 0 var(--space-8);
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .preview__viewport {
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+  }
+  .preview__viewport iframe {
+    display: block;
+    border: 0;
+    transform-origin: 0 0;
+  }
+  .preview__code {
+    margin-top: var(--space-16);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+  }
+  .preview__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-8) var(--space-8) var(--space-8) var(--space-16);
+    border-bottom: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .preview__code pre {
+    margin: 0;
+    padding: var(--space-16);
+    overflow-x: auto;
+    font-family: var(--font-display);
+    font-size: 13px;
+  }
+  @media (max-width: 760px) {
+    .preview__frames {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .preview__frame--desktop {
+      grid-column: auto;
+    }
+  }
+</style>

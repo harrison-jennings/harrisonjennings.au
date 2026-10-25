@@ -37,9 +37,16 @@ export const scriptHash = (body: string): string =>
 export const inlineHandlers = (html: string): string[] =>
   [...html.matchAll(/<[a-z][^>]*\s(on[a-z]+)\s*=/gi)].map((m) => m[1] ?? '');
 
+/** The headers a policy adds for a set of inline script hashes: the site's own unless given another. */
+export type CspHeaders = (hashes: string[]) => Array<[name: string, value: string]>;
+
 /** _headers with the CSP added to the `/*` rule. */
-export function withCsp(headers: string, hashes: string[]): string {
-  const lines = cspHeaders(hashes).map(([name, value]) => `  ${name}: ${value}`);
+export function withCsp(
+  headers: string,
+  hashes: string[],
+  policy: CspHeaders = cspHeaders,
+): string {
+  const lines = policy(hashes).map(([name, value]) => `  ${name}: ${value}`);
   for (const line of lines) {
     if (line.length > MAX_LINE)
       throw new Error(
@@ -59,7 +66,8 @@ async function htmlFiles(dir: string): Promise<string[]> {
     .map((e) => join(e.parentPath, e.name));
 }
 
-export function csp(): AstroIntegration {
+/** The integration. The design system passes its own policy (design-system/csp.ts). */
+export function csp(policy: CspHeaders = cspHeaders): AstroIntegration {
   return {
     name: 'csp',
     hooks: {
@@ -75,10 +83,9 @@ export function csp(): AstroIntegration {
         }
         const path = join(out, '_headers');
         const sorted = [...hashes].sort();
-        await writeFile(path, withCsp(await readFile(path, 'utf8'), sorted));
-        logger.info(
-          `Content-Security-Policy-Report-Only written, ${sorted.length} inline script hashes`,
-        );
+        await writeFile(path, withCsp(await readFile(path, 'utf8'), sorted, policy));
+        const name = policy(sorted)[0]?.[0] ?? 'Content-Security-Policy';
+        logger.info(`${name} written, ${sorted.length} inline script hashes`);
       },
     },
   };

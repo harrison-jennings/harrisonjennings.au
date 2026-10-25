@@ -1,0 +1,39 @@
+---
+// One example on its own, with the site's real styles and nothing else, so it renders exactly as it
+// does on harrisonjennings.au. Preview frames show it in an iframe at a true screen width, in the theme
+// they ask for (?theme=light), and it reports its height back to them (specimen.ts).
+import '../../../src/styles/global.css';
+import '../../../src/styles/prose.css';
+
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en-AU" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>{title}: specimen</title>
+    <script is:inline>
+      document.documentElement.dataset.theme =
+        new URLSearchParams(location.search).get('theme') === 'light' ? 'light' : 'dark';
+    </script>
+  </head>
+  <body class="specimen">
+    <slot />
+    <script>
+      import '../scripts/specimen';
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  .specimen {
+    padding: var(--space-28) var(--space-22);
+  }
+</style>

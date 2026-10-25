@@ -1,0 +1,17 @@
+# Headers for design.harrisonjennings.au. Public, but never indexed: every response says noindex (robots.txt
+# doesn't block crawling, or crawlers couldn't see it). Pages may be framed only by the design system itself,
+# for its previews. The build adds the Content-Security-Policy to /*: see design-system/src/lib/csp.ts.
+/*
+  X-Robots-Tag: noindex, nofollow
+  Strict-Transport-Security: max-age=31536000
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
+  Cross-Origin-Opener-Policy: same-origin
+
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable

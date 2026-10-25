@@ -1,0 +1,45 @@
+# Design system
+
+`design.harrisonjennings.au`: the reference for the brand, every component, every token and every kind of content a post can hold, built from the site's own code so it can't drift from it. Public, never indexed. The plan and the decision are in `docs/decisions.md`; the pages are built from the approved mockups (the brief is in the private notes repo).
+
+## How it's built
+
+A second Astro site in `design-system/`, an npm workspace of this repository, deployed as its own Worker (`harrisonjennings-au-design`). It imports from the main site and never copies:
+
+- **Components, styles and tokens** from `src/components/`, `src/styles/` (including the generated `tokens.css`) and `src/lib/`.
+- **The Markdown pipeline** from `src/lib/markdown/config.ts`, the same module `astro.config.mjs` uses, so a content example renders exactly as it would in a post.
+- **Public files** the site's CSS and pages need (`public/fonts/`, `public/brand/`, `public/favicon.svg`): served by the dev server and copied into the build by `design-system/src/lib/shared-public.ts`.
+
+**Specimens and previews.** Every example is a specimen page (`design-system/src/pages/specimens/`), the example on its own with the site's real CSS (`layouts/Specimen.astro`). A preview (`components/Preview.astro`) shows it in iframes at a true width (phone 390, desktop 1280), in the theme it asks for (`?theme=light`), scaled down to fit the column when needed. Iframes, because the site's layout responds to the screen's width, not a container's: a phone preview has to be a phone-width screen. The specimen reports its height to the preview (`scripts/specimen.ts`, `scripts/preview.ts`).
+
+**Code to copy** comes from the example itself, never a second copy: a component example's own file (`?raw`, minus its frontmatter), a content example's Markdown file.
+
+**Headers** (`design-system/public/_headers`): `X-Robots-Tag: noindex, nofollow` on every response (robots.txt doesn't block crawling, or crawlers couldn't read it), `X-Frame-Options: SAMEORIGIN`, and an enforced Content-Security-Policy (`design-system/src/lib/csp.ts`, written by the same build step as the site's) that lets pages frame only each other.
+
+**Build stamp:** the footer names the commit it was built from (`WORKERS_CI_COMMIT_SHA` on Workers Builds, git elsewhere) and the date.
+
+## Working on it
+
+```sh
+npm run design:dev       # http://localhost:4322
+npm run design:build     # design-system/dist
+npm run design:preview   # build, then serve through Wrangler on :8791, as Cloudflare will
+```
+
+`npm run check` type-checks both sites; `npm run test:e2e` builds both and runs the `design-system` Playwright project (`tests/e2e/design-system/`) beside the site's tests. In CI it runs in the Chromium job.
+
+## Deploying
+
+Workers Builds, from the Worker `harrisonjennings-au-design` connected to this repository:
+
+| Setting           | Value                                                                                                                                                                                                                                                  | Why                                                                                                                                                                            |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Root directory    | `design-system`                                                                                                                                                                                                                                        | Cloudflare checks the Worker's name against the Wrangler config in the root directory; at the repository root it would read the site's `wrangler.jsonc` and offer to rename it |
+| Build command     | `npm run build:cloudflare`                                                                                                                                                                                                                             | Installs from the repository root (Cloudflare's own install step runs in `design-system/` and installs only the workspace), then builds                                        |
+| Deploy command    | `npm run deploy`                                                                                                                                                                                                                                       | `wrangler deploy`                                                                                                                                                              |
+| Preview command   | `npm run preview`                                                                                                                                                                                                                                      | `wrangler preview`, for every other branch                                                                                                                                     |
+| Build watch paths | include `design-system/*`, `src/components/*`, `src/styles/*`, `src/scripts/*`, `src/lib/*`, `design/*`, `public/fonts/*`, `public/brand/*`, `public/favicon.svg`, `frontmatter.json`, `package.json`, `package-lock.json`, `scripts/build-tokens.mjs` | Builds only when something it shows could have changed                                                                                                                         |
+
+`design-system/package.json` pins npm (`packageManager`) and `design-system/.nvmrc` links to the site's Node version, because Cloudflare reads both from the root directory. The custom domain `design.harrisonjennings.au` is set on the Worker in the dashboard, like the site's route, so `wrangler deploy` leaves it alone. Previews are behind Cloudflare Access, as the site's are.
+
+The site's own Worker still builds on every push: the CD Orchestrator waits for its build on every pull request (`scripts/wait-for-cloudflare.sh`, which picks the check by Worker name), so a skipped build would look like a stuck one.

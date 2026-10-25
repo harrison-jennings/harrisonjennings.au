@@ -10,6 +10,9 @@
     "type": "git",
     "url": "git+https://github.com/harrison-jennings/harrisonjennings.au.git"
   },
+  "workspaces": [
+    "design-system"
+  ],
   "engines": {
     "node": ">=22.22.0"
   },
@@ -21,18 +24,21 @@
     "prebuild": "npm run tokens",
     "build": "astro build",
     "preview": "npm run build && wrangler dev",
-    "check": "npm run tokens && astro check",
+    "check": "npm run tokens && astro check && astro check --root design-system",
     "lint": "eslint .",
     "readme:diagram": "node scripts/readme/diagram.mjs",
     "readme:screenshot": "node scripts/readme/screenshot.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "vitest run",
-    "test:e2e": "INCLUDE_DRAFTS=true npm run build && npm run db:local && playwright test",
+    "test:e2e": "INCLUDE_DRAFTS=true npm run build && npm run design:build && npm run db:local && playwright test",
     "db:local": "wrangler d1 migrations apply CONSENT_DB --local",
     "verify": "npm run format:check && npm run lint && npm run check && npm run test && npm run test:e2e",
     "lighthouse": "npm run build && npx --yes @lhci/cli@0.15.1 autorun",
-    "deploy": "npm run build && wrangler deploy"
+    "deploy": "npm run build && wrangler deploy",
+    "design:dev": "npm run tokens && astro dev --root design-system --port 4322",
+    "design:build": "npm run tokens && astro build --root design-system",
+    "design:preview": "npm run design:build && wrangler dev -c design-system/wrangler.jsonc --port 8791"
   },
   "dependencies": {
     "@astrojs/markdown-remark": "^7.3.3",

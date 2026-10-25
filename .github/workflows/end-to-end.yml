@@ -18,10 +18,13 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          # The design system's tests run with Chromium's.
           - project: chromium
             browser: chromium
+            projects: --project chromium --project design-system
           - project: webkit-iphone
             browser: webkit
+            projects: --project webkit-iphone
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -40,7 +43,7 @@ jobs:
       # Builds with drafts included (the formatting reference), applies the D1 migrations locally, then
       # tests dist/ served by wrangler dev (see playwright.config.ts).
       - name: End-to-end tests
-        run: npm run test:e2e -- --project ${{ matrix.project }}
+        run: npm run test:e2e -- ${{ matrix.projects }}
         env:
           WRANGLER_SEND_METRICS: 'false'
 
