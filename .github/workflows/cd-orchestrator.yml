@@ -22,9 +22,12 @@ name: 🚀 CD Orchestrator
 #
 # check_run runs this file as it is on main, with main's latest commit as its own; the built commit and
 # its branch come from the check, and are passed to each workflow.
+# Every app's finished check starts it (a workflow can't filter check_run by name), so another app's,
+# such as CodeQL's, starts a run that skips everything; its title says so.
 run-name: >-
-  ${{ github.event_name == 'check_run'
+  ${{ github.event_name == 'check_run' && startsWith(github.event.check_run.name, 'Workers Builds: ')
   && format('{0} built: {1}', contains(github.event.check_run.name, '-design') && 'design system' || 'site', github.event.check_run.check_suite.head_branch)
+  || github.event_name == 'check_run' && format('{0}: not a Cloudflare build', github.event.check_run.name)
   || github.event_name == 'pull_request' && github.event.pull_request.title
   || format('{0} checks by hand: {1}', inputs.target, github.ref_name) }}
 

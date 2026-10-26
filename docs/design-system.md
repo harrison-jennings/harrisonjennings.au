@@ -29,7 +29,7 @@ The shell (`layouts/Shell.astro`, `styles/shell.css`, `scripts/shell.ts`) follow
 
 **Downloads** are served by the design system, so their links never go stale: `/tokens.css` (the generated file) and `/tokens.json` (`design/tokens.json` itself), the marks as SVG from `public/brand/`, and as 1024px PNGs drawn from those SVGs at build time with sharp (`src/pages/brand/[mark].png.ts`), and the favicons.
 
-**Headers** (`design-system/public/_headers`): `X-Robots-Tag: noindex, nofollow` on every response (robots.txt doesn't block crawling, or crawlers couldn't read it), `X-Frame-Options: SAMEORIGIN`, and an enforced Content-Security-Policy (`design-system/src/lib/csp.ts`, written by the same build step as the site's) that lets pages frame only each other.
+**Headers** (`design-system/public/_headers`): `X-Robots-Tag: noindex, nofollow` on every response (`design-system/public/robots.txt` allows crawling, or crawlers couldn't read it), `X-Frame-Options: SAMEORIGIN`, and an enforced Content-Security-Policy (`design-system/src/lib/csp.ts`, written by the same build step as the site's) that lets pages frame only each other.
 
 **Build stamp:** the footer names the commit it was built from (`WORKERS_CI_COMMIT_SHA` on Workers Builds, git elsewhere) and the date.
 
@@ -60,6 +60,6 @@ Workers Builds, from the Worker `harrisonjennings-au-design` connected to this r
 **After each deploy** the 🚀 CD Orchestrator records it, as it does for the site. It runs when Cloudflare's "Workers Builds: harrisonjennings-au-design" check finishes on a commit, so a commit Cloudflare didn't build the design system for gets no run at all:
 
 - **On a branch** (`.github/workflows/design-system-preview.yml`): records a **Design system preview** deployment with the branch's Preview URL.
-- **On main** (`.github/workflows/design-system-production.yml`): smoke-tests that exact version through its preview address (`scripts/design-smoke-test.sh`, with the Access service token), checks the live domain (`scripts/design-live-check.sh`; Bot Fight Mode challenges GitHub's runners, so a challenge is noted rather than failed), and records a **Design system** deployment.
+- **On main** (`.github/workflows/design-system-production.yml`): smoke-tests that exact version through its preview address (`scripts/design-smoke-test.sh`, with the Access service token), checks the live domain the way the site's is checked (`scripts/design-live-check.sh`: its `robots.txt`, which Bot Fight Mode lets through to GitHub's runners when it challenges the pages, names the design system and carries the noindex header), and records a **Design system** deployment.
 
 The scripts take the Worker's name in `WORKER` (`version-url.sh`, `preview-url.sh`), because each Worker posts its own check on a commit.
