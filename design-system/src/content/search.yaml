@@ -1,0 +1,10 @@
+# Search, before anything's typed: "used most while writing", in order, by page id (the page's file in
+# src/content/docs/, without .mdx). The first is selected, so Enter opens it.
+search:
+  pages:
+    - content/callouts
+    - content/code-blocks
+    - content/images
+    - content/images-side-by-side
+    - content/front-matter
+    - components/button

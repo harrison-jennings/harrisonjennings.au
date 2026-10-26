@@ -2,7 +2,8 @@
 // The frame around every design system page (design hand-off: Shell and Sidebar): the brick line and
 // "design system" beside the logo, the six sections, the section's sidebar, "on this page", the footer
 // with the build stamp, and on phones the page picker and full-screen menu. Built from the pages that
-// exist (lib/nav.ts). Landing pages (the overview) have no sidebar and no "on this page".
+// exist (lib/nav.ts). Landing pages (the overview) have no sidebar and no "on this page". Search
+// (components/Search.astro) opens from the header and the phone menu.
 import '../../../src/styles/global.css';
 import '../../../src/styles/prose.css';
 import '../styles/shell.css';
@@ -13,6 +14,7 @@ import ThemeHead from '../../../src/components/ThemeHead.astro';
 import ThemeToggle from '../../../src/components/ThemeToggle.astro';
 import DsIcon from '../components/DsIcon.astro';
 import Link from '../components/Link.astro';
+import Search from '../components/Search.astro';
 import SideGroups from '../components/SideGroups.astro';
 import Stamp from '../components/Stamp.astro';
 import { getNav } from '../lib/nav';
@@ -28,6 +30,8 @@ interface Props {
   /** The page's headings: its ## sections become "on this page". */
   headings?: { depth: number; slug: string; text: string }[];
   landing?: boolean;
+  /** Indexes the page for search (lib/search.ts), saying where its results live: content / text. */
+  search?: string | undefined;
 }
 
 const {
@@ -38,6 +42,7 @@ const {
   pageTitle,
   headings = [],
   landing = false,
+  search,
 } = Astro.props;
 const nav = await getNav();
 const current = nav.find((s) => s.id === section);
@@ -85,7 +90,28 @@ const REPO = 'https://github.com/harrison-jennings/harrisonjennings.au';
         ))}
       </nav>
       <div class="ds-head__end">
-        {/* The search slot: a button goes here once search exists (docs/design-system.md). */}
+        <button
+          class="ds-search"
+          type="button"
+          aria-label="Search the design system"
+          aria-haspopup="dialog"
+          aria-controls="ds-search"
+          data-search-open
+        >
+          <DsIcon name="search" size={18} />
+          search
+          <kbd aria-hidden="true">/</kbd>
+        </button>
+        <button
+          class="ds-iconbtn ds-head__search"
+          type="button"
+          aria-label="Search the design system"
+          aria-haspopup="dialog"
+          aria-controls="ds-search"
+          data-search-open
+        >
+          <DsIcon name="search" size={20} />
+        </button>
         <ThemeToggle />
         <Link class="ds-back" href={SITE}>
           harrisonjennings.au
@@ -123,7 +149,12 @@ const REPO = 'https://github.com/harrison-jennings/harrisonjennings.au';
           <SideGroups section={side} current={page} place="side" />
         </nav>
       )}
-      <main id="main" class="ds-main">
+      <main
+        id="main"
+        class="ds-main"
+        data-pagefind-body={search ? '' : undefined}
+        data-pagefind-meta={search ? `where:${search}` : undefined}
+      >
         <slot />
       </main>
       {toc.length > 0 && (
@@ -170,7 +201,16 @@ const REPO = 'https://github.com/harrison-jennings/harrisonjennings.au';
         </button>
       </div>
       <div class="ds-menu__body">
-        {/* The search field goes here once search exists. */}
+        <button
+          class="ds-menu__search"
+          type="button"
+          aria-haspopup="dialog"
+          aria-controls="ds-search"
+          data-search-open
+        >
+          <DsIcon name="search" size={18} />
+          search
+        </button>
         {nav.map((s) => (
           <div class="ds-menu__sec">
             <button
@@ -214,8 +254,20 @@ const REPO = 'https://github.com/harrison-jennings/harrisonjennings.au';
       </div>
     </dialog>
 
+    <Search />
+    <div class="sr-arrive" hidden data-arrive>
+      <p role="status">
+        <b data-arrive-query></b> <span data-arrive-count></span>
+      </p>
+      <button type="button">
+        clear
+        <DsIcon name="cross" size={14} />
+      </button>
+    </div>
+
     <script>
       import '../scripts/shell';
+      import '../scripts/arrive';
       import { bindCopyCode } from '../../../src/scripts/copy-code';
       import { bindToc } from '../../../src/scripts/toc';
       document.querySelectorAll<HTMLElement>('[data-toc]').forEach(bindToc);

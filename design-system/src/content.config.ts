@@ -76,6 +76,12 @@ const templates = defineCollection({
   }),
 });
 
+// Search, before anything's typed (components/Search.astro): "used most while writing", by page id.
+const search = defineCollection({
+  loader: file('src/content/search.yaml'),
+  schema: z.object({ pages: z.array(z.string()).min(1) }),
+});
+
 // The site's own collections too (posts, projects, the home page's wording, consent…), so the site's
 // components render here with exactly what they show on harrisonjennings.au.
-export const collections = { ...site, docs, overview, changes, templates };
+export const collections = { ...site, docs, overview, changes, templates, search };

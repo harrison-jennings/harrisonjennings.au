@@ -15,7 +15,7 @@ interface Props {
 const { section, group, title, lead, facts = [] } = Astro.props;
 ---
 
-<nav class="ds-crumb" aria-label="Breadcrumb">
+<nav class="ds-crumb" aria-label="Breadcrumb" data-pagefind-ignore>
   <a href={section.href}>{section.name}</a>
   <span aria-hidden="true">/</span>
   <a href={group.pages[0]?.href ?? section.href}>{group.name}</a>

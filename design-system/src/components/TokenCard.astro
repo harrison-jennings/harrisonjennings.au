@@ -1,0 +1,39 @@
+---
+// Search's token card (design hand-off: Search, "a token"): shown above the results when the query is
+// exactly a token's name. Its kind and copy chip, its value in each theme (a colour's swatch painted by
+// that theme's token, or the token table's preview), what it's for, and a link into the token table
+// filtered to its kind. Served by pages/search/tokens.astro, from tokens.json, not the search index.
+import { readable, type Token } from '../lib/tokens';
+import ChipCopy from './ChipCopy.astro';
+import TokenPreview from './TokenPreview.astro';
+
+interface Props {
+  token: Token;
+}
+
+const { token: t } = Astro.props;
+---
+
+<div class="sr-token" data-token-card={t.name}>
+  <div class="sr-token__head">
+    <span class="sr-token__kind">{t.kind} token</span>
+    <ChipCopy copy={t.copy} />
+  </div>
+  <div class="sr-token__vals">
+    {t.values.map((v) => (
+      <span class="sr-token__val">
+        {t.kind === 'colour' ? (
+          <i data-theme={v.theme} style={`background: var(--${t.name})`} />
+        ) : (
+          <TokenPreview token={t} />
+        )}
+        {v.theme && <span>{v.theme}</span>}
+        <b>{readable(v.value)}</b>
+      </span>
+    ))}
+  </div>
+  <p class="sr-token__use">{t.usage}</p>
+  <a class="ds-link sr-token__more" href={`/foundations/tokens/?kind=${t.kind}`}>
+    open in the token table
+  </a>
+</div>

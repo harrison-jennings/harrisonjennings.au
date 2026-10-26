@@ -1,0 +1,182 @@
+---
+// Search (design hand-off: Search): a dialog over the page, full screen on phones, opened from the
+// header, the phone menu, `/` or ⌘K / Ctrl K. Before anything's typed it offers the six sections and
+// the pages used most while writing (src/content/search.yaml); then Pagefind's results, a token's card
+// when the query names one, and the loading, no-results and failed states. This is the markup and
+// what's known at build; scripts/search.ts fills in the results.
+import '../styles/search.css';
+import { getEntry } from 'astro:content';
+import LiveDot from '../../../src/components/LiveDot.astro';
+import { getNav } from '../lib/nav';
+import { TOKENS } from '../lib/tokens';
+import DsIcon from './DsIcon.astro';
+
+const nav = await getNav();
+const where = (id: string): { title: string; where: string; href: string } => {
+  for (const s of nav)
+    for (const g of s.groups)
+      for (const p of g.pages)
+        if (p.id === id) return { title: p.title, where: `${s.name} / ${g.name}`, href: p.href };
+  throw new Error(`search.yaml: no page "${id}"`);
+};
+const used = ((await getEntry('search', 'search'))?.data.pages ?? []).map(where);
+const chips = nav.map((s) => ({ name: s.name, href: s.href }));
+---
+
+<dialog
+  class="sr"
+  id="ds-search"
+  aria-label="Search the design system"
+  data-search
+  data-tokens={TOKENS.map((t) => t.name).join(' ')}
+>
+  <div class="sr-top">
+    <label class="sr-field">
+      <DsIcon name="search" size={20} />
+      <span class="visually-hidden">search the design system</span>
+      <input
+        type="search"
+        role="combobox"
+        aria-autocomplete="list"
+        aria-controls="sr-start"
+        aria-expanded="true"
+        placeholder="search the design system"
+        autocomplete="off"
+        autocapitalize="off"
+        spellcheck="false"
+        enterkeyhint="search"
+        data-search-input
+      />
+    </label>
+    <button class="sr-clear" type="button" hidden data-search-clear>
+      clear
+    </button>
+    <button class="sr-esc" type="button" aria-label="Close search, esc" data-search-close>
+      <kbd>esc</kbd>
+    </button>
+    <button class="sr-cancel" type="button" data-search-close>
+      cancel
+    </button>
+  </div>
+
+  <div class="sr-body" data-search-body>
+    <p class="visually-hidden" role="status" data-search-status></p>
+
+    <div data-view="start">
+      <p class="sr-label">jump to a section</p>
+      <div class="sr-chips">
+        {chips.map((c) => (
+          <a class="sr-chip" href={c.href}>
+            {c.name}
+          </a>
+        ))}
+      </div>
+      <p class="sr-label" id="sr-start-label">
+        used most while writing
+      </p>
+      <ul class="sr-list" role="listbox" id="sr-start" aria-labelledby="sr-start-label">
+        {used.map((p, i) => (
+          <li role="none">
+            <a
+              class="sr-res sr-res--plain"
+              role="option"
+              id={`sr-start-${i}`}
+              aria-selected={i === 0 ? 'true' : 'false'}
+              href={p.href}
+              tabindex="-1"
+            >
+              <span class="sr-res__title">{p.title}</span>
+              <span class="sr-res__where">{p.where}</span>
+              <span class="sr-enter" aria-hidden="true">
+                ↵
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <div data-view="results" hidden>
+      <p class="sr-count" id="sr-count" data-search-count></p>
+      <div data-search-token></div>
+      <ul
+        class="sr-list"
+        role="listbox"
+        id="sr-list"
+        aria-labelledby="sr-count"
+        data-search-list
+      ></ul>
+      <div class="sr-more" hidden data-search-more>
+        <button type="button">
+          <span data-search-more-label>show 8 more</span>
+          <span data-search-left></span>
+        </button>
+      </div>
+    </div>
+
+    <div class="sr-msg" data-view="loading" hidden>
+      <p class="sr-loading">
+        <LiveDot /> loading search…
+      </p>
+      <p class="sr-msg__note">The first search loads the index. After that, results are instant.</p>
+    </div>
+
+    <div data-view="none" hidden>
+      <div class="sr-msg">
+        <p class="sr-msg__title" data-search-none></p>
+        <p class="sr-msg__note">
+          Search covers every page's text, props, tokens and snippet names. Try a shorter or broader
+          word, or check the spelling.
+        </p>
+      </div>
+      <p class="sr-label">or browse a section</p>
+      <div class="sr-chips">
+        {chips.map((c) => (
+          <a class="sr-chip" href={c.href}>
+            {c.name}
+          </a>
+        ))}
+      </div>
+    </div>
+
+    <div data-view="failed" hidden>
+      <div class="sr-msg">
+        <p class="sr-msg__title">search couldn't load.</p>
+        <p class="sr-msg__note">
+          The search index didn't arrive. Check your connection, then try again.
+        </p>
+        <button class="sr-retry" type="button" data-search-retry>
+          try again
+        </button>
+      </div>
+      <p class="sr-label">or browse a section</p>
+      <div class="sr-chips">
+        {chips.map((c) => (
+          <a class="sr-chip" href={c.href}>
+            {c.name}
+          </a>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <div class="sr-foot" aria-hidden="true">
+    <span>
+      <kbd>↑</kbd>
+      <kbd>↓</kbd> move
+    </span>
+    <span>
+      <kbd>↵</kbd> open
+    </span>
+    <span>
+      <kbd>esc</kbd> <span data-search-esc>close</span>
+    </span>
+    <span class="sr-foot__end">
+      <kbd>/</kbd> or <kbd data-search-key>⌘ K</kbd> to search from anywhere
+    </span>
+  </div>
+</dialog>
+
+<script>
+  import '../scripts/search';
+</script>

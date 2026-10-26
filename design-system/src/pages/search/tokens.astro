@@ -1,0 +1,23 @@
+---
+// Every token's search card (components/TokenCard.astro), on one page that search fetches the first
+// time a query names a token (scripts/search.ts), so pages don't carry 59 cards they rarely show. Not
+// a page anyone visits: no shell, and search doesn't index it.
+import TokenCard from '../../components/TokenCard.astro';
+import { TOKENS } from '../../lib/tokens';
+---
+
+<!doctype html>
+<html lang="en-AU">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>token cards · design system · harrison jennings</title>
+  </head>
+  <body>
+    <main>
+      {TOKENS.map((t) => (
+        <TokenCard token={t} />
+      ))}
+    </main>
+  </body>
+</html>

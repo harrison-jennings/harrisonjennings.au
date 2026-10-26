@@ -37,7 +37,7 @@ design/tokens.json ──scripts/build-tokens.mjs──▶ src/styles/tokens.css
 - **Sitemap** (`@astrojs/sitemap`, `src/lib/sitemap.ts`): every built page, with `lastmod` where there's a real date: a post's `updated` or `published`, the blog and topic pages from their newest post, the legal pages from `updated`. Pages kept out of search (`noindex`) carry no canonical address.
 - **Redirects** (`public/_redirects`): one explicit 301 per old WordPress post and category URL, plus the old sitemap and feed URLs. No wildcards; the `redirects` end-to-end test checks every rule.
 - **404**: `src/pages/404.astro` builds `404.html`, which Workers serves for any unknown path (`not_found_handling: 404-page`). It's the one inner page with the ember clouds and the bouncing dot (`<Logo loading>`), with the latest three posts; wording in `src/content/not-found.yaml`. WordPress-only URLs (`?p=` shortlinks, `wp-content` uploads) are left to lapse.
-- **Design system** (`design-system/`): `design.harrisonjennings.au`, a second Astro site in an npm workspace, built from the site's own components, styles, tokens and Markdown pipeline (imported, never copied) and deployed as its own Worker. See `docs/design-system.md`.
+- **Design system** (`design-system/`): `design.harrisonjennings.au`, a second Astro site in an npm workspace, built from the site's own components, styles, tokens and Markdown pipeline (imported, never copied) and deployed as its own Worker, with search from a static Pagefind index built alongside it. See `docs/design-system.md`.
 
 ## tests
 

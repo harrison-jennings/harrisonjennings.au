@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # A quick check that a deployed copy of the design system works: its pages and specimens, the shared
-# fonts, the 404, and the headers that keep it out of search and framed only by itself. The CD
-# Orchestrator runs it after each deploy against that exact version's preview address
+# fonts, its search index, the 404, and the headers that keep it out of search and framed only by
+# itself. The CD Orchestrator runs it after each deploy against that exact version's preview address
 # (.github/workflows/production-version.yml), with the Access service token in
 # CF_ACCESS_CLIENT_ID and CF_ACCESS_CLIENT_SECRET. Also handy by hand:
 #
@@ -43,11 +43,14 @@ check 'overview has the shell' has 'class="ds-head"' "$home"
 check 'overview names the commit it was built from' has 'class="ds-stamp"' "$home"
 check 'a specimen answers 200' [ "$(status /specimens/button/)" = 200 ]
 check 'the shared fonts answer 200' [ "$(status /fonts/SchibstedGrotesk-Variable.woff2)" = 200 ]
+check 'the search index answers 200' [ "$(status /pagefind/pagefind-entry.json)" = 200 ]
+check "search's token cards answer 200" [ "$(status /search/tokens/)" = 200 ]
 check 'an unknown page answers 404' [ "$(status /this-page-does-not-exist/)" = 404 ]
 # Cloudflare sends a plain noindex on preview addresses; the custom domain sends "noindex, nofollow".
 check 'noindex header' has 'x-robots-tag: noindex' "$home_headers"
 check 'frame header' has 'x-frame-options: sameorigin' "$home_headers"
 check "Content-Security-Policy lets only the design system frame it" has "frame-ancestors 'self'" "$home_headers"
+check "Content-Security-Policy lets search run its WebAssembly" has "'wasm-unsafe-eval'" "$home_headers"
 check 'nosniff header' has 'x-content-type-options: nosniff' "$home_headers"
 
 if [ "$failures" -gt 0 ]; then

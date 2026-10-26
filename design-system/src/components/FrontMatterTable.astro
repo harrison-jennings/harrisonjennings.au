@@ -17,7 +17,10 @@ import { FIELDS } from '../lib/front-matter';
     <tbody>
       {FIELDS.map((f) => (
         <tr>
-          <td class="mono-cell">{f.name}</td>
+          {/* The reference for every field, so a field's name counts as a heading does in search. */}
+          <td class="mono-cell" data-pagefind-weight="6">
+            {f.name}
+          </td>
           <td class:list={{ req: f.required }}>
             {f.required ? 'yes' : f.requiredWith ? `with ${f.requiredWith}` : 'no'}
           </td>

@@ -58,6 +58,7 @@ const toc = related.length
   page={doc.id}
   pageTitle={doc.data.title}
   headings={toc}
+  search={`${section.name} / ${group.name}`}
 >
   <PageHead
     section={section}
@@ -68,11 +69,12 @@ const toc = related.length
   />
   <div class="ds-doc">
     <Content />
+    {/* Related pages are a way on, not what this page says, so search leaves them out. */}
     {related.length > 0 && (
-      <>
+      <div data-pagefind-ignore>
         <h2 id="related">related</h2>
         <Related related={related} />
-      </>
+      </div>
     )}
   </div>
 </Shell>
