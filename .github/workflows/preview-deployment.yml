@@ -1,12 +1,21 @@
 name: Preview deployment
 
-# Called by the CD Orchestrator when Cloudflare finishes building the site for a branch: records the
-# build as a GitHub deployment to the Preview environment with the branch's Preview URL, so it shows in
-# the pull request and the repository's Deployments panel (marked failed if Cloudflare's build failed).
-# Cloudflare does the deploying; this only records it.
+# Called by the CD Orchestrator when Cloudflare finishes building a Worker for a branch (the site on
+# every push; the design system when a push touches its watch paths): records the build as a GitHub
+# deployment with the branch's Preview URL, so it shows in the pull request and the repository's
+# Deployments panel (marked failed if Cloudflare's build failed). Cloudflare does the deploying; this
+# only records it.
 on:
   workflow_call:
     inputs:
+      worker:
+        description: The Worker Cloudflare built (harrisonjennings-au, harrisonjennings-au-design)
+        required: true
+        type: string
+      environment:
+        description: The GitHub environment to record it in (Preview, Design system preview)
+        required: true
+        type: string
       sha:
         description: The commit Cloudflare built
         required: true
@@ -24,7 +33,7 @@ permissions:
   deployments: write
 
 concurrency:
-  group: preview-deployment-${{ inputs.branch }}
+  group: preview-deployment-${{ inputs.worker }}-${{ inputs.branch }}
   cancel-in-progress: true
 
 jobs:
@@ -42,18 +51,20 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          WORKER: ${{ inputs.worker }}
+          ENVIRONMENT: ${{ inputs.environment }}
           # Passed as data, never pasted into the script: branch names can contain anything.
           BRANCH: ${{ inputs.branch }}
           SHA: ${{ inputs.sha }}
           CONCLUSION: ${{ inputs.conclusion }}
         run: |
           url=$(bash scripts/preview-url.sh "$BRANCH")
-          id=$(bash scripts/record-deployment.sh start Preview "$BRANCH" "$SHA")
+          id=$(bash scripts/record-deployment.sh start "$ENVIRONMENT" "$BRANCH" "$SHA")
           [ -n "$id" ] || exit 0
           if [ "$CONCLUSION" = success ]; then
             bash scripts/record-deployment.sh finish "$id" success "$url"
           else
             bash scripts/record-deployment.sh finish "$id" failure "$url"
-            echo "::error::Cloudflare's preview build didn't succeed: $CONCLUSION"
+            echo "::error::Cloudflare's preview build of $WORKER didn't succeed: $CONCLUSION"
             exit 1
           fi

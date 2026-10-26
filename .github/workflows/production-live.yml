@@ -1,13 +1,26 @@
-name: Production
+name: Live domain
 
-# Called by the CD Orchestrator once the deployed version has passed its smoke test, from cutover
-# (PRODUCTION_LIVE is true): checks the live domain as far as Bot Fight Mode allows from GitHub
-# (scripts/live-check.sh), recorded as a GitHub deployment to the Production environment, so the
-# repository's Deployments panel shows it. A failure emails Harrison; rolling back is Cloudflare's job
-# (deploy the previous version from the Worker's Deployments tab).
+# Called by the CD Orchestrator once a Worker's deployed version has passed its smoke test: checks its
+# live domain as far as Bot Fight Mode allows from GitHub (scripts/live-check.sh for the site,
+# scripts/design-live-check.sh for the design system), recorded as a GitHub deployment to its
+# environment (Production, Design system), so the repository's Deployments panel shows it. A failure
+# emails Harrison; rolling back is Cloudflare's job (deploy the previous version from the Worker's
+# Deployments tab).
 on:
   workflow_call:
     inputs:
+      environment:
+        description: The GitHub environment to record it in (Production, Design system)
+        required: true
+        type: string
+      url:
+        description: The live domain
+        required: true
+        type: string
+      live-check:
+        description: Its live check, in scripts/
+        required: true
+        type: string
       sha:
         description: The commit Cloudflare deployed
         required: true
@@ -34,15 +47,19 @@ jobs:
       - name: Start the deployment record
         id: record
         env:
+          ENVIRONMENT: ${{ inputs.environment }}
           SHA: ${{ inputs.sha }}
-        run: echo "id=$(bash scripts/record-deployment.sh start Production main "$SHA")" >> "$GITHUB_OUTPUT"
+        run: echo "id=$(bash scripts/record-deployment.sh start "$ENVIRONMENT" main "$SHA")" >> "$GITHUB_OUTPUT"
 
       - name: Check the live domain
-        run: bash scripts/live-check.sh
+        env:
+          LIVE_CHECK: ${{ inputs.live-check }}
+        run: bash "scripts/$LIVE_CHECK"
 
       - name: Finish the deployment record
         if: always() && steps.record.outputs.id != ''
         env:
           ID: ${{ steps.record.outputs.id }}
           STATE: ${{ job.status == 'success' && 'success' || 'failure' }}
-        run: bash scripts/record-deployment.sh finish "$ID" "$STATE" https://www.harrisonjennings.au/
+          URL: ${{ inputs.url }}
+        run: bash scripts/record-deployment.sh finish "$ID" "$STATE" "$URL"
