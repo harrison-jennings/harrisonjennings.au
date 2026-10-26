@@ -65,17 +65,17 @@ The preview frame (`components/Preview.astro`, `styles/preview.css`, `scripts/pr
 
 Almost nothing the pages state is typed in:
 
-| what                              | from                                                                                                                         |
-| --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| every token, its values and usage | `design/tokens.json` (`lib/tokens.ts`): the palette, token table, type scale, spacing, radius, sizes and motion              |
-| contrast ratios                   | calculated at build with WCAG's formula (`lib/contrast.ts`); a colour change updates every ratio and a failure shows as such |
-| logo sizes                        | each `<Logo size>` in `src/` and the compact nav's CSS (`lib/logo-sizes.ts`), weighted as `Logo.astro` does                  |
-| icon names                        | `Icon.astro`                                                                                                                 |
-| props tables                      | each component's own `interface Props`, with its doc comments (`lib/props.ts`), so every prop needs one                      |
-| "used in"                         | the site's imports (`lib/site-source.ts`), naming places by their own pages where they have one                              |
-| VS Code snippets                  | `frontmatter.json`                                                                                                           |
-| the front matter reference        | the posts schema (fields, order, what's required), Front Matter's descriptions, and the newest post with each field          |
-| the overview's counts             | the tokens, the pages and the templates                                                                                      |
+| what                              | from                                                                                                                                                                  |
+| --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| every token, its values and usage | `design/tokens.json` (`lib/tokens.ts`): the palette, token table, type scale, spacing, radius, sizes and motion                                                       |
+| contrast ratios                   | calculated at build with WCAG's formula (`lib/contrast.ts`); a colour change updates every ratio and a failure shows as such                                          |
+| logo sizes                        | each `<Logo size>` in `src/` and the compact nav's CSS (`lib/logo-sizes.ts`), weighted by the size each is drawn at (the compact nav's is the nav's own mark, shrunk) |
+| icon names                        | `Icon.astro`                                                                                                                                                          |
+| props tables                      | each component's own `interface Props`, with its doc comments (`lib/props.ts`), so every prop needs one                                                               |
+| "used in"                         | the site's imports (`lib/site-source.ts`), naming places by their own pages where they have one                                                                       |
+| VS Code snippets                  | `frontmatter.json`                                                                                                                                                    |
+| the front matter reference        | the posts schema (fields, order, what's required), Front Matter's descriptions, and the newest post with each field                                                   |
+| the overview's counts             | the tokens, the pages and the templates                                                                                                                               |
 
 ### Page patterns
 
