@@ -1,7 +1,7 @@
 name: CodeQL
 
-# Code scanning is free on public repositories. While the repository is private these jobs skip,
-# so nothing fails; they start working as soon as it is made public.
+# Code scanning is free on public repositories. The jobs check the repository is public, so they'd
+# skip rather than fail if it were ever made private.
 on:
   # Called by the CI Orchestrator on each pull request and on main, and run weekly on its own.
   workflow_call:

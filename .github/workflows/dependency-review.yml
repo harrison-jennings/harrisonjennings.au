@@ -1,7 +1,7 @@
 name: Dependency review
 
 # Blocks pull requests that add dependencies with known vulnerabilities or unsuitable licences.
-# Like CodeQL, it needs a public repository (or GitHub Advanced Security), so it skips while private.
+# Like CodeQL, it needs a public repository (or GitHub Advanced Security); it'd skip if it were private.
 on:
   # Called by the CI Orchestrator, on pull requests only.
   workflow_call:
