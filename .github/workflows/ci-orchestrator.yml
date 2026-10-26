@@ -28,7 +28,7 @@ jobs:
     name: lighthouse
     uses: ./.github/workflows/lighthouse.yml
 
-  # The two below skip while the repository is private (they need GitHub Advanced Security).
+  # The two below need a public repository (or GitHub Advanced Security); they'd skip if it were private.
   codeql:
     name: codeql
     uses: ./.github/workflows/codeql.yml

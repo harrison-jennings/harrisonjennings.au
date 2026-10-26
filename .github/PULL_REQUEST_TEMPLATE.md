@@ -17,6 +17,10 @@
 - [ ] Uses tokens from `design/tokens.json` only (no new hex values or one-off sizes)
 - [ ] Follows `docs/brand.md`, or this PR updates it
 
+## Design system
+
+- [ ] If this changes something [the design system](https://design.harrisonjennings.au/) shows (a component, a content element, a token or a page's look), there's a row for it in `design-system/src/content/changes.yaml`; if it changes a page's first screen, the templates' thumbnails are retaken (`npm run design:shots`)
+
 ## Screenshots
 
 <!-- Before and after for any visual change. Delete if none. -->

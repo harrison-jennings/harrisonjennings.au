@@ -14,6 +14,7 @@ marketing automation, analytics and measurement, creative and media strategy.
 
 [![CI](https://github.com/harrison-jennings/harrisonjennings.au/actions/workflows/ci-orchestrator.yml/badge.svg?branch=main)](https://github.com/harrison-jennings/harrisonjennings.au/actions/workflows/ci-orchestrator.yml)
 [![CD](https://github.com/harrison-jennings/harrisonjennings.au/actions/workflows/cd-orchestrator.yml/badge.svg?branch=main)](https://github.com/harrison-jennings/harrisonjennings.au/actions/workflows/cd-orchestrator.yml)
+[![Design system](https://img.shields.io/badge/design_system-live-C85A52?style=flat-square&labelColor=121110)](https://design.harrisonjennings.au/)
 [![Astro 7](https://img.shields.io/badge/astro-7-C85A52?style=flat-square&logo=astro&logoColor=EFEAE6&labelColor=121110)](https://astro.build/)
 [![Cloudflare Workers](https://img.shields.io/badge/cloudflare-workers-C85A52?style=flat-square&logo=cloudflare&logoColor=EFEAE6&labelColor=121110)](https://developers.cloudflare.com/workers/static-assets/)
 [![Node 24](https://img.shields.io/badge/node-24_LTS-E8A27A?style=flat-square&logo=nodedotjs&logoColor=EFEAE6&labelColor=121110)](https://nodejs.org/)
@@ -50,6 +51,24 @@ A fast, static personal site: a blog, a projects index and a way to book a call.
 - **CI and CD as orchestrators.** 🛠️ runs formatting, linting, types, unit and end-to-end tests, Lighthouse, CodeQL and dependency review as required checks. 🚀 smoke-tests every Cloudflare deploy through its version's preview address with an Access service token, and records each one as a GitHub deployment.
 - **The brand as data.** `design/tokens.json` is the only source of colour and size; the site's CSS, the share cards, and the diagram and screenshot above are all drawn from it.
 
+## the design system
+
+<a href="https://design.harrisonjennings.au/">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/design-system-dark.png">
+    <img src="docs/images/design-system-light.png" alt="The design system's button page: the page head with where the button is used and its source, then a preview frame showing the four buttons at their own size, with width and theme controls and the Astro code to copy" width="100%">
+  </picture>
+</a>
+
+**[design.harrisonjennings.au](https://design.harrisonjennings.au/)** documents the site's design language: the brand, every component, every element a post can hold, every token and every kind of page. That design language is the site's own. It isn't an off-the-shelf Astro theme or template: the identity, the palette, the type pairing, the motion and every component were designed for this site, and the design system is where they're written down. It's a separate site in [`design-system/`](design-system/), with its own Cloudflare Worker.
+
+- **Built from the site, never copied.** It imports the site's real components, styles, tokens and Markdown pipeline, so what it shows is what's live and it can't drift.
+- **Previews at true widths.** Each example is its own page, shown in a frame at a real 390px phone or 1280px desktop width, scaled to fit and never squashed, in dark, light or both, with the code that makes it to copy.
+- **Read from the code, not typed in.** Contrast ratios are calculated from the tokens. Props tables come from each component's own `Props`. "Used in" is worked out from the site's imports. The front matter reference comes from the content schema, and the VS Code snippet names from Front Matter's settings.
+- **It can't fall behind.** Tests fail if a component or snippet has no page, and every page is checked with axe in both themes at phone and desktop widths. Each deploy is smoke-tested and recorded, like the site's.
+
+More in [docs/design-system.md](docs/design-system.md).
+
 ## quick start
 
 Built and developed on Node 24 LTS (`nvm use` reads `.nvmrc`); Node 22.22 or newer still works.
@@ -63,29 +82,31 @@ npm run lighthouse                       # build, then Lighthouse on four pages 
 npm run preview                          # build, then serve dist/ through Wrangler as Cloudflare will
 ```
 
-| script                      | what it does                                                  |
-| --------------------------- | ------------------------------------------------------------- |
-| `npm run dev`               | builds the tokens, then starts the Astro dev server           |
-| `npm run build`             | builds the tokens, then the static site into `dist/`          |
-| `npm run check`             | type-checks `.astro` and `.ts` files with `astro check`       |
-| `npm run lint`              | ESLint, including the Astro plugin                            |
-| `npm run format`            | formats everything with Prettier                              |
-| `npm run tokens`            | regenerates `src/styles/tokens.css` from `design/tokens.json` |
-| `npm run test`              | Vitest unit tests                                             |
-| `npm run test:e2e`          | builds, then runs the Playwright tests against `wrangler dev` |
-| `npm run verify`            | everything CI checks except Lighthouse, in one go             |
-| `npm run lighthouse`        | builds, then Lighthouse CI against `dist/` (95+ required)     |
-| `npm run design:dev`        | the design system's dev server, on port 4322                  |
-| `npm run design:build`      | builds the design system into `design-system/dist/`           |
-| `npm run design:preview`    | builds it, then serves it through Wrangler on port 8791       |
-| `npm run readme:diagram`    | redraws the diagram above into `docs/images/`                 |
-| `npm run readme:screenshot` | retakes the screenshot from a running `npm run preview`       |
+| script                             | what it does                                                        |
+| ---------------------------------- | ------------------------------------------------------------------- |
+| `npm run dev`                      | builds the tokens, then starts the Astro dev server                 |
+| `npm run build`                    | builds the tokens, then the static site into `dist/`                |
+| `npm run check`                    | type-checks `.astro` and `.ts` files with `astro check`             |
+| `npm run lint`                     | ESLint, including the Astro plugin                                  |
+| `npm run format`                   | formats everything with Prettier                                    |
+| `npm run tokens`                   | regenerates `src/styles/tokens.css` from `design/tokens.json`       |
+| `npm run test`                     | Vitest unit tests                                                   |
+| `npm run test:e2e`                 | builds, then runs the Playwright tests against `wrangler dev`       |
+| `npm run verify`                   | everything CI checks except Lighthouse, in one go                   |
+| `npm run lighthouse`               | builds, then Lighthouse CI against `dist/` (95+ required)           |
+| `npm run design:dev`               | the design system's dev server, on port 4322                        |
+| `npm run design:build`             | builds the design system into `design-system/dist/`                 |
+| `npm run design:preview`           | builds it, then serves it through Wrangler on port 8791             |
+| `npm run design:shots`             | retakes the templates gallery's thumbnails from `npm run preview`   |
+| `npm run readme:diagram`           | redraws the diagram above into `docs/images/`                       |
+| `npm run readme:screenshot`        | retakes the screenshot from a running `npm run preview`             |
+| `npm run readme:design-screenshot` | retakes the design system's from a running `npm run design:preview` |
 
 ## how it's put together
 
 ```text
 design/tokens.json        the brand: colours (dark and light), type, spacing, radii
-design-system/            design.harrisonjennings.au, built from the site's own components
+design-system/            design.harrisonjennings.au: the design system, built from the site's own components
 scripts/
   build-tokens.mjs        turns the tokens into src/styles/tokens.css
   readme/                 draws this README's diagram and screenshot
@@ -113,7 +134,7 @@ More in [docs/architecture.md](docs/architecture.md).
 
 ## the brand
 
-Dark first, with one warm accent. The full identity, with live previews of every component, lives in the design system; [docs/brand.md](docs/brand.md) is the working summary.
+Dark first, with one warm accent, and designed for this site rather than taken from a theme. The full identity, with live previews of every component, lives in [the design system](https://design.harrisonjennings.au/); [docs/brand.md](docs/brand.md) is the working summary.
 
 | role       | dark      | light     |
 | ---------- | --------- | --------- |
