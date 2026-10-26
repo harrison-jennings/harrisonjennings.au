@@ -28,6 +28,7 @@
     "lint": "eslint .",
     "readme:diagram": "node scripts/readme/diagram.mjs",
     "readme:screenshot": "node scripts/readme/screenshot.mjs",
+    "readme:design-screenshot": "node scripts/readme/design-screenshot.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "vitest run",

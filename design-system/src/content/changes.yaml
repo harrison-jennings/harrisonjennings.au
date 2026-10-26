@@ -1,6 +1,21 @@
 # "what changed" on the overview, newest first: the date, one line saying what changed, and the pull
 # request's number. Add a row when something changes that someone using the design system should know.
 - date: 2026-10-26
+  line: 'Templates: every kind of page on the site, at both widths and in both themes, with a link to each live page.'
+  pr: 80
+- date: 2026-10-26
+  line: 'Content: a page for every element a post can hold, with its Markdown, its VS Code snippet, and a front matter reference read from the schema.'
+  pr: 79
+- date: 2026-10-26
+  line: 'Posts: a cover needs its coverAlt, or the build fails.'
+  pr: 79
+- date: 2026-10-26
+  line: 'Components: a page for each of the 26, with its preview, variants, guidance, and props read from its code.'
+  pr: 70
+- date: 2026-10-26
+  line: 'Brand and foundations: the logo, colour, type, voice, motion, spacing, accessibility and every token, from tokens.json.'
+  pr: 68
+- date: 2026-10-26
   line: 'Design system: every example sits in a preview frame, at phone and desktop width, with its code to copy.'
   pr: 67
 - date: 2026-10-25

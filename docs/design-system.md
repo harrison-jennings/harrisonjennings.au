@@ -1,41 +1,88 @@
 # Design system
 
-`design.harrisonjennings.au`: the reference for the brand, every component, every token and every kind of content a post can hold, built from the site's own code so it can't drift from it. Public, never indexed. The plan and the decision are in `docs/decisions.md`; the pages are built from the approved mockups (the brief is in the private notes repo).
+[design.harrisonjennings.au](https://design.harrisonjennings.au/) is the reference for the brand, every component, every element a post can hold, every token and every kind of page on the site. Public, never indexed. The decision is in `docs/decisions.md`; the pages were built from approved mockups (the brief and the design hand-off are in the private notes repo).
+
+**The design language it documents is the site's own.** The brand identity, the palette, the type pairing, the motion and every component were designed for harrisonjennings.au; none of it comes from an off-the-shelf Astro theme or template. The design system is made from the site itself: it imports the site's real components, styles, tokens and Markdown pipeline, so it shows exactly what's live and can't drift from it, and most of what it says is read from the code rather than typed in.
+
+## What's in it
+
+Six sections, each a group of pages:
+
+- **overview** (`/`): what it is, the counts, where to start, how to use it, and what changed.
+- **brand:** logo, colour, typography, voice and tone, imagery and motion, icons.
+- **foundations:** spacing, radius, layout and breakpoint, accessibility, and every token.
+- **components:** a page for each of the site's 26 components.
+- **content:** a page for every element a post can hold, the front matter reference, and image guidance.
+- **templates:** a gallery of every kind of page on the site.
 
 ## How it's built
 
 A second Astro site in `design-system/`, an npm workspace of this repository, deployed as its own Worker (`harrisonjennings-au-design`). It imports from the main site and never copies:
 
 - **Components, styles and tokens** from `src/components/`, `src/styles/` (including the generated `tokens.css`) and `src/lib/`.
-- **Content:** the site's content collections (`src/content.config.ts`, whose paths are relative to itself so another Astro root can load them), so components that read posts, projects or the home page's wording render with exactly what the site shows.
-- **The Markdown pipeline** from `src/lib/markdown/config.ts`, the same module `astro.config.mjs` uses, so a content example renders exactly as it would in a post.
-- **Public files** the site's CSS and pages need (`public/fonts/`, `public/brand/`, and the favicons `favicon.svg`, `favicon.ico`, `icon-192.png` and `icon-512.png`): served by the dev server and copied into the build by `design-system/src/lib/shared-public.ts`.
+- **Content:** the site's content collections (`src/content.config.ts`, whose paths are relative to itself so another Astro root can load them), so components that read posts, projects or the home page's wording show exactly what the site does.
+- **The Markdown pipeline** from `src/lib/markdown/config.ts`, the same module `astro.config.mjs` uses, so a content example renders exactly as in a post.
+- **Public files** the site's CSS and pages need (`public/fonts/`, `public/brand/`, and the favicons): served by the dev server and copied into the build by `design-system/src/lib/shared-public.ts`.
 
-**Pages and the shell.** Each page is an MDX file in `design-system/src/content/docs/<section>/<page>.mdx`, published at `/<section>/<page>/`, so its wording can be edited without touching code. Its frontmatter gives the `title`, the `lead`, its `group` and `order` within the section, and an optional `facts` line (label, value, link). The six sections and their groups are the one fixed list (`src/lib/sections.ts`); everything else is built from the pages that exist (`src/lib/nav.ts`): the header's section links, the sidebar's groups and counts, the phone menu, the page picker and the breadcrumb. A new page appears in its group by itself, and a section or group shows once it has a page. `/<section>/` on its own redirects to the section's first page. The overview at `/` is a landing page with no sidebar.
+### Pages and the shell
 
-The shell (`layouts/Shell.astro`, `styles/shell.css`, `scripts/shell.ts`) follows the design hand-off's Shell and Sidebar notes: the brick line across the top and "design system" beside the logo on every page; a sidebar whose groups open and close (the current page's group starts open, and what's opened is remembered for the visit in `sessionStorage`); "on this page" from the page's `##` headings, marking the one being read (the site's own `src/scripts/toc.ts`); and on phones a page picker and a full-screen menu dialog with the same groups. Without JavaScript every group shows. The mockups are drawn at 1440 and 390; in between (approved 25 October 2026), below 1200px "on this page" goes and the header drops the name, and below 1024px the shell is the phone's, with the phone's type and spacing from the site's 760px breakpoint. The theme toggle and the head script that applies the saved theme are the site's own (`src/components/ThemeToggle.astro`, `src/components/ThemeHead.astro`); the design system is another origin, so it remembers its choice separately. Links that leave the design system, to harrisonjennings.au included, open in a new tab (`src/lib/links.ts`). Search has a slot in the header and the menu but no button until search exists.
+Each page is an MDX file in `design-system/src/content/docs/<section>/<page>.mdx`, published at `/<section>/<page>/`, so its wording can be edited without touching code. Its frontmatter gives the `title`, the `lead`, its `group` and `order` within the section, and optionally:
 
-**Specimens and previews.** Every example in `design-system/src/examples/` gets a specimen page at `/specimens/<name>/` (`pages/specimens/[name].astro`): the example on its own with the site's real CSS (`layouts/Specimen.astro`). A component example (`.astro`) renders as it is, small ones in a centred row and page-level ones (the nav, the home sections) edge to edge; a content example (`.md`) goes through the Markdown pipeline into prose, with a post's code-block copy buttons and image viewer. The phone menu's specimen opens the menu once it has loaded. The preview frame (`components/Preview.astro`, `styles/preview.css`, `scripts/preview.ts`, from the design hand-off's PreviewFrame and CodePanel notes) shows it in an iframe kept at a true width and scaled down to fit, never squashed: **fit** (the column's own width, the default for small examples), **phone 390** or **desktop 1280** (the default for large ones, `size="large"`). Iframes, because the site's layout responds to the screen's width, not a container's. Themes: dark, light, or both (side by side, stacked at desktop width; not offered on phones), following the page's theme until the reader picks one. Each view's size line says its width and scale; tall examples are capped at 360px until "show full height"; "open" shows the specimen on its own; a specimen that never reports its height shows "couldn't load this example". The specimen reports its height (`scripts/specimen.ts`); under reduced motion it's loaded with `?still=1` and nothing in it animates.
+- `facts`: a line of label, value and link under the lead;
+- `component`: the file it documents (the page head links to it, and for a component says where it's used, from the site's imports);
+- `snippets`: the VS Code snippets that insert a content element (checked against `frontmatter.json`);
+- `related`: pages with a line each, which close the page and are listed in "on this page".
 
-**Code to copy** comes from the example itself, never a second copy, in tabs: a component example's own file (`?raw`, its imports rewritten to read as they would in the site, `lib/example.ts`) and, on a "source" tab, the component itself; a content example's Markdown file. It's highlighted at build time with the site's own Shiki theme (`src/lib/markdown/code.ts`), always in the dark code treatment. Code over 12 lines is clipped until "show all N lines". Both copy buttons are the site's `CopyButton`; the toolbar's appears while the code is hidden.
+The six sections and their groups are the one fixed list (`src/lib/sections.ts`). Everything else is built from the pages that exist (`src/lib/nav.ts`): the header's section links, the sidebar's groups and counts, the phone menu, the page picker and the breadcrumb. A new page appears in its group by itself, and a section or group shows once it has a page. `/<section>/` redirects to the section's first page.
 
-**What the pages show comes from the code, never retyped.** Every token, its value in both themes and its usage come from `design/tokens.json` (`lib/tokens.ts`): the palette, the token table, the type scale, the spacing and radius pages, the sizes and the motion tokens. Contrast ratios are worked out at build time with WCAG's formula (`lib/contrast.ts`), so a colour change updates every ratio and a new failure shows as "below AA". The logo page's sizes are found in the site's code (`lib/logo-sizes.ts`: each `<Logo size={…}>` in `src/`, and the compact nav's CSS), with the stroke and dot from the same table `Logo.astro` uses (`src/lib/logo.ts`). The icons page reads the names from `Icon.astro`. The overview counts tokens and pages.
+The shell (`layouts/Shell.astro`, `styles/shell.css`, `scripts/shell.ts`) has the brick line across the top and "design system" beside the logo on every page, a sidebar whose groups open and close (remembered for the visit), "on this page" from the page's `##` headings (the site's own `src/scripts/toc.ts`), and on phones a page picker and a full-screen menu. Without JavaScript every group shows. Below 1200px "on this page" goes and the header drops the name; below 1024px the shell is the phone's. The theme toggle is the site's own; the design system is another origin, so it remembers its choice separately. Links that leave it, to harrisonjennings.au included, open in a new tab.
 
-**The furniture** (from the design hand-off's PageFurniture, Swatch, ContrastPair, TokenTable, DoDontCard and DownloadCard notes) is in `design-system/src/components/` with its styles in `styles/furniture.css`: the copy chip (`ChipCopy`, copying `var(--name)` or `.type-name` with the site's copy script), `Swatches`, `ContrastPairs`, `TokenTable` (filters by kind, kept in the address as `?kind=type`; `only` shows one kind without filters), `DoDont` and `DoDontCard` (a "don't" example is an inert picture, hidden from screen readers and the keyboard), `DownloadCard`, the type scale, family cards and type in use, the logo page's pieces in `components/logo/`, and `VoiceRule`. Swatches, dots and samples set `data-theme` on themselves, so they're painted with that theme's token, never a typed-in value. The site's own components are used inside them as they are: `Logo`, `Button`, `TextLink`, `Tag`, `Steps` (the RSS page's steps, shared), and `PostCardView` (the post card's look, which `PostCard` fills from a post and the voice page fills by hand).
+### Specimens and previews
 
-**Component pages** follow the button's pattern (design hand-off: `ds-04`): the preview, variants and states (`DoDontCard` with `name`), when to use it (do/don't pairs), props, accessibility and related pages. A page's frontmatter names the file it documents (`component: src/components/Button.astro`): the page head links to it and says where it's used, worked out from the site's imports (`lib/site-source.ts`), naming places by their own pages where they have one ("booking band"). `related` lists pages with a line each; they close the page and are listed in "on this page". The props table (`PropsTable`) is read from the component's own `interface Props` by `lib/props.ts`, with types, defaults as written and each prop's doc comment, so every prop in a component needs one. `Ratio` puts a contrast ratio in running text, worked out from the tokens. The share card page shows real cards, rendered at build by the site's `src/lib/og` from the site's content (`/share-cards/<kind>.png`). Every component in `src/components/` has a page or is named in `tests/e2e/design-system/components.spec.ts` with the page that shows it, so a new component can't go undocumented.
+Every example in `design-system/src/examples/` gets a specimen page at `/specimens/<name>/` (`pages/specimens/[name].astro`): the example on its own with the site's real CSS (`layouts/Specimen.astro`).
 
-**Content pages** follow the callout's pattern (design hand-off: `ds-05`): a preview of the element rendered by the site's Markdown pipeline, the Markdown to copy (the example file itself), its kinds, when to use it, and related pages. A page names its VS Code snippets in frontmatter (`snippets: [callout]`, checked against `frontmatter.json` at build), and the page head says where to find each: "Insert snippet › callout", or "Media › image" for the media dashboard's. `component` is the code that makes it ("made by"). Content examples are `.md` files, or `.mdx` for `<Figures>` and `<YouTube>`, which the specimen provides as a post page does; a post's own images are borrowed and shown as `./image.png`. The **front matter reference** is built at build time (`lib/front-matter.ts`): the fields and which are required from the posts schema in `src/content.config.ts`, what each does from Front Matter's own descriptions in `frontmatter.json`, and each example from the newest post that has it. A field with no description, or one whose limit its description doesn't state, fails the build. `tests/e2e/design-system/content.spec.ts` checks that every snippet is shown on a content page and that the reference lists exactly the schema's fields.
+- A component example (`.astro`) renders as it is: small ones in a centred row, page-level ones (the nav, the home and blog sections) with a page's gutters, or edge to edge (the hero, the phone menu, which opens once it's loaded).
+- A content example (`.md`, or `.mdx` for `<Figures>` and `<YouTube>`, which it provides as a post page does) goes through the Markdown pipeline into prose, in a post's column, with a post's code-block copy buttons, image viewer and video player. A post's own images are borrowed and shown as `./image.png`.
+- In a preview, the site's own links stay put rather than load another page into the frame.
 
-**The templates gallery** (`/templates/all-templates/`, design hand-off: `ds-11`) shows every kind of page on the site from `design-system/src/content/templates.yaml` (its name, address, the page that's shot, and a line on what it holds), with the first screen at 1440 and 390 in dark and light, a switch for the thumbnails' theme (following the page's until it's used), and "open live". The thumbnails are WebP files in `design-system/public/templates/`, made by `npm run design:shots` from a local build (start `npm run preview` first), so no visit reaches analytics, with the cookie banner hidden and motion still. Workers Builds has no browser, so they're shot by hand and committed: run it after a change that alters a page's first screen, or after adding a template. `tests/e2e/design-system/templates.spec.ts` fails if a template is missing any of its four images, or a stale one is left.
+The preview frame (`components/Preview.astro`, `styles/preview.css`, `scripts/preview.ts`) shows the specimen in an iframe kept at a true width and scaled to fit, never squashed: **fit** (the column's width), **phone 390** or **desktop 1280**. Iframes, because the site's layout responds to the screen's width, not a container's. Themes: dark, light, or both, following the page's until the reader picks one. Tall examples are capped at 360px until "show full height"; "open" shows the specimen on its own; under reduced motion nothing in it animates.
 
-**Wording you can edit** without touching code: each page's MDX; the overview's in `design-system/src/content/overview.yaml`; and "what changed" on the overview in `design-system/src/content/changes.yaml`, a row per change worth knowing about (date, one line, the pull request's number), newest first, written by hand rather than taken from git. The six pages with no mockup (imagery and motion, icons, spacing, radius, layout and breakpoint, accessibility) are drafted from `docs/brand.md`.
+**Code to copy** comes from the example itself, never a second copy (`lib/example.ts` rewrites its imports to read as they would in the site), with the component's source or script on further tabs, highlighted with the site's own Shiki theme on the dark code treatment. Code over 12 lines is clipped until "show all". Without a specimen, the frame is the code panel alone (the front matter reference's full example).
 
-**Downloads** are served by the design system, so their links never go stale: `/tokens.css` (the generated file) and `/tokens.json` (`design/tokens.json` itself), the marks as SVG from `public/brand/`, and as 1024px PNGs drawn from those SVGs at build time with sharp (`src/pages/brand/[mark].png.ts`), and the favicons.
+### Read from the code
 
-**Headers** (`design-system/public/_headers`): `X-Robots-Tag: noindex, nofollow` on every response (`design-system/public/robots.txt` allows crawling, or crawlers couldn't read it), `X-Frame-Options: SAMEORIGIN`, and an enforced Content-Security-Policy (`design-system/src/lib/csp.ts`, written by the same build step as the site's) that lets pages frame only each other.
+Almost nothing the pages state is typed in:
 
-**Build stamp:** the footer names the commit it was built from (`WORKERS_CI_COMMIT_SHA` on Workers Builds, git elsewhere) and the date.
+| what                              | from                                                                                                                         |
+| --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| every token, its values and usage | `design/tokens.json` (`lib/tokens.ts`): the palette, token table, type scale, spacing, radius, sizes and motion              |
+| contrast ratios                   | calculated at build with WCAG's formula (`lib/contrast.ts`); a colour change updates every ratio and a failure shows as such |
+| logo sizes                        | each `<Logo size>` in `src/` and the compact nav's CSS (`lib/logo-sizes.ts`), weighted as `Logo.astro` does                  |
+| icon names                        | `Icon.astro`                                                                                                                 |
+| props tables                      | each component's own `interface Props`, with its doc comments (`lib/props.ts`), so every prop needs one                      |
+| "used in"                         | the site's imports (`lib/site-source.ts`), naming places by their own pages where they have one                              |
+| VS Code snippets                  | `frontmatter.json`                                                                                                           |
+| the front matter reference        | the posts schema (fields, order, what's required), Front Matter's descriptions, and the newest post with each field          |
+| the overview's counts             | the tokens, the pages and the templates                                                                                      |
+
+### Page patterns
+
+- **Brand and foundations** use the furniture in `design-system/src/components/` (styles in `styles/furniture.css`): the copy chip, swatches, contrast pairs, the token table (filtered by kind, kept in the address as `?kind=type`), do/don't cards (a "don't" is an inert picture, hidden from screen readers and the keyboard), download cards, the type scale and the logo pieces. Swatches and samples set `data-theme` on themselves, so they're painted with that theme's token.
+- **Component pages** follow the button's: the preview, variants and states, when to use it, props, accessibility and related.
+- **Content pages** follow the callout's: the rendered element, its Markdown, its kinds, when to use it and related. The front matter reference fails the build on a field with no description, or one whose limit its description doesn't state.
+- **The templates gallery** shows every page type from `design-system/src/content/templates.yaml`, with thumbnails of its first screen at both widths and themes, and "open live".
+
+The site's own components are used inside all of these as they are: `Logo`, `Button`, `TextLink`, `Tag`, `Steps`, `PostCardView` (the post card's look, which `PostCard` fills from a post) and the rest.
+
+## Keeping it current
+
+Most of it keeps itself current, because it's read from the code. What needs a hand:
+
+- **"what changed"** on the overview is `design-system/src/content/changes.yaml`: a row per change worth knowing about (date, one line, the pull request), newest first, written by hand so it says what changed for someone using the design system.
+- **The templates' thumbnails** are snapshots: after a change to a page's first screen, or a new template, start `npm run preview` and run `npm run design:shots`, then commit the images. Workers Builds has no browser, so they can't be made there.
+- **The README's screenshot**: start `npm run design:preview`, then `npm run readme:design-screenshot`.
+- **A new component** needs a page (or a line in `tests/e2e/design-system/components.spec.ts` naming the page that shows it); **a new snippet** needs naming on a content page. The tests fail until they're there.
+- **Wording** is each page's MDX, and the overview's is `design-system/src/content/overview.yaml`.
 
 ## Working on it
 
@@ -46,7 +93,15 @@ npm run design:preview   # build, then serve through Wrangler on :8791, as Cloud
 npm run design:shots     # the templates gallery's thumbnails, from `npm run preview` on :8787
 ```
 
-To add a page, add its MDX file with that frontmatter; to add a group or section, add it to `src/lib/sections.ts`. `npm run check` type-checks both sites; `npm run test:e2e` builds both and runs the `design-system` Playwright project (`tests/e2e/design-system/`) beside the site's tests. In CI it runs in the Chromium job.
+To add a page, add its MDX file with that frontmatter; to add a group or section, add it to `src/lib/sections.ts`.
+
+**Testing:** `npm run check` type-checks both sites; `npm run test:e2e` builds both and runs the `design-system` Playwright project (`tests/e2e/design-system/`) beside the site's tests, in CI's Chromium job. On every page, at phone and desktop widths and in both themes: axe finds nothing, nothing scrolls sideways, and every preview loads. Beyond that: the shell and phone menu from the keyboard, the preview frame, the token table's filters and counts against `tokens.json`, contrast against an independent calculation, the downloads, coverage of every component and snippet, the front matter reference against the schema, and every template's thumbnails.
+
+## Headers, downloads and the stamp
+
+- **Headers** (`design-system/public/_headers`): `X-Robots-Tag: noindex, nofollow` on every response (`design-system/public/robots.txt` allows crawling, or crawlers couldn't read it), `X-Frame-Options: SAMEORIGIN`, and an enforced Content-Security-Policy (`design-system/src/lib/csp.ts`, written by the same build step as the site's) that lets pages frame only each other.
+- **Downloads** are served by the design system, so their links never go stale: `/tokens.css`, `/tokens.json`, the logo marks as SVG and as 1024px PNGs drawn from them at build with sharp, and the favicons.
+- **The build stamp** in the footer names the commit and date it was built from, after the site's live dot.
 
 ## Deploying
 
@@ -60,13 +115,11 @@ Workers Builds, from the Worker `harrisonjennings-au-design` connected to this r
 | Preview command   | `npm run preview`                                                                                                                                                                                                                                                 | `wrangler preview`, for every other branch                                                                                                                                     |
 | Build watch paths | include `design-system/*`, `src/*`, `design/*`, `public/fonts/*`, `public/brand/*`, `public/favicon.svg`, `public/favicon.ico`, `public/icon-192.png`, `public/icon-512.png`, `frontmatter.json`, `package.json`, `package-lock.json`, `scripts/build-tokens.mjs` | Builds only when something it shows could have changed. All of `src/`: it renders the site's content, and reads its pages and layouts to say where each component is used      |
 
-`design-system/package.json` pins npm (`packageManager`) and `design-system/.nvmrc` links to the site's Node version, because Cloudflare reads both from the root directory. The custom domain `design.harrisonjennings.au` is set on the Worker in the dashboard, like the site's route, so `wrangler deploy` leaves it alone. Previews are behind Cloudflare Access, as the site's are.
+`design-system/package.json` pins npm (`packageManager`) and `design-system/.nvmrc` links to the site's Node version, because Cloudflare reads both from the root directory. The custom domain is set on the Worker in the dashboard, so `wrangler deploy` leaves it alone. Previews are behind Cloudflare Access, as the site's are.
 
-**After each deploy** the 🚀 CD Orchestrator records it, as it does for the site. It runs when Cloudflare's "Workers Builds: harrisonjennings-au-design" check finishes on a commit, so a commit Cloudflare didn't build the design system for gets no run at all:
-
-It goes through the same workflows as the site, with the design system's own scripts:
+**After each deploy** the 🚀 CD Orchestrator checks and records it, through the same workflows as the site with the design system's own scripts. It runs when Cloudflare's "Workers Builds: harrisonjennings-au-design" check finishes, so a commit the design system wasn't built for gets no run:
 
 - **On a branch** (`preview-deployment.yml`): records a **Design system preview** deployment with the branch's Preview URL.
-- **On main:** smoke-tests that exact version through its preview address (`production-version.yml`, running `scripts/design-smoke-test.sh` with the Access service token), then checks the live domain the way the site's is checked and records a **Design system** deployment (`production-live.yml`, running `scripts/design-live-check.sh`: its `robots.txt`, which Bot Fight Mode lets through to GitHub's runners when it challenges the pages, names the design system and carries the noindex header).
+- **On main:** smoke-tests that exact version through its preview address with the Access service token (`production-version.yml`, running `scripts/design-smoke-test.sh`), then checks the live domain and records a **Design system** deployment (`production-live.yml`, running `scripts/design-live-check.sh`: its `robots.txt`, which Bot Fight Mode lets through to GitHub's runners, names the design system and carries the noindex header).
 
 The scripts take the Worker's name in `WORKER` (`version-url.sh`, `preview-url.sh`), because each Worker posts its own check on a commit.
