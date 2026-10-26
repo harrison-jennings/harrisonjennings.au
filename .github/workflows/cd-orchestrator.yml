@@ -6,15 +6,14 @@ name: 🚀 CD Orchestrator
 # It starts when Cloudflare finishes a build: each Worker posts a "Workers Builds: <Worker>" check on the
 # commit it built, and GitHub runs this on that check (check_run). So nothing waits or polls, and a
 # commit Cloudflare doesn't build the design system for simply gets no design system run.
-#   The site (harrisonjennings-au), built on every push:
-#     on a branch, records the build as a GitHub deployment to the Preview environment;
-#     on main, smoke-tests that exact version through its preview address (Bot Fight Mode challenges
-#     GitHub's runners on the real domain), and from cutover (the PRODUCTION_LIVE repository variable is
-#     `true`) checks the live domain and records a deployment to Production.
-#   The design system (harrisonjennings-au-design), built when a push touches its watch paths:
-#     on a branch, records a Design system preview deployment;
-#     on main, smoke-tests the deployed version, checks the live domain and records a Design system
-#     deployment.
+# Both Workers go through the same three workflows:
+#   on a branch, the build is recorded as a GitHub deployment (preview-deployment.yml);
+#   on main, that exact version is smoke-tested through its preview address (production-version.yml;
+#   Bot Fight Mode challenges GitHub's runners on the real domain), then the live domain is checked and
+#   a deployment recorded (production-live.yml).
+# The site (harrisonjennings-au) is built on every push and records to Preview and Production; the
+# design system (harrisonjennings-au-design) is built when a push touches its watch paths and records to
+# Design system preview and Design system.
 # On a pull request it posts the branch's preview link, which doesn't wait for a build.
 # Run it by hand (Actions → 🚀 CD Orchestrator → Run workflow) to repeat main's checks for the branch's
 # latest commit, if Cloudflare's check ever arrives without starting it.
@@ -61,8 +60,9 @@ jobs:
       contents: read
       pull-requests: write
 
-  preview:
-    name: preview
+  # ---------- the site ----------
+  site-preview:
+    name: site preview
     if: >-
       github.event_name == 'check_run'
       && github.event.check_run.name == 'Workers Builds: harrisonjennings-au'
@@ -72,27 +72,14 @@ jobs:
       contents: read
       deployments: write
     with:
+      worker: harrisonjennings-au
+      environment: Preview
       sha: ${{ github.event.check_run.head_sha }}
       branch: ${{ github.event.check_run.check_suite.head_branch }}
       conclusion: ${{ github.event.check_run.conclusion }}
 
-  design-system-preview:
-    name: design system preview
-    if: >-
-      github.event_name == 'check_run'
-      && github.event.check_run.name == 'Workers Builds: harrisonjennings-au-design'
-      && github.event.check_run.check_suite.head_branch != 'main'
-    uses: ./.github/workflows/design-system-preview.yml
-    permissions:
-      contents: read
-      deployments: write
-    with:
-      sha: ${{ github.event.check_run.head_sha }}
-      branch: ${{ github.event.check_run.check_suite.head_branch }}
-      conclusion: ${{ github.event.check_run.conclusion }}
-
-  deployed-version:
-    name: deployed version
+  site:
+    name: site
     if: >-
       (github.event_name == 'check_run'
       && github.event.check_run.name == 'Workers Builds: harrisonjennings-au'
@@ -103,6 +90,8 @@ jobs:
       contents: read
       checks: read
     with:
+      worker: harrisonjennings-au
+      smoke-test: smoke-test.sh
       sha: ${{ github.event.check_run.head_sha || github.sha }}
       branch: ${{ github.event.check_run.check_suite.head_branch || github.ref_name }}
       conclusion: ${{ github.event.check_run.conclusion || 'success' }}
@@ -110,16 +99,38 @@ jobs:
       CF_ACCESS_CLIENT_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
       CF_ACCESS_CLIENT_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
 
-  production:
-    name: production
-    needs: deployed-version
-    if: vars.PRODUCTION_LIVE == 'true' && (github.event_name == 'check_run' || github.ref_name == 'main')
+  site-live:
+    name: site live
+    needs: site
+    # Only main is live: a run by hand on another branch smoke-tests its preview and stops there.
+    if: github.event_name == 'check_run' || github.ref_name == 'main'
     uses: ./.github/workflows/production-live.yml
     permissions:
       contents: read
       deployments: write
     with:
+      environment: Production
+      url: https://www.harrisonjennings.au/
+      live-check: live-check.sh
       sha: ${{ github.event.check_run.head_sha || github.sha }}
+
+  # ---------- the design system ----------
+  design-system-preview:
+    name: design system preview
+    if: >-
+      github.event_name == 'check_run'
+      && github.event.check_run.name == 'Workers Builds: harrisonjennings-au-design'
+      && github.event.check_run.check_suite.head_branch != 'main'
+    uses: ./.github/workflows/preview-deployment.yml
+    permissions:
+      contents: read
+      deployments: write
+    with:
+      worker: harrisonjennings-au-design
+      environment: Design system preview
+      sha: ${{ github.event.check_run.head_sha }}
+      branch: ${{ github.event.check_run.check_suite.head_branch }}
+      conclusion: ${{ github.event.check_run.conclusion }}
 
   design-system:
     name: design system
@@ -128,14 +139,30 @@ jobs:
       && github.event.check_run.name == 'Workers Builds: harrisonjennings-au-design'
       && github.event.check_run.check_suite.head_branch == 'main')
       || (github.event_name == 'workflow_dispatch' && github.ref_name == 'main' && inputs.target != 'site')
-    uses: ./.github/workflows/design-system-production.yml
+    uses: ./.github/workflows/production-version.yml
     permissions:
       contents: read
       checks: read
-      deployments: write
     with:
+      worker: harrisonjennings-au-design
+      smoke-test: design-smoke-test.sh
       sha: ${{ github.event.check_run.head_sha || github.sha }}
+      branch: ${{ github.event.check_run.check_suite.head_branch || github.ref_name }}
       conclusion: ${{ github.event.check_run.conclusion || 'success' }}
     secrets:
       CF_ACCESS_CLIENT_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
       CF_ACCESS_CLIENT_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
+
+  design-system-live:
+    name: design system live
+    needs: design-system
+    if: github.event_name == 'check_run' || github.ref_name == 'main'
+    uses: ./.github/workflows/production-live.yml
+    permissions:
+      contents: read
+      deployments: write
+    with:
+      environment: Design system
+      url: https://design.harrisonjennings.au/
+      live-check: design-live-check.sh
+      sha: ${{ github.event.check_run.head_sha || github.sha }}

@@ -2,7 +2,7 @@
 # A quick check that a deployed copy of the design system works: its pages and specimens, the shared
 # fonts, the 404, and the headers that keep it out of search and framed only by itself. The CD
 # Orchestrator runs it after each deploy against that exact version's preview address
-# (.github/workflows/design-system-production.yml), with the Access service token in
+# (.github/workflows/production-version.yml), with the Access service token in
 # CF_ACCESS_CLIENT_ID and CF_ACCESS_CLIENT_SECRET. Also handy by hand:
 #
 #   bash scripts/design-smoke-test.sh https://design.harrisonjennings.au   # from a home network
