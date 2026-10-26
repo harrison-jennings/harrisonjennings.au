@@ -1,0 +1,5 @@
+# design.harrisonjennings.au: the design system for harrisonjennings.au. Public, but never indexed:
+# every response carries X-Robots-Tag: noindex, nofollow (public/_headers). So crawling isn't blocked
+# here, or crawlers couldn't fetch a page to see that it mustn't be indexed.
+User-agent: *
+Allow: /

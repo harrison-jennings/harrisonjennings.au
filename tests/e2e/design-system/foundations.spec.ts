@@ -54,3 +54,17 @@ test('the footer says when and from which commit it was built, linking to it', a
     new RegExp(`^https://github.com/harrison-jennings/harrisonjennings.au/commit/${sha}`),
   );
 });
+
+test("robots.txt allows crawling, so crawlers can see that nothing's to be indexed", async ({
+  request,
+}) => {
+  // The CD Orchestrator's live check reads it (scripts/design-live-check.sh): Bot Fight Mode lets
+  // robots.txt through to GitHub's runners when it challenges the pages.
+  const response = await request.get('/robots.txt');
+  expect(response.status()).toBe(200);
+  const text = await response.text();
+  expect(text).toContain('the design system for harrisonjennings.au');
+  expect(text).toMatch(/^Allow: \/$/m);
+  expect(text).not.toMatch(/^Disallow:/m);
+  expect(response.headers()['x-robots-tag']).toMatch(/\bnoindex\b/);
+});
