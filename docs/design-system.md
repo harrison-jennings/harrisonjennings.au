@@ -1,6 +1,6 @@
 # Design system
 
-[design.harrisonjennings.au](https://design.harrisonjennings.au/) is the reference for the brand, every component, every element a post can hold, every token and every kind of page on the site. Public, never indexed. The decision is in `docs/decisions.md`; the pages were built from approved mockups (the brief and the design hand-off are in the private notes repo).
+[design.harrisonjennings.au](https://design.harrisonjennings.au/) is the reference for the brand, every component, every element a post can hold, every token and every kind of page on the site. The decision is in `docs/decisions.md`; the pages were built from approved mockups (the brief and the design hand-off are in the private notes repo).
 
 **The design language it documents is the site's own.** The brand identity, the palette, the type pairing, the motion and every component were designed for harrisonjennings.au; none of it comes from an off-the-shelf Astro theme or template. The design system is made from the site itself: it imports the site's real components, styles, tokens and Markdown pipeline, so it shows exactly what's live and can't drift from it, and most of what it says is read from the code rather than typed in.
 
