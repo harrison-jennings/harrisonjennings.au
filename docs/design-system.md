@@ -15,6 +15,8 @@ Six sections, each a group of pages:
 - **content:** a page for every element a post can hold, the front matter reference, and image guidance.
 - **templates:** a gallery of every kind of page on the site.
 
+Search finds any of them from the header, `/` or ⌘K (see [Search](#search)).
+
 ## How it's built
 
 A second Astro site in `design-system/`, an npm workspace of this repository, deployed as its own Worker (`harrisonjennings-au-design`). It imports from the main site and never copies:
@@ -35,7 +37,17 @@ Each page is an MDX file in `design-system/src/content/docs/<section>/<page>.mdx
 
 The six sections and their groups are the one fixed list (`src/lib/sections.ts`). Everything else is built from the pages that exist (`src/lib/nav.ts`): the header's section links, the sidebar's groups and counts, the phone menu, the page picker and the breadcrumb. A new page appears in its group by itself, and a section or group shows once it has a page. `/<section>/` redirects to the section's first page.
 
-The shell (`layouts/Shell.astro`, `styles/shell.css`, `scripts/shell.ts`) has the brick line across the top and "design system" beside the logo on every page, a sidebar whose groups open and close (remembered for the visit), "on this page" from the page's `##` headings (the site's own `src/scripts/toc.ts`), and on phones a page picker and a full-screen menu. Without JavaScript every group shows. Below 1200px "on this page" goes and the header drops the name; below 1024px the shell is the phone's. The theme toggle is the site's own; the design system is another origin, so it remembers its choice separately. Links that leave it, to harrisonjennings.au included, open in a new tab.
+The shell (`layouts/Shell.astro`, `styles/shell.css`, `scripts/shell.ts`) has the brick line across the top and "design system" beside the logo on every page, search in the header, a sidebar whose groups open and close (remembered for the visit), "on this page" from the page's `##` headings (the site's own `src/scripts/toc.ts`), and on phones a page picker and a full-screen menu. Without JavaScript every group shows. Below 1200px "on this page" goes and the header drops the name; below 1024px the shell is the phone's. The theme toggle is the site's own; the design system is another origin, so it remembers its choice separately. Links that leave it, to harrisonjennings.au included, open in a new tab.
+
+### Search
+
+Search (`components/Search.astro`, `styles/search.css`, `scripts/search.ts`) is a dialog over the page, full screen on phones, opened by the header's search button, the phone menu's search field, `/` from anywhere but a field, or ⌘K / Ctrl K. Below 1400px the header's pill becomes the phone header's icon button, as the pill needs a 1440 header's room. Without JavaScript there's no way in.
+
+- **The index** is built after the build by Pagefind (`lib/search.ts`) into `dist/pagefind/`, and searched in the browser: no server. It holds the pages that mark their content with `data-pagefind-body` (every docs page and the overview, through the shell's `search` prop, which also says where results live: "content / text"), split into sections at their `##` headings. Left out with `data-pagefind-ignore`: the breadcrumb, preview frames (their controls and code), related pages and "what changed"; and whatever's `aria-hidden`. The front matter reference's field names count as headings. Pagefind reads a copy of each page with a space between tags, as Astro's compressed HTML would otherwise run neighbouring words together.
+- **Before typing:** the six sections, and the pages used most while writing (`src/content/search.yaml`, by page id; the build fails on one that doesn't exist).
+- **Results** come from the second character, 120ms after the last key: eight pages at a time, each with up to three of its sections, matches underlined in brick. The arrows move through them with focus staying in the field; Enter opens one; Esc clears the field, then closes. The loading state shows only if the first search (which loads the index) takes over 300ms; if the index doesn't arrive, "try again".
+- **A token's card:** a query that's exactly a token's name (`accent`, `--accent`, `var(--accent)`) gets its card above the results, from `tokens.json` rather than the index: both themes' values, the copy chip, what it's for, and a link to the token table. The cards are on one page, `/search/tokens/` (`pages/search/tokens.astro`, `components/TokenCard.astro`), fetched the first time a query names a token.
+- **Arriving on a result** (`scripts/arrive.ts`): the result's address carries the query (`?q=`); Pagefind's highlight script marks the matches in the page's content, the page scrolls the first (after the section the result named) a third of the way down the screen, and a pill offers "clear". Esc clears too. The query leaves the address at once, so a reload or a copied link doesn't bring the marks back. A match in a kind of token the table is hiding switches the table to that kind.
 
 ### Specimens and previews
 
@@ -83,23 +95,25 @@ Most of it keeps itself current, because it's read from the code. What needs a h
 - **The README's screenshot**: start `npm run design:preview`, then `npm run readme:design-screenshot`.
 - **A new component** needs a page (or a line in `tests/e2e/design-system/components.spec.ts` naming the page that shows it); **a new snippet** needs naming on a content page. The tests fail until they're there.
 - **Wording** is each page's MDX, and the overview's is `design-system/src/content/overview.yaml`.
+- **Search** indexes itself at every build. What it offers before anything's typed is `design-system/src/content/search.yaml`. Something on a page that isn't what the page says (controls, links on to other pages) gets `data-pagefind-ignore`.
 
 ## Working on it
 
 ```sh
 npm run design:dev       # http://localhost:4322
 npm run design:build     # design-system/dist
-npm run design:preview   # build, then serve through Wrangler on :8791, as Cloudflare will
+npm run design:preview   # build, then serve through Wrangler on :8791, as Cloudflare will (search needs this:
+                         # its index is built with the site, so under design:dev it says it couldn't load)
 npm run design:shots     # the templates gallery's thumbnails, from `npm run preview` on :8787
 ```
 
 To add a page, add its MDX file with that frontmatter; to add a group or section, add it to `src/lib/sections.ts`.
 
-**Testing:** `npm run check` type-checks both sites; `npm run test:e2e` builds both and runs the `design-system` Playwright project (`tests/e2e/design-system/`) beside the site's tests. In CI it has its own runner, beside the site's Chromium and WebKit runs. On every page, at phone and desktop widths and in both themes: axe finds nothing, nothing scrolls sideways, and every preview loads. Beyond that: the shell and phone menu from the keyboard, the preview frame, the token table's filters and counts against `tokens.json`, contrast against an independent calculation, the downloads, coverage of every component and snippet, the front matter reference against the schema, and every template's thumbnails.
+**Testing:** `npm run check` type-checks both sites; `npm run test:e2e` builds both and runs the `design-system` Playwright project (`tests/e2e/design-system/`) beside the site's tests. In CI it has its own runner, beside the site's Chromium and WebKit runs. On every page, at phone and desktop widths and in both themes: axe finds nothing, nothing scrolls sideways, and every preview loads. Beyond that: search (opening it every way, the keyboard, results, a token's card, no results, a failed index, arriving on a result, and axe with it open), the shell and phone menu from the keyboard, the preview frame, the token table's filters and counts against `tokens.json`, contrast against an independent calculation, the downloads, coverage of every component and snippet, the front matter reference against the schema, and every template's thumbnails.
 
 ## Headers, downloads and the stamp
 
-- **Headers** (`design-system/public/_headers`): `X-Robots-Tag: noindex, nofollow` on every response (`design-system/public/robots.txt` allows crawling, or crawlers couldn't read it), `X-Frame-Options: SAMEORIGIN`, and an enforced Content-Security-Policy (`design-system/src/lib/csp.ts`, written by the same build step as the site's) that lets pages frame only each other.
+- **Headers** (`design-system/public/_headers`): `X-Robots-Tag: noindex, nofollow` on every response (`design-system/public/robots.txt` allows crawling, or crawlers couldn't read it), `X-Frame-Options: SAMEORIGIN`, and an enforced Content-Security-Policy (`design-system/src/lib/csp.ts`, written by the same build step as the site's) that lets pages frame only each other, and allows `'wasm-unsafe-eval'` for search's WebAssembly.
 - **Downloads** are served by the design system, so their links never go stale: `/tokens.css`, `/tokens.json`, the logo marks as SVG and as 1024px PNGs drawn from them at build with sharp, and the favicons.
 - **The build stamp** in the footer names the commit and date it was built from, after the site's live dot.
 

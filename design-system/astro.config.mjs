@@ -4,6 +4,7 @@ import { defineConfig } from 'astro/config';
 import { csp } from '../src/lib/csp-build.ts';
 import { markdown } from '../src/lib/markdown/config.ts';
 import { designSystemCsp } from './src/lib/csp.ts';
+import { searchIndex } from './src/lib/search.ts';
 import { sharedPublic } from './src/lib/shared-public.ts';
 
 // design.harrisonjennings.au: static, like the site, and built from the site's own components, styles,
@@ -12,10 +13,12 @@ export default defineConfig({
   site: 'https://design.harrisonjennings.au',
   output: 'static',
   trailingSlash: 'always',
-  // csp() last: it reads the finished pages and writes the Content-Security-Policy into dist/_headers.
+  // searchIndex() indexes the finished pages (src/lib/search.ts); csp() last: it reads them and writes
+  // the Content-Security-Policy into dist/_headers.
   integrations: [
     mdx(),
     sharedPublic(['fonts', 'brand', 'favicon.svg', 'favicon.ico', 'icon-192.png', 'icon-512.png']),
+    searchIndex(),
     csp(designSystemCsp),
   ],
   build: {

@@ -23,13 +23,14 @@ export function specimenPages(): string[] {
 
 /**
  * Every page of the built design system, as a path: the overview and the docs pages, not the
- * specimens (shown inside previews) or the section addresses that only redirect. Read from the build,
- * so new pages are covered without editing the tests.
+ * specimens (shown inside previews), the section addresses that only redirect, or search's token
+ * cards (fetched by search, never visited). Read from the build, so new pages are covered without
+ * editing the tests.
  */
 export function designPages(): string[] {
   return htmlFiles(dist)
     .filter((file) => !readFileSync(file, 'utf8').includes('http-equiv="refresh"'))
     .map((file) => `/${relative(dist, file).split(sep).slice(0, -1).join('/')}/`.replace('//', '/'))
-    .filter((path) => !path.startsWith('/specimens/'))
+    .filter((path) => !path.startsWith('/specimens/') && !path.startsWith('/search/'))
     .sort();
 }

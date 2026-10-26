@@ -1,6 +1,9 @@
 # "what changed" on the overview, newest first: the date, one line saying what changed, and the pull
 # request's number. Add a row when something changes that someone using the design system should know.
 - date: 2026-10-26
+  line: 'Search: every page, by its sections, with a card for any token named exactly. Press / or ⌘K from anywhere.'
+  pr: 83
+- date: 2026-10-26
   line: 'Templates: every kind of page on the site, at both widths and in both themes, with a link to each live page.'
   pr: 80
 - date: 2026-10-26

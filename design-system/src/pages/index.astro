@@ -42,9 +42,10 @@ const [before, after] = copy.history.split("repository's history");
   description="The design system for harrisonjennings.au: brand, components, tokens and content, from the site's own code."
   section="overview"
   landing
+  search="overview"
 >
   <p class="ds-eyebrow">{copy.eyebrow}</p>
-  <h1 class="ds-title ds-title--hero">
+  <h1 class="ds-title ds-title--hero" data-pagefind-meta="title:overview">
     design system<span class="stop" aria-hidden="true"></span>
   </h1>
   <p class="ds-lead">{copy.lead}</p>
@@ -93,7 +94,7 @@ const [before, after] = copy.history.split("repository's history");
     <Steps steps={copy.steps} />
 
     <h2 id="what-changed">what changed</h2>
-    <ul class="ds-rows">
+    <ul class="ds-rows" data-pagefind-ignore>
       {changes.map(({ data }) => (
         <li>
           <time datetime={isoDate(data.date)}>{formatDate(data.date)}</time>

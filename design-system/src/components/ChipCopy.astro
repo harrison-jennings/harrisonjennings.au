@@ -15,7 +15,9 @@ const { copy, label = copy } = Astro.props;
 
 <button class="ds-chipcopy" type="button" data-copy-text={copy}>
   <DsIcon name="copy" size={14} />
-  <span class="visually-hidden">copy</span>
+  <span class="visually-hidden" data-pagefind-ignore>
+    copy
+  </span>
   <span data-copy-label aria-live="polite">
     {label}
   </span>

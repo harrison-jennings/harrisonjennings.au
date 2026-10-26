@@ -2,7 +2,8 @@
 // The frame every example sits in (design hand-off: PreviewFrame and CodePanel): a toolbar for width
 // and theme, a stage showing the specimen page in iframes at a true screen width (scaled to fit, never
 // squashed), and the code that makes it, highlighted as the site's code blocks are. The toolbar's
-// choices, scaling, stacking and the tall-example cap are scripts/preview.ts.
+// choices, scaling, stacking and the tall-example cap are scripts/preview.ts. Search leaves the frame
+// out: its toolbar is controls, and its code repeats what the page says.
 import { Code } from 'astro:components';
 import type { ShikiTransformer } from 'shiki';
 import CopyButton from '../../../src/components/CopyButton.astro';
@@ -56,6 +57,7 @@ const panel: ShikiTransformer = {
   data-preview
   data-specimen={specimen}
   data-start={start}
+  data-pagefind-ignore
 >
   {specimen && (
     <>

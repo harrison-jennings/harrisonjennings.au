@@ -65,6 +65,7 @@ A fast, static personal site: a blog, a projects index and a way to book a call.
 - **Built from the site, never copied.** It imports the site's real components, styles, tokens and Markdown pipeline, so what it shows is what's live and it can't drift.
 - **Previews at true widths.** Each example is its own page, shown in a frame at a real 390px phone or 1280px desktop width, scaled to fit and never squashed, in dark, light or both, with the code that makes it to copy.
 - **Read from the code, not typed in.** Contrast ratios are calculated from the tokens. Props tables come from each component's own `Props`. "Used in" is worked out from the site's imports. The front matter reference comes from the content schema, and the VS Code snippet names from Front Matter's settings.
+- **Search, with no server.** [Pagefind](https://pagefind.app/) indexes every page as it's built, by its sections, and searches in the browser. Name a token exactly and its card comes first, with both themes' values. Press `/` or ⌘K from anywhere.
 - **It can't fall behind.** Tests fail if a component or snippet has no page, and every page is checked with axe in both themes at phone and desktop widths. Each deploy is smoke-tested and recorded, like the site's.
 
 More in [docs/design-system.md](docs/design-system.md).
