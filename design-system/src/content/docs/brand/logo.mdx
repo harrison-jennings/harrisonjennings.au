@@ -40,7 +40,7 @@ import LogoSizes from '../../../components/logo/LogoSizes.astro';
 
 ## sizes
 
-The line gets heavier as the mark gets smaller, so it reads the same at every size. The component picks the weight from the size you give it. The smallest the mark is drawn is 24px; below that, use the tile.
+The line gets heavier as the mark gets smaller, so it reads the same at every size. The component picks the weight from the size you give it. The compact nav is the one place CSS resizes the mark: it shrinks the nav's own drawing, so it keeps the nav's weight. Nothing shows the mark below 24px; below that, use the tile.
 
 <LogoSizes />
 

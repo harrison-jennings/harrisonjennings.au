@@ -986,6 +986,11 @@
   color: var(--muted);
   text-align: center;
 }
+/* A mark the site resizes in CSS (the compact nav): its own drawing, shown at the smaller size. */
+.lg-resized .mark {
+  width: var(--lg-shown);
+  height: var(--lg-shown);
+}
 .lg-where {
   font-family: var(--font-sans);
 }

@@ -1,7 +1,8 @@
 ---
-// Sizes: every size the site draws the mark at, found in its code (lib/logo-sizes.ts), with the
-// stroke and dot the component picks for it, and where it's used. The big one (the 404's) is named
-// under the row rather than drawn.
+// Sizes: every size the site shows the mark at, found in its code (lib/logo-sizes.ts), with the
+// stroke and dot it has there, and where it's used. One that CSS resizes (the compact nav) is drawn as
+// the site draws it, at its own size and then shrunk. The big one (the 404's) is named under the row
+// rather than drawn.
 import Logo from '../../../../src/components/Logo.astro';
 import { logoSizes } from '../../lib/logo-sizes';
 
@@ -9,9 +10,9 @@ const all = logoSizes();
 const shown = all.filter((s) => s.size <= 64);
 const large = all.filter((s) => s.size > 64);
 const note = [
-  "Every size the site draws the mark at, with its stroke / dot radius in the mark's 100 units.",
+  "Every size the site shows the mark at, with its stroke / dot radius in the mark's 100 units.",
   ...large.map((s) => `The ${s.where} draws it at ${s.size}px.`),
-  `Nothing draws it below ${Math.min(...all.map((s) => s.size))}px; the favicon and app icons use the tile instead.`,
+  `Nothing shows it below ${Math.min(...all.map((s) => s.size))}px; the favicon and app icons use the tile instead.`,
 ].join(' ');
 ---
 
@@ -19,13 +20,22 @@ const note = [
   <div class="lg-sizes">
     {shown.map((s) => (
       <figure>
-        <Logo size={s.size} />
+        {s.drawn === s.size ? (
+          <Logo size={s.size} />
+        ) : (
+          <span class="lg-resized" style={`--lg-shown: ${s.size}px`}>
+            <Logo size={s.drawn} />
+          </span>
+        )}
         <figcaption>
           {s.size}px
           <br />
           {s.stroke} / {s.dot}
           <br />
-          <span class="lg-where">{s.where}</span>
+          <span class="lg-where">
+            {s.where}
+            {s.drawn !== s.size && ` (${s.drawn}px, shrunk)`}
+          </span>
         </figcaption>
       </figure>
     ))}

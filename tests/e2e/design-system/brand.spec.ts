@@ -148,6 +148,20 @@ test('the logo page shows every size the site draws the mark at', async ({ page 
   for (const size of sizes) await expect(shown.filter({ hasText: `${size}px` })).not.toHaveCount(0);
 });
 
+test("the compact nav's mark has the nav's weight, as it's the nav's drawing made smaller", async ({
+  page,
+}) => {
+  await page.goto('/brand/logo/');
+  const weight = async (where: string | RegExp) =>
+    (await page.locator('.lg-sizes figcaption').filter({ hasText: where }).innerText()).split(
+      '\n',
+    )[1];
+  expect(await weight('compact nav')).toBe(await weight(/^26px/));
+  await expect(
+    page.locator('.lg-sizes figure').filter({ hasText: 'compact nav' }).locator('svg'),
+  ).toHaveAttribute('width', '26');
+});
+
 test('a "don\'t" example is a picture: hidden from screen readers and the keyboard', async ({
   page,
 }) => {
