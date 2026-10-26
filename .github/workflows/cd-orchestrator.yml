@@ -11,10 +11,9 @@ name: 🚀 CD Orchestrator
 #   on main, that exact version is smoke-tested through its preview address (production-version.yml;
 #   Bot Fight Mode challenges GitHub's runners on the real domain), then the live domain is checked and
 #   a deployment recorded (production-live.yml).
-# The site (harrisonjennings-au) is built on every push, records to Preview and Production, and has its
-# live check from cutover (the PRODUCTION_LIVE repository variable is `true`). The design system
-# (harrisonjennings-au-design) is built when a push touches its watch paths, and records to Design
-# system preview and Design system.
+# The site (harrisonjennings-au) is built on every push and records to Preview and Production; the
+# design system (harrisonjennings-au-design) is built when a push touches its watch paths and records to
+# Design system preview and Design system.
 # On a pull request it posts the branch's preview link, which doesn't wait for a build.
 # Run it by hand (Actions → 🚀 CD Orchestrator → Run workflow) to repeat main's checks for the branch's
 # latest commit, if Cloudflare's check ever arrives without starting it.
@@ -103,7 +102,8 @@ jobs:
   site-live:
     name: site live
     needs: site
-    if: vars.PRODUCTION_LIVE == 'true' && (github.event_name == 'check_run' || github.ref_name == 'main')
+    # Only main is live: a run by hand on another branch smoke-tests its preview and stops there.
+    if: github.event_name == 'check_run' || github.ref_name == 'main'
     uses: ./.github/workflows/production-live.yml
     permissions:
       contents: read
@@ -156,6 +156,7 @@ jobs:
   design-system-live:
     name: design system live
     needs: design-system
+    if: github.event_name == 'check_run' || github.ref_name == 'main'
     uses: ./.github/workflows/production-live.yml
     permissions:
       contents: read
