@@ -95,7 +95,7 @@ npm run design:shots     # the templates gallery's thumbnails, from `npm run pre
 
 To add a page, add its MDX file with that frontmatter; to add a group or section, add it to `src/lib/sections.ts`.
 
-**Testing:** `npm run check` type-checks both sites; `npm run test:e2e` builds both and runs the `design-system` Playwright project (`tests/e2e/design-system/`) beside the site's tests, in CI's Chromium job. On every page, at phone and desktop widths and in both themes: axe finds nothing, nothing scrolls sideways, and every preview loads. Beyond that: the shell and phone menu from the keyboard, the preview frame, the token table's filters and counts against `tokens.json`, contrast against an independent calculation, the downloads, coverage of every component and snippet, the front matter reference against the schema, and every template's thumbnails.
+**Testing:** `npm run check` type-checks both sites; `npm run test:e2e` builds both and runs the `design-system` Playwright project (`tests/e2e/design-system/`) beside the site's tests. In CI it has its own runner, beside the site's Chromium and WebKit runs. On every page, at phone and desktop widths and in both themes: axe finds nothing, nothing scrolls sideways, and every preview loads. Beyond that: the shell and phone menu from the keyboard, the preview frame, the token table's filters and counts against `tokens.json`, contrast against an independent calculation, the downloads, coverage of every component and snippet, the front matter reference against the schema, and every template's thumbnails.
 
 ## Headers, downloads and the stamp
 
