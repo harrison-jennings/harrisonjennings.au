@@ -49,13 +49,13 @@ test("the front matter reference lists exactly the posts schema's fields, in ord
     config.indexOf('const posts'),
     config.indexOf('\n});', config.indexOf('const posts')),
   );
-  const fields = [...block.matchAll(/^ {6}(\w+):/gm)].map((m) => m[1]);
+  const fields = [...block.matchAll(/^ +(\w+): (?:z\.|image\(|reference\()/gm)].map((m) => m[1]);
   expect(fields.length).toBeGreaterThan(10);
 
   await page.goto('/content/front-matter/');
   const rows = page.locator('.ds-fields tbody tr td:first-child');
   await expect(rows).toHaveText(fields as string[]);
-  // Required as the schema says: the three without .optional() or .default().
+  // Required as the schema says: the three without .optional() or .default(), and coverAlt with a cover.
   for (const name of ['title', 'description', 'published'])
     await expect(
       page
@@ -63,6 +63,12 @@ test("the front matter reference lists exactly the posts schema's fields, in ord
         .locator('td')
         .nth(1),
     ).toHaveText('yes');
+  await expect(
+    page
+      .locator('.ds-fields tbody tr', { hasText: /^coverAlt/ })
+      .locator('td')
+      .nth(1),
+  ).toHaveText('with cover');
 });
 
 test('the full example is the newest post, as written', async ({ page }) => {

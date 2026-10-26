@@ -9,30 +9,44 @@ const content = (path: string) => fileURLToPath(new URL(`./content/${path}`, imp
 
 // Posts live at src/content/posts/<slug>/index.md with their images beside them.
 // They publish at /blog/<slug>/ (see src/lib/posts.ts).
+/** Fields a post must have once it has another: the cover needs words for anyone who can't see it. */
+export const REQUIRED_WITH = { coverAlt: 'cover' } as const;
+
 const posts = defineCollection({
   loader: glob({ base: content('posts'), pattern: '**/index.{md,mdx}' }),
   schema: ({ image }) =>
-    z.object({
-      title: z.string(),
-      description: z.string().max(180),
-      /** Search results and share previews only, in place of "<title> · harrison jennings". */
-      searchTitle: z.string().max(65).optional(),
-      /** Search results and share previews only, in place of `description` (which stays the dek). */
-      searchDescription: z.string().max(155).optional(),
-      published: z.coerce.date(),
-      updated: z.coerce.date().optional(),
-      topics: z.array(reference('topics')).default([]),
-      draft: z.boolean().default(false),
-      cover: image().optional(),
-      coverAlt: z.string().optional(),
-      socialImage: image().optional(),
-      /** The WordPress post ID, kept so feed readers don't show migrated posts as new. */
-      wpId: z.number().int().optional(),
-      /** Hand-picks "keep reading" (up to three); otherwise posts sharing the most topics. */
-      related: z.array(reference('posts')).max(3).optional(),
-      /** "on this page" beside the text; also hidden when there are fewer than three h2s. */
-      toc: z.boolean().default(true),
-    }),
+    z
+      .object({
+        title: z.string(),
+        description: z.string().max(180),
+        /** Search results and share previews only, in place of "<title> · harrison jennings". */
+        searchTitle: z.string().max(65).optional(),
+        /** Search results and share previews only, in place of `description` (which stays the dek). */
+        searchDescription: z.string().max(155).optional(),
+        published: z.coerce.date(),
+        updated: z.coerce.date().optional(),
+        topics: z.array(reference('topics')).default([]),
+        draft: z.boolean().default(false),
+        cover: image().optional(),
+        coverAlt: z.string().optional(),
+        socialImage: image().optional(),
+        /** The WordPress post ID, kept so feed readers don't show migrated posts as new. */
+        wpId: z.number().int().optional(),
+        /** Hand-picks "keep reading" (up to three); otherwise posts sharing the most topics. */
+        related: z.array(reference('posts')).max(3).optional(),
+        /** "on this page" beside the text; also hidden when there are fewer than three h2s. */
+        toc: z.boolean().default(true),
+      })
+      .superRefine((post, ctx) => {
+        for (const [field, needs] of Object.entries(REQUIRED_WITH)) {
+          if (post[needs] !== undefined && !post[field as keyof typeof post])
+            ctx.addIssue({
+              code: 'custom',
+              path: [field],
+              message: `${field} is required with a ${needs}`,
+            });
+        }
+      }),
 });
 
 // The privacy policy and terms of use, at /<file name>/. The description is the intro under the title.

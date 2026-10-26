@@ -1,6 +1,7 @@
 // A post's front matter fields, for the front matter reference, put together at build time so none of
 // it is retyped:
-// - the fields, their order and which are required: the posts schema in src/content.config.ts;
+// - the fields, their order and which are required (alone, or with another field): the posts schema
+//   in src/content.config.ts;
 // - what each does: Front Matter's own description of it (frontmatter.json), as its panel shows it;
 // - an example: the value in the newest post that has the field.
 // A schema field without a description fails the build, and so does a description that doesn't state
@@ -8,11 +9,13 @@
 import { z } from 'astro/zod';
 import { parse } from 'yaml';
 import settings from '../../../frontmatter.json';
-import { collections } from '../../../src/content.config';
+import { collections, REQUIRED_WITH } from '../../../src/content.config';
 
 export interface Field {
   name: string;
   required: boolean;
+  /** Required once a post has this other field: coverAlt with a cover. */
+  requiredWith?: string;
   /** A string's or list's maximum length, if it has one. */
   max?: number;
   doc: string;
@@ -98,9 +101,11 @@ export const FIELDS: Field[] = Object.entries(schema.shape).map(([name, type]) =
       `front matter: "${name}" is limited to ${max}, but frontmatter.json doesn't say so`,
     );
   const found = written.find((p) => p.data[name] !== undefined && p.data[name] !== null);
+  const requiredWith = (REQUIRED_WITH as Record<string, string>)[name];
   return {
     name,
     required: !type.safeParse(undefined).success,
+    ...(requiredWith ? { requiredWith } : {}),
     ...(max !== undefined ? { max } : {}),
     doc,
     ...(found ? { example: show(found.data[name]) } : {}),

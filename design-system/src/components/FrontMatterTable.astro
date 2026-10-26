@@ -18,7 +18,9 @@ import { FIELDS } from '../lib/front-matter';
       {FIELDS.map((f) => (
         <tr>
           <td class="mono-cell">{f.name}</td>
-          <td class:list={{ req: f.required }}>{f.required ? 'yes' : 'no'}</td>
+          <td class:list={{ req: f.required }}>
+            {f.required ? 'yes' : f.requiredWith ? `with ${f.requiredWith}` : 'no'}
+          </td>
           <td class="wide">{f.doc}</td>
           <td class="wide ds-fields__example">{f.example ?? ''}</td>
         </tr>
