@@ -14,6 +14,7 @@ import { TOKENS } from '../lib/tokens';
 
 const copy = (await getEntry('overview', 'overview'))?.data;
 if (!copy) throw new Error('src/content/overview.yaml: missing the `overview` entry');
+const templates = await getCollection('templates');
 const changes = (await getCollection('changes')).sort((a, b) => Number(a.id) - Number(b.id));
 
 const nav = await getNav();
@@ -29,7 +30,7 @@ const stats = [
   { n: TOKENS.length, one: 'design token', many: 'design tokens' },
   { n: pagesIn('components'), one: 'component', many: 'components' },
   { n: pagesIn('content', 'reference'), one: 'content element', many: 'content elements' },
-  { n: pagesIn('templates'), one: 'page template', many: 'page templates' },
+  { n: templates.length, one: 'page template', many: 'page templates' },
 ].filter((s) => s.n > 0);
 
 const REPO = 'https://github.com/harrison-jennings/harrisonjennings.au';
@@ -62,12 +63,17 @@ const [before, after] = copy.history.split("repository's history");
     <div class="ds-cards">
       {sections.map((s) => {
         const pages = s.groups.reduce((n, g) => n + g.pages.length, 0);
+        // The templates section is one gallery page; what it holds is the templates.
+        const meta =
+          s.id === 'templates'
+            ? `${templates.length} templates`
+            : `${pages} ${pages === 1 ? 'page' : 'pages'}`;
         return (
           <a class="ds-card" href={s.href}>
             <span class="ds-card__name">{s.name}</span>
             <span class="ds-card__text">{copy.cards[s.id]}</span>
             <span class="ds-card__meta">
-              {pages} {pages === 1 ? 'page' : 'pages'}
+              {meta}
               <DsIcon name="arrow-right" size={18} />
             </span>
           </a>

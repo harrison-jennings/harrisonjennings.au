@@ -1,0 +1,86 @@
+---
+// The templates gallery (design hand-off: PageFurniture, templates gallery): every kind of page on the
+// site from src/content/templates.yaml, each with its first screen at 1440 and 390 (public/templates/,
+// shot by npm run design:shots), what it holds, and "open live". A dark / light switch picks the
+// thumbnails' theme, following the page's until it's used (scripts/templates.ts). The switch and
+// "open live" are the preview frame's own controls (styles/preview.css).
+import { getCollection } from 'astro:content';
+import { parse } from 'yaml';
+import { SITE } from '../../../src/consts';
+import list from '../content/templates.yaml?raw';
+import '../styles/preview.css';
+import DsIcon from './DsIcon.astro';
+import Link from './Link.astro';
+
+// In the file's order (the collection comes back sorted by id).
+const order = (parse(list) as { id: string }[]).map((t) => t.id);
+const templates = (await getCollection('templates')).sort(
+  (a, b) => order.indexOf(a.id) - order.indexOf(b.id),
+);
+const live = (path: string) => new URL(path, SITE.url).href;
+const shot = (id: string, theme: string, device: string) =>
+  `/templates/${id}-${theme}-${device}.webp`;
+---
+
+<div class="tp-bar">
+  <p class="ds-small">{templates.length} templates · first screen at 1440 and 390</p>
+  <div class="seg" role="group" aria-label="Thumbnail theme" data-thumb-themes>
+    {['dark', 'light'].map((theme) => (
+      <button
+        type="button"
+        aria-pressed={theme === 'dark' ? 'true' : 'false'}
+        data-thumb-theme={theme}
+      >
+        {theme}
+      </button>
+    ))}
+  </div>
+</div>
+<div class="tp-grid" data-thumbs="dark">
+  {templates.map(({ id, data }) => (
+    <article class="tp">
+      <Link class="tp__shots" href={live(data.path)} aria-label={`the ${data.name} page, live`}>
+        <span class="tp__desk">
+          {['dark', 'light'].map((theme) => (
+            <img
+              src={shot(id, theme, 'desktop')}
+              width="720"
+              height="450"
+              alt=""
+              loading="lazy"
+              data-thumb={theme}
+            />
+          ))}
+        </span>
+        <span class="tp__phone">
+          {['dark', 'light'].map((theme) => (
+            <img
+              src={shot(id, theme, 'phone')}
+              width="168"
+              height="364"
+              alt=""
+              loading="lazy"
+              data-thumb={theme}
+            />
+          ))}
+        </span>
+      </Link>
+      <div class="tp__body">
+        <div class="tp__text">
+          <b>{data.name}</b>
+          <code>{data.route}</code>
+          <span>{data.note}</span>
+        </div>
+        <Link class="pf-act" href={live(data.path)}>
+          open live
+          <DsIcon name="arrow-out" size={14} />
+          <span class="visually-hidden"> the {data.name} page</span>
+        </Link>
+      </div>
+    </article>
+  ))}
+</div>
+
+<script>
+  import '../scripts/templates';
+</script>

@@ -63,6 +63,19 @@ const changes = defineCollection({
   }),
 });
 
+// The templates gallery: every kind of page on the site, with the page that's shot for its thumbnails.
+const templates = defineCollection({
+  loader: file('src/content/templates.yaml'),
+  schema: z.object({
+    name: z.string(),
+    /** How the gallery names its address: /blog/<slug>/, any missing page. */
+    route: z.string(),
+    /** The page shot for the thumbnails (npm run design:shots) and opened by "open live". */
+    path: z.string().startsWith('/'),
+    note: z.string(),
+  }),
+});
+
 // The site's own collections too (posts, projects, the home page's wording, consent…), so the site's
 // components render here with exactly what they show on harrisonjennings.au.
-export const collections = { ...site, docs, overview, changes };
+export const collections = { ...site, docs, overview, changes, templates };
