@@ -2,7 +2,7 @@
 // One do/don't card (design hand-off: DoDontCard): the example, then the verdict in words with one
 // sentence saying why. A "don't" (or "before") example is an inert picture over a hatch: hidden from
 // screen readers and the keyboard, so nobody can tab to the wrong way of doing something. A variant
-// card has a name instead of a verdict.
+// card has a name instead of a verdict, and may have no example at all (the callout's three kinds).
 import DsIcon from './DsIcon.astro';
 
 interface Props {
@@ -23,13 +23,15 @@ const inert = wrong || picture;
 ---
 
 <div class:list={['dd-card', { 'dd-card--dont': wrong }]}>
-  <div
-    class:list={['dd-card__ex', { 'dd-card__ex--wide': wide }]}
-    aria-hidden={inert ? 'true' : undefined}
-    inert={inert}
-  >
-    <slot />
-  </div>
+  {Astro.slots.has('default') && (
+    <div
+      class:list={['dd-card__ex', { 'dd-card__ex--wide': wide }]}
+      aria-hidden={inert ? 'true' : undefined}
+      inert={inert}
+    >
+      <slot />
+    </div>
+  )}
   {name ? (
     <p class="dd-card__cap">
       <b>{name}</b>

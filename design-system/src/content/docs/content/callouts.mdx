@@ -2,19 +2,68 @@
 title: callouts
 lead: 'A short aside, set apart from the text: background the reader can skip, a better way to do something, or a warning.'
 group: text
-order: 4
+order: 5
+snippets: [callout]
+component: src/lib/markdown/callouts.ts
 facts:
-  - label: snippet
-    value: callout
+  - label: works in
+    value: .md and .mdx posts, and the legal pages
+related:
+  - page: content/quotes
+    line: For someone else's words, with who said them.
+  - page: content/details
+    line: For longer asides the reader opens if they want them.
+  - page: content/footnotes
+    line: For a source or a small qualification.
 ---
 
+import DoDont from '../../../components/DoDont.astro';
+import DoDontCard from '../../../components/DoDontCard.astro';
 import Preview from '../../../components/Preview.astro';
-import source from '../../../examples/callout.md?raw';
+import { usage } from '../../../lib/example';
+import example from '../../../examples/callout.md?raw';
 
 ## preview
 
 <Preview
-  title="callout"
+  title="callouts"
   specimen="/specimens/callout/"
-  tabs={[{ label: 'markdown', code: source.trim(), lang: 'markdown', file: 'any post' }]}
+  tabs={[{ label: 'markdown', code: usage(example), lang: 'md', file: 'any post' }]}
 />
+
+## the three kinds
+
+<DoDont cols={3}>
+  <DoDontCard name=":::note" say="Labelled “note”, in grey. Background or context the reader can skip without missing the point." />
+  <DoDontCard name=":::tip" say="Labelled “tip”, in brick. A shortcut, or a better way to do what the text describes." />
+  <DoDontCard name=":::warning" say="Labelled “heads up”, with a brick edge. Something that can go wrong, and what it costs." />
+</DoDont>
+
+The label is written for you: start the block with the kind's name and close it with `:::` on a line of its own. Anything Markdown can do works inside, including links, inline code and lists. A colon inside a sentence is just text, so "4.53:1" or "10:30" stay as written.
+
+## when to use them
+
+<DoDont>
+  <DoDontCard verdict="do" say="Keep it short, and make it something the reader can act on or safely skip.">
+<div class="prose ds-prose-ex">
+
+:::tip
+One or two sentences that stand on their own.
+:::
+
+</div>
+  </DoDontCard>
+  <DoDontCard verdict="don't" say="Stack them back to back, or put the post's main point in one. If it matters that much, it belongs in the text.">
+<div class="prose ds-prose-ex">
+
+:::tip
+Preview with a real lead.
+:::
+
+:::warning
+Renaming a token breaks emails.
+:::
+
+</div>
+  </DoDontCard>
+</DoDont>

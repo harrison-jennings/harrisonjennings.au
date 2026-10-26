@@ -1,0 +1,28 @@
+---
+// Every front matter field a post can have (lib/front-matter.ts): the field, whether the build
+// requires it, what it does and an example from a real post.
+import { FIELDS } from '../lib/front-matter';
+---
+
+<div class="ds-tablebox">
+  <table class="ds-table ds-table--stack ds-fields">
+    <thead>
+      <tr>
+        <th scope="col">field</th>
+        <th scope="col">required</th>
+        <th scope="col">what it does</th>
+        <th scope="col">example</th>
+      </tr>
+    </thead>
+    <tbody>
+      {FIELDS.map((f) => (
+        <tr>
+          <td class="mono-cell">{f.name}</td>
+          <td class:list={{ req: f.required }}>{f.required ? 'yes' : 'no'}</td>
+          <td class="wide">{f.doc}</td>
+          <td class="wide ds-fields__example">{f.example ?? ''}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>

@@ -231,15 +231,16 @@ test('a section address goes to its first page', async ({ page }) => {
 });
 
 test('the breadcrumb leads back to the section and the group', async ({ page }) => {
-  await page.goto('/content/callouts/');
+  // Each leads to the first page: of the section (headings), and of the group (code blocks).
+  await page.goto('/content/tables/');
   const crumb = page.getByRole('navigation', { name: 'Breadcrumb' });
   await expect(crumb.getByRole('link', { name: 'content' })).toHaveAttribute(
     'href',
-    '/content/callouts/',
+    '/content/headings/',
   );
-  await expect(crumb.getByRole('link', { name: 'text' })).toHaveAttribute(
+  await expect(crumb.getByRole('link', { name: 'code and data' })).toHaveAttribute(
     'href',
-    '/content/callouts/',
+    '/content/code-blocks/',
   );
 });
 

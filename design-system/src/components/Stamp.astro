@@ -1,5 +1,7 @@
 ---
-// The build stamp: when the design system was built and from which commit, linked on GitHub.
+// The build stamp: when the design system was built and from which commit, linked on GitHub, after the
+// site's live dot, pulsing (still under reduced motion).
+import LiveDot from '../../../src/components/LiveDot.astro';
 import { BUILD } from '../lib/build';
 import Link from './Link.astro';
 
@@ -11,7 +13,7 @@ const { class: className } = Astro.props;
 ---
 
 <p class:list={['ds-stamp', className]}>
-  <i aria-hidden="true"></i>
+  <LiveDot />
   {BUILD.commit ? (
     <span>
       built {BUILD.date} from <Link href={BUILD.commitUrl}>{BUILD.commit}</Link>

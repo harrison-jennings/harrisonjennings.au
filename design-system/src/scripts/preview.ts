@@ -180,7 +180,11 @@ for (const root of document.querySelectorAll<HTMLElement>('[data-preview]')) {
   const stage = root.querySelector<HTMLElement>('.pf-stage');
   const dark = root.querySelector<HTMLElement>('[data-view="dark"]');
   const light = root.querySelector<HTMLElement>('[data-view="light"]');
-  if (!stage || !dark || !light) continue;
+  // Code on its own (no specimen): just its tabs, copy and "show all".
+  if (!stage || !dark || !light) {
+    bindCode(root);
+    continue;
+  }
   const f: Frame = {
     root,
     stage,

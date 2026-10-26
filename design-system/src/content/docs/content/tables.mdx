@@ -1,0 +1,43 @@
+---
+title: tables
+lead: Markdown tables, framed and scrolling sideways on a phone. A right-aligned column is set as numbers, in Martian Mono.
+group: code and data
+order: 3
+snippets: [table]
+component: src/lib/markdown/structure.ts
+facts:
+  - label: works in
+    value: .md and .mdx posts, and the legal pages
+related:
+  - page: content/lists
+    line: For items with only one thing to say.
+  - page: brand/typography
+    line: Martian Mono, for the numbers.
+  - page: foundations/layout-and-breakpoint
+    line: Why wide things scroll in their own box on phones.
+---
+
+import DoDont from '../../../components/DoDont.astro';
+import DoDontCard from '../../../components/DoDontCard.astro';
+import Preview from '../../../components/Preview.astro';
+import { usage } from '../../../lib/example';
+import example from '../../../examples/tables.md?raw';
+
+## preview
+
+<Preview
+  title="tables"
+  specimen="/specimens/tables/"
+  tabs={[{ label: 'markdown', code: usage(example), lang: 'md', file: 'any post' }]}
+/>
+
+## writing them
+
+A row of headings, a row of hyphens, then a row per item, with `|` between columns. Right-align a column with `---:` and its numbers are set in Martian Mono, lined up. The snippet makes a three-column table with its last column right-aligned. The columns don't need to line up in the Markdown, but the formatter lines them up on save.
+
+## when to use them
+
+<DoDont>
+  <DoDontCard verdict="do" say="Short cells: a few words, or a number." />
+  <DoDontCard verdict="don't" say="Paragraphs in cells, or a table only one column wide. Use a list." />
+</DoDont>

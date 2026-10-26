@@ -26,6 +26,8 @@ const docs = defineCollection({
      * head links to it and, for a component, says where it's used, worked out from the site's imports.
      */
     component: z.string().optional(),
+    /** The VS Code snippets that insert a content element, by name (frontmatter.json). */
+    snippets: z.array(z.string()).default([]),
     /** Related pages, by id (components/text-link), each with a line on why. */
     related: z.array(z.object({ page: z.string(), line: z.string() })).default([]),
   }),

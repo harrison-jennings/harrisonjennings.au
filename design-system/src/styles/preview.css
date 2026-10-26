@@ -196,6 +196,10 @@
   background: var(--ground);
   color: var(--text);
 }
+/* Code on its own, with no preview above it. */
+.pf--code .pf-code {
+  border-top: 0;
+}
 .pf-code__bar {
   display: flex;
   align-items: center;

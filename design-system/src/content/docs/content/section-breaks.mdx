@@ -1,0 +1,43 @@
+---
+title: section breaks
+lead: Three brick dots between parts of a post, for a change of pace that doesn't need a heading.
+group: text
+order: 8
+snippets: [section break]
+component: src/styles/prose.css
+facts:
+  - label: works in
+    value: .md and .mdx posts, and the legal pages
+related:
+  - page: content/headings
+    line: When the next part needs a name.
+  - page: brand/logo
+    line: Where the brick dot comes from.
+  - page: content/text
+    line: The paragraphs either side.
+---
+
+import DoDont from '../../../components/DoDont.astro';
+import DoDontCard from '../../../components/DoDontCard.astro';
+import Preview from '../../../components/Preview.astro';
+import { usage } from '../../../lib/example';
+import example from '../../../examples/section-break.md?raw';
+
+## preview
+
+<Preview
+  title="section breaks"
+  specimen="/specimens/section-break/"
+  tabs={[{ label: 'markdown', code: usage(example), lang: 'md', file: 'any post' }]}
+/>
+
+## writing one
+
+Three hyphens on a line of their own, with a blank line either side. They draw three brick dots, centred, not a rule.
+
+## when to use them
+
+<DoDont>
+  <DoDontCard verdict="do" say="Between two parts of a story, where a heading would be too formal." />
+  <DoDontCard verdict="don't" say="Before every heading. A heading already starts a new part." />
+</DoDont>

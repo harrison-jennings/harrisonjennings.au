@@ -1,15 +1,18 @@
 ---
 // A specimen page for every example in src/examples/, at /specimens/<name>/: the example on its own
 // with the site's real styles, shown in a preview frame. A component example (.astro) renders as it
-// is; a content example (.md) goes through the site's Markdown pipeline into prose, in a post's
-// column, with a post's code-block copy buttons and image viewer. Small examples sit in a centred row;
+// is; a content example (.md, or .mdx with the post page's <Figures> and <YouTube>) goes through the
+// site's Markdown pipeline into prose, in a post's column, with a post's code-block copy buttons, image
+// viewer and video player. Small examples sit in a centred row;
 // page-level ones are laid out as a page lays them out (FULL, PAGE).
 import type { AstroComponentFactory } from 'astro/runtime/server/index.js';
 import '../../../../src/styles/lightbox.css';
+import Figures from '../../../../src/components/prose/Figures.astro';
+import YouTube from '../../../../src/components/prose/YouTube.astro';
 import Specimen from '../../layouts/Specimen.astro';
 
 type Module = { default?: AstroComponentFactory; Content?: AstroComponentFactory };
-const examples = import.meta.glob<Module>('../../examples/*.{astro,md}', { eager: true });
+const examples = import.meta.glob<Module>('../../examples/*.{astro,md,mdx}', { eager: true });
 
 /** Page-level examples: edge to edge (FULL), or with a page's gutters and room around them (PAGE). */
 const FULL = new Set(['hero', 'mobile-menu', 'consent']);
@@ -33,22 +36,24 @@ const OPEN: Record<string, string> = { 'mobile-menu': '[data-menu-open]' };
 const SCREEN = new Set(['mobile-menu', 'consent']);
 
 export function getStaticPaths() {
-  return Object.keys(import.meta.glob('../../examples/*.{astro,md}')).map((file) => ({
+  return Object.keys(import.meta.glob('../../examples/*.{astro,md,mdx}')).map((file) => ({
     params: {
       name: file
         .split('/')
         .pop()
-        ?.replace(/\.(astro|md)$/, ''),
+        ?.replace(/\.(astro|mdx?)$/, ''),
     },
   }));
 }
 
 const { name = '' } = Astro.params;
-const file = Object.keys(examples).find((f) => f.replace(/\.(astro|md)$/, '').endsWith(`/${name}`));
+const file = Object.keys(examples).find((f) =>
+  f.replace(/\.(astro|mdx?)$/, '').endsWith(`/${name}`),
+);
 const module = file ? examples[file] : undefined;
-const markdown = file?.endsWith('.md') ?? false;
+const markdown = /\.mdx?$/.test(file ?? '');
 const Example = module?.Content ?? module?.default;
-if (!Example) throw new Error(`no example src/examples/${name}.astro or .md`);
+if (!Example) throw new Error(`no example src/examples/${name}.astro, .md or .mdx`);
 ---
 
 <Specimen
@@ -60,7 +65,7 @@ if (!Example) throw new Error(`no example src/examples/${name}.astro or .md`);
   {markdown ? (
     <div class="column">
       <div class="prose">
-        <Example />
+        <Example components={{ Figures, YouTube }} />
       </div>
     </div>
   ) : (
@@ -74,6 +79,8 @@ if (!Example) throw new Error(`no example src/examples/${name}.astro or .md`);
 <script>
   import { bindCopyCode } from '../../../../src/scripts/copy-code';
   import { bindLightbox } from '../../../../src/scripts/lightbox';
+  import { bindVideo } from '../../../../src/scripts/video';
   document.querySelectorAll<HTMLButtonElement>('[data-copy-code]').forEach(bindCopyCode);
+  document.querySelectorAll<HTMLElement>('[data-video]').forEach(bindVideo);
   bindLightbox([...document.querySelectorAll<HTMLButtonElement>('[data-zoomable]')]);
 </script>
