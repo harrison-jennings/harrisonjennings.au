@@ -1,6 +1,6 @@
 # brand
 
-The working summary of the identity. The design system has live previews of every component; this file is what to follow in code.
+The working summary of the identity. The design system, [design.harrisonjennings.au](https://design.harrisonjennings.au/), has the full guidance: live previews of every component and content element, the tokens, and every page type. This file is what to follow in code.
 
 ## voice
 

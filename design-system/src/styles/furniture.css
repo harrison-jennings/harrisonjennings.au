@@ -1582,3 +1582,121 @@ span.ds-state--link .icon-btn {
 .dd-card__ex .ds-prose-ex.prose > * + * {
   margin-top: var(--space-10);
 }
+
+/* ---------- templates gallery ---------- */
+.tp-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-14);
+  margin: 0 0 var(--space-16);
+}
+.ds-doc .tp-bar .ds-small {
+  margin: 0;
+}
+.tp-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-22);
+}
+.tp {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+}
+.tp__shots {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-14);
+  padding: var(--space-22) var(--space-22) 0;
+  border-bottom: 1px solid var(--line);
+  background-color: var(--ground);
+  background-image: radial-gradient(var(--field-dot) 1px, transparent 1.4px);
+  background-size: 16px 16px;
+  text-decoration: none;
+}
+.tp__shots:focus-visible {
+  outline-offset: -2px;
+}
+.tp__desk,
+.tp__phone {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-bottom: 0;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+}
+.tp__desk {
+  flex: 1;
+  min-width: 0;
+  height: 220px;
+}
+.tp__phone {
+  flex: none;
+  width: 84px;
+  height: 182px;
+}
+.tp__desk img,
+.tp__phone img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+}
+.tp-grid[data-thumbs='dark'] img[data-thumb='light'],
+.tp-grid[data-thumbs='light'] img[data-thumb='dark'] {
+  display: none;
+}
+.tp__body {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-14);
+  padding: var(--space-16) var(--space-20);
+}
+.tp__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.tp__text b {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 500;
+  letter-spacing: -0.04em;
+}
+.tp__text code {
+  font-family: var(--font-display);
+  font-size: 12px;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+.tp__text span {
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--muted);
+}
+.tp__body .pf-act {
+  flex: none;
+  margin-left: auto;
+  white-space: nowrap;
+}
+@media (max-width: 760px) {
+  .tp-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .tp-bar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .tp__desk {
+    height: 150px;
+  }
+  .tp__phone {
+    width: 64px;
+    height: 138px;
+  }
+}

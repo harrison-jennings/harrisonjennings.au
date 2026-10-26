@@ -1,0 +1,43 @@
+# The templates gallery (/templates/all-templates/): every kind of page on the site, in order. `path` is
+# the page that's shot for the thumbnails (npm run design:shots) and opened by "open live"; `route` is
+# how the gallery names its address. Add a page type here, then run the shots and commit the images.
+- id: home
+  name: home
+  route: /
+  path: /
+  note: Hero on the ember field, then what I do, built and shipped, the latest posts and the booking band.
+- id: blog
+  name: blog index
+  route: /blog/
+  path: /blog/
+  note: Every post by year, with topic chips to filter.
+- id: topic
+  name: topic
+  route: /blog/topic/<id>/
+  path: /blog/topic/adobe-marketo-engage/
+  note: One topic's posts, its own feed and the other topics.
+- id: post
+  name: post
+  route: /blog/<slug>/
+  path: /blog/is-sending-yourself-a-test-email-enough/
+  note: Title, dek and meta, the prose with "on this page", then keep reading.
+- id: projects
+  name: projects
+  route: /projects/
+  path: /projects/
+  note: Each project with its screenshot, status and links.
+- id: legal
+  name: legal
+  route: /privacy-policy/, /terms-of-use/
+  path: /privacy-policy/
+  note: The short version first, then the full text with "on this page".
+- id: '404'
+  name: '404'
+  route: any missing page
+  path: /this-page-does-not-exist/
+  note: The bouncing mark on the ember field, and the latest posts.
+- id: rss
+  name: rss
+  route: /rss/
+  path: /rss/
+  note: The feed address to copy, and how a feed reader works.
