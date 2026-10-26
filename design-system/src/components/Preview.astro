@@ -22,8 +22,8 @@ interface Tab {
 interface Props {
   /** What the example shows, for the controls' accessible names. */
   title: string;
-  /** The specimen page's path, such as /specimens/button/. */
-  specimen: string;
+  /** The specimen page's path, such as /specimens/button/. Leave out for code on its own. */
+  specimen?: string;
   /** Small examples are shown at their own size by default ("fit"); large ones at desktop width. */
   size?: 'small' | 'large';
   /** The width it opens at, if not the size's own (fit for small, desktop for large): the phone menu. */
@@ -33,7 +33,7 @@ interface Props {
 
 const { title, specimen, size = 'small', tabs } = Astro.props;
 const start = Astro.props.start ?? (size === 'large' ? '1280' : 'fit');
-const id = `pf-${specimen.replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '')}`;
+const id = `pf-${(specimen ?? title).replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '')}`;
 /** Code longer than this many lines is clipped, with "show all N lines". */
 const LONG = 12;
 const lines = (code: string) => code.split('\n').length;
@@ -50,91 +50,115 @@ const panel: ShikiTransformer = {
 };
 ---
 
-<figure class="pf" id={id} data-preview data-specimen={specimen} data-start={start}>
-  <div class="pf-bar">
-    <div class="seg" role="group" aria-label="Preview width">
-      {size === 'small' && (
-        <button type="button" aria-pressed={start === 'fit' ? 'true' : 'false'} data-width="fit">
-          fit
-        </button>
-      )}
-      <button type="button" aria-pressed={start === '390' ? 'true' : 'false'} data-width="390">
-        phone <small>390</small>
-      </button>
-      <button type="button" aria-pressed={start === '1280' ? 'true' : 'false'} data-width="1280">
-        desktop <small>1280</small>
-      </button>
-    </div>
-    <div class="seg" role="group" aria-label="Preview theme">
-      <button type="button" aria-pressed="true" data-theme-choice="dark">
-        dark
-      </button>
-      <button type="button" aria-pressed="false" data-theme-choice="light">
-        light
-      </button>
-      <button type="button" aria-pressed="false" data-theme-choice="both" class="pf-both">
-        both
-      </button>
-    </div>
-    <div class="pf-bar__end">
-      <a class="pf-act" href={`${specimen}?theme=dark`} target="_blank" rel="noopener" data-open>
-        open
-        <DsIcon name="arrow-out" size={14} />
-        <span class="visually-hidden">the {title} example in a new tab</span>
-      </a>
-      <CopyButton
-        label="copy code"
-        text={tabs[0]?.code ?? ''}
-        context={`for the ${title} example`}
-        icon={false}
-        class="pf-act pf-act--copy"
-        attrs={{ hidden: '', 'data-bar-copy': '' }}
-      />
-      <button
-        class="pf-act"
-        type="button"
-        aria-expanded="true"
-        aria-controls={`${id}-code`}
-        data-code-toggle
-      >
-        <span data-code-label>hide code</span>
-        <DsIcon name="chevron-down" size={14} />
-      </button>
-    </div>
-  </div>
-
-  <div class="pf-stage">
-    {['dark', 'light'].map((theme) => (
-      <div class="pf-view" data-view={theme} hidden={theme === 'light'}>
-        <p class="pf-size">
-          <span data-size-label>
-            <b>own size</b> as it renders
-          </span>
-          <span class="rule" />
-          <span data-size-pct>100%</span>
-        </p>
-        <div class="pf-vp">
-          <iframe
-            title={`${title} example, ${theme}`}
-            data-src={`${specimen}?theme=${theme}`}
-            src={theme === 'dark' ? `${specimen}?theme=dark` : undefined}
-            width="100%"
-            height="120"
-          />
-          <div class="pf-fade" hidden />
+<figure
+  class:list={['pf', { 'pf--code': !specimen }]}
+  id={id}
+  data-preview
+  data-specimen={specimen}
+  data-start={start}
+>
+  {specimen && (
+    <>
+      <div class="pf-bar">
+        <div class="seg" role="group" aria-label="Preview width">
+          {size === 'small' && (
+            <button
+              type="button"
+              aria-pressed={start === 'fit' ? 'true' : 'false'}
+              data-width="fit"
+            >
+              fit
+            </button>
+          )}
+          <button type="button" aria-pressed={start === '390' ? 'true' : 'false'} data-width="390">
+            phone <small>390</small>
+          </button>
+          <button
+            type="button"
+            aria-pressed={start === '1280' ? 'true' : 'false'}
+            data-width="1280"
+          >
+            desktop <small>1280</small>
+          </button>
         </div>
-        <p class="pf-error" hidden>
-          couldn't load this example.{' '}
-          <a href={`${specimen}?theme=${theme}`} target="_blank" rel="noopener">
-            open it on its own<span class="visually-hidden"> (opens in a new tab)</span>
+        <div class="seg" role="group" aria-label="Preview theme">
+          <button type="button" aria-pressed="true" data-theme-choice="dark">
+            dark
+          </button>
+          <button type="button" aria-pressed="false" data-theme-choice="light">
+            light
+          </button>
+          <button type="button" aria-pressed="false" data-theme-choice="both" class="pf-both">
+            both
+          </button>
+        </div>
+        <div class="pf-bar__end">
+          <a
+            class="pf-act"
+            href={`${specimen}?theme=dark`}
+            target="_blank"
+            rel="noopener"
+            data-open
+          >
+            open
+            <DsIcon name="arrow-out" size={14} />
+            <span class="visually-hidden">the {title} example in a new tab</span>
           </a>
-        </p>
+          <CopyButton
+            label="copy code"
+            text={tabs[0]?.code ?? ''}
+            context={`for the ${title} example`}
+            icon={false}
+            class="pf-act pf-act--copy"
+            attrs={{ hidden: '', 'data-bar-copy': '' }}
+          />
+          <button
+            class="pf-act"
+            type="button"
+            aria-expanded="true"
+            aria-controls={`${id}-code`}
+            data-code-toggle
+          >
+            <span data-code-label>hide code</span>
+            <DsIcon name="chevron-down" size={14} />
+          </button>
+        </div>
       </div>
-    ))}
-    <button class="pf-act pf-more" type="button" aria-expanded="false" hidden data-tall>
-      show full height
-    </button>
-  </div>
+
+      <div class="pf-stage">
+        {['dark', 'light'].map((theme) => (
+          <div class="pf-view" data-view={theme} hidden={theme === 'light'}>
+            <p class="pf-size">
+              <span data-size-label>
+                <b>own size</b> as it renders
+              </span>
+              <span class="rule" />
+              <span data-size-pct>100%</span>
+            </p>
+            <div class="pf-vp">
+              <iframe
+                title={`${title} example, ${theme}`}
+                data-src={`${specimen}?theme=${theme}`}
+                src={theme === 'dark' ? `${specimen}?theme=dark` : undefined}
+                width="100%"
+                height="120"
+              />
+              <div class="pf-fade" hidden />
+            </div>
+            <p class="pf-error" hidden>
+              couldn't load this example.{' '}
+              <a href={`${specimen}?theme=${theme}`} target="_blank" rel="noopener">
+                open it on its own<span class="visually-hidden"> (opens in a new tab)</span>
+              </a>
+            </p>
+          </div>
+        ))}
+        <button class="pf-act pf-more" type="button" aria-expanded="false" hidden data-tall>
+          show full height
+        </button>
+      </div>
+    </>
+  )}
 
   <div class="pf-code" data-theme="dark" id={`${id}-code`}>
     <div class="pf-code__bar">

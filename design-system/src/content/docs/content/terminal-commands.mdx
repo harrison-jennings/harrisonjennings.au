@@ -1,0 +1,43 @@
+---
+title: terminal commands
+lead: Commands to type, in a shell block. The $ prompt is muted and left out of what the copy button copies.
+group: code and data
+order: 2
+snippets: [terminal commands]
+component: src/lib/markdown/code.ts
+facts:
+  - label: works in
+    value: .md and .mdx posts, and the legal pages
+related:
+  - page: content/code-blocks
+    line: For code that isn't typed into a terminal.
+  - page: components/copy-button
+    line: The site's other copy control.
+  - page: content/text
+    line: For a single command inside a sentence, as inline code.
+---
+
+import DoDont from '../../../components/DoDont.astro';
+import DoDontCard from '../../../components/DoDontCard.astro';
+import Preview from '../../../components/Preview.astro';
+import { usage } from '../../../lib/example';
+import example from '../../../examples/terminal.md?raw';
+
+## preview
+
+<Preview
+  title="terminal commands"
+  specimen="/specimens/terminal/"
+  tabs={[{ label: 'markdown', code: usage(example), lang: 'md', file: 'any post' }]}
+/>
+
+## writing them
+
+A code block with `sh` as its language, and each command on its own line starting with `$ `. The prompt shows the reader what to type; copying gives them only the commands.
+
+## when to use them
+
+<DoDont>
+  <DoDontCard verdict="do" say="One command per line, each with its prompt." />
+  <DoDontCard verdict="don't" say="Mix output in with the commands. Show output in a plain block after it." />
+</DoDont>

@@ -3,7 +3,7 @@
 // or component in the site (../components/…), and a content example's images as they would beside a post.
 export const usage = (source: string): string =>
   source
+    // A content example borrows a post's files (images, a poster); in a post they sit beside it.
+    .replace(/(['"(])(?:\.\.\/)+src\/content\/posts\/[^/]+\//g, '$1./')
     .replace(/(['"])(?:\.\.\/)+src\//g, '$1../')
-    // A content example borrows a post's images; in a post they sit beside it.
-    .replace(/\]\((?:\.\.\/)+src\/content\/posts\/[^/]+\//g, '](./')
     .trim();

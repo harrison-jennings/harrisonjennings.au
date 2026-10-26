@@ -1,0 +1,1 @@
+Body copy with **bold for emphasis**, _italic for titles and asides_, [links underlined in brick](https://www.harrisonjennings.au/blog/), and `inline code` for anything you'd type: a field like `$lead.Company`, a function like `isEmpty()`, or a file such as `wrangler.jsonc`.

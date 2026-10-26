@@ -1,0 +1,55 @@
+---
+title: quotes
+lead: A pull quote, for a sentence worth stopping on. Larger type with a brick rule beside it.
+group: text
+order: 4
+snippets: [quote]
+component: src/styles/prose.css
+facts:
+  - label: works in
+    value: .md and .mdx posts, and the legal pages
+related:
+  - page: content/callouts
+    line: For your own aside, rather than someone's words.
+  - page: components/what-people-are-saying
+    line: Where other people's words about the work go.
+  - page: content/footnotes
+    line: For where a quote came from.
+---
+
+import DoDont from '../../../components/DoDont.astro';
+import DoDontCard from '../../../components/DoDontCard.astro';
+import Preview from '../../../components/Preview.astro';
+import { usage } from '../../../lib/example';
+import example from '../../../examples/quotes.md?raw';
+
+## preview
+
+<Preview
+  title="quotes"
+  specimen="/specimens/quotes/"
+  tabs={[{ label: 'markdown', code: usage(example), lang: 'md', file: 'any post' }]}
+/>
+
+## writing one
+
+Start the line with `> `. The snippet wraps the selected sentence. It's set larger than the text around it, so keep it to a sentence or two.
+
+## when to use them
+
+<DoDont>
+  <DoDontCard verdict="do" say="One sentence that sums up the point, once in a post.">
+<div class="prose ds-prose-ex">
+
+> A test send proves the email can work.
+
+</div>
+  </DoDontCard>
+  <DoDontCard verdict="don't" say="Whole paragraphs, or a quote in every section. It stops standing out.">
+<div class="prose ds-prose-ex">
+
+> A test send proves the email can work. It doesn't prove it works for everyone it's about to reach, with their name, their segment and their tokens, in every email client they use.
+
+</div>
+  </DoDontCard>
+</DoDont>

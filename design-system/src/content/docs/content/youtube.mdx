@@ -1,0 +1,46 @@
+---
+title: YouTube
+lead: A YouTube video that loads nothing from YouTube until it's played, not even its thumbnail. Optionally with a still frame from this site behind the play button.
+group: media
+order: 4
+snippets: [YouTube video (.mdx), YouTube video with a poster (.mdx)]
+component: src/components/prose/YouTube.astro
+facts:
+  - label: works in
+    value: .mdx posts
+related:
+  - page: components/consent
+    line: Why nothing loads from Google before it's played.
+  - page: content/images
+    line: For a still picture instead.
+  - page: content/image-guidance
+    line: The poster's 16:9.
+---
+
+import DoDont from '../../../components/DoDont.astro';
+import DoDontCard from '../../../components/DoDontCard.astro';
+import Preview from '../../../components/Preview.astro';
+import { usage } from '../../../lib/example';
+import example from '../../../examples/youtube.mdx?raw';
+
+## preview
+
+The videos don't play here: the design system doesn't allow YouTube. On the site, pressing play loads the video in place.
+
+<Preview
+  title="YouTube"
+  specimen="/specimens/youtube/"
+  start="1280"
+  tabs={[{ label: 'markdown', code: usage(example), lang: 'mdx', file: 'any .mdx post' }]}
+/>
+
+## writing them
+
+`<YouTube id="…" title="what it shows" />`, where the id is the part after `v=` in the video's address. For a still frame, save one beside the post (16:9), import it at the top of the post, and pass it as `poster`. It's a component, so it works in `.mdx` posts only.
+
+## when to use them
+
+<DoDont>
+  <DoDontCard verdict="do" say="A title that says what the video shows: it's the player's name for screen readers." />
+  <DoDontCard verdict="don't" say="Embed YouTube's own player code. It loads Google's scripts before anyone agrees to them." />
+</DoDont>

@@ -1,0 +1,43 @@
+---
+title: images without zoom
+lead: An image left out of the image viewer, for small ones where zooming adds nothing.
+group: media
+order: 2
+snippets: [image without zoom (.md), image without zoom (.mdx)]
+component: src/lib/markdown/images.ts
+facts:
+  - label: works in
+    value: .md and .mdx posts
+related:
+  - page: content/images
+    line: The usual image, which opens the viewer.
+  - page: components/image-viewer
+    line: What it leaves out.
+  - page: content/image-guidance
+    line: What to export, and how big.
+---
+
+import DoDont from '../../../components/DoDont.astro';
+import DoDontCard from '../../../components/DoDontCard.astro';
+import Preview from '../../../components/Preview.astro';
+import { usage } from '../../../lib/example';
+import example from '../../../examples/images-without-zoom.md?raw';
+
+## preview
+
+<Preview
+  title="images without zoom"
+  specimen="/specimens/images-without-zoom/"
+  tabs={[{ label: 'markdown', code: usage(example), lang: 'md', file: 'any .md post' }]}
+/>
+
+## writing them
+
+Add `{nozoom}` straight after the image, with no space. In an `.mdx` post braces are code, so write it as `\{nozoom}`; there's a snippet for each.
+
+## when to use them
+
+<DoDont>
+  <DoDontCard verdict="do" say="Small images, icons and logos, where there's nothing more to see." />
+  <DoDontCard verdict="don't" say="Screenshots and diagrams. Someone will want to read the detail." />
+</DoDont>

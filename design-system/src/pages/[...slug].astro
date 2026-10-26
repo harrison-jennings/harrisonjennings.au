@@ -6,6 +6,7 @@ import Related from '../components/Related.astro';
 import Shell from '../layouts/Shell.astro';
 import { getNav, sectionOf, type Doc } from '../lib/nav';
 import { usedIn } from '../lib/site-source';
+import { snippetPath } from '../lib/snippets';
 
 export async function getStaticPaths() {
   const docs = await getCollection('docs');
@@ -32,10 +33,14 @@ const names = Object.fromEntries(
     .map((d) => [d.data.component ?? '', d.data.title]),
 );
 const used = component?.endsWith('.astro') ? usedIn(component, names) : [];
+// A content element names its VS Code snippets, and the code that makes it rather than its source.
+const snippets = doc.data.snippets.map((name) => snippetPath(name, doc.id));
+const sourceLabel = section.id === 'content' ? 'made by' : 'source';
 const facts = [
+  ...(snippets.length ? [{ label: 'in VS Code', value: snippets.join(', ') }] : []),
   ...(used.length ? [{ label: 'used in', value: used.join(', ') }] : []),
   ...(component
-    ? [{ label: 'source', value: component, href: `${REPO}/blob/main/${component}` }]
+    ? [{ label: sourceLabel, value: component, href: `${REPO}/blob/main/${component}` }]
     : []),
   ...doc.data.facts,
 ];

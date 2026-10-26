@@ -1,0 +1,43 @@
+---
+title: images
+lead: An image in a post, with an optional caption. Every one opens the image viewer, where it can be zoomed and moved around.
+group: media
+order: 1
+snippets: [image, image with caption]
+component: src/lib/markdown/images.ts
+facts:
+  - label: works in
+    value: .md and .mdx posts
+related:
+  - page: components/image-viewer
+    line: What opening one does.
+  - page: content/images-side-by-side
+    line: For two or three images in a row.
+  - page: content/image-guidance
+    line: What to export, and how big.
+---
+
+import DoDont from '../../../components/DoDont.astro';
+import DoDontCard from '../../../components/DoDontCard.astro';
+import Preview from '../../../components/Preview.astro';
+import { usage } from '../../../lib/example';
+import example from '../../../examples/images.md?raw';
+
+## preview
+
+<Preview
+  title="images"
+  specimen="/specimens/images/"
+  tabs={[{ label: 'markdown', code: usage(example), lang: 'md', file: 'any post' }]}
+/>
+
+## writing them
+
+`![what it shows](./image.png 'caption')`, with the image saved beside the post. The words in square brackets are its alternative text, for anyone who can't see it; the caption, in quotes, is optional and shows underneath. Images keep their own shape: landscape and square ones fill the column, and portrait ones are capped at 560px tall and centred. In VS Code, the media dashboard inserts them: pick the image, then **image** or **image with caption**.
+
+## when to use them
+
+<DoDont>
+  <DoDontCard verdict="do" say="Alternative text that says what the image shows, and a caption that says what to look at." />
+  <DoDontCard verdict="don't" say="Alternative text like “screenshot” or a file name, or a caption that repeats it." />
+</DoDont>

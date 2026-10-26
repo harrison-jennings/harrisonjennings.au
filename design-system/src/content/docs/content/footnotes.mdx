@@ -1,0 +1,43 @@
+---
+title: footnotes
+lead: A small number in the text, and the note it points to at the end of the post. For sources and asides that would interrupt the sentence.
+group: text
+order: 6
+snippets: [footnote marker, footnote text]
+component: src/styles/prose.css
+facts:
+  - label: works in
+    value: .md and .mdx posts, and the legal pages
+related:
+  - page: content/callouts
+    line: For an aside the reader shouldn't miss.
+  - page: content/details
+    line: For a longer aside, opened on demand.
+  - page: content/text
+    line: The sentence the marker sits in.
+---
+
+import DoDont from '../../../components/DoDont.astro';
+import DoDontCard from '../../../components/DoDontCard.astro';
+import Preview from '../../../components/Preview.astro';
+import { usage } from '../../../lib/example';
+import example from '../../../examples/footnotes.md?raw';
+
+## preview
+
+<Preview
+  title="footnotes"
+  specimen="/specimens/footnotes/"
+  tabs={[{ label: 'markdown', code: usage(example), lang: 'md', file: 'any post' }]}
+/>
+
+## writing one
+
+Two parts, matched by number: the marker `[^1]` straight after the word or punctuation, and the note `[^1]: …` on a line of its own anywhere in the post (usually the end). There's a snippet for each. The notes are collected at the end of the post, numbered in order, each linking back to its marker.
+
+## when to use them
+
+<DoDont>
+  <DoDontCard verdict="do" say="A source, or a qualification most readers can skip." />
+  <DoDontCard verdict="don't" say="Something everyone needs to know. If it matters, it belongs in the sentence." />
+</DoDont>

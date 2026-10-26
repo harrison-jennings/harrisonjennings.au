@@ -1,0 +1,49 @@
+---
+title: code blocks
+lead: Code in a post, highlighted in the brand's colours, with its language, an optional file name and highlighted lines, and a copy button.
+group: code and data
+order: 1
+snippets: [code block, code block with a file name, code block with highlighted lines]
+component: src/lib/markdown/code.ts
+facts:
+  - label: works in
+    value: .md and .mdx posts, and the legal pages
+related:
+  - page: components/code-block
+    line: How it looks, and the colours it uses.
+  - page: content/terminal-commands
+    line: For commands to type.
+  - page: content/details
+    line: For a long script most readers will skip.
+---
+
+import DoDont from '../../../components/DoDont.astro';
+import DoDontCard from '../../../components/DoDontCard.astro';
+import Preview from '../../../components/Preview.astro';
+import { usage } from '../../../lib/example';
+import example from '../../../examples/code-blocks.md?raw';
+
+## preview
+
+<Preview
+  title="code blocks"
+  specimen="/specimens/code-blocks/"
+  tabs={[{ label: 'markdown', code: usage(example), lang: 'md', file: 'any post' }]}
+/>
+
+## the three kinds
+
+<DoDont cols={3}>
+  <DoDontCard name="```js" say="The language after the fence sets the highlighting and the label. Nothing is guessed: no language is plain text." />
+  <DoDontCard name='```js title="…"' say="Adds the file name to the bar, before the language." />
+  <DoDontCard name="```vtl {2-3}" say="Highlights lines 2 to 3 with a brick edge. 1,4 picks single lines." />
+</DoDont>
+
+Code is left exactly as written: the formatter doesn't touch code in posts, and long lines scroll rather than wrap. Velocity (`vtl`) is highlighted too, with quotes treated as strings only inside a directive's parentheses, so output text stays plain.
+
+## when to use them
+
+<DoDont>
+  <DoDontCard verdict="do" say="Name the language, and highlight only the lines the text talks about." />
+  <DoDontCard verdict="don't" say="Leave the language off code that has one, or highlight most of the block." />
+</DoDont>

@@ -1,0 +1,48 @@
+---
+title: front matter
+lead: The fields at the top of every post. The build checks each one, so a typo fails the build instead of the page.
+group: reference
+order: 1
+component: src/content.config.ts
+facts:
+  - label: descriptions
+    value: frontmatter.json
+    href: https://github.com/harrison-jennings/harrisonjennings.au/blob/main/frontmatter.json
+related:
+  - page: content/image-guidance
+    line: For the cover and the share image.
+  - page: content/headings
+    line: How the title and sections fit together.
+  - page: components/post-header
+    line: Where the title, description, date and topics show.
+---
+
+import FrontMatterTable from '../../../components/FrontMatterTable.astro';
+import Preview from '../../../components/Preview.astro';
+import { fullExample } from '../../../lib/front-matter';
+
+export const example = fullExample();
+
+## every field
+
+The fields come from the posts schema, so a new field shows here by itself; what each does is Front Matter's own description, as its panel shows it, and each example is from a real post.
+
+<FrontMatterTable />
+
+## a full example
+
+The newest post's front matter, as written.
+
+<Preview
+  title="front matter"
+  tabs={[{ label: 'markdown', code: example.code, lang: 'md', file: example.file }]}
+/>
+
+<p class="ds-small">In VS Code, Front Matter's “create content” starts a post as a draft dated today, with a form for each of these fields.</p>
+
+## what the build checks
+
+- **Lengths.** A description over 180 characters, a search title over 65 or a search description over 155 stops the build, with the post's name.
+- **Links between files.** A topic that isn't in topics.yaml, or a related post that doesn't exist, fails the build rather than leaving a dead link.
+- **Dates and images.** A date that isn't a date, or a cover that isn't beside the post, fails too.
+- **What it works out for you.** Reading time (prose words ÷ 230, rounded up), "on this page" from the headings, and "keep reading".

@@ -1,0 +1,65 @@
+---
+title: details
+lead: A section that starts closed, with a line to open it. For long scripts and asides most readers won't want.
+group: text
+order: 7
+snippets: [details]
+component: src/styles/prose.css
+facts:
+  - label: works in
+    value: .md and .mdx posts, and the legal pages
+related:
+  - page: content/code-blocks
+    line: What a long script inside one looks like.
+  - page: content/callouts
+    line: For a short aside that stays open.
+  - page: content/footnotes
+    line: For a one-line aside.
+---
+
+import DoDont from '../../../components/DoDont.astro';
+import DoDontCard from '../../../components/DoDontCard.astro';
+import Preview from '../../../components/Preview.astro';
+import { usage } from '../../../lib/example';
+import example from '../../../examples/details.md?raw';
+
+## preview
+
+<Preview
+  title="details"
+  specimen="/specimens/details/"
+  tabs={[{ label: 'markdown', code: usage(example), lang: 'md', file: 'any post' }]}
+/>
+
+## writing one
+
+It's HTML in the Markdown: `<details>`, then `<summary>` with the line that opens it, then the content, then `</details>`. Leave a blank line after `</summary>` and before `</details>`, so the content inside is still read as Markdown (code blocks included).
+
+## when to use them
+
+<DoDont>
+  <DoDontCard verdict="do" say="A summary line that says what's inside, so the reader knows whether to open it.">
+<div class="prose ds-prose-ex">
+
+<details>
+<summary>show the full script</summary>
+
+The whole Velocity script, for anyone who wants to copy it.
+
+</details>
+
+</div>
+  </DoDontCard>
+  <DoDontCard verdict="don't" say="Hide the post's main point, or a step the reader has to follow.">
+<div class="prose ds-prose-ex">
+
+<details>
+<summary>more</summary>
+
+The step that makes it work.
+
+</details>
+
+</div>
+  </DoDontCard>
+</DoDont>

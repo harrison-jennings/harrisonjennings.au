@@ -467,14 +467,6 @@
   letter-spacing: -0.02em;
   color: var(--muted);
 }
-.ds-stamp i {
-  flex: none;
-  width: 7px;
-  height: 7px;
-  border-radius: var(--radius-pill);
-  background: var(--accent);
-  box-shadow: var(--shadow-signal);
-}
 .ds-stamp a {
   color: var(--text);
   text-decoration: underline;

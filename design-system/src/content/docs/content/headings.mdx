@@ -1,0 +1,56 @@
+---
+title: headings
+lead: Sections and sub-sections in a post. The title is the only h1; the sections under it are listed in “on this page”.
+group: text
+order: 1
+component: src/lib/markdown/structure.ts
+facts:
+  - label: works in
+    value: .md and .mdx posts, and the legal pages
+related:
+  - page: components/on-this-page
+    line: Lists a post's sections and sub-sections.
+  - page: brand/typography
+    line: heading-2, heading-3 and heading-4.
+  - page: content/section-breaks
+    line: For a pause between parts, without a heading.
+---
+
+import DoDont from '../../../components/DoDont.astro';
+import DoDontCard from '../../../components/DoDontCard.astro';
+import Preview from '../../../components/Preview.astro';
+import { usage } from '../../../lib/example';
+import example from '../../../examples/headings.md?raw';
+
+## preview
+
+<Preview
+  title="headings"
+  specimen="/specimens/headings/"
+  tabs={[{ label: 'markdown', code: usage(example), lang: 'md', file: 'any post' }]}
+/>
+
+## the three levels
+
+<DoDont cols={3}>
+  <DoDontCard name="## section" say="heading-2, 26px. Listed in “on this page”." />
+  <DoDontCard name="### sub-section" say="heading-3, 20px. Listed in “on this page”, indented." />
+  <DoDontCard name="#### minor heading" say="heading-4, 17px. Not listed." />
+</DoDont>
+
+The post's title, from its front matter, is the page's only h1, so a post starts at `##`. Three levels under the title is the ceiling: `#####` and `######` render as `####`, so a deeper heading never looks like a bug. "on this page" shows once a post has three or more sections.
+
+## when to use them
+
+<DoDont>
+  <DoDontCard verdict="do" say="Lowercase, and say what the section is about. Readers skim the list before they read.">
+<div class="prose ds-prose-ex">
+  <h2>what a test send can't see</h2>
+</div>
+  </DoDontCard>
+  <DoDontCard verdict="don't" say="Title case, or a heading that only makes sense after reading the section.">
+<div class="prose ds-prose-ex">
+  <h2>Part Two: The Fix</h2>
+</div>
+  </DoDontCard>
+</DoDont>

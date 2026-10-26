@@ -49,8 +49,6 @@ const ELSEWHERE: Record<string, string> = {
   'src/components/blog/PostTags.astro': 'components/post-header',
   'src/components/blog/TopicChips.astro': 'the blog templates (step 7)',
   'src/components/home/LatestPosts.astro': 'components/post-card',
-  'src/components/prose/Figures.astro': 'the content pages (step 6)',
-  'src/components/prose/YouTube.astro': 'the content pages (step 6)',
 };
 
 test('every component has a page, or is named with the page that shows it', () => {

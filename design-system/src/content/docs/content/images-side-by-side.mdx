@@ -1,0 +1,44 @@
+---
+title: images side by side
+lead: Two or three images in a row with one caption, for a before and after or the same thing on different screens. They stack on phones.
+group: media
+order: 3
+snippets: [images side by side (.mdx)]
+component: src/components/prose/Figures.astro
+facts:
+  - label: works in
+    value: .mdx posts
+related:
+  - page: content/images
+    line: For one image on its own.
+  - page: components/image-viewer
+    line: Opens each image, with the others as a set.
+  - page: content/image-guidance
+    line: Export them at the same size.
+---
+
+import DoDont from '../../../components/DoDont.astro';
+import DoDontCard from '../../../components/DoDontCard.astro';
+import Preview from '../../../components/Preview.astro';
+import { usage } from '../../../lib/example';
+import example from '../../../examples/images-side-by-side.mdx?raw';
+
+## preview
+
+<Preview
+  title="images side by side"
+  specimen="/specimens/images-side-by-side/"
+  start="1280"
+  tabs={[{ label: 'markdown', code: usage(example), lang: 'mdx', file: 'any .mdx post' }]}
+/>
+
+## writing them
+
+`<Figures cols={2} caption="…">` with the images inside, then `</Figures>`. `cols` is 2 or 3. It's a component, so it works in `.mdx` posts only; the post page provides it, so there's nothing to import. Each image still opens the image viewer.
+
+## when to use them
+
+<DoDont>
+  <DoDontCard verdict="do" say="Images of the same size and shape, compared in one caption." />
+  <DoDontCard verdict="don't" say="Unrelated images in a row to save space. Each deserves its own caption." />
+</DoDont>

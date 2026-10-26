@@ -1,0 +1,62 @@
+---
+title: lists
+lead: Bulleted lists for things in no particular order, numbered lists for steps. Brick markers, and one level of nesting.
+group: text
+order: 3
+component: src/styles/prose.css
+facts:
+  - label: works in
+    value: .md and .mdx posts, and the legal pages
+related:
+  - page: content/tables
+    line: For items with more than one thing to say about each.
+  - page: content/headings
+    line: For splitting a long list into sections.
+  - page: content/text
+    line: What can sit inside a list item.
+---
+
+import DoDont from '../../../components/DoDont.astro';
+import DoDontCard from '../../../components/DoDontCard.astro';
+import Preview from '../../../components/Preview.astro';
+import { usage } from '../../../lib/example';
+import example from '../../../examples/lists.md?raw';
+
+## preview
+
+<Preview
+  title="lists"
+  specimen="/specimens/lists/"
+  tabs={[{ label: 'markdown', code: usage(example), lang: 'md', file: 'any post' }]}
+/>
+
+## the two kinds
+
+<DoDont>
+  <DoDontCard name="- bulleted" say="Things in no particular order. A hyphen and a space starts each item; two spaces in nests it once." />
+  <DoDontCard name="1. numbered" say="Steps, in the order they're done. The numbers are counted for you, so every line can start with 1." />
+</DoDont>
+
+## when to use them
+
+<DoDont>
+  <DoDontCard verdict="do" say="Short, parallel items, each starting the same way.">
+<div class="prose ds-prose-ex">
+
+1. Build the email.
+2. Preview it against the test list.
+3. Send the test.
+
+</div>
+  </DoDontCard>
+  <DoDontCard verdict="don't" say="Nest more than once, or turn a paragraph into a list to make it look shorter.">
+<div class="prose ds-prose-ex">
+
+- Preview
+  - Real records
+    - With missing fields
+      - And long names
+
+</div>
+  </DoDontCard>
+</DoDont>

@@ -40,7 +40,7 @@ test('a component specimen is the real component, a content specimen the real Ma
   await page.goto('/specimens/button/');
   await expect(page.getByRole('link', { name: 'book a call' }).first()).toHaveClass(/btn/);
   await page.goto('/specimens/callout/');
-  await expect(page.locator('.prose .callout')).toBeVisible();
+  await expect(page.locator('.prose .callout')).toHaveCount(3);
 });
 
 test('the footer says when and from which commit it was built, linking to it', async ({ page }) => {

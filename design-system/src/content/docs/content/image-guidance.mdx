@@ -1,0 +1,41 @@
+---
+title: image guidance
+lead: What to export for a post, a project and a share card, and how big, so images stay sharp when they're zoomed.
+group: reference
+order: 2
+facts:
+  - label: from
+    value: docs/content.md
+    href: https://github.com/harrison-jennings/harrisonjennings.au/blob/main/docs/content.md
+related:
+  - page: content/images
+    line: Putting an image in a post.
+  - page: components/image-viewer
+    line: Why big exports matter.
+  - page: components/share-card
+    line: The card a socialImage replaces.
+---
+
+## in a post
+
+- **Save images beside the post,** in its folder, and link them as `./image.png`. Front Matter's media tab opens in that folder.
+- **Diagrams as SVG where you can,** so they stay sharp at any zoom. Otherwise a PNG at two or three times its shown size: the page loads a smaller one, and the image viewer loads the largest only when it opens.
+- **Any shape.** Landscape and square images fill the column; portrait ones are capped at 560px tall (480px on phones) and centred, so they never fill the screen.
+- **Images side by side** should share a size and shape, so the row lines up.
+- **Alternative text** says what the image shows; the caption, if any, says what to look at.
+
+## a cover
+
+`cover` is an image beside the post, shown with it; always add `coverAlt` with it, saying what it shows.
+
+## a project
+
+`image` in `src/content/projects.yaml` is a screenshot in `src/content/projects/`. It's shown at 16:9 and cropped from the top left, so keep the important part there. It's shown still, never as a link.
+
+## a share image
+
+A post's share image is made at build from its title, topic and date. To use a picture instead, set `socialImage` to an image beside the post. It's cropped to 1200 × 630, so keep the subject near the middle.
+
+## a video poster
+
+A YouTube poster is a still frame saved beside the post, at 16:9, imported at the top of the post.

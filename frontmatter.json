@@ -129,7 +129,8 @@
           "dateFormat": "yyyy-MM-dd",
           "isPublishDate": true,
           "required": true,
-          "default": "{{now}}"
+          "default": "{{now}}",
+          "description": "The date it went live. Posts are listed newest first by it."
         },
         {
           "title": "updated",
@@ -223,7 +224,8 @@
           "title": "WordPress ID",
           "name": "wpId",
           "type": "number",
-          "hidden": true
+          "hidden": true,
+          "description": "Migrated posts only: the WordPress post ID, so feed readers don't show them again as new."
         }
       ]
     },

@@ -1,0 +1,63 @@
+---
+title: text
+lead: Body copy, and what can sit inside it. Bold for emphasis, italic for titles and asides, links, and inline code for anything you'd type.
+group: text
+order: 2
+component: src/styles/prose.css
+facts:
+  - label: links
+    value: src/lib/markdown/links.ts
+    href: https://github.com/harrison-jennings/harrisonjennings.au/blob/main/src/lib/markdown/links.ts
+  - label: works in
+    value: .md and .mdx posts, and the legal pages
+related:
+  - page: brand/voice-and-tone
+    line: Sentence case, and link text that says where it goes.
+  - page: components/text-link
+    line: The same link, drawn by components.
+  - page: brand/typography
+    line: The prose style, 17px at 1.7.
+---
+
+import DoDont from '../../../components/DoDont.astro';
+import DoDontCard from '../../../components/DoDontCard.astro';
+import Preview from '../../../components/Preview.astro';
+import { usage } from '../../../lib/example';
+import example from '../../../examples/text.md?raw';
+
+## preview
+
+<Preview
+  title="text"
+  specimen="/specimens/text/"
+  tabs={[{ label: 'markdown', code: usage(example), lang: 'md', file: 'any post' }]}
+/>
+
+## what it holds
+
+<DoDont cols={3}>
+  <DoDontCard name="**bold**" say="For the one phrase that matters most. Not for whole sentences." />
+  <DoDontCard name="_italic_" say="For titles of things, and asides." />
+  <DoDontCard name="`inline code`" say="For anything you'd type: a field, a function, a file name. It wraps rather than run off a phone." />
+</DoDont>
+
+Links are written as plain Markdown, `[words](address)`. A link to another site opens in a new tab, with a hidden "(opens in a new tab)" for screen readers; links within the site stay in the same tab.
+
+## when to use it
+
+<DoDont>
+  <DoDontCard verdict="do" say="Link the words that say where it goes.">
+<div class="prose ds-prose-ex">
+
+The [Marketo REST API docs](https://www.harrisonjennings.au/blog/) list every endpoint.
+
+</div>
+  </DoDontCard>
+  <DoDontCard verdict="don't" say="“Click here”, or bold scattered through a paragraph. Neither says anything on its own.">
+<div class="prose ds-prose-ex">
+
+For **every** endpoint, [click here](https://www.harrisonjennings.au/blog/).
+
+</div>
+  </DoDontCard>
+</DoDont>
