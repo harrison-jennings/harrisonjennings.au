@@ -4,10 +4,11 @@ description: "A couple of months ago I wrote about whether sending yourself a te
 searchTitle: "leadlens: Marketo email previews and linting in VS Code"
 searchDescription: "Preview Adobe Marketo Engage emails across 21 email clients as you type, and lint them with Marketo-aware checks, in a VS Code extension."
 published: 2026-10-16
+updated: 2026-10-27
 topics: [adobe-marketo-engage, web-development]
 wpId: 685
 cover: "./cover.png"
-coverAlt: "Leadlens in VS Code: a Marketo template with a border-radius warning for Outlook Classic and its explanation, beside the email previewed in Gmail, Outlook Classic and Apple Mail iOS in dark mode"
+coverAlt: "Leadlens in VS Code: a Marketo template with a padding warning for Outlook Classic and its explanation, beside the email previewed in Gmail, Outlook Classic and Apple Mail iOS in dark mode"
 ---
 
 A couple of months ago I wrote about [whether sending yourself a test email is enough](/blog/is-sending-yourself-a-test-email-enough/). That post was about the end of the process: the sample send arrives, and a pipeline gathers the evidence a reviewer needs to approve it.
@@ -15,6 +16,8 @@ A couple of months ago I wrote about [whether sending yourself a test email is e
 This one is about the _other_ end. By the time a test send lands in your inbox, the email has already been built, uploaded and approved in Marketo. If the button falls apart in Outlook, or the dark-mode styles do nothing in Gmail, you find out late, fix it in a code editor, ship it back into Marketo, and send yourself another one. Then you squint at it on your phone again.
 
 So I built [Leadlens](https://leadlens.harrisonjennings.au): a VS Code extension that previews Adobe Marketo Engage emails across 21 email clients as you type, and lints them with an understanding of how Marketo actually works. It runs entirely on your own computer, and it's open source.
+
+**Update, 27 October 2026:** Leadlens is now on the [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=leadlens.leadlens) and [Open VSX](https://open-vsx.org/extension/leadlens/leadlens), so you can install it from VS Code's Extensions view, and it keeps itself up to date. _shipping it_ below has the details.
 
 ## what I wanted
 
@@ -35,7 +38,7 @@ The hard part of email previewing isn't drawing a box with HTML in it. It's know
 
 I didn't want that job. [Emailens](https://github.com/emailens/engine) already does it: an open-source engine, released under the MIT licence, that models 21 email clients and draws its support data from [caniemail.com](https://www.caniemail.com). Leadlens started from Emailens' own VS Code extension and builds on its engine. The client knowledge is theirs. The Marketo layer, the preview interface and everything around them are mine.
 
-The decision that mattered most was how to depend on it. I'm not going to track email client changes myself, so the engine stays an ordinary dependency rather than a copy I'd have to keep merging. It's pinned to an exact version, and when Emailens publishes a new one, a GitHub Actions bot opens a pull request. The full test suite runs against the new engine, and merging it publishes a new build of Leadlens automatically. The upstream project keeps up with the clients; Leadlens inherits that work through one merge button.
+The decision that mattered most was how to depend on it. I'm not going to track email client changes myself, so the engine stays an ordinary dependency rather than a copy I'd have to keep merging. It's pinned to an exact version, and when Emailens publishes a new one, a GitHub Actions bot opens a pull request. The full test suite runs against the new engine, and merging it publishes a new build of Leadlens to the Marketplace automatically, where every installed copy picks it up as an update. The upstream project keeps up with the clients; Leadlens inherits that work through one merge button.
 
 ## teaching it Marketo
 
@@ -47,7 +50,7 @@ It works out what kind of file it's looking at: a full template, a complete emai
 
 A component can be previewed inside the real template it will live in, so a block of custom HTML for an editable region is checked in context rather than as a lonely fragment. And the editor itself learns the template: modules and regions show up in the outline, hovering a variable shows its declaration, Go to Definition jumps to it, and typing `${` offers the variables that are actually declared.
 
-The part I'm happiest with is that findings still point at the right line. By the time the engine sees the email, variables have been substituted and components composed, so its idea of "line 105" isn't yours. Leadlens maps every finding back through those substitutions to the line you wrote. If a `border-radius` inside a templated button breaks Outlook, the squiggle lands under that declaration in your template, not somewhere in a document you can't see.
+The part I'm happiest with is that findings still point at the right line. By the time the engine sees the email, variables have been substituted and components composed, so its idea of "line 105" isn't yours. Leadlens maps every finding back through those substitutions to the line you wrote. If Outlook drops the `padding` on a templated button, the squiggle lands under that declaration in your template, not somewhere in a document you can't see.
 
 Quick fixes follow the same rule. They'll correct a single-braced token or add a missing `mktoName`, but they never touch tokens, Outlook conditional comments or VML.
 
@@ -71,27 +74,29 @@ None of this is unusual for a security-minded tool, but it matters more than usu
 
 ## shipping it
 
-Leadlens isn't on the [Visual Studio Marketplace](https://marketplace.visualstudio.com/VSCode), at least for now. It's distributed the old-fashioned way: a `.vsix` file attached to a GitHub release, installed with **Install from VSIX…** in [VS Code](https://code.visualstudio.com/).
+Leadlens is on the [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=leadlens.leadlens), so installing it is a search in VS Code's Extensions view. It's also on [Open VSX](https://open-vsx.org/extension/leadlens/leadlens), the registry Cursor, VSCodium and Windsurf use, and every build is still attached to a GitHub release for anyone who'd rather install the file.
 
-What isn't old-fashioned is how that file gets made. Every change merged into the main branch goes through the same pipeline:
+Every change merged into the main branch goes through the same pipeline:
 
 1. type-check the code;
-2. run 266 unit tests against the real engine;
-3. run 56 integration tests in an actual copy of VS Code, which opens files, waits for diagnostics, applies quick fixes and opens the preview;
+2. run 281 unit tests against the real engine;
+3. run 58 integration tests in an actual copy of VS Code, which opens files, waits for Leadlens' diagnostics, applies quick fixes and opens the preview;
 4. package the extension, and check it contains only what it should;
-5. publish it as the latest release, at an address that never changes.
+5. publish it to GitHub, the Marketplace and Open VSX in one go.
 
-The version number comes from the build, so every release is newer than the last and installs over it as an update. Each one is also signed with a provenance attestation: a record, verifiable with one GitHub CLI command, that the file was built by that pipeline from that commit and hasn't been altered since. That matters more than usual for something people download from a link rather than install from a store.
+The Marketplace step doesn't rely on a stored password. GitHub Actions signs in to Microsoft with a short-lived token issued for that one job, which is just as well: the personal access tokens which Marketplace publishing has always used are retired on 1 December 2026.
+
+The version number comes from the build, so every release is newer than the last and installs over it as an update. Each one is also signed with a provenance attestation: a record, verifiable with one GitHub CLI command, that the file was built by that pipeline from that commit and hasn't been altered since. That matters more than usual for anyone who installs the file from GitHub rather than from a store.
 
 ![Terminal output of gh attestation verify on a downloaded leadlens.vsix, ending in Verification succeeded and naming the repository and workflow that built it](./attestation.png)
 
 ## a home for it
 
-An extension that isn't in a store has to explain itself somewhere else, so Leadlens has [its own website](https://leadlens.harrisonjennings.au). It covers what Leadlens does, how to install it, full documentation for every feature, and the changelog.
+A marketplace listing only says so much, so Leadlens also has [its own website](https://leadlens.harrisonjennings.au). It covers what Leadlens does, how to install it, full documentation for every feature, and the changelog.
 
-![The Leadlens website home page: the lead.lens logo, the headline “Preview every inbox before you send”, a Download for VS Code button showing version 1.0 and VS Code 1.90 or later, and the product illustration below](./website.png)
+![The Leadlens website home page: the lead.lens logo, the headline “Preview every inbox before you send”, an Install for VS Code button showing version 1.1 and VS Code 1.90 or later, and the product illustration below](./website.png)
 
-The site lives in the same repository as the extension, built with [Astro](https://astro.build/) and [Starlight](https://starlight.astro.build/) and hosted on [Vercel](https://vercel.com/home). That matters more than the choice of framework. The documentation and the changelog aren't written twice: the site is built from the same Markdown files that sit next to the code. A pull request that changes how Leadlens behaves updates its documentation in the same change, and the site rebuilds itself when it merges. Even the version number and the minimum VS Code version on the download buttons are read from the extension's own package file, so they can't drift out of date.
+The site lives in the same repository as the extension, built with [Astro](https://astro.build/) and [Starlight](https://starlight.astro.build/) and hosted on [Vercel](https://vercel.com/home). That matters more than the choice of framework. The documentation and the changelog aren't written twice: the site is built from the same Markdown files that sit next to the code. A pull request that changes how Leadlens behaves updates its documentation in the same change, and the site rebuilds itself when it merges. Even the version number and the minimum VS Code version on the install buttons are read from the extension's own package file, so they can't drift out of date.
 
 It's also built to match the extension's attitude to privacy. Everything, fonts included, is served from the site itself, there are no cookies, and visits are counted with cookie-free analytics and nothing else.
 
@@ -113,11 +118,11 @@ What the two bugs have in common is that the tests checked the wrong thing. One 
 
 Leadlens opens beside any HTML email, template or component in VS Code. It shows the email in 21 clients, in light and dark mode, at phone or desktop width, updating as I type. Problems appear in the editor where they happen, with an explanation on hover and a fix where one is safe. And it understands Marketo well enough to stop shouting about syntax that Marketo was always going to handle.
 
-It stays current without me, too. When Emailens learns something new about a client, Leadlens picks it up the next time I merge a pull request I didn't have to write.
+It stays current without me, too. When Emailens learns something new about a client, Leadlens picks it up the next time I merge a pull request I didn't have to write, and everyone who installed it from the Marketplace gets that update without lifting a finger.
 
-It's open source under the MIT licence. You can download it, read the documentation or browse the code:
+It's open source under the MIT licence. You can install it, read the documentation or browse the code:
 
-[get Leadlens](https://leadlens.harrisonjennings.au) · [view on GitHub](https://github.com/harrison-jennings/leadlens)
+[install from the VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=leadlens.leadlens) · [get Leadlens](https://leadlens.harrisonjennings.au) · [view on GitHub](https://github.com/harrison-jennings/leadlens)
 
 ## what I learned
 
