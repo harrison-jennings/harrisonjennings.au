@@ -143,12 +143,12 @@ test.describe('results', () => {
     page,
   }) => {
     await page.goto('/components/button/');
-    for (const query of ['asdflksjad f;lkjf sdf', 'callout zzzz']) {
-      await search(page, query);
-      await expect(dialog(page).getByText(`nothing matches “${query}”.`)).toBeVisible();
-      await page.keyboard.press('Escape');
-      await page.keyboard.press('Escape');
-    }
+    await search(page, 'asdflksjad f;lkjf sdf');
+    await expect(dialog(page).getByText('nothing matches “asdflksjad f;lkjf sdf”.')).toBeVisible();
+    // The next query replaces this one in the open field. Closing and reopening between them raced:
+    // `/` sent straight after the closing Esc landed in the closed dialog's field, before focus left it.
+    await field(page).fill('callout zzzz');
+    await expect(dialog(page).getByText('nothing matches “callout zzzz”.')).toBeVisible();
   });
 
   test('a plural still finds its singular', async ({ page }) => {
