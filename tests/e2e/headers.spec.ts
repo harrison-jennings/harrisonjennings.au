@@ -30,7 +30,7 @@ test('_headers sets the core security headers on every path', () => {
       'strict-transport-security',
       'x-content-type-options',
       'x-frame-options',
-      'content-security-policy-report-only',
+      'content-security-policy',
       'reporting-endpoints',
     ]),
   );

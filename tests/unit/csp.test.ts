@@ -24,9 +24,9 @@ describe('the policy', () => {
     expect(script).not.toContain("'unsafe-eval'");
   });
 
-  it('is sent as Report-Only, with the Reporting API endpoint', () => {
+  it('is enforced, with the Reporting API endpoint', () => {
     expect(cspHeaders([]).map(([name]) => name)).toEqual([
-      'Content-Security-Policy-Report-Only',
+      'Content-Security-Policy',
       'Reporting-Endpoints',
     ]);
   });
@@ -65,7 +65,7 @@ describe('the build step', () => {
   it('adds the headers to the /* rule and leaves the others alone', () => {
     const headers = '# comment\n/*\n  X-Frame-Options: DENY\n\n/fonts/*\n  Cache-Control: x\n';
     const out = withCsp(headers, ["'sha256-abc='"]);
-    expect(out).toMatch(/^# comment\n\/\*\n {2}Content-Security-Policy-Report-Only: default-src/);
+    expect(out).toMatch(/^# comment\n\/\*\n {2}Content-Security-Policy: default-src/);
     expect(out).toContain(
       '\n  Reporting-Endpoints: csp="/api/csp-report"\n  X-Frame-Options: DENY\n',
     );

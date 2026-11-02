@@ -4,6 +4,7 @@ description: "How this site moved from WordPress to Astro on Cloudflare's edge n
 searchTitle: "Re-platforming WordPress to Astro on Cloudflare Workers"
 searchDescription: "A WordPress to Astro re-platform on Cloudflare Workers: design tokens, a D1 consent log, a build-generated CSP, gated CI/CD and full SEO continuity."
 published: 2026-10-21
+updated: 2026-11-02
 topics: [web-development, cloud, analytics]
 cover: "./cover.png"
 coverAlt: 'The harrisonjennings.au home page, headed "marketing, engineered.", on a laptop and a phone in dark mode'
@@ -282,7 +283,7 @@ First, the inline scripts are the same on every page. Page-specific values, like
 
 Second, component scripts are never inlined. Astro would normally inline small scripts to save a request; here it's configured not to, so they're files on the site's own origin and need no hash at all.
 
-The policy is currently in report-only mode. Browsers report every violation to a second Worker API endpoint, which counts them in Cloudflare D1, one row per distinct violation, so I can see exactly what Tag Manager loads on real visits before the policy starts blocking anything. Shipping a CSP in enforcing mode on day one is a good way to break your own analytics and not find out for a week.
+The policy launched in report-only mode. Browsers reported every violation to a second Worker API endpoint, which counted them in Cloudflare D1, one row per distinct violation, so I could see exactly what Tag Manager loaded on real visits before the policy started blocking anything. Shipping a CSP in enforcing mode on day one is a good way to break your own analytics and not find out for a week. After two weeks of real traffic with no violations, the policy is now enforced, and that endpoint still records anything it blocks.
 
 Around that sit the less glamorous protections:
 

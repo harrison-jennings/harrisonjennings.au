@@ -2,8 +2,8 @@
 // report of something outside it. The build adds the inline scripts' hashes and writes the header into
 // dist/_headers (src/lib/csp-build.ts); the Worker stores reports (src/worker/csp-report.ts).
 //
-// It's sent as Content-Security-Policy-Report-Only until the reports are clean after cutover: nothing
-// is blocked, every violation is reported. See docs/decisions.md.
+// It's enforced: anything outside it is blocked, and each violation is still reported. See
+// docs/decisions.md.
 
 /** Where browsers send violation reports. */
 export const REPORT_PATH = '/api/csp-report';
@@ -82,7 +82,7 @@ export function cspPolicy(hashes: string[]): string {
 /** The response headers for every page. */
 export function cspHeaders(hashes: string[]): Array<[name: string, value: string]> {
   return [
-    ['Content-Security-Policy-Report-Only', cspPolicy(hashes)],
+    ['Content-Security-Policy', cspPolicy(hashes)],
     ['Reporting-Endpoints', `csp="${REPORT_PATH}"`],
   ];
 }
