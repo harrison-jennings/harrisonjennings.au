@@ -1,5 +1,5 @@
 # Security and caching headers for Cloudflare Workers static assets.
-# The build adds the Content-Security-Policy (Report-Only) and Reporting-Endpoints to /*, with the hashes of
+# The build adds the Content-Security-Policy and Reporting-Endpoints to /*, with the hashes of
 # the pages' inline scripts: see src/lib/csp.ts. The served file is dist/_headers.
 /*
   Strict-Transport-Security: max-age=31536000

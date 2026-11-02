@@ -1,9 +1,9 @@
 import { expect, test, type Page } from '@playwright/test';
 import { sitemapPaths } from './site';
 
-// The site's own pages and scripts run within the Content-Security-Policy the build writes (sent as
-// Report-Only, which still raises a violation event for anything it would block). Tag Manager isn't
-// loaded in tests; what it loads is checked through the reports once it's live.
+// The site's own pages and scripts run within the Content-Security-Policy the build writes, which
+// raises a violation event for anything it blocks. Tag Manager isn't loaded in tests; what it loads
+// is checked through the reports once it's live.
 
 /** Collects every CSP violation the page raises, from before its first script. */
 async function watchViolations(page: Page): Promise<() => Promise<string[]>> {
