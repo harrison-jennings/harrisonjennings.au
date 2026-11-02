@@ -40,7 +40,7 @@ export const LONG_TITLE = 48;
  */
 export const OVERLONG_TITLE = 72;
 /** The width the text may use. */
-const MEASURE = 900;
+export const MEASURE = 900;
 /** Martian Mono is monospaced: every character advances 0.7em, less 0.05em of letter spacing. */
 const monoChars = (size: number): number => Math.floor(MEASURE / (0.65 * size));
 

@@ -22,12 +22,17 @@ const loadFonts = () =>
     { name: 'Martian Mono', data: mono, weight: 500, style: 'normal' },
   ]));
 
-export async function renderCard(card: Card): Promise<Buffer> {
-  const svg = await satori(cardElement(card) as unknown as Parameters<typeof satori>[0], {
+/** The card's content alone: transparent wherever nothing is drawn, with no clouds underneath. */
+export async function cardSvg(card: Card): Promise<string> {
+  return satori(cardElement(card) as unknown as Parameters<typeof satori>[0], {
     width: WIDTH,
     height: HEIGHT,
     fonts: await loadFonts(),
   });
+}
+
+export async function renderCard(card: Card): Promise<Buffer> {
+  const svg = await cardSvg(card);
   // The clouds go underneath as plain SVG gradients (Satori can't size an elliptical gradient).
   const full = `<svg xmlns="http://www.w3.org/2000/svg" width="${WIDTH}" height="${HEIGHT}">${cloudsSvg(card)}${svg}</svg>`;
   return sharp(Buffer.from(full)).png({ compressionLevel: 9 }).toBuffer();
