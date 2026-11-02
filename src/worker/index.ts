@@ -3,6 +3,7 @@
 // retention period (src/worker/retention.ts).
 import { handleConsent, type ConsentEnv } from './consent';
 import { handleCspReport } from './csp-report';
+import { handleInternalTraffic } from './internal-traffic';
 import { pruneRecords } from './retention';
 
 interface Env extends ConsentEnv {
@@ -14,6 +15,7 @@ export default {
     const { pathname } = new URL(request.url);
     if (pathname === '/api/consent') return handleConsent(request, env);
     if (pathname === '/api/csp-report') return handleCspReport(request, env);
+    if (pathname === '/api/internal-traffic') return handleInternalTraffic(request);
     // Anything else under /api/ is the 404 page, as for any unknown path.
     return env.ASSETS.fetch(request);
   },
