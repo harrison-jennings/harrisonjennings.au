@@ -29,7 +29,7 @@ than:
 
 > what _exactly_ should the request I am about to make look like?
 
-I kept finding myself staring at request templates full of placeholders, cross-referencing optional parameters and constructing API calls that looked correct only for Marketo to politely inform me otherwise, I started wondering whether there was a better way.
+I kept finding myself staring at request templates full of placeholders, cross-referencing optional parameters and constructing API calls that looked correct only for Marketo to politely inform me otherwise, so I started wondering whether there was a better way.
 
 Naturally, this became a project.
 
@@ -58,7 +58,7 @@ From that information it should be possible to construct the same request as cUR
 
 There was a second problem I was interested in solving as well.
 
-Sometimes I don't _actually_ need to send a request yet. I needed to know what the system on the other side of an integration should expect Marketo to return.
+Sometimes I don't _actually_ need to send a request yet. I just need to know what the system on the other side of an integration should expect Marketo to return.
 
 That might be because I am developing something which will consume the response later, because the endpoint changes data and I don't want to invoke it just for testing, or simply because I want to understand the shape of the payload before I start building around it.
 
@@ -134,7 +134,7 @@ The current build processes five separate Marketo API specifications:
 - Identity API
 - User Management API
 
-Together they currently describe **388 API operations** and **459 shared data models**. It also generates a human-readable Markdown documentation for every operation and model, a machine-readable JSON definition for every individual operation, and a global operation manifest tying the whole thing together.
+Together they currently describe **388 API operations** and **459 shared data models**. The build also generates human-readable Markdown documentation for every operation and model, a machine-readable JSON definition for every individual operation, and a global operation manifest tying the whole thing together.
 
 That gave me a much richer source of truth than any collection of manually maintained request examples could.
 
@@ -443,7 +443,7 @@ For example cURL:
 
 ```sh
 curl --request GET \
-  "https://123-ABC-456.mktorest.com/rest/v1/lead/{leadId}.json" \
+  "https://123-ABC-456.mktorest.com/rest/v1/lead/54321.json" \
   --header "Authorization: Bearer <ACCESS_TOKEN>"
 ```
 
@@ -451,7 +451,7 @@ or the equivalent using JavaScript:
 
 ```javascript
 const response = await fetch(
-  "https://123-ABC-456.mktorest.com/rest/v1/lead/{leadId}.json",
+  "https://123-ABC-456.mktorest.com/rest/v1/lead/54321.json",
   {
     headers: {
       Authorization: "Bearer <ACCESS_TOKEN>"
@@ -468,7 +468,7 @@ or Python:
 import requests
 
 response = requests.get(
-    "https://123-ABC-456.mktorest.com/rest/v1/lead/{leadId}.json",
+    "https://123-ABC-456.mktorest.com/rest/v1/lead/54321.json",
     headers={
         "Authorization": "Bearer <ACCESS_TOKEN>",
     },
