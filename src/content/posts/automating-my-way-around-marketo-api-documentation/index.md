@@ -4,6 +4,7 @@ description: "I use the Marketo Engage REST API reasonably often, and its docume
 searchTitle: "a better Marketo API reference, generated from Adobe's specs"
 searchDescription: "Marketo's REST API documentation left me wanting, so I generated a searchable reference from Adobe's Swagger and OpenAPI specs, with request building."
 published: 2026-09-23
+updated: 2026-11-03
 topics: [adobe-marketo-engage, web-development]
 wpId: 544
 ---
@@ -32,7 +33,7 @@ I kept finding myself staring at request templates full of placeholders, cross-r
 
 Naturally, this became a project.
 
-![The API reference open on Get Lead by Id: the operation's method, path and parameters in the middle, and the Request Builder beside it in mock mode with a base URL, authentication placeholder and a lead ID](./api-reference.png)
+![The API reference open on Get Lead by Id: operations down the left, the method, path and parameters in the middle, and the Request Builder beside them in mock mode, with a base URL, an authentication placeholder and a lead ID](./api-reference.png)
 
 ## what I wanted from an API reference
 
@@ -247,7 +248,7 @@ If Adobe changes a parameter in the source specification, the next rebuild shoul
 
 ## making the reference searchable
 
-Once the generated reference existed, I wrapped it in a static documentation site using [MkDocs](https://www.mkdocs.org/) and [Material for MkDocs](https://squidfunk.github.io/mkdocs-material/).
+Once the generated reference existed, I wrapped it in a static documentation site. That was originally [MkDocs](https://www.mkdocs.org/) with [Material for MkDocs](https://squidfunk.github.io/mkdocs-material/), and it's now [Astro](https://astro.build/) with [Pagefind](https://pagefind.app/) (more on that move below).
 
 That gave me navigation and full-text search across the generated content without requiring an application server or database.
 
@@ -273,7 +274,7 @@ With hundreds of endpoints distributed across multiple API families, being able 
 
 So if I remember that an endpoint contains programMember, but have absolutely no recollection of where Adobe decided to put it, I can search for it. If I know the exact operation ID, I can search for that. If I've got a path from some ancient integration and want to work out what it actually does, I can search for that too.
 
-![Searching the reference for program members: 121 matching documents, led by Delete Program Members and Get Program Members with their methods, paths and operation IDs](./search.png)
+![Searching the reference for program members: 221 results, led by exact matches for the Program Members groups, then Delete Program Members and Sync Program Member Status with their paths and highlighted terms, beside filters for kind, API and method](./search.png)
 
 Useful. But still mostly documentation.
 
@@ -339,7 +340,7 @@ If I enter a form ID of `1234` and select `approved`, the builder has enough inf
 /rest/asset/v1/form/1234.json?status=approved
 ```
 
-![The Request Playground building Get Form By Id: an id of 1234 and a status of approved produce a GET request, a cURL sample and a mock response generated from the response model](./request-builder.png)
+![The Request Playground building Get Form By Id: an id of 1234 and a status of approved produce a GET request and a cURL sample, with a tab beside it for the mock response](./request-builder.png)
 
 The same approach extends beyond simple path and query parameters.
 
@@ -411,6 +412,8 @@ A valid body therefore takes the form:
   ]
 }
 ```
+
+The builder draws that body as a form: a row for each lead, buttons to add or remove them, and a JSON view of the same value for when I'd rather just type it.
 
 This is the part of the architecture I find particularly useful. The Request Builder does not know how to construct **Get Form By Id** because I wrote logic specifically for Marketo forms, and it does not know how to construct **Add Leads to List** because I built another bespoke interface for the Data Ingestion API.
 
@@ -594,7 +597,7 @@ If a request contains multiple records, for example, an appropriate mock respons
 
 The result is more useful than simply printing an empty schema while remaining clearly synthetic.
 
-![A generated request for lead 54321 with its cURL sample, and a mock 200 response from the ResponseOfLead model containing the lead's default fields](./mock-response.png)
+![A generated request for lead 54321, and a mock 200 response from the ResponseOfLead model containing the lead's default fields](./mock-response.png)
 
 ## resolving the shared data models
 
@@ -722,7 +725,7 @@ That merge then rebuilds the public reference.
 
 Because the reference is generated, a successful Python process is not enough evidence that the site is healthy.
 
-The CI process also runs unit and integration tests around the Request Builder and validates the resulting static site.
+The CI process also runs unit and integration tests around the Request Builder, validates the resulting static site, and then opens that site in three browser engines.
 
 This catches a different category of problem.
 
@@ -732,7 +735,7 @@ An operation used by a Request Builder fixture might disappear.
 
 A generated link might point to a model which no longer exists.
 
-The MkDocs build itself might start warning about unresolved references or configuration problems.
+The site itself might end up with a missing page, a broken link or two pages fighting over the same title.
 
 So the CI boundary is deliberately broader than:
 
@@ -764,11 +767,25 @@ The objective was not to make an unofficial copy of Adobe's site.
 
 It was to build a different interface over machine-readable API material Adobe already publishes.
 
+## moving off MkDocs
+
+MkDocs got this project off the ground, and I would happily use it again for something smaller. But a few things pushed me to move.
+
+Material for MkDocs, the theme doing most of the work, is winding down, with support currently due to end in May 2027, and it isn't compatible with MkDocs 2.0. So a move was coming sooner or later. I also wanted a layout a documentation theme wasn't designed for, with the docs and the Request Builder side by side, and I wanted the site to be found. Until now, it deliberately asked search engines not to index it.
+
+So I rebuilt the front end in Astro, with Pagefind for search.
+
+This is where generating everything paid off, because the move was much less dramatic than it sounds. The specifications, the generator, the reference and the Postman collection did not change at all. The collection came out byte-for-byte identical. Only the last step of the pipeline moved, and all 915 pages kept their URLs.
+
+I also measured it rather than assuming it would be better. Across 28 test searches, the right page came first 22 times, up from 18. Not everything improved, though. The largest operation pages got a little heavier (List Emails went from 10.4 KB to 13.7 KB compressed), and the build went from 3.9 seconds to just under 5. I can live with that.
+
+The rebuild was also a chance to tighten up the promises the site makes. "Nothing is sent to Marketo" is exactly the sort of claim that should be enforced rather than just written down, so a browser test now fails if any request leaves the site.
+
 ## what I ended up with
 
 The final architecture looks roughly like this:
 
-![The pipeline: Adobe's Swagger and OpenAPI specifications feed a Python reference builder, which produces Markdown reference pages, operation JSON and a Postman collection; the MkDocs site and its Request Builder generate cURL, JavaScript and Python requests and mock responses, while a weekly GitHub Action fetches the specs, regenerates, tests and opens a draft pull request](./architecture.png)
+![The pipeline, in three bands. Generate: Adobe's Swagger and OpenAPI specifications feed a Python generator, which produces the reference and a Postman collection. Build and check: Astro, Pagefind, a site check and browser tests. Serve: GitHub Pages, the reference and search, the Request Builder and mock responses. Beside them, a weekly GitHub Action fetches the specs, compares, regenerates, tests and opens a draft pull request for a person to merge](./architecture.png)
 
 What started as a request-template problem therefore became a fairly complete specification-processing pipeline.
 
