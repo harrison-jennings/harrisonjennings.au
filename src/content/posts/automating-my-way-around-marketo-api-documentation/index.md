@@ -4,7 +4,7 @@ description: "I use the Marketo Engage REST API reasonably often, and its docume
 searchTitle: "a better Marketo API reference, generated from Adobe's specs"
 searchDescription: "Marketo's REST API documentation left me wanting, so I generated a searchable reference from Adobe's Swagger and OpenAPI specs, with request building."
 published: 2026-09-23
-updated: 2026-11-03
+updated: 2026-11-08
 topics: [adobe-marketo-engage, web-development]
 wpId: 544
 ---
@@ -511,7 +511,7 @@ The generated examples use placeholders for authentication information.
 
 If you enter your Marketo base URL to make the generated examples more convenient, it stays in the browser and isn't stored.
 
-There is no application backend involved either. The published reference is a static site, the Request Builder executes entirely in the browser, and its Content Security Policy restricts the application to loading its own resources.
+There is no application backend involved either. The published reference is a static site, the Request Builder executes entirely in the browser, and its Content Security Policy stops the page from connecting to anything but the site itself.
 
 That keeps a fairly useful security boundary around the project:
 
@@ -781,11 +781,25 @@ I also measured it rather than assuming it would be better. Across 28 test searc
 
 The rebuild was also a chance to tighten up the promises the site makes. "Nothing is sent to Marketo" is exactly the sort of claim that should be enforced rather than just written down, so a browser test now fails if any request leaves the site.
 
+## moving to Cloudflare
+
+The site started on GitHub Pages, which is perfectly good at serving static files. But it can't send custom response headers, so the Content Security Policy had to live in a meta tag. I also wanted some analytics and a preview of every branch, and the rest of my site already runs on Cloudflare Workers. So the reference moved there too.
+
+The thing I'd been wary of was Bot Fight Mode. It's on across my whole domain, and on Cloudflare's free plan nothing can be exempted from it, so automated requests from data centres get challenged. It turned out nothing of mine needs to make them. CI tests the build before anything is deployed, and the check after each deploy tests that exact version at its own preview address, which sits outside my domain and behind Cloudflare Access.
+
+Once again, only the last step of the pipeline moved. Before switching, I served the build exactly as Cloudflare would and compared 1,677 URLs against the live site. Every page answered at the same address. The one difference is that a link missing its trailing slash now redirects with a 307 rather than a 301.
+
+Moving the Content Security Policy into a real header turned up something the meta tag had been hiding. A header covers the whole page, including the small script that sets the light or dark theme before anything else loads, and which the meta tag never reached. The browser tests caught it, along with the WebAssembly behind the site's search, before either reached a visitor.
+
+The analytics are Cloudflare's cookieless Web Analytics. It reports to the site itself, so the policy still stops anything you type into the Request Builder from going anywhere else.
+
+The switch itself took a few minutes. I rehearsed it on a spare subdomain, pointed a Workers route at the site, then switched the DNS record over to Cloudflare. There was no downtime, and GitHub Pages was retired the same night.
+
 ## what I ended up with
 
 The final architecture looks roughly like this:
 
-![The pipeline, in three bands. Generate: Adobe's Swagger and OpenAPI specifications feed a Python generator, which produces the reference and a Postman collection. Build and check: Astro, Pagefind, a site check and browser tests. Serve: GitHub Pages, the reference and search, the Request Builder and mock responses. Beside them, a weekly GitHub Action fetches the specs, compares, regenerates, tests and opens a draft pull request for a person to merge](./architecture.png)
+![The pipeline, in three bands. Generate: Adobe's Swagger and OpenAPI specifications feed a Python generator, which produces the reference and a Postman collection. Build and check: Astro, Pagefind, a site check and browser tests. Serve: Cloudflare Workers, the reference and search, the Request Builder and mock responses. Beside them, a weekly GitHub Action fetches the specs, compares, regenerates, tests and opens a draft pull request for a person to merge](./architecture.svg)
 
 What started as a request-template problem therefore became a fairly complete specification-processing pipeline.
 

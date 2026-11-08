@@ -4,8 +4,10 @@ description: How this site handles personal information, what runs in your brows
 # Updated for the new site: hosting on Cloudflare, the consent records, and the cookie tables (built
 # from src/content/consent.yaml). The site went live on 20 October 2026; updated the next day with the
 # consent records' retention period, which src/worker/retention.ts enforces. Updated on 25 October 2026
-# with the analytics retention periods, which partition and table expiry enforce in BigQuery.
-updated: 2026-10-25
+# with the analytics retention periods, which partition and table expiry enforce in BigQuery. Updated on
+# 8 November 2026 to remove GitHub: its last site, mkto-ref, moved to Cloudflare, which already covers
+# hosting and Web Analytics for every subdomain.
+updated: 2026-11-08
 summary:
   - You can read the site without telling me who you are.
   - Analytics and advertising cookies are only set if you agree in the cookie settings. Without that consent, Google may still receive limited measurements without cookies.
@@ -148,7 +150,6 @@ Personal information may be handled by service providers that assist with operat
 - **Cloudflare**, for website hosting, DNS, content delivery, traffic management, website security, cookieless performance analytics (Cloudflare Web Analytics) and storing cookie-consent records;
 - **Google**, including Google Analytics, Google Tag Manager and Google Cloud services used in the Site’s measurement architecture;
 - **Vercel**, for hosting and cookieless Web Analytics associated with selected project or demonstration sites;
-- **GitHub**, for static GitHub Pages hosting associated with selected project, demonstration or reference sites;
 - **Cal.com**, for optional appointment booking; and
 - **Apple/iCloud**, for email communications associated with the Site’s domain.
 
@@ -166,7 +167,7 @@ Personal information is not sold or rented.
 
 ## overseas processing
 
-Some service providers operate internationally. Personal information may consequently be processed in the United States and other countries in which Cloudflare, Google, Cal.com, Apple, Vercel, GitHub or their service providers operate.
+Some service providers operate internationally. Personal information may consequently be processed in the United States and other countries in which Cloudflare, Google, Cal.com, Apple, Vercel or their service providers operate.
 
 Privacy and data-protection laws in those countries may differ from Australian law. Where required by applicable law, reasonable steps will be taken in connection with the selection and use of service providers and the handling of personal information outside Australia.
 
