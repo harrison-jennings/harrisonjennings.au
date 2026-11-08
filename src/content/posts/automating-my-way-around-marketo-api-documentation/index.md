@@ -799,7 +799,7 @@ The switch itself took a few minutes. I rehearsed it on a spare subdomain, point
 
 The final architecture looks roughly like this:
 
-![The pipeline, in three bands. Generate: Adobe's Swagger and OpenAPI specifications feed a Python generator, which produces the reference and a Postman collection. Build and check: Astro, Pagefind, a site check and browser tests. Serve: Cloudflare Workers, the reference and search, the Request Builder and mock responses. Beside them, a weekly GitHub Action fetches the specs, compares, regenerates, tests and opens a draft pull request for a person to merge](./architecture.png)
+![The pipeline, in three bands. Generate: Adobe's Swagger and OpenAPI specifications feed a Python generator, which produces the reference and a Postman collection. Build and check: Astro, Pagefind, a site check and browser tests. Serve: Cloudflare Workers, the reference and search, the Request Builder and mock responses. Beside them, a weekly GitHub Action fetches the specs, compares, regenerates, tests and opens a draft pull request for a person to merge](./architecture.svg)
 
 What started as a request-template problem therefore became a fairly complete specification-processing pipeline.
 
