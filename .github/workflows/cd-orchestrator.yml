@@ -14,7 +14,8 @@ name: 🚀 CD Orchestrator
 # The site (harrisonjennings-au) is built on every push and records to Preview and Production; the
 # design system (harrisonjennings-au-design) is built when a push touches its watch paths and records to
 # Design system preview and Design system.
-# On a pull request it posts the branch's preview link, which doesn't wait for a build.
+# On a pull request it posts the branch's preview link, which doesn't wait for a build; the design
+# system's link follows on the PR once Cloudflare has built it for the branch (preview-link.yml).
 # Run it by hand (Actions → 🚀 CD Orchestrator → Run workflow) to repeat main's checks for the branch's
 # latest commit, if Cloudflare's check ever arrives without starting it.
 # All four environments show in the repository's Deployments panel.
@@ -59,6 +60,12 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
+    with:
+      worker: harrisonjennings-au
+      label: Preview
+      branch: ${{ github.head_ref }}
+      pr: ${{ github.event.pull_request.number }}
+      note: Behind Cloudflare Access. It shows this branch's latest push once the **Workers Builds** check passes.
 
   # ---------- the site ----------
   site-preview:
@@ -131,6 +138,25 @@ jobs:
       sha: ${{ github.event.check_run.head_sha }}
       branch: ${{ github.event.check_run.check_suite.head_branch }}
       conclusion: ${{ github.event.check_run.conclusion }}
+
+  # The design system is only built when a push touches its watch paths, so its link waits for a
+  # successful build, then goes on the branch's open pull request (if there is one) unless it's there.
+  design-system-preview-link:
+    name: design system preview link
+    if: >-
+      github.event_name == 'check_run'
+      && github.event.check_run.name == 'Workers Builds: harrisonjennings-au-design'
+      && github.event.check_run.check_suite.head_branch != 'main'
+      && github.event.check_run.conclusion == 'success'
+    uses: ./.github/workflows/preview-link.yml
+    permissions:
+      contents: read
+      pull-requests: write
+    with:
+      worker: harrisonjennings-au-design
+      label: Design system preview
+      branch: ${{ github.event.check_run.check_suite.head_branch }}
+      note: Behind Cloudflare Access. Cloudflare rebuilds it when a push touches the design system's watch paths.
 
   design-system:
     name: design system

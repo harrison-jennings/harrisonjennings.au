@@ -1,15 +1,41 @@
-# Posts the branch's Cloudflare preview link on every pull request.
+# Posts a Worker's Cloudflare preview link on the branch's pull request.
 #
-# Workers Builds only comments on a pull request when the commit it builds is already on an open PR, so
-# a PR opened after its branch's first push never gets Cloudflare's comment. This fills the gap: one
-# comment per PR, posted when it opens (and again if that comment is missing on a later push). The link
-# is the branch's stable Preview URL, so it's right before the build finishes; the page loads once the
-# "Workers Builds" check passes.
+# Workers Builds only comments on a pull request when the PR already exists as the build starts, so a PR
+# opened with or after its branch's push often misses Cloudflare's comment, for either Worker. This fills
+# the gap: one comment per Worker per PR, posted unless that Worker's comment is already there. The link
+# is the branch's stable Preview URL.
+#
+# The CD Orchestrator calls it twice:
+#   the site's link when a pull request opens, reopens or gets a push, before the build finishes (the
+#   site is built on every push, so its preview always comes);
+#   the design system's link when Cloudflare finishes building the design system for a branch (it's
+#   only built when a push touches its watch paths, so a link posted earlier could lead nowhere).
 name: Preview link
 
 on:
-  # Called by the CD Orchestrator when a pull request opens, reopens or gets a push.
   workflow_call:
+    inputs:
+      worker:
+        description: The Worker whose preview to link (harrisonjennings-au, harrisonjennings-au-design)
+        required: true
+        type: string
+      label:
+        description: What the comment calls the preview (Preview, Design system preview)
+        required: true
+        type: string
+      branch:
+        description: The pull request's branch
+        required: true
+        type: string
+      pr:
+        description: The pull request's number; looked up from the branch when it's left empty
+        required: false
+        type: string
+        default: ''
+      note:
+        description: The line under the link
+        required: true
+        type: string
 
 permissions:
   # To check out the repository (for scripts/preview-url.sh), and to comment.
@@ -17,13 +43,11 @@ permissions:
   pull-requests: write
 
 concurrency:
-  group: preview-link-${{ github.event.pull_request.number }}
+  group: preview-link-${{ inputs.worker }}-${{ inputs.branch }}
 
 jobs:
   comment:
     name: Post the preview link
-    # Dependabot's pull requests get a read-only token, so they're skipped.
-    if: github.event.pull_request.user.login != 'dependabot[bot]'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -35,24 +59,39 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
-          PR: ${{ github.event.pull_request.number }}
           # Passed as data, never pasted into the script: branch names can contain anything.
-          BRANCH: ${{ github.head_ref }}
+          WORKER: ${{ inputs.worker }}
+          LABEL: ${{ inputs.label }}
+          BRANCH: ${{ inputs.branch }}
+          PR: ${{ inputs.pr }}
+          NOTE: ${{ inputs.note }}
         run: |
-          marker='<!-- preview-link -->'
+          if [ -z "$PR" ]; then
+            PR=$(gh pr list --repo "$REPO" --head "$BRANCH" --state open --json number --jq '.[0].number // empty')
+            if [ -z "$PR" ]; then
+              echo "No open pull request for this branch."
+              exit 0
+            fi
+          fi
+          # The site's marker predates the design system's comment, so open PRs keep theirs.
+          if [ "$WORKER" = harrisonjennings-au ]; then
+            marker='<!-- preview-link -->'
+          else
+            marker="<!-- preview-link:$WORKER -->"
+          fi
           if gh api "repos/$REPO/issues/$PR/comments" --paginate --jq '.[].body' | grep -qF "$marker"; then
-            echo "Preview link already posted."
+            echo "$LABEL link already posted."
             exit 0
           fi
-          url=$(bash scripts/preview-url.sh "$BRANCH")
+          url=$(WORKER="$WORKER" bash scripts/preview-url.sh "$BRANCH")
           if [ -z "$url" ]; then
             # Long names get a shortened name and a hash from Cloudflare, so there's no link to build.
-            line="This branch name is too long to predict its Preview URL: find it under the Worker's **Previews** in the Cloudflare dashboard."
+            line="**$LABEL:** this branch name is too long to predict the address: find it under the $WORKER Worker's **Previews** in the Cloudflare dashboard."
           else
-            line="**Preview:** $url"
+            line="**$LABEL:** $url"
           fi
           body="$marker
           $line
 
-          Behind Cloudflare Access. It shows this branch's latest push once the **Workers Builds** check passes."
+          $NOTE"
           gh pr comment "$PR" --repo "$REPO" --body "$body"
