@@ -4,7 +4,7 @@ description: "A couple of months ago I wrote about whether sending yourself a te
 searchTitle: "leadlens: Marketo email previews and linting in VS Code"
 searchDescription: "Preview Adobe Marketo Engage emails across 21 email clients as you type, and lint them with Marketo-aware checks, in a VS Code extension."
 published: 2026-10-16
-updated: 2026-10-27
+updated: 2026-11-09
 topics: [adobe-marketo-engage, web-development]
 wpId: 685
 cover: "./cover.png"
@@ -96,9 +96,9 @@ A marketplace listing only says so much, so Leadlens also has [its own website](
 
 ![The Leadlens website home page: the lead.lens logo, the headline “Preview every inbox before you send”, an Install for VS Code button showing version 1.1 and VS Code 1.90 or later, and the product illustration below](./website.png)
 
-The site lives in the same repository as the extension, built with [Astro](https://astro.build/) and [Starlight](https://starlight.astro.build/) and hosted on [Vercel](https://vercel.com/home). That matters more than the choice of framework. The documentation and the changelog aren't written twice: the site is built from the same Markdown files that sit next to the code. A pull request that changes how Leadlens behaves updates its documentation in the same change, and the site rebuilds itself when it merges. Even the version number and the minimum VS Code version on the install buttons are read from the extension's own package file, so they can't drift out of date.
+The site lives in the same repository as the extension, built with [Astro](https://astro.build/) and [Starlight](https://starlight.astro.build/) and hosted on [Cloudflare Workers](https://www.cloudflare.com/products/workers/). That matters more than the choice of framework. The documentation and the changelog aren't written twice: the site is built from the same Markdown files that sit next to the code. A pull request that changes how Leadlens behaves updates its documentation in the same change, and the site rebuilds itself when it merges. Even the version number and the minimum VS Code version on the install buttons are read from the extension's own package file, so they can't drift out of date.
 
-It's also built to match the extension's attitude to privacy. Everything, fonts included, is served from the site itself, there are no cookies, and visits are counted with cookie-free analytics and nothing else.
+It's also built to match the extension's attitude to privacy. Everything, fonts included, is served from the site itself, apart from Cloudflare's analytics script. There are no cookies, and visits are counted with cookie-free analytics and nothing else.
 
 ## the bugs that waited for launch day
 
