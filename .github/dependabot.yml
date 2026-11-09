@@ -7,19 +7,23 @@ updates:
       day: monday
       time: '07:00'
       timezone: Australia/Melbourne
+    # No cooldown is set: Dependabot's default already holds each release for 3 days, long enough
+    # for a broken or compromised version to be pulled, and security updates skip it.
     open-pull-requests-limit: 5
     labels: ['dependencies']
     commit-message:
       prefix: 'chore(deps)'
     # Every minor and patch update arrives in one weekly PR, so a week's updates are one merge and
     # one CI run. Each major update still gets its own PR, so one breaking release can't hold up the
-    # rest, and closing it skips just that version. Satori is left out so its updates keep arriving
-    # as their own PRs: they're the reminder that its upgrade is outstanding (see docs/decisions.md).
+    # rest, and closing it skips just that version. Left out, so each keeps its own PR:
+    # - satori: its PRs are the reminder that its upgrade is outstanding (see docs/decisions.md).
+    # - sharp: below 1.0 a minor release can break things, and it renders the share cards, which
+    #   CI doesn't yet check.
     groups:
       npm-minor-patch:
         update-types: ['minor', 'patch']
         patterns: ['*']
-        exclude-patterns: ['satori']
+        exclude-patterns: ['satori', 'sharp']
 
   - package-ecosystem: github-actions
     directory: /
