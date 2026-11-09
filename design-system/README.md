@@ -10,3 +10,5 @@ npm run design:preview   # the build, through Wrangler on :8791 (search needs a 
 ```
 
 How it's built, kept current and deployed: [docs/design-system.md](../docs/design-system.md).
+
+<!-- Testing the design system preview link: this PR is closed without merging. -->
