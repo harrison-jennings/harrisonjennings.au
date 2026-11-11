@@ -8,7 +8,7 @@ related: [leadlens-email-previews-and-linting-for-marketo-inside-vs-code]
 draft: false
 ---
 
-Earlier this month I wrote about [building Leadlens](/blog/leadlens-email-previews-and-linting-for-marketo-inside-vs-code/), a VS Code extension that previews Adobe Marketo Engage emails across 21 email clients as you type, and lints them with an understanding of how Marketo actually works. Back then, installing it meant downloading a file from GitHub. As of today, it's on the [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=leadlens.leadlens).
+Earlier this month I wrote about [building Leadlens](/blog/leadlens-email-previews-and-linting-for-marketo-inside-vs-code/), a VS Code extension that previews Adobe Marketo Engage emails across 21 email clients as you type, and lints them with an understanding of how Marketo actually works. Back then, installing it meant downloading a file from GitHub. As of today, it's live on the [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=leadlens.leadlens).
 
 ![Leadlens in VS Code: typing padding into a Marketo template's button brings up an Outlook Classic warning and its explanation on hover, the button collapses in the Outlook Classic preview, and the quick fix menu opens](./demo.gif)
 
