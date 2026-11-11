@@ -1,19 +1,21 @@
 // The site's only Worker code. It runs for /api/* alone (run_worker_first in wrangler.jsonc); every page
 // and asset is served as a static file without it. Two Cron Triggers: once a day it deletes records past
-// their retention period (src/worker/retention.ts), and twice a day it asks for a fresh build, for
-// the contributions graph (src/worker/refresh.ts). Each runs on its own, so one failing can't stop the
-// other.
+// their retention period and reports to a heartbeat (src/worker/retention.ts), and twice a day it asks
+// for a fresh build, for the contributions graph (src/worker/refresh.ts). Each runs on its own, so one
+// failing can't stop the other.
 import { handleConsent, type ConsentEnv } from './consent';
 import { handleContributionsHealth } from './contributions-health';
 import { handleCspReport } from './csp-report';
 import { handleInternalTraffic } from './internal-traffic';
 import { REFRESH_CRON, refreshSite } from './refresh';
-import { pruneRecords, RETENTION_CRON } from './retention';
+import { RETENTION_CRON, runRetention } from './retention';
 
 interface Env extends ConsentEnv {
   ASSETS: { fetch(request: Request): Promise<Response> };
   /** The Workers Builds Deploy Hook for main (a secret; production only). */
   DEPLOY_HOOK_URL?: string;
+  /** The Better Stack heartbeat for the daily clean-up (a secret; production only). */
+  RETENTION_HEARTBEAT_URL?: string;
 }
 
 export default {
@@ -33,7 +35,7 @@ export default {
     ctx: { waitUntil(promise: Promise<unknown>): void },
   ): Promise<void> {
     if (controller.cron === RETENTION_CRON && env.CONSENT_DB) {
-      ctx.waitUntil(pruneRecords(env.CONSENT_DB));
+      ctx.waitUntil(runRetention(env.CONSENT_DB, env.RETENTION_HEARTBEAT_URL));
     }
     if (controller.cron === REFRESH_CRON && env.DEPLOY_HOOK_URL) {
       ctx.waitUntil(refreshSite(env.DEPLOY_HOOK_URL));
