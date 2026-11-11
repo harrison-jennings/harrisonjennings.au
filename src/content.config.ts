@@ -129,7 +129,8 @@ const blog = defineCollection({
   }),
 });
 
-// The home page's own wording: the hero and the booking band.
+// The home page's own wording: the hero, the contributions graph's heading and link, and the booking
+// band.
 const home = defineCollection({
   loader: file(content('home.yaml')),
   schema: z.object({
@@ -138,6 +139,7 @@ const home = defineCollection({
     intro: z.string(),
     /** The line under the lead on the share card (the home card is every page's default). */
     shareLine: z.string(),
+    github: z.object({ title: z.string(), link: z.string() }),
     booking: z.object({ title: z.string(), note: z.string() }),
   }),
 });

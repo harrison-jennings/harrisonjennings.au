@@ -5,6 +5,11 @@ home:
   intro: I'm Harrison, a marketing technology consultant in Melbourne.
   # The second line on the share card (the image shown when a link to the site is shared).
   shareLine: Marketing technology consultant, Melbourne.
+  # "still shipping": the GitHub contributions graph, after "built and shipped". The lines under it
+  # (the summary, the tooltips) are worked out from the data.
+  github:
+    title: still shipping
+    link: view on github
   booking:
     title: ready to jump in? book a call
     note: A 30-minute video call to talk through what you're working on.

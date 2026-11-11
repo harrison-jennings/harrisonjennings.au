@@ -11,7 +11,7 @@ Six sections, each a group of pages:
 - **overview** (`/`): what it is, the counts, where to start, how to use it, and what changed.
 - **brand:** logo, colour, typography, voice and tone, imagery and motion, icons.
 - **foundations:** spacing, radius, layout and breakpoint, accessibility, and every token.
-- **components:** a page for each of the site's 26 components.
+- **components:** a page for each of the site's 27 components.
 - **content:** a page for every element a post can hold, the front matter reference, and image guidance.
 - **templates:** a gallery of every kind of page on the site.
 

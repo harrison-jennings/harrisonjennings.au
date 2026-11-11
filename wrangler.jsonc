@@ -22,10 +22,14 @@
       "migrations_dir": "migrations",
     },
   ],
-  // Daily at 03:17 UTC (early afternoon in Melbourne): delete consent records older than 12 months and CSP
-  // reports older than 90 days (src/worker/retention.ts). Crons run on the production deployment only.
+  // Crons run on the production deployment only (src/worker/index.ts tells them apart):
+  // - daily at 03:17 UTC (early afternoon in Melbourne): delete consent records older than 12 months
+  //   and CSP reports older than 90 days (src/worker/retention.ts);
+  // - twice a day at 01:17 and 14:17 UTC (in Melbourne, around midday and just after midnight): rebuild
+  //   the site through the Deploy Hook in the secret DEPLOY_HOOK_URL, so the contributions graph stays
+  //   fresh (src/worker/refresh.ts).
   "triggers": {
-    "crons": ["17 3 * * *"],
+    "crons": ["17 3 * * *", "17 1,14 * * *"],
   },
   "observability": {
     "enabled": true,

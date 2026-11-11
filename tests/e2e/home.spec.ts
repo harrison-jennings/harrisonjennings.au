@@ -227,3 +227,202 @@ test.describe('phone', () => {
     expect(Math.round(button.width)).toBe(390 - 38 - 26);
   });
 });
+
+// "still shipping": the contributions graph, built from tests/e2e/fixtures/contributions.json
+// (CONTRIBUTIONS_FIXTURE, set by npm run test:e2e): 365 days ending on 11 November 2026.
+test.describe('still shipping', () => {
+  const section = (page: Page) => page.locator('section[aria-labelledby="still-shipping"]');
+  const day = (page: Page, label: string) =>
+    section(page).locator(`.act__day[aria-label="${label}"]`);
+  const tip = (page: Page) => section(page).locator('.act__tip');
+
+  test('a year of days, after built and shipped', async ({ page }) => {
+    await page.goto('/');
+    await expect(section(page).locator('.act__day')).toHaveCount(365);
+    await expect(section(page).locator('h2')).toHaveText('still shipping');
+    await expect(section(page).locator('.act__summary')).toHaveText(
+      '601 contributions on GitHub in the last year, 278 of them in private repositories.',
+    );
+    // "built and shipped" has a heading for each layout; each title once, in page order.
+    const order = [
+      ...new Set(
+        await page.locator('section h2').evaluateAll((hs) => hs.map((h) => h.textContent?.trim())),
+      ),
+    ];
+    expect(order.indexOf('still shipping')).toBe(order.indexOf('built and shipped') + 1);
+  });
+
+  test.describe('desktop', () => {
+    test.use({ viewport: { width: 1440, height: 900 } });
+
+    test('hovering a day shows its count and date', { tag: '@desktop' }, async ({ page }) => {
+      await page.goto('/');
+      for (const label of [
+        '16 contributions on 8 November',
+        '49 contributions on 9 November',
+        'no contributions on 10 November',
+      ]) {
+        await day(page, label).hover();
+        await expect(tip(page)).toBeVisible();
+        await expect(tip(page)).toHaveText(label);
+      }
+      await page.keyboard.press('Escape');
+      await expect(tip(page)).toBeHidden();
+    });
+
+    test(
+      'the tooltip stays inside the column at both ends',
+      { tag: '@desktop' },
+      async ({ page }) => {
+        await page.goto('/');
+        const act = (await section(page).locator('.act').boundingBox())!;
+        for (const label of [
+          '49 contributions on 9 November',
+          'no contributions on 12 November 2025',
+        ]) {
+          await day(page, label).hover();
+          const box = (await tip(page).boundingBox())!;
+          expect(box.x).toBeGreaterThanOrEqual(act.x - 0.5);
+          expect(box.x + box.width).toBeLessThanOrEqual(act.x + act.width + 0.5);
+        }
+      },
+    );
+
+    test(
+      'the grid is one tab stop: Tab lands on today, the arrow keys move',
+      { tag: '@keyboard' },
+      async ({ page }) => {
+        await page.goto('/');
+        await section(page).locator('.section__head a').focus();
+        await page.keyboard.press('Tab');
+        const today = day(page, '5 contributions on 11 November');
+        await expect(today).toBeFocused();
+        await expect(tip(page)).toHaveText('5 contributions on 11 November');
+
+        await page.keyboard.press('ArrowUp');
+        await expect(day(page, 'no contributions on 10 November')).toBeFocused();
+        await page.keyboard.press('Escape');
+        await expect(tip(page)).toBeHidden();
+        await page.keyboard.press('ArrowUp');
+        await expect(tip(page)).toHaveText('49 contributions on 9 November');
+
+        // The first day, then a week on: the same weekday in the next column.
+        await page.keyboard.press('Control+Home');
+        const first = day(page, 'no contributions on 12 November 2025');
+        await expect(first).toBeFocused();
+        await page.keyboard.press('ArrowRight');
+        await expect(section(page).locator('.act__day:focus')).toHaveAttribute(
+          'aria-label',
+          /on 19 November 2025$/,
+        );
+        await page.keyboard.press('Control+End');
+        await expect(today).toBeFocused();
+        // Only one day is ever in the tab order.
+        await expect(section(page).locator('.act__day[tabindex="0"]')).toHaveCount(1);
+      },
+    );
+
+    test('it plays its entrance once it scrolls into view', async ({ page }) => {
+      await page.goto('/');
+      const act = section(page).locator('.act');
+      await expect(act).toHaveAttribute('data-reveal', 'armed');
+      await section(page).scrollIntoViewIfNeeded();
+      await expect(act).toHaveAttribute('data-reveal', 'play');
+      await expect(act).not.toHaveAttribute('data-reveal', /.*/, { timeout: 3_000 });
+    });
+  });
+
+  test('under reduced motion it never arms the entrance', async ({ browser }) => {
+    const context = await browser.newContext({ reducedMotion: 'reduce' });
+    const page = await context.newPage();
+    await page.goto(`${test.info().project.use.baseURL}/`);
+    await section(page).scrollIntoViewIfNeeded();
+    await page.waitForTimeout(300);
+    await expect(section(page).locator('.act')).not.toHaveAttribute('data-reveal', /.*/);
+    await context.close();
+  });
+
+  test('between phone and desktop, the year scrolls with arrows', async ({ page }) => {
+    await page.setViewportSize({ width: 1000, height: 800 });
+    await page.goto('/');
+    await expect(section(page).locator('[data-swipe-next="activity"]')).toBeVisible();
+    await expect(section(page).locator('[data-swipe-next="activity"]')).toHaveAttribute(
+      'aria-disabled',
+      'true',
+    );
+  });
+
+  test.describe('phone', () => {
+    test.use({ viewport: { width: 390, height: 844 } });
+
+    test('it opens at the newest weeks, a whole week beside the day labels', async ({ page }) => {
+      await page.goto('/');
+      await section(page).scrollIntoViewIfNeeded();
+      const scroller = section(page).locator('.act__scroll');
+      await expect
+        .poll(() => scroller.evaluate((s) => s.scrollWidth - s.clientWidth - s.scrollLeft))
+        .toBeLessThanOrEqual(1);
+      await expect(day(page, '5 contributions on 11 November')).toBeInViewport();
+      await expect(section(page).locator('[data-swipe-next="activity"]')).toHaveAttribute(
+        'aria-disabled',
+        'true',
+      );
+      // Nothing but the grid scrolls sideways.
+      expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(390);
+
+      await section(page).locator('[data-swipe-prev="activity"]').click();
+      await expect
+        .poll(() => scroller.evaluate((s) => s.scrollWidth - s.clientWidth - s.scrollLeft))
+        .toBeGreaterThan(200);
+    });
+
+    test('the weeks stay inside the column, with no dot cut at either edge', async ({ page }) => {
+      await page.goto('/');
+      await section(page).scrollIntoViewIfNeeded();
+      const edges = () =>
+        section(page).evaluate((s) => {
+          const view = s.querySelector('.act__scroll')!.getBoundingClientRect();
+          const column = s.querySelector('.act')!.getBoundingClientRect();
+          const start = s.querySelector('.act__corner')!.getBoundingClientRect().right + 6;
+          const days = [...s.querySelectorAll('.act__day')].map((d) => d.getBoundingClientRect());
+          const shown = days.filter((r) => r.right > start + 0.5 && r.left < view.right - 0.5);
+          return {
+            cut: shown.filter((r) => r.left < start - 0.5 || r.right > view.right + 0.5).length,
+            past: shown.filter((r) => r.right > column.right + 0.5).length,
+          };
+        });
+      await expect.poll(edges).toEqual({ cut: 0, past: 0 });
+      await section(page).locator('[data-swipe-prev="activity"]').click();
+      await page.waitForTimeout(600);
+      await expect.poll(edges).toEqual({ cut: 0, past: 0 });
+    });
+
+    test('a tap shows the day’s tooltip; tapping it again hides it', async ({ browser }) => {
+      const context = await browser.newContext({
+        viewport: { width: 390, height: 844 },
+        hasTouch: true,
+      });
+      const page = await context.newPage();
+      await page.goto(`${test.info().project.use.baseURL}/`);
+      await section(page).scrollIntoViewIfNeeded();
+      const tuesday = day(page, 'no contributions on 10 November');
+      await tuesday.tap();
+      await expect(tip(page)).toHaveText('no contributions on 10 November');
+      await expect(tuesday).toHaveAttribute('data-state', 'tap');
+      await expect(tuesday).toHaveCSS('outline-style', 'solid');
+      await tuesday.tap();
+      await expect(tip(page)).toBeHidden();
+      await context.close();
+    });
+
+    test('the link moves under the section', async ({ page }) => {
+      await page.goto('/');
+      await expect(section(page).locator('.section__head a')).toBeHidden();
+      await expect(
+        section(page)
+          .locator('.section__after')
+          .getByRole('link', { name: /view on github/ }),
+      ).toHaveAttribute('href', 'https://github.com/harrison-jennings');
+    });
+  });
+});

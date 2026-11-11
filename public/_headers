@@ -14,3 +14,7 @@
 
 /fonts/*
   Cache-Control: public, max-age=31536000, immutable
+
+# The calendar the build used for the contributions graph (src/lib/contributions.ts): data, not a page.
+/github-contributions.json
+  X-Robots-Tag: noindex
