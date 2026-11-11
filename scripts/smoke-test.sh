@@ -59,18 +59,15 @@ check 'robots.txt answers 200' [ "$(status /robots.txt)" = 200 ]
 check 'the Worker answers (consent log refuses a GET)' [ "$(status /api/consent)" = 405 ]
 
 # The contributions graph (src/lib/contributions.ts): on the home page, with the calendar it was built
-# from. It's refreshed twice a day; a calendar older than three days means GitHub hasn't answered
-# for a while (most likely the build's token), and the site is still showing the last good copy.
+# from. The Worker's health check answers 503 once that calendar is more than three days old, which means
+# GitHub hasn't answered for a while (most likely the build's token) and the site is still showing the
+# last good copy (src/worker/contributions-health.ts). Not locally: the tests' fixed calendar is old.
 contributions=$(body /github-contributions.json)
 check 'the home page shows the contributions graph' has 'aria-labelledby="still-shipping"' "$home"
 check 'the contributions calendar is published' has '"days":' "$contributions"
 if [[ "$base" != http://127.0.0.1* && "$base" != http://localhost* ]]; then
-  fetched=$(grep -o '"fetchedAt":"[^"]*"' <<<"$contributions" | cut -d'"' -f4)
-  # GNU date on the runners; BSD date on a Mac
-  then_s=$(date -u -d "$fetched" +%s 2>/dev/null ||
-    date -u -j -f '%Y-%m-%dT%H:%M:%S' "${fetched%%.*}" +%s 2>/dev/null || echo 0)
-  check "the contributions calendar is under three days old (fetched ${fetched:-never})" \
-    [ $(($(date -u +%s) - then_s)) -lt 259200 ]
+  check 'the contributions calendar is under three days old' \
+    [ "$(status /api/contributions-health)" = 200 ]
 fi
 
 # The bare domain redirect is a Cloudflare rule, so it's only there in production.

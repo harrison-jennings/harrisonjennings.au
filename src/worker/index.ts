@@ -4,6 +4,7 @@
 // the contributions graph (src/worker/refresh.ts). Each runs on its own, so one failing can't stop the
 // other.
 import { handleConsent, type ConsentEnv } from './consent';
+import { handleContributionsHealth } from './contributions-health';
 import { handleCspReport } from './csp-report';
 import { handleInternalTraffic } from './internal-traffic';
 import { REFRESH_CRON, refreshSite } from './refresh';
@@ -21,6 +22,7 @@ export default {
     if (pathname === '/api/consent') return handleConsent(request, env);
     if (pathname === '/api/csp-report') return handleCspReport(request, env);
     if (pathname === '/api/internal-traffic') return handleInternalTraffic(request);
+    if (pathname === '/api/contributions-health') return handleContributionsHealth(request, env);
     // Anything else under /api/ is the 404 page, as for any unknown path.
     return env.ASSETS.fetch(request);
   },
