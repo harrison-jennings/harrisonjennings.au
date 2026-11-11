@@ -376,6 +376,37 @@ test.describe('still shipping', () => {
         .toBeGreaterThan(200);
     });
 
+    test('it opens at the newest weeks after growing from desktop to phone width', async ({
+      page,
+    }) => {
+      // As in the design system's preview frame, which starts at desktop width.
+      await page.setViewportSize({ width: 1280, height: 844 });
+      await page.goto('/');
+      await page.setViewportSize({ width: 390, height: 844 });
+      await section(page).scrollIntoViewIfNeeded();
+      const scroller = section(page).locator('.act__scroll');
+      await expect
+        .poll(() => scroller.evaluate((s) => s.scrollWidth - s.clientWidth - s.scrollLeft))
+        .toBeLessThanOrEqual(1);
+      expect(await scroller.evaluate((s) => s.scrollLeft)).toBeGreaterThan(200);
+    });
+
+    test('a browser restoring an old position on reload is undone; a visitor’s scroll isn’t', async ({
+      page,
+    }) => {
+      await page.goto('/');
+      await section(page).scrollIntoViewIfNeeded();
+      const scroller = section(page).locator('.act__scroll');
+      const fromEnd = () => scroller.evaluate((s) => s.scrollWidth - s.clientWidth - s.scrollLeft);
+      // A restore is a scroll with no swipe, wheel, key or arrow press behind it.
+      await scroller.evaluate((s) => (s.scrollLeft = 100));
+      await expect.poll(fromEnd).toBeLessThanOrEqual(1);
+      await section(page).locator('[data-swipe-prev="activity"]').click();
+      await expect.poll(fromEnd).toBeGreaterThan(200);
+      await page.waitForTimeout(600);
+      expect(await fromEnd()).toBeGreaterThan(200);
+    });
+
     test('the weeks stay inside the column, with no dot cut at either edge', async ({ page }) => {
       await page.goto('/');
       await section(page).scrollIntoViewIfNeeded();
