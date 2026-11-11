@@ -49,12 +49,22 @@ export function bindContributions(root: HTMLElement): void {
   const today = days.find((d) => d.cell.tabIndex === 0) ?? days.at(-1)!;
 
   // Opened at the newest weeks (a phone, or any screen too narrow for the year). The weeks snap to whole
-  // columns beside the day labels; the row's end is padded to a whole week too, so resting at the newest
-  // weeks never cuts the oldest one in view to a sliver.
+  // columns beside the day labels. The view is trimmed to a whole number of weeks, and the row's end is
+  // padded to a whole week, so no dot in view is ever cut, at either edge, wherever it comes to rest.
   const fit = () => {
     const atEnd = scroller.scrollLeft >= scroller.scrollWidth - scroller.clientWidth - 4;
     scroller.style.removeProperty('padding-right');
+    scroller.style.removeProperty('margin-right');
     const week = today.cell.getBoundingClientRect().width + 6;
+    if (scroller.scrollWidth - scroller.clientWidth > 4) {
+      const first = grid.querySelector('.act__corner')!.getBoundingClientRect().right + 6;
+      const view = scroller.getBoundingClientRect().right - first;
+      const trim = view % week;
+      if (trim > 0.5) {
+        const margin = Number.parseFloat(getComputedStyle(scroller).marginRight) || 0;
+        scroller.style.marginRight = `${margin + trim}px`;
+      }
+    }
     const max = scroller.scrollWidth - scroller.clientWidth;
     const extra = max > 4 ? (week - (max % week)) % week : 0;
     if (extra > 0.5) {

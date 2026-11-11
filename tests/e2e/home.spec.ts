@@ -376,6 +376,27 @@ test.describe('still shipping', () => {
         .toBeGreaterThan(200);
     });
 
+    test('the weeks stay inside the column, with no dot cut at either edge', async ({ page }) => {
+      await page.goto('/');
+      await section(page).scrollIntoViewIfNeeded();
+      const edges = () =>
+        section(page).evaluate((s) => {
+          const view = s.querySelector('.act__scroll')!.getBoundingClientRect();
+          const column = s.querySelector('.act')!.getBoundingClientRect();
+          const start = s.querySelector('.act__corner')!.getBoundingClientRect().right + 6;
+          const days = [...s.querySelectorAll('.act__day')].map((d) => d.getBoundingClientRect());
+          const shown = days.filter((r) => r.right > start + 0.5 && r.left < view.right - 0.5);
+          return {
+            cut: shown.filter((r) => r.left < start - 0.5 || r.right > view.right + 0.5).length,
+            past: shown.filter((r) => r.right > column.right + 0.5).length,
+          };
+        });
+      await expect.poll(edges).toEqual({ cut: 0, past: 0 });
+      await section(page).locator('[data-swipe-prev="activity"]').click();
+      await page.waitForTimeout(600);
+      await expect.poll(edges).toEqual({ cut: 0, past: 0 });
+    });
+
     test('a tap shows the day’s tooltip; tapping it again hides it', async ({ browser }) => {
       const context = await browser.newContext({
         viewport: { width: 390, height: 844 },
