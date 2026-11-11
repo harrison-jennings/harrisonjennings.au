@@ -26,6 +26,7 @@ describe('the contributions health check', () => {
     const response = await handleContributionsHealth(new Request(url), env, now);
     expect(response.status).toBe(200);
     expect(response.headers.get('Cache-Control')).toBe('no-store');
+    expect(response.headers.get('X-Robots-Tag')).toBe('noindex');
     expect(await response.json()).toEqual({
       status: 'fresh',
       fetchedAt: '2026-11-11T01:17:30.000Z',

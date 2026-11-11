@@ -15,7 +15,12 @@ interface AssetsEnv {
 const answer = (status: number, body: Record<string, unknown>) =>
   new Response(JSON.stringify(body), {
     status,
-    headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' },
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8',
+      'Cache-Control': 'no-store',
+      // public/_headers only reaches static files, not what the Worker writes
+      'X-Robots-Tag': 'noindex',
+    },
   });
 
 export async function handleContributionsHealth(
