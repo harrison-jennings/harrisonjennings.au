@@ -48,15 +48,23 @@ export function bindContributions(root: HTMLElement): void {
   const first = days.reduce((a, b) => (order(b) < order(a) ? b : a), days[0]!);
   const today = days.find((d) => d.cell.tabIndex === 0) ?? days.at(-1)!;
 
-  // Opened at the newest weeks (a phone, or any screen too narrow for the year). The weeks snap to whole
-  // columns beside the day labels. The view is trimmed to a whole number of weeks, and the row's end is
-  // padded to a whole week, so no dot in view is ever cut, at either edge, wherever it comes to rest.
+  // Opened at the newest weeks (a phone, or any screen too narrow for the year), and kept there until
+  // the visitor moves the row themselves (a swipe, the trackpad, the arrows, the keyboard): through a
+  // resize (a phone turning, the design system's preview frame switching to phone width), and against a
+  // browser restoring the row's old position on a reload, after this has run.
+  const overflow = () => scroller.scrollWidth - scroller.clientWidth;
+  let moved = false;
+  let atEnd = true; // as of the last scroll, so a resize can't change the answer before it's read
+
+  // The weeks snap to whole columns beside the day labels. The view is trimmed to a whole number of
+  // weeks, and the row's end is padded to a whole week, so no dot in view is ever cut, at either edge,
+  // wherever it comes to rest.
   const fit = () => {
-    const atEnd = scroller.scrollLeft >= scroller.scrollWidth - scroller.clientWidth - 4;
+    const keepEnd = !moved || atEnd;
     scroller.style.removeProperty('padding-right');
     scroller.style.removeProperty('margin-right');
     const week = today.cell.getBoundingClientRect().width + 6;
-    if (scroller.scrollWidth - scroller.clientWidth > 4) {
+    if (overflow() > 4) {
       const first = grid.querySelector('.act__corner')!.getBoundingClientRect().right + 6;
       const view = scroller.getBoundingClientRect().right - first;
       const trim = view % week;
@@ -65,16 +73,38 @@ export function bindContributions(root: HTMLElement): void {
         scroller.style.marginRight = `${margin + trim}px`;
       }
     }
-    const max = scroller.scrollWidth - scroller.clientWidth;
+    const max = overflow();
     const extra = max > 4 ? (week - (max % week)) % week : 0;
     if (extra > 0.5) {
       const padding = Number.parseFloat(getComputedStyle(scroller).paddingRight) || 0;
       scroller.style.paddingRight = `${padding + extra}px`;
     }
-    if (atEnd) scroller.scrollLeft = scroller.scrollWidth;
+    if (keepEnd) scroller.scrollLeft = scroller.scrollWidth;
+    atEnd = scroller.scrollLeft >= overflow() - 4;
   };
-  scroller.scrollLeft = scroller.scrollWidth;
   fit();
+
+  const byHand = () => (moved = true);
+  for (const type of ['pointerdown', 'wheel', 'keydown']) {
+    scroller.addEventListener(type, byHand, { passive: true, once: true });
+  }
+  const key = scroller.dataset['swipe'];
+  document
+    .querySelectorAll(`[data-swipe-prev="${key}"], [data-swipe-next="${key}"]`)
+    .forEach((arrow) => {
+      arrow.addEventListener('pointerdown', byHand, { once: true });
+      arrow.addEventListener('click', byHand, { once: true });
+    });
+  scroller.addEventListener(
+    'scroll',
+    () => {
+      if (!moved && scroller.scrollLeft < overflow() - 4)
+        scroller.scrollLeft = scroller.scrollWidth;
+      atEnd = scroller.scrollLeft >= overflow() - 4;
+    },
+    { passive: true },
+  );
+
   let width = window.innerWidth;
   window.addEventListener('resize', () => {
     if (window.innerWidth === width) return; // a phone's toolbar showing or hiding
