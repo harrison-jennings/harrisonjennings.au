@@ -1,19 +1,23 @@
 // Arrow buttons for a row that swipes sideways on phones. The row is [data-swipe="key"]; its buttons
-// are [data-swipe-prev="key"] and [data-swipe-next="key"]. Each press moves one card. At the end of
-// the row an arrow is marked aria-disabled (and fades), not removed, so focus never jumps.
+// are [data-swipe-prev="key"] and [data-swipe-next="key"]. Each press moves one card, or the row's
+// data-swipe-step in pixels when it has one (the contributions graph moves 13 weeks). At the end of
+// the row an arrow is marked aria-disabled (and fades), not removed, so focus never jumps. The arrows
+// ([data-swipe-arrows="key"]) are marked data-overflows while the row is wider than its space.
 const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 export function bindSwipe(row: HTMLElement): void {
   const key = row.dataset['swipe'];
   const prev = document.querySelector<HTMLButtonElement>(`[data-swipe-prev="${key}"]`);
   const next = document.querySelector<HTMLButtonElement>(`[data-swipe-next="${key}"]`);
+  const arrows = document.querySelector<HTMLElement>(`[data-swipe-arrows="${key}"]`);
 
   const step = (dir: 1 | -1) => {
     const card = row.firstElementChild as HTMLElement | null;
     if (!card) return;
     const gap = parseFloat(getComputedStyle(row).columnGap) || 0;
+    const fixed = Number(row.dataset['swipeStep']);
     row.scrollBy({
-      left: dir * (card.offsetWidth + gap),
+      left: dir * (fixed > 0 ? fixed : card.offsetWidth + gap),
       behavior: reducedMotion() ? 'auto' : 'smooth',
     });
   };
@@ -32,6 +36,7 @@ export function bindSwipe(row: HTMLElement): void {
         row.removeAttribute('aria-label');
       }
     }
+    arrows?.toggleAttribute('data-overflows', max > 4);
     prev?.setAttribute('aria-disabled', String(row.scrollLeft <= 4));
     next?.setAttribute('aria-disabled', String(row.scrollLeft >= max - 4));
   };

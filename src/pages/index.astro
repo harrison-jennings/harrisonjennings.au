@@ -1,9 +1,11 @@
 ---
-// Home: the hero, then what I do, built and shipped, what people are saying, latest posts and the
-// booking band. All wording lives in src/content/ (home.yaml, services.yaml, testimonials.yaml,
-// projects.yaml and the posts).
+// Home: the hero, then what I do, built and shipped, still shipping (the GitHub contributions graph),
+// what people are saying, latest posts and the booking band. All wording lives in src/content/
+// (home.yaml, services.yaml, testimonials.yaml, projects.yaml and the posts); the graph's numbers come
+// from GitHub at build time (src/lib/contributions.ts).
 import Booking from '../components/home/Booking.astro';
 import BuiltAndShipped from '../components/home/BuiltAndShipped.astro';
+import Contributions from '../components/home/Contributions.astro';
 import Hero from '../components/home/Hero.astro';
 import LatestPosts from '../components/home/LatestPosts.astro';
 import Services from '../components/home/Services.astro';
@@ -20,6 +22,7 @@ const services = (await getCollection('services')).map((s) => s.data);
   <div class="sections">
     <Services />
     <BuiltAndShipped />
+    <Contributions />
     <Testimonials />
     <LatestPosts />
     <Booking />

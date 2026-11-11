@@ -1,0 +1,70 @@
+---
+title: still shipping
+lead: A year of GitHub contributions as a grid of dots, after "built and shipped". Here's what I built; here's the steady work behind it.
+group: home
+order: 4
+component: src/components/home/Contributions.astro
+facts:
+  - label: words
+    value: src/content/home.yaml
+  - label: data
+    value: GitHub, at build time
+  - label: status
+    value: live
+related:
+  - page: components/built-and-shipped
+    line: The section before it.
+  - page: components/what-people-are-saying
+    line: The section after it.
+  - page: brand/colour
+    line: The five steps of brick, from `line` to `accent`.
+  - page: brand/imagery-and-motion
+    line: "`duration-sweep` and `duration-light`, the entrance's tokens."
+---
+
+import Preview from '../../../components/Preview.astro';
+import { usage } from '../../../lib/example';
+import example from '../../../examples/contributions.astro?raw';
+import source from '../../../../../src/components/home/Contributions.astro?raw';
+import script from '../../../../../src/scripts/contributions.ts?raw';
+import data from '../../../../../src/lib/contributions.ts?raw';
+
+## preview
+
+With the calendar the live site had when the design system was built. Hover a day, or tab in and use the arrow keys.
+
+<Preview
+  title="still shipping"
+  specimen="/specimens/contributions/"
+  size="large"
+  tabs={[
+    { label: 'astro', code: usage(example), lang: 'astro', file: 'src/pages/index.astro' },
+    { label: 'source', code: source.trim(), lang: 'astro', file: 'src/components/home/Contributions.astro' },
+    { label: 'script', code: script.trim(), lang: 'ts', file: 'src/scripts/contributions.ts' },
+    { label: 'data', code: data.trim(), lang: 'ts', file: 'src/lib/contributions.ts' },
+  ]}
+/>
+
+## how it behaves
+
+- **The data:** 53 weeks in columns, Sunday first, like GitHub's. Fetched when the site is built and refreshed twice a day by a scheduled rebuild. Counts include private repositories, as counts only. If GitHub doesn't answer, the build keeps the calendar the live site already has, so the section never shows an empty or error state.
+- **Each day** is a 14px dot (`space-14`, `radius-pill`), 6px apart (`space-6`). Five steps: none is `line`, the four quartiles are `activity-1`, `activity-2`, `activity-3` and `accent`. Days before the year and after today have no dot.
+- **Labels:** months in Martian Mono (a month gets one when it has two weeks or more, so labels never collide); mon, wed and fri; a "less … more" legend.
+- **The summary** is worked out from the data: "**601 contributions** on GitHub in the last year, 278 of them in private repositories." It mentions private work because nearly half the year is in repositories nobody else can open.
+- **The tooltip:** hover a day, focus it from the keyboard, or tap it on a phone. "16 contributions on 8 November", "no contributions on 10 November", with the year outside the current one. It sits above the day on `surface` with a hairline and a caret, kept inside the column; the caret moves along it to stay on the day.
+- **Rings:** a 1px `muted` ring on hover or a tap; the site's focus ring from the keyboard.
+- **Narrower than about 1160px** the year scrolls sideways under the day labels, opened at the newest weeks, with ‹ › arrows in the head moving 13 weeks a press. It snaps to whole weeks, so a dot at rest is never cut to a sliver. On phones the weeks run to the screen's edge and the link moves under the section.
+- **The entrance:** once, when 35% of the section is in view, a diagonal wave from the oldest week to today. Each day lights in `link` and settles to its level over `duration-light`; the wave crosses the weeks in view over `duration-sweep`. It doesn't play when the section is already in view on load.
+- **Its words** (the title and the link) are in `src/content/home.yaml`.
+
+## props
+
+None. The calendar comes from `src/lib/contributions.ts`; the words from `src/content/home.yaml`.
+
+## accessibility
+
+- **A grid** (`role="grid"`), named by the title and described by the summary, a line on the busiest day and how many days had any, and how to move. One tab stop: Tab lands on today, and the arrow keys, Home and End move (Ctrl or ⌘ with Home or End for the first day or today).
+- **Each day's name** is the tooltip's sentence, so the tooltip itself is hidden from screen readers. Esc hides it (WCAG 1.4.13).
+- **Colour is never the only carrier.** The lighter steps sit below 3:1 against the page, as GitHub's do; every count is also in words.
+- **Small targets:** the dots are 14px, under the site's 44px. A tap picks the nearest day, gaps included (20 × 20px each), and the keyboard and the summary give the same information.
+- **Reduced motion, or no JavaScript:** no entrance; the grid is drawn filled.

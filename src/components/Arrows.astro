@@ -1,15 +1,19 @@
 ---
-// ‹ › buttons for a swipe row (phones only). `swipe` matches the row's data-swipe; `noun` names one
-// card in the labels ("Next post").
+// ‹ › buttons for a swipe row (phones only, unless `overflow`). `swipe` matches the row's data-swipe;
+// `noun` names what one press moves in the labels ("Next post", "Next weeks").
 interface Props {
+  /** The row's data-swipe key. */
   swipe: string;
+  /** What one press moves, for the labels: "post" gives "Previous post" and "Next post". */
   noun: string;
+  /** Shown whenever the row is wider than its space, at any screen width, not only on phones. */
+  overflow?: boolean;
 }
 
-const { swipe, noun } = Astro.props;
+const { swipe, noun, overflow = false } = Astro.props;
 ---
 
-<div class="arrows">
+<div class:list={['arrows', { 'arrows--overflow': overflow }]} data-swipe-arrows={swipe}>
   <button
     class="arrow"
     type="button"
@@ -81,6 +85,10 @@ const { swipe, noun } = Astro.props;
     .arrows {
       display: inline-flex;
     }
+  }
+  /* The row's script marks the arrows when the row overflows (src/scripts/swipe.ts). */
+  .arrows--overflow[data-overflows] {
+    display: inline-flex;
   }
   @media (prefers-reduced-motion: reduce) {
     .arrow {

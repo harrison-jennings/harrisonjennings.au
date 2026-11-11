@@ -3,6 +3,9 @@
 // consent period; change both together.
 import type { ConsentDb } from './consent';
 
+/** When the clean-up runs (UTC): early afternoon in Melbourne. */
+export const RETENTION_CRON = '17 3 * * *';
+
 export const CONSENT_KEEP_MONTHS = 12;
 export const CSP_KEEP_DAYS = 90;
 

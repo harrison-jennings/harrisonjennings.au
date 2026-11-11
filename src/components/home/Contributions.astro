@@ -1,0 +1,381 @@
+---
+// "still shipping": a year of GitHub contributions as a grid of dots, after "built and shipped".
+// Drawn filled at build time from src/lib/contributions.ts (left out when there's no calendar);
+// src/scripts/contributions.ts adds the tooltip, the arrow keys and the entrance. On phones, and on any
+// screen too narrow for the year, the weeks scroll sideways under the day labels, opened at the newest.
+// Its heading and link are in src/content/home.yaml; everything else is worked out from the data.
+import { getEntry } from 'astro:content';
+import { SOCIAL } from '../../consts';
+import { calendar, countText, getContributions, WEEKDAYS } from '../../lib/contributions';
+import Arrows from '../Arrows.astro';
+import TextLink from '../TextLink.astro';
+
+const home = await getEntry('home', 'home');
+const data = await getContributions();
+const grid = data && calendar(data);
+const { title, link } = home!.data.github;
+const id = title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+// "601 contributions on GitHub in the last year, 278 of them in private repositories."
+const total = data ? countText(data.total) : '';
+const rest = data
+  ? `on GitHub in the last year${data.private > 0 ? `, ${data.private.toLocaleString('en-AU')} of them in private repositories` : ''}.`
+  : '';
+---
+
+{data && grid && (
+  <section class="section column" aria-labelledby={id}>
+    <div class="section__head">
+      <h2 id={id} class="section__title">
+        {title}
+      </h2>
+      <div class="act__controls">
+        <TextLink href={SOCIAL.github.href} quiet class="desktop-only">
+          {link}
+        </TextLink>
+        <Arrows swipe="activity" noun="weeks" overflow />
+      </div>
+    </div>
+    <div class="act" data-act>
+      <div class="act__scroll" id="swipe-activity" data-swipe="activity" data-swipe-step="260">
+        <table
+          class="act__grid"
+          role="grid"
+          aria-labelledby={id}
+          aria-describedby={`${id}-summary ${id}-more ${id}-help`}
+        >
+          <thead>
+            <tr>
+              <td class="act__corner" />
+              {grid.months.map((m) =>
+                m.short ? (
+                  <th class="act__month" scope="col" colspan={m.span}>
+                    <span aria-hidden="true">{m.short}</span>
+                    <span class="visually-hidden">{m.name}</span>
+                  </th>
+                ) : (
+                  <td class="act__month" colspan={m.span} />
+                ),
+              )}
+            </tr>
+          </thead>
+          <tbody>
+            {grid.rows.map((row, d) => (
+              <tr>
+                <th class="act__wd" scope="row">
+                  {d % 2 === 1 && (
+                    <span aria-hidden="true">{WEEKDAYS[d]!.slice(0, 3).toLowerCase()}</span>
+                  )}
+                  <span class="visually-hidden">{WEEKDAYS[d]}</span>
+                </th>
+                {row.map((day) =>
+                  day ? (
+                    <td
+                      class="act__day"
+                      role="gridcell"
+                      tabindex={day.today ? 0 : -1}
+                      data-level={day.level}
+                      aria-label={day.label}
+                    />
+                  ) : (
+                    <td class="act__pad" />
+                  ),
+                )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div class="act__tip" aria-hidden="true" hidden>
+        <b /> on <span />
+      </div>
+      <div class="act__foot">
+        <p class="act__summary" id={`${id}-summary`}>
+          {data.total > 0 ? (
+            <>
+              <strong>{total}</strong> {rest}
+            </>
+          ) : (
+            'No contributions on GitHub in the last year.'
+          )}
+        </p>
+        <p class="act__legend" aria-hidden="true">
+          <span>less</span>
+          <i />
+          <i />
+          <i />
+          <i />
+          <i />
+          <span>more</span>
+        </p>
+      </div>
+      <p class="visually-hidden" id={`${id}-more`}>
+        {grid.more}
+      </p>
+      <p class="visually-hidden" id={`${id}-help`}>
+        Use the arrow keys to move between days.
+      </p>
+    </div>
+    <p class="section__after phone-only">
+      <TextLink href={SOCIAL.github.href} quiet>
+        {link}
+      </TextLink>
+    </p>
+  </section>
+)}
+
+<style>
+  .act__controls {
+    display: flex;
+    align-items: center;
+    gap: var(--space-28);
+  }
+  .act {
+    position: relative; /* the tooltip is placed in this box, so it can't leave the column */
+  }
+
+  /* The scroller. The year fits from about 1160px; narrower, it scrolls, opened at the newest weeks.
+     It reaches 6px past the column, so a scrolled year's newest dot ends on the column's edge. It
+     snaps to whole weeks just right of the day labels, so a week at rest is never cut to a sliver. */
+  .act__scroll {
+    position: relative;
+    margin-right: calc(-1 * var(--space-6));
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-left: calc(var(--space-32) + var(--space-6));
+    scrollbar-width: none;
+  }
+  .act__scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  .act__grid {
+    width: max-content; /* never squeezed: the scroller scrolls instead */
+    border-collapse: separate;
+    border-spacing: var(--space-6);
+    margin: calc(-1 * var(--space-6)) 0 calc(-1 * var(--space-6)) calc(-1 * var(--space-6));
+    font-family: var(--font-display);
+    font-size: 12px;
+    line-height: 1;
+    color: var(--muted);
+  }
+
+  /* month labels: "nov", "dec", "jan" … */
+  .act__month {
+    height: var(--space-16);
+    padding: 0;
+    font-weight: 400;
+    text-align: left;
+    vertical-align: top;
+    white-space: nowrap;
+  }
+  /* Day labels ("mon", "wed", "fri") stay put while the weeks scroll under them. Their ground reaches
+     over the 6px gaps either side, so no sliver of a passing dot shows beside them. */
+  .act__wd,
+  .act__corner {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    padding: 0;
+    background: var(--ground);
+    box-shadow:
+      calc(-1 * var(--space-6)) 0 0 var(--ground),
+      var(--space-6) 0 0 var(--ground);
+  }
+  .act__wd {
+    box-sizing: border-box;
+    width: var(--space-32);
+    padding-right: var(--space-6);
+    font-weight: 400;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  /* a day */
+  .act__day {
+    box-sizing: border-box;
+    width: var(--space-14);
+    min-width: var(--space-14);
+    height: var(--space-14);
+    padding: 0;
+    border-radius: var(--radius-pill);
+    background: var(--line);
+  }
+  .act__day[data-level='1'] {
+    background: var(--activity-1);
+  }
+  .act__day[data-level='2'] {
+    background: var(--activity-2);
+  }
+  .act__day[data-level='3'] {
+    background: var(--activity-3);
+  }
+  .act__day[data-level='4'] {
+    background: var(--accent);
+  }
+  /* each week, by its Sunday */
+  tbody tr:first-child > td {
+    scroll-snap-align: start;
+  }
+  /* before the first day and after today: no dot */
+  .act__pad {
+    width: var(--space-14);
+    height: var(--space-14);
+    padding: 0;
+  }
+
+  /* A click or tap focuses a day without the keyboard: no ring for that alone. */
+  .act__day:focus {
+    outline: none;
+  }
+  /* hover or a tap: a hairline ring, so you can see which day the tooltip means */
+  .act__day:hover,
+  .act__day[data-state='hover'],
+  .act__day[data-state='tap'] {
+    outline: 1px solid var(--muted);
+    outline-offset: 1px;
+  }
+  /* keyboard: the site's focus ring (last, so it wins over hover) */
+  .act__day:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  /* under the grid: the summary and the legend */
+  .act__foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-10) var(--space-28);
+    margin-top: var(--space-20);
+  }
+  .act__summary {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+  .act__summary strong {
+    font-weight: 600;
+    color: var(--text);
+  }
+  .act__legend {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-6);
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 12px;
+    line-height: 1;
+    color: var(--muted);
+  }
+  .act__legend i {
+    display: block;
+    width: var(--space-14);
+    height: var(--space-14);
+    border-radius: var(--radius-pill);
+    background: var(--line);
+  }
+  .act__legend i:nth-of-type(2) {
+    background: var(--activity-1);
+  }
+  .act__legend i:nth-of-type(3) {
+    background: var(--activity-2);
+  }
+  .act__legend i:nth-of-type(4) {
+    background: var(--activity-3);
+  }
+  .act__legend i:nth-of-type(5) {
+    background: var(--accent);
+  }
+  .act__legend span:first-child {
+    margin-right: var(--space-6);
+  }
+  .act__legend span:last-child {
+    margin-left: var(--space-6);
+  }
+
+  /* The tooltip: one line above the day, centred on it and kept inside the column; the caret keeps
+     pointing at the day when the box is pushed in from an edge. Hidden from screen readers: the day's
+     own name says the same. */
+  .act__tip {
+    position: absolute;
+    z-index: 2;
+    left: 0;
+    top: 0;
+    box-sizing: border-box;
+    padding: var(--space-6) var(--space-10);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    font-size: 14px;
+    line-height: 1.4;
+    color: var(--text);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  .act__tip[hidden] {
+    display: none;
+  }
+  .act__tip b {
+    font-weight: 600;
+  }
+  /* the caret: a square turned 45°, sharing the box's border on its two outer sides */
+  .act__tip::after {
+    content: '';
+    position: absolute;
+    bottom: calc(-1 * var(--space-6) + 1px);
+    left: var(--caret, 50%);
+    width: var(--space-10);
+    height: var(--space-10);
+    margin-left: calc(-1 * var(--space-6));
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    background: var(--surface);
+    transform: rotate(45deg);
+  }
+
+  /* The entrance. Without JavaScript, or under reduced motion, none of this applies: the grid is drawn
+     filled. The script sets data-reveal="armed" (every active day drawn empty) only when the section
+     starts below the fold, then "play" once 35% of it is in view: a diagonal wave, each day lighting in
+     link and settling to its level, with its delay set by the script. */
+  .act[data-reveal='armed'] .act__day:not([data-level='0']) {
+    background: var(--line);
+  }
+  .act[data-reveal='play'] .act__day:not([data-level='0']) {
+    animation: act-light var(--duration-light) var(--ease-settle) both;
+  }
+  @keyframes act-light {
+    0% {
+      background-color: var(--line);
+    }
+    30% {
+      background-color: var(--link);
+    }
+    /* 100%: the day's own level */
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .act[data-reveal] .act__day:not([data-level='0']) {
+      animation: none;
+    }
+  }
+
+  @media (max-width: 760px) {
+    /* the weeks run to the screen's right edge, like the other swipe rows */
+    .act__scroll {
+      margin-right: calc(-1 * (var(--space-16) + var(--space-10)));
+      padding-right: calc(var(--space-16) + var(--space-10) - var(--space-6));
+    }
+    .act__foot {
+      flex-direction: column;
+      align-items: flex-start;
+      margin-top: var(--space-16);
+    }
+  }
+</style>
+
+<script>
+  import { bindContributions } from '../../scripts/contributions';
+  document.querySelectorAll<HTMLElement>('[data-act]').forEach(bindContributions);
+</script>
