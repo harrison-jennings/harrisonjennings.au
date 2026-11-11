@@ -129,8 +129,12 @@ const rest = data
     align-items: center;
     gap: var(--space-28);
   }
+  /* As wide as the year when it fits, so the legend ends with the last week; the full column when it
+     scrolls. The heading's link stays on the column's edge, like every other section's. */
   .act {
     position: relative; /* the tooltip is placed in this box, so it can't leave the column */
+    width: fit-content;
+    max-width: 100%;
   }
 
   /* The scroller. The year fits from about 1160px; narrower, it scrolls inside the column (on phones
