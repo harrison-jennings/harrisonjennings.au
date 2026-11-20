@@ -5,6 +5,11 @@ home:
   intro: I'm Harrison, a marketing technology consultant in Melbourne.
   # The second line on the share card (the image shown when a link to the site is shared).
   shareLine: Marketing technology consultant, Melbourne.
+  # What search results and share previews show for the home page (up to 65 and 155 characters). The
+  # page itself doesn't show them. Without them, the title is the site name and the description is the
+  # site's own. The name stays first: it's the query that brings people here.
+  searchTitle: harrison jennings, marketing technology consultant in Melbourne
+  searchDescription: 'Strategy and the stack, from one person: Adobe Marketo Engage, analytics and measurement, and creative and media strategy.'
   # "still shipping": the GitHub contributions graph, after "built and shipped". The lines under it
   # (the summary, the tooltips) are worked out from the data.
   github:
