@@ -122,7 +122,7 @@ Put `::cookie-settings` on a line of its own where the "cookie settings" button 
 
 Every word on the home page comes from a content file, so it can change without touching code:
 
-- `home.yaml`: the headline (one line per entry; the last line ends in the brick stop, so leave off its full stop), the two-line subtitle, the booking band's title and note, and `shareLine`, the second line on the share card.
+- `home.yaml`: the headline (one line per entry; the last line ends in the brick stop, so leave off its full stop), the two-line subtitle, the booking band's title and note, `shareLine`, the second line on the share card, and `searchTitle` (up to 65 characters) and `searchDescription` (up to 155), the title and description in search results and share previews. The page doesn't show those two, and analytics keeps the usual page name.
 - `services.yaml`: each service's name, a paragraph up to 200 characters, and exactly three tools.
 - `testimonials.yaml`: `quote` (up to 280 characters; trim a longer one to its best part), `name`, `role` and `order`. From five quotes the home page shows them as a moving row with a pause button; with fewer they sit still, side by side.
 - `projects.yaml`: `featured: true` puts a project in "built and shipped". Its links appear only when it has them: `url` and `host` for "live at", `repo` for "source on github", `story` for "read the story". Add `image` (a screenshot in `src/content/projects/`) to replace the dashed placeholder.

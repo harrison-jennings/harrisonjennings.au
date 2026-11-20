@@ -139,6 +139,10 @@ const home = defineCollection({
     intro: z.string(),
     /** The line under the lead on the share card (the home card is every page's default). */
     shareLine: z.string(),
+    /** The title in search results and share previews, in place of the site name alone. */
+    searchTitle: z.string().max(65).optional(),
+    /** The description in search results and share previews, in place of the site's description. */
+    searchDescription: z.string().max(155).optional(),
     github: z.object({ title: z.string(), link: z.string() }),
     booking: z.object({ title: z.string(), note: z.string() }),
   }),

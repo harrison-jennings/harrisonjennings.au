@@ -51,6 +51,29 @@ test('the home page is in search, with its canonical address', async ({ page }) 
   );
 });
 
+test("the home page's search title and description go to search and share previews, not analytics", async ({
+  page,
+}) => {
+  await page.goto('/');
+  const title = 'harrison jennings, marketing technology consultant in Melbourne';
+  await expect(page).toHaveTitle(title);
+  await expect(page.locator('meta[property="og:title"]')).toHaveAttribute('content', title);
+  const description = await page.locator('meta[name="description"]').getAttribute('content');
+  expect(description).toMatch(/^Strategy and the stack, from one person: Adobe Marketo Engage/);
+  await expect(page.locator('meta[property="og:description"]')).toHaveAttribute(
+    'content',
+    description!,
+  );
+  // Analytics keeps the page name it has always had, so reports stay continuous.
+  const pageName = await page.evaluate(
+    () =>
+      (window.dataLayer as Array<Record<string, unknown>>).find((e) => 'page_name' in e)?.[
+        'page_name'
+      ],
+  );
+  expect(pageName).toBe('harrison jennings');
+});
+
 test('robots.txt welcomes search and AI answers, keeps AI training out, and names the sitemap, in standard syntax', async ({
   request,
 }) => {
