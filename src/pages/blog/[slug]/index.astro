@@ -1,6 +1,6 @@
 ---
 // A post: header, the text with "on this page" beside it, then the published line, the author
-// panel and "keep reading". No booking band on blog pages.
+// panel and "keep reading", with "back to top" in the corner. No booking band on blog pages.
 import { getImage } from 'astro:assets';
 import { getCollection, render } from 'astro:content';
 import AuthorPanel from '../../../components/blog/AuthorPanel.astro';
@@ -8,6 +8,7 @@ import KeepReading from '../../../components/blog/KeepReading.astro';
 import PostEnd from '../../../components/blog/PostEnd.astro';
 import PostHeader from '../../../components/blog/PostHeader.astro';
 import Toc from '../../../components/blog/Toc.astro';
+import ToTop from '../../../components/blog/ToTop.astro';
 import Figures from '../../../components/prose/Figures.astro';
 import YouTube from '../../../components/prose/YouTube.astro';
 import Base from '../../../layouts/Base.astro';
@@ -93,6 +94,7 @@ const structuredData = [
     </div>
     <KeepReading posts={keepReading(post, posts)} topicPages={topicPages} />
   </div>
+  <ToTop />
 </Base>
 
 <style>

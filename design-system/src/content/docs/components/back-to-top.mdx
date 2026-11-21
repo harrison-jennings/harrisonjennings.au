@@ -1,0 +1,53 @@
+---
+title: back to top
+lead: A post's way back up. A round button in the corner, under "on this page" on desktop, that shows once you're a screen down and fills its ring as you read.
+group: blog
+order: 5
+component: src/components/blog/ToTop.astro
+facts:
+  - label: status
+    value: live
+related:
+  - page: components/on-this-page
+    line: Beside the text, above it on desktop.
+  - page: components/consent
+    line: Shares the corner; the button waits until it's answered.
+---
+
+import Preview from '../../../components/Preview.astro';
+import { usage } from '../../../lib/example';
+import example from '../../../examples/back-to-top.astro?raw';
+import source from '../../../../../src/components/blog/ToTop.astro?raw';
+import script from '../../../../../src/scripts/to-top.ts?raw';
+
+## preview
+
+Shown as it is a third of the way through a post.
+
+<Preview
+  title="back to top"
+  specimen="/specimens/back-to-top/"
+  tabs={[
+    { label: 'astro', code: usage(example), lang: 'astro', file: 'src/pages/blog/[slug]/index.astro' },
+    { label: 'source', code: source.trim(), lang: 'astro', file: 'src/components/blog/ToTop.astro' },
+    { label: 'script', code: script.trim(), lang: 'ts', file: 'src/scripts/to-top.ts' },
+  ]}
+/>
+
+## how it behaves
+
+- **Where:** posts only, fixed to the column's right edge, so on desktop it sits under "on this page" and on phones in the corner.
+- **When it shows:** once you've scrolled a screen down. It fades in and out, and stays hidden while the cookie banner is up, as they share the corner.
+- **The ring** fills from the start of the post's text to its end, so it's full when you've read it, before the author panel and "keep reading".
+- **Activating it** scrolls to the top: smoothly, or at once under reduced motion.
+- **Without JavaScript** it never shows.
+
+## props
+
+None.
+
+## accessibility
+
+- **A button named "back to top",** 44px, with the site's focus ring.
+- **Focus moves to the post's title,** so the next Tab carries on from the top, not from the corner.
+- **Hidden means hidden:** until it shows, it's out of the tab order and unseen by screen readers.

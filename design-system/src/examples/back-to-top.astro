@@ -1,0 +1,26 @@
+---
+import ToTop from '../../../src/components/blog/ToTop.astro';
+---
+
+<!-- a post puts it after its column, fixed to the screen; here a short box stands in for the screen -->
+<div class="screen">
+  <ToTop />
+</div>
+
+<script>
+  // On a post it shows a screen down, its ring filling as the text is read: here, a third of the way.
+  const button = document.querySelector<HTMLButtonElement>('[data-to-top]');
+  button?.toggleAttribute('data-shown', true);
+  button
+    ?.querySelector<SVGElement>('[data-to-top-fill]')
+    ?.style.setProperty('stroke-dashoffset', '0.67');
+</script>
+
+<style>
+  /* A transformed box holds fixed children, so the button sits in its corner, not the frame's. */
+  .screen {
+    width: 100%;
+    height: 120px;
+    transform: translateZ(0);
+  }
+</style>

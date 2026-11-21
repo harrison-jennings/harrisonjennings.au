@@ -28,6 +28,7 @@ test.describe('the blog index', () => {
       REF,
     );
     await expect(page.locator('[data-book]')).toHaveCount(0);
+    await expect(page.locator('[data-to-top]')).toHaveCount(0);
   });
 });
 
@@ -58,6 +59,53 @@ test.describe('a post', () => {
     await expect(toc.locator('a[href="#tables"]')).toHaveAttribute('aria-current', 'true');
     await expect(page.locator('.toc-phone')).toBeHidden();
     await expect(page.locator('[data-book]')).toHaveCount(0);
+  });
+
+  test('"on this page" draws a rail that steps in for h3s, and slides the marker along it', async ({
+    page,
+  }) => {
+    await page.goto(REF);
+    const toc = page.locator('[data-toc]');
+    await expect(toc).toHaveClass(/toc--rail/);
+    // Two levels, so the line runs at two distances from the left.
+    const d = (await toc.locator('.toc__track').getAttribute('d')) ?? '';
+    const xs = new Set([...d.matchAll(/[ML]([\d.]+) /g)].map((m) => m[1]));
+    expect(xs.size).toBe(2);
+    const offset = () =>
+      toc.locator('.toc__marker').evaluate((m: SVGPathElement) => m.style.strokeDashoffset);
+    const first = await offset();
+    await page.evaluate(() => document.getElementById('tables')!.scrollIntoView());
+    await expect(toc.locator('a[href="#tables"]')).toHaveAttribute('aria-current', 'true');
+    await expect.poll(offset).not.toBe(first);
+  });
+
+  test('back to top: shows a screen down, fills as the text is read, and goes back to the title', async ({
+    page,
+  }) => {
+    await page.goto(REF);
+    const button = page.getByRole('button', { name: 'back to top' });
+    await expect(page.locator('[data-to-top]')).toBeHidden();
+    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight / 2));
+    await expect(button).toBeVisible();
+    const read = Number(
+      await page
+        .locator('[data-to-top-fill]')
+        .evaluate((c: SVGCircleElement) => c.style.strokeDashoffset),
+    );
+    expect(read).toBeGreaterThan(0);
+    expect(read).toBeLessThan(1);
+    // It shares the corner with the cookie banner, so waits while that's up.
+    await page.evaluate(() => {
+      document.querySelector<HTMLElement>('[data-consent-banner]')!.hidden = false;
+    });
+    await expect(button).toBeHidden();
+    await page.evaluate(() => {
+      document.querySelector<HTMLElement>('[data-consent-banner]')!.hidden = true;
+    });
+    await button.click();
+    await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
+    await expect(page.locator('h1')).toBeFocused();
+    await expect(page.locator('[data-to-top]')).toBeHidden();
   });
 
   test('prose: h5 shows as h4, callouts, figures, table and footnotes', async ({ page }) => {

@@ -47,6 +47,8 @@ test.describe('the legal pages', () => {
     await expect(toc).toBeVisible();
     await expect(toc.locator('a[href="#cookies-and-similar-technologies"]')).toBeVisible();
     await expect(toc.locator('a[href="#analytics"]')).toHaveCount(0);
+    // "back to top" is for posts.
+    await expect(page.locator('[data-to-top]')).toHaveCount(0);
   });
 
   test('terms: "Effective", a link to the privacy policy and no short version', async ({
