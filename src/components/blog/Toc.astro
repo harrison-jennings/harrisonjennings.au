@@ -51,7 +51,7 @@ for (const h of headings) {
     </ol>
   </details>
 ) : (
-  <nav class="toc" aria-labelledby="toc-label" data-toc>
+  <nav class="toc" aria-labelledby="toc-label" data-toc data-toc-rail>
     <p class="toc__label" id="toc-label">
       on this page
     </p>
@@ -75,10 +75,19 @@ for (const h of headings) {
 )}
 
 <style>
+  /* A long list scrolls inside itself, stopping above "back to top" in the corner, so its last
+     sections never sit below the screen. The gutter keeps the links' focus rings unclipped. */
   .toc {
     position: sticky;
     top: 112px;
     align-self: start;
+    max-height: calc(100vh - 112px - var(--target) - 2 * (var(--space-16) + var(--space-10)));
+    margin: 0 calc(-1 * var(--space-6));
+    padding: 0 var(--space-6) var(--space-6);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--line) transparent;
     font-size: 14px;
     line-height: 1.45;
   }
@@ -117,6 +126,38 @@ for (const h of headings) {
   .toc .toc__sub a {
     padding-left: 30px;
     font-size: 13px;
+  }
+  /* The script's rail (src/scripts/toc.ts): one line that steps in beside each group of h3s, and a
+     marker that slides along it. It replaces the straight border and the links' own. */
+  .toc--rail > ol,
+  .toc--rail a,
+  .toc--rail a[aria-current='true'] {
+    border-left-color: transparent;
+  }
+  .toc :global(.toc__rail) {
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: visible;
+    pointer-events: none;
+  }
+  .toc :global(.toc__track),
+  .toc :global(.toc__marker) {
+    fill: none;
+    stroke-linejoin: round;
+  }
+  .toc :global(.toc__track) {
+    stroke: var(--line);
+    stroke-width: 1px;
+  }
+  .toc :global(.toc__marker) {
+    stroke: var(--accent);
+    stroke-width: 1.5px;
+  }
+  .toc--ready :global(.toc__marker) {
+    transition:
+      stroke-dasharray var(--duration-move) var(--ease-move),
+      stroke-dashoffset var(--duration-move) var(--ease-move);
   }
 
   /* Each form shows at its own width: the column on desktop, the panel on phones. */
@@ -169,7 +210,8 @@ for (const h of headings) {
   }
   @media (prefers-reduced-motion: reduce) {
     .toc a,
-    .toc-phone a {
+    .toc-phone a,
+    .toc--ready :global(.toc__marker) {
       transition: none;
     }
   }

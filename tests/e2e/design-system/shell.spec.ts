@@ -223,6 +223,9 @@ test('"on this page" lists the page\'s sections and marks the one being read', a
   const first = toc.locator('a').first();
   await expect(first).toHaveText('preview');
   await expect(first).toHaveAttribute('aria-current', 'true');
+  // The site's rail, with its marker.
+  await expect(toc).toHaveClass(/toc--rail/);
+  await expect(toc.locator('.toc__marker')).toHaveCount(1);
 });
 
 test('a section address goes to its first page', async ({ page }) => {

@@ -70,18 +70,18 @@ Light mode uses richer cloud values automatically. Keep copy on the left, clouds
 
 Everything is still under `prefers-reduced-motion`. Every transition's duration and easing is a token in the `motion` group of `design/tokens.json` (`--duration-*`, `--ease-*`), named for its job; the looping animations and the timings set in scripts are their components' own.
 
-| token             | value | for                                                                       |
-| ----------------- | ----- | ------------------------------------------------------------------------- |
-| `duration-hover`  | 150ms | colour, border, underline and opacity changes on hover and focus          |
-| `duration-fade`   | 200ms | fades: the theme icon, the hero's scroll cue, the consent switch's colour |
-| `duration-switch` | 220ms | the consent switch's knob                                                 |
-| `duration-zoom`   | 220ms | the image viewer's zoom                                                   |
-| `duration-move`   | 240ms | the nav compacting, underlines drawing in                                 |
-| `duration-panel`  | 280ms | the projects switcher's panes, the preferences dialog                     |
-| `duration-arrive` | 320ms | the cookie banner                                                         |
-| `duration-spin`   | 320ms | the theme toggle's icon                                                   |
-| `duration-wipe`   | 360ms | the button's wipe                                                         |
-| `duration-hint`   | 400ms | the image viewer's hint                                                   |
+| token             | value | for                                                                                      |
+| ----------------- | ----- | ---------------------------------------------------------------------------------------- |
+| `duration-hover`  | 150ms | colour, border, underline and opacity changes on hover and focus                         |
+| `duration-fade`   | 200ms | fades: the theme icon, the hero's scroll cue, the consent switch's colour, "back to top" |
+| `duration-switch` | 220ms | the consent switch's knob                                                                |
+| `duration-zoom`   | 220ms | the image viewer's zoom                                                                  |
+| `duration-move`   | 240ms | the nav compacting, underlines drawing in, the "on this page" marker                     |
+| `duration-panel`  | 280ms | the projects switcher's panes, the preferences dialog                                    |
+| `duration-arrive` | 320ms | the cookie banner                                                                        |
+| `duration-spin`   | 320ms | the theme toggle's icon                                                                  |
+| `duration-wipe`   | 360ms | the button's wipe                                                                        |
+| `duration-hint`   | 400ms | the image viewer's hint                                                                  |
 
 Easings: `ease-standard` (`ease`) for hover changes and fades, `ease-move` (`cubic-bezier(0.65, 0, 0.35, 1)`) for things moving across, `ease-settle` (`cubic-bezier(0.2, 0.7, 0.2, 1)`) for things coming to rest. Keep each element's pairing: a duration doesn't imply an easing.
 

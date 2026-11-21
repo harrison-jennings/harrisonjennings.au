@@ -433,6 +433,38 @@
   color: var(--text);
   border-left-color: var(--accent);
 }
+/* The site's rail (src/scripts/toc.ts): one line, with a marker that slides along it. It replaces the
+   straight border and the links' own. */
+.ds-toc.toc--rail ol,
+.ds-toc.toc--rail a,
+.ds-toc.toc--rail a[aria-current='true'] {
+  border-left-color: transparent;
+}
+.ds-toc .toc__rail {
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: visible;
+  pointer-events: none;
+}
+.ds-toc .toc__track,
+.ds-toc .toc__marker {
+  fill: none;
+  stroke-linejoin: round;
+}
+.ds-toc .toc__track {
+  stroke: var(--line);
+  stroke-width: 1px;
+}
+.ds-toc .toc__marker {
+  stroke: var(--accent);
+  stroke-width: 1.5px;
+}
+.ds-toc.toc--ready .toc__marker {
+  transition:
+    stroke-dasharray var(--duration-move) var(--ease-move),
+    stroke-dashoffset var(--duration-move) var(--ease-move);
+}
 
 /* ---------- footer ---------- */
 .ds-foot {
@@ -691,7 +723,8 @@
 @media (prefers-reduced-motion: reduce) {
   .ds-sections a::after,
   .ds-group__toggle .ds-icon,
-  .ds-menu__sec > button .ds-icon {
+  .ds-menu__sec > button .ds-icon,
+  .ds-toc.toc--ready .toc__marker {
     transition: none;
   }
 }

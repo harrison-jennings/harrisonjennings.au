@@ -1,0 +1,97 @@
+---
+// "back to top" on a post: a round button in the bottom-right corner, under "on this page" on
+// desktop. It shows once the reader is a screen down, and its ring fills as the text is read. It
+// stays out of the way while the cookie banner is up.
+---
+
+<button class="to-top" type="button" aria-label="back to top" data-to-top>
+  <svg class="to-top__ring" viewBox="0 0 44 44" aria-hidden="true">
+    <circle class="to-top__track" cx="22" cy="22" r="21" />
+    <circle class="to-top__fill" cx="22" cy="22" r="21" pathLength="1" data-to-top-fill />
+  </svg>
+  <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+    <path
+      d="M12 19V5M6 11l6-6 6 6"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  </svg>
+</button>
+
+<style>
+  /* Fixed to the column's right edge (under "on this page" on desktop), as far up from the bottom as
+     the column's gutter is on phones. Hidden until the script shows it, so it never shows without it. */
+  .to-top {
+    position: fixed;
+    z-index: 40;
+    right: calc(
+      max(0px, (100% - var(--container)) / 2 - var(--space-16)) + var(--space-16) + var(--space-10)
+    );
+    bottom: calc(var(--space-16) + var(--space-10));
+    display: grid;
+    place-items: center;
+    width: var(--target);
+    height: var(--target);
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: var(--surface);
+    color: var(--text);
+    cursor: pointer;
+    visibility: hidden;
+    opacity: 0;
+    transition:
+      opacity var(--duration-fade) var(--ease-standard),
+      visibility var(--duration-fade) var(--ease-standard),
+      color var(--duration-hover) var(--ease-standard);
+  }
+  .to-top[data-shown] {
+    visibility: visible;
+    opacity: 1;
+  }
+  /* The cookie banner sits in the same corner until it's answered. */
+  :global(html:has([data-consent-banner]:not([hidden]))) .to-top {
+    visibility: hidden;
+    opacity: 0;
+  }
+  .to-top:hover,
+  .to-top:focus-visible {
+    color: var(--link);
+  }
+  .to-top > svg {
+    grid-area: 1 / 1;
+  }
+  .to-top__ring {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+  }
+  .to-top__track,
+  .to-top__fill {
+    fill: none;
+    stroke-width: 1.5px;
+  }
+  .to-top__track {
+    stroke: var(--line);
+  }
+  .to-top__fill {
+    stroke: var(--accent);
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .to-top {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  import { bindToTop } from '../../scripts/to-top';
+  const button = document.querySelector<HTMLButtonElement>('[data-to-top]');
+  const text = document.querySelector<HTMLElement>('.prose');
+  if (button && text) bindToTop(button, text, document.querySelector<HTMLElement>('main h1'));
+</script>
